@@ -834,7 +834,6 @@
 
 <script type="text/mustache" id="tableViewTemplate" style="display:none;">
     <div id="tableView-{{tableId}}" class="table-container">
-
         <div class="table-logo"></div>
         <div id="seatContainer-{{tableId}}" class="default-poker-table table-{{capacity}}">
             <div class="seat" id="seat0-{{tableId}}">

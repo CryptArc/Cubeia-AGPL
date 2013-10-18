@@ -3,14 +3,16 @@
     background-image: url("../images/table/hand-rankings.png");
     width: 3.5em;
     height: 3.5em;
-    top: 9%;
-    left: 1.5%;
+    top: 50px;
+    left: 5px;
     background-repeat: no-repeat;
     background-size: 100%;
     position: absolute;
     cursor: pointer;
     z-index: 99999999;
 }
+
+
 .rankings-view {
     position: absolute;
     top:14%;
@@ -74,10 +76,16 @@
     }
 }
 
-@media (max-width:480px){
+@media (max-width:480px), (max-height:480px){
+    .hand-ranking-icon {
+        top:10px;
+        width: 2.5em;
+        height: 2.5em;
+    }
     .rankings-view {
         width:95%;
         min-width: 95%;
+        height: 100%;
         left:0;
         top:0;
     }

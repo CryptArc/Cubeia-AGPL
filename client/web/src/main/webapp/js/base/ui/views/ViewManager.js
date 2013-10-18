@@ -136,6 +136,18 @@ Poker.ViewManager = Class.extend({
         }
         this.portrait = $(window).height() < $(window).width();
     },
+    isIPad : function() {
+        if(window.matchMedia) {
+            var mq1 = window.matchMedia("(min-device-width: 768px)");
+            var mq2 = window.matchMedia("(max-device-width: 1024px)");
+            if(mq1.matches && mq2.matches) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    },
     /**
      * Gets the next view null if there are no more views
      * @return {Poker.View}
@@ -411,7 +423,10 @@ Poker.ViewManager = Class.extend({
             console.log("Not portrait");
             $("body").removeClass("portrait");
         }
-
+        //tmp ipad fix
+        if(this.isIPad() && this.portrait==true) {
+            topMargin+=25;
+        }
         for(var i = 0; i<views.length; i++) {
             views[i].calculateSize(w.width()-leftMargin, w.height()-topMargin, maxAspectRatio);
             views[i].calculateFontSize();

@@ -57,7 +57,7 @@ Poker.TableLayoutManager = Class.extend({
         this.animationManager = new Poker.AnimationManager();
         var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId, capacity : capacity});
         this.viewContainerOffsetTop = tableViewContainer.offset().top;
-        tableViewContainer.append(tableViewHtml);
+        tableViewContainer.prepend(tableViewHtml);
         var viewId = "#tableView-"+tableId;
         this.tableView = $(viewId);
 
