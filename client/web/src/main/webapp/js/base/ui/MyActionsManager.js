@@ -186,10 +186,10 @@ Poker.MyActionsManager  = Class.extend({
      * @param {Poker.Action[]} actions
      * @param {Number} mainPot
      * @param {Boolean} fixedLimit
-     * @param {CircularProgressBar} progressBar
+     * @param {Function} progressbar
      * @return {Boolean} whether the action was handled automatically
      */
-    onRequestPlayerAction : function(actions, mainPot, fixedLimit, progressBar){
+    onRequestPlayerAction : function(actions, mainPot, fixedLimit, progressbar){
 
         if (this.blindsActions.handleBlindsAndEntryBet(actions)) {
             return true;
@@ -214,8 +214,7 @@ Poker.MyActionsManager  = Class.extend({
         //to avoid users clicking the action buttons by mistake
         setTimeout(function(){
             self.showActionButtons(actions, mainPot, fixedLimit);
-            progressBar.show();
-            progressBar.render();
+            progressbar();
         }, 500);
         return false;
     },

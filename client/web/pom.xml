@@ -239,6 +239,7 @@
                         <source>${js.dir}/lib/handlebars.js</source>
                         <source>${js.dir}/base/ui/TemplateManager.js</source>
                         <source>${js.dir}/base/Action.js</source>
+                        <source>${js.dir}/base/ui/CanvasProgressbar.js</source>
                         <source>${js.dir}/base/ui/Seat.js</source>
                         <source>${js.dir}/base/ui/animation/AnimationManager.js</source>
                         <source>${js.dir}/base/sound/SoundRepository.js</source>

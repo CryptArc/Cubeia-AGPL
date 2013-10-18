@@ -12,7 +12,7 @@ Poker.Seat = Class.extend({
     seatId: -1,
     player: null,
     seatElement: null,
-    progressBarElement: null,
+    progressbar: null,
     cards: null,
     cardsContainer: null,
     avatarElement: null,
@@ -38,7 +38,7 @@ Poker.Seat = Class.extend({
     renderSeat: function() {
         var output = this.templateManager.render("seatTemplate", this.player);
         this.seatElement.html(output);
-        this.progressBarElement = this.seatElement.find(".progress-bar");
+        this.progressbar = new Poker.CanvasProgressbar(this.seatElement.find(".seat-progressbar canvas") , {border:true});
         this.avatarElement = this.seatElement.find(".avatar");
         this.cardsContainer = this.seatElement.find(".cards-container");
         this.actionAmount = this.seatElement.find(".action-amount");
@@ -95,7 +95,9 @@ Poker.Seat = Class.extend({
     reset: function() {
         this.hideActionInfo();
         this.handStrength.html("").removeClass("won").hide();
-        this.clearProgressBar();
+        if(this.progressbar!=null) {
+            this.progressbar.stop();
+        }
         if (this.cardsContainer) {
             this.cardsContainer.empty();
         }
@@ -152,16 +154,7 @@ Poker.Seat = Class.extend({
     },
     inactivateSeat: function() {
         this.seatElement.removeClass("active-seat");
-        this.clearProgressBar();
-    },
-    clearProgressBar: function() {
-        if (this.progressBarElement) {
-            this.progressBarElement.attr("style", "").hide();
-        }
-        if (this.currentProgressBarAnimation != null) {
-            this.animationManager.removeAnimation(this.currentProgressBarAnimation);
-            this.currentProgressBarAnimation = null;
-        }
+        this.progressbar.stop();
     },
     /**
      * When a betting round is complete (community cards are dealt/shown);
@@ -171,12 +164,7 @@ Poker.Seat = Class.extend({
    },
    activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");
-       this.progressBarElement.show();
-       this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
-           .addTransition("transform",timeToAct/1000,"linear")
-           .addScale3d(1,0.01,1).addOrigin("bottom")
-           .setTimed(true)
-           .start(this.animationManager);
+       this.progressbar.start(timeToAct);
     },
     rebuyRequested: function(rebuyCost, chipsForRebuy, timeToAct) {
         this.showTimer(timeToAct);
@@ -191,16 +179,11 @@ Poker.Seat = Class.extend({
         // Nothing to do.
     },
     rebuyPerformed: function() {
-        this.clearProgressBar();
+        this.progressbar.stop();
     },
     showTimer: function(timeToAct) {
         this.seatElement.addClass("active-seat");
-        this.progressBarElement.show();
-        this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
-                .addTransition("transform", timeToAct / 1000, "linear")
-                .addScale3d(1, 0.01, 1).addOrigin("bottom")
-                .setTimed(true)
-                .start(this.animationManager);
+        this.progressbar.start(timeToAct);
     },
     showHandStrength: function(hand) {
         this.actionAmount.html("");

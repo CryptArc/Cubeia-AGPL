@@ -85,17 +85,7 @@ describe("Poker.Seat Test", function(){
 
     });
 
-    it("Test on activate/inactivate seat",function(){
-        seat.activateSeat([], 15000, 300);
-        expect(seat.seatElement.hasClass("active-seat")).toBeTruthy();
-        expect(seat.progressBarElement.is(":visible")).toBeTruthy();
 
-        seat.inactivateSeat();
-
-        expect(seat.seatElement.hasClass("active-seat")).toBeFalsy();
-        expect(seat.progressBarElement.is(":visible")).toBeFalsy();
-
-    });
 
 
 });

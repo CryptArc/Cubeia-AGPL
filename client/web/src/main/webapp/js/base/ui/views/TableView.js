@@ -12,6 +12,7 @@ Poker.TableView = Poker.TabView.extend({
         this._super();
         this.tableViewContainer.show();
         this.layoutManager.onActivateView();
+        $(window).trigger("resizeEnd");
         this.getViewElement().removeClass("no-transitions");
     },
     deactivate : function() {

@@ -42,8 +42,7 @@
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
 
-    <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
     <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.19-javascript.js" type="text/javascript"></script>
@@ -672,9 +671,7 @@
 
 <div id="seatTemplate" style="display: none;">
     <div class="avatar-base">
-        <div class="progress-bar">
 
-        </div>
     </div>
     <div class="player-name">
         {{name}}
@@ -701,6 +698,9 @@
     </div>
     <div class="hand-strength">
 
+    </div>
+    <div class="seat-progressbar">
+        <canvas width="20" height="20"></canvas>
     </div>
 </div>
 
@@ -834,7 +834,6 @@
 
 <script type="text/mustache" id="tableViewTemplate" style="display:none;">
     <div id="tableView-{{tableId}}" class="table-container">
-
         <div class="table-logo"></div>
         <div id="seatContainer-{{tableId}}" class="default-poker-table table-{{capacity}}">
             <div class="seat" id="seat0-{{tableId}}">
@@ -1049,8 +1048,8 @@
                 <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">{{t "table.wait-for-big-blind"}}</label>
                 <div>{{t "table.wait-for-big-blind-description"}}</div>
             </div>
-        <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
-
+        <div id="myPlayerSeat-{{tableId}}Progressbar" class="canvas-progress-bar">
+            <canvas width="20" height="20"></canvas>
         </div>
 
     </div>

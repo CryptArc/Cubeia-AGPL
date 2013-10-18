@@ -38,7 +38,17 @@ Poker.ViewManager = Class.extend({
         this.toolbar = $("#toolbar");
         this.activateView(this.loginView);
 
+        var timer = null;
         $(window).resize(function(){
+            if(timer!=null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function(){
+                $(window).trigger("resizeEnd");
+                timer = null;
+            },300);
+        });
+        $(window).on("resizeEnd",function(){
             self.setViewDimensions();
         });
         $(document).ready(function(){
@@ -114,8 +124,8 @@ Poker.ViewManager = Class.extend({
     },
     checkMobileDevice : function() {
         if(window.matchMedia) {
-            var mq1 = window.matchMedia("(max-width:700px)");
-            var mq2 = window.matchMedia("(max-height: 400px)");
+            var mq1 = window.matchMedia("(max-height:480px)");
+            var mq2 = window.matchMedia("(max-width:480px)");
             if(mq1.matches || mq2.matches) {
                 this.mobileDevice = true;
             } else {
@@ -125,6 +135,18 @@ Poker.ViewManager = Class.extend({
             this.mobileDevice = false;
         }
         this.portrait = $(window).height() < $(window).width();
+    },
+    isIPad : function() {
+        if(window.matchMedia) {
+            var mq1 = window.matchMedia("(min-device-width: 768px)");
+            var mq2 = window.matchMedia("(max-device-width: 1024px)");
+            if(mq1.matches && mq2.matches) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     },
     /**
      * Gets the next view null if there are no more views
@@ -396,10 +418,15 @@ Poker.ViewManager = Class.extend({
             leftMargin = 40;
             topMargin = 0;
             $("body").addClass("portrait");
+            console.log("Mobile & portrait");
         } else {
+            console.log("Not portrait");
             $("body").removeClass("portrait");
         }
-
+        //tmp ipad fix
+        if(this.isIPad() && this.portrait==true) {
+            topMargin+=25;
+        }
         for(var i = 0; i<views.length; i++) {
             views[i].calculateSize(w.width()-leftMargin, w.height()-topMargin, maxAspectRatio);
             views[i].calculateFontSize();

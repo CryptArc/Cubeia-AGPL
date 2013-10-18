@@ -17,7 +17,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     /**
      * @type CircularProgressBar
      */
-    circularProgressBar : null,
+    progressbar : null,
 
     /**
      * @type Number
@@ -37,8 +37,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.seatElement = $("#"+elementId);
         this.renderSeat();
         this.infoElement = $("#"+elementId+"Info").show();
-        this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
-        this.circularProgressBar.hide();
+        this.progressbar = new Poker.CanvasProgressbar("#"+elementId+"Progressbar canvas");
         this.seatBalance = this.seatElement.find(".seat-balance");
         this.myActionsManager.onSatDown();
         this.seatBase = this.seatElement.find(".avatar-base");
@@ -59,14 +58,15 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
-        this.showTimer(timeToAct);
-        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, this.circularProgressBar);
+        var self = this;
+        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
+            var time = timeToAct;
+            self.progressbar.start(time);
+        });
         Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
-        this.showTimer(timeToAct);
-        this.circularProgressBar.show();
-        this.circularProgressBar.render();
+        this.progressbar.start(timeToAct);
         this.myActionsManager.showRebuyButtons(rebuyCost, chipsForRebuy);
     },
     addOnRequested : function(addOnCost, chipsForAddOn) {
@@ -74,24 +74,17 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     hideRebuyButtons : function() {
         this.myActionsManager.hideRebuyButtons();
-        this.circularProgressBar.hide();
+        this.progressbar.hide();
     },
     hideAddOnButton : function() {
         this.myActionsManager.hideAddOnButton();
     },
-    showTimer: function(timeToAct) {
-        if (this.circularProgressBar != null) {
-            this.circularProgressBar.detach();
-        }
-        this.circularProgressBar = new CircularProgressBar("#" + this.seatElement.attr("id") + "Progressbar", this.animationManager);
-        this.circularProgressBar.setTime(timeToAct);
-    },
+
     onAction : function(actionType,amount){
         this.running = false;
-        this.circularProgressBar.hide();
+        this.progressbar.stop();
         this.showActionData(actionType,amount);
         this.myActionsManager.hideActionElements();
-        this.clearProgressBar();
         if(actionType.id == Poker.ActionType.FOLD.id) {
             this.fold();
             Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
@@ -172,7 +165,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     clear : function() {
         this.seatElement.empty();
         $("#myPlayer-"+this.tableId).hide();
-        this.circularProgressBar.detach();
+        this.progressbar.stop();
     },
     getDealerButtonOffsetElement : function() {
         return this.seatBase;
