@@ -33,7 +33,10 @@
             "stakes" : "Лимиты:",
             "low" : "Микро",
             "mid" : "Средние",
-            "high" : "Высокие"
+            "high" : "Высокие",
+            "currency" : "Select Currency:",
+            "show-registering" : "Show registering only"
+
         },
         "list" : {
             "name" : "Название",

@@ -27,8 +27,8 @@
         "filters" : {
             "show-filters" : "Show filters",
             "show-tables" : "Show Tables",
-            "full" : "Full",
-            "empty" : "Empty",
+            "full" : "Hide full tables",
+            "empty" : "Hide empty tables",
             "show-limits" : "Show limits",
             "no-limit" : "NL",
             "fixed-limit" : "FL",
@@ -38,8 +38,7 @@
             "mid" : "Mid",
             "high" : "High",
             "currency" : "Select Currency:",
-            "xcc" : "XCC",
-            "xoc" : "XOC"
+            "show-registering" : "Show registering only"
         },
         "list" : {
             "name" : "Name",

@@ -620,17 +620,17 @@
                         </nav>
                         <div class="lobby-checkbox-filter tournament-filter sitandgo-filter">
                             <input class="checkbox" checked="checked" id="registeringOnly" type="checkbox"/>
-                            <label class="checkbox-icon-label" for="registeringOnly">
+                            <label class="checkbox-icon-label" for="registeringOnly"  data-i18n="lobby.filters.show-registering">
                                 Show registering only
                             </label>
                         </div>
                         <div class="lobby-checkbox-filter cashgame-filter">
                             <input class="checkbox" type="checkbox" id="hideFullTables"/>
-                            <label class="checkbox-icon-label" for="hideFullTables">
+                            <label class="checkbox-icon-label" for="hideFullTables"  data-i18n="lobby.filters.full">
                                 Hide full tables
                             </label>
                             <input class="checkbox" type="checkbox" id="hideEmptyTables"/>
-                            <label class="checkbox-icon-label" for="hideEmptyTables">
+                            <label class="checkbox-icon-label" for="hideEmptyTables" data-i18n="lobby.filters.empty">
                                 Hide empty tables
                             </label>
 
