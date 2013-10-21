@@ -21,9 +21,4 @@ public abstract class BasePage extends com.cubeia.network.shared.web.wicket.Base
 
     }
 
-    @Override
-    public void loadPages(List<PageNode> pages) {
-        PageNodeUtils.add(pages, "Home", HomePage.class, "icon-home");
-        super.loadPages(pages);
-    }
 }
