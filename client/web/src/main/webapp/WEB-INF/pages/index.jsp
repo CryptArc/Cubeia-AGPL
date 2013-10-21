@@ -618,7 +618,13 @@
                                 <li id="limitsFL"><a>Fixed Limit</a></li>
                             </ul>
                         </nav>
-                        <div style="display:none;">
+                        <div class="lobby-checkbox-filter tournament-filter sitandgo-filter">
+                            <input class="checkbox" checked="checked" id="registeringOnly" type="checkbox"/>
+                            <label class="checkbox-icon-label" for="registeringOnly">
+                                Show registering only
+                            </label>
+                        </div>
+                        <div class="lobby-checkbox-filter cashgame-filter">
                             <input class="checkbox" type="checkbox" id="hideFullTables"/>
                             <label class="checkbox-icon-label" for="hideFullTables">
                                 Hide full tables
