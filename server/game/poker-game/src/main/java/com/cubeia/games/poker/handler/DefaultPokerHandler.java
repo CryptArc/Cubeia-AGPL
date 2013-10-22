@@ -346,4 +346,8 @@ public class DefaultPokerHandler implements PacketVisitor {
 	@Override
 	public void visit(AchievementNotificationPacket packet) {}
 
+    @Override
+    public void visit(TournamentTables packet) {
+    }
+
 }

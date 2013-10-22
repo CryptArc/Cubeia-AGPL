@@ -137,7 +137,12 @@
         "unregister" : "Unregister",
         "go-to-table" : "Go to table",
         "please-wait" : "Please wait...",
-
+        "menu" : {
+            "players" : "Players",
+            "tables" : "Tables",
+            "payouts" : "Payouts",
+            "blinds-structure" : "Blinds structure"
+        },
         "players" : {
             "players" : "Players",
             "player" : "Player",
@@ -145,6 +150,10 @@
             "winnings" : "Winnings",
             "loading" : "Loading Players...",
             "no-players" : "No players registered"
+        },
+        "tables" : {
+            "tables" : "tables",
+            "no-tables" : "Currently no active tables"
         },
         "info" : {
             "title" : "Tournament Info",

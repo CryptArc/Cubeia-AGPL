@@ -133,7 +133,12 @@
         "unregister" : "Отменить",
         "go-to-table" : "К Столу",
         "please-wait" : "Подождите...",
-
+        "menu" : {
+            "players" : "Players",
+            "tables" : "Tables",
+            "payouts" : "Payouts",
+            "blinds-structure" : "Blinds structure"
+        },
         "players" : {
             "players" : "Игроков",
             "player" : "Игрок",
@@ -141,6 +146,10 @@
             "winnings" : "Победители",
             "loading" : "Загрузка...",
             "no-players" : "Нет игроков"
+        },
+        "tables" : {
+            "tables" : "tables",
+            "no-tables" : "Currently no active tables"
         },
         "info" : {
             "title" : "Информация о турнире",

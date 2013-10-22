@@ -507,6 +507,7 @@
         <var name="payout_info" type="payout_info" />
         <var name="tournament_statistics" type="tournament_statistics" />
         <var name="tournament_info" type="tournament_info" />
+        <var name="tournament_tables" type="tournament_tables"/>
     </struct>
 
     <!-- Requests the player's table in this tournament. -->
@@ -580,6 +581,10 @@
     <struct name="achievement_notification_packet">
         <var name="player_id" type="int32"/>
         <var name="message" type="string"/>
+    </struct>
+
+    <struct name="tournament_tables">
+        <list name="tables" type="int32"/>
     </struct>
 
 </protocol>

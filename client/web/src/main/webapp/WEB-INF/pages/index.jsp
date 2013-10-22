@@ -1225,9 +1225,10 @@
                     </div>
                     <div class="navbar-collapse navbar-tournament-collapse collapse">
                         <ul class="nav nav-pills">
-                            <li class="players-link active"><a>Players</a></li>
-                            <li class="payouts-link"><a>Payouts</a></li>
-                            <li class="blinds-link"><a>Blinds Structure</a></li>
+                            <li class="players-link active"><a>{{t "tournament-lobby.menu.players" }}</a></li>
+                            <li class="tables-link"><a>{{t "tournament-lobby.menu.tables" }}</a></li>
+                            <li class="payouts-link"><a>{{t "tournament-lobby.menu.payouts" }}</a></li>
+                            <li class="blinds-link"><a>{{t "tournament-lobby.menu.blinds-structure" }}</a></li>
                         </ul>
                     </div>
 
@@ -1247,6 +1248,23 @@
                         <tbody>
                         <tr>
                             <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row tables-row tournament-section" style="display:none;">
+                <div class="col-sm-7">
+                    <table class="table default-table table-list">
+                        <thead>
+                        <tr>
+                            <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -1455,6 +1473,12 @@
         <td>{{name}}</td>
         <td>{{currency stackSize}}</td>
         <td>{{currency winnings}}</td>
+    </tr>
+</script>
+<script type="text/mustache" id="tournamentTableListItem" style="display:none;">
+    <tr>
+        <td>Table {{index}}</td>
+        <td><a class="btn btn-lobby" id="tournamentTable{{id}}">Go to table</a></td>
     </tr>
 </script>
 

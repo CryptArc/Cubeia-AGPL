@@ -136,13 +136,22 @@
         "unregister" : "Avregistrera",
         "go-to-table" : "Gå till bord",
         "please-wait" : "Var god vänta...",
-
+        "menu" : {
+            "players" : "Spelare",
+            "tables" : "Bord",
+            "payouts" : "Utbetalningar",
+            "blinds-structure" : "Blinds-struktur"
+        },
         "players" : {
             "players" : "Spelare",
             "player" : "Spelare",
             "stack" : "Stack",
             "winnings" : "Vinst",
             "loading" : "Laddar spelare..."
+        },
+        "tables" : {
+            "tables" : "Bord",
+            "no-tables" : "För tillfället finns det inga aktiva bord"
         },
         "info" : {
             "title" : "Turneringsinfo",
