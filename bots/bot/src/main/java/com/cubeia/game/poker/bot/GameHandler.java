@@ -159,12 +159,12 @@ public class GameHandler implements PacketVisitor {
         if (request.player == bot.getBot().getPid() && !historicActionsAreBeingSent.get()) {
             Action action = pokerHandler.onActionRequest(request);
 
-            int wait = 0;
+            int wait = 1000;
             if (strategy.useDelay(request.allowedActions)) {
-                int expected = request.timeToAct / 6;
+                int expected = request.timeToAct / 8;
                 int deviation = request.timeToAct / 3;
                 wait = gaussianAverage(expected, deviation);
-                wait = wait < 0 ? 0 : wait;
+                wait = wait < 1000 ? 1000 : wait;
             }
 
             bot.executor.schedule(action, wait, TimeUnit.MILLISECONDS);
