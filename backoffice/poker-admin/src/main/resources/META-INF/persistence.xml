@@ -5,6 +5,7 @@
    version="1.0">
    
    <persistence-unit name="adminPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+<!--       <provider>org.hibernate.ejb.HibernatePersistence</provider>-->
        <class>com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure</class>
        <class>com.cubeia.games.poker.tournament.configuration.payouts.Payouts</class>
        <class>com.cubeia.games.poker.tournament.configuration.payouts.Payout</class>
@@ -19,10 +20,5 @@
        <class>com.cubeia.games.poker.entity.TableConfigTemplate</class>
        <class>com.cubeia.poker.timing.TimingProfile</class>
        <class>com.cubeia.poker.settings.RakeSettings</class>
-
-
-       <properties>
-      	<!-- property name="hibernate.hbm2ddl.auto" value="create-drop"/-->
-      </properties>
    </persistence-unit>
 </persistence>
