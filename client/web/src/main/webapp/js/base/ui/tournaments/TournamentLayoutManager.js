@@ -16,6 +16,7 @@ Poker.TournamentLayoutManager = Class.extend({
 
     viewElement : null,
     playerListBody : null,
+    tableListBody : null,
     registerButton : null,
     unregisterButton : null,
     loadingButton : null,
@@ -37,6 +38,7 @@ Poker.TournamentLayoutManager = Class.extend({
         var viewId = "#tournamentView"+tournamentId;
         this.viewElement = $(viewId);
         this.playerListBody = this.viewElement.find(".player-list tbody");
+        this.tableListBody = this.viewElement.find(".table-list tbody");
         this.initActions();
         if(registered==true) {
             this.setPlayerRegisteredState();
@@ -56,6 +58,10 @@ Poker.TournamentLayoutManager = Class.extend({
             self.viewElement.find(".tournament-section").hide();
             self.viewElement.find(".blinds-row").show();
         });
+        menu.addItem(".tables-link", function(){
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".tables-row").show();
+        });
         menu.activateItem(".players-link");
 
     },
@@ -69,6 +75,22 @@ Poker.TournamentLayoutManager = Class.extend({
         if(players.length==0) {
             this.playerListBody.append("<td/>").attr("colspan","3").
                 append(i18n.t("tournament-lobby.players.no-players"));
+        }
+    },
+    updateTableList : function(tables) {
+        var template = this.templateManager.getRenderTemplate("tournamentTableListItem");
+        this.tableListBody.empty();
+        var self = this;
+        tables.sort();
+        $.each(tables,function(i,t) {
+            self.tableListBody.append(template.render({index : (i+1), id : t }));
+            self.tableListBody.find("#tournamentTable"+t).click(function(e){
+                new Poker.TableRequestHandler(t).openTable(10);
+            });
+        });
+        if(tables.length==0) {
+            this.tableListBody.append("<td/>").attr("colspan","2").
+                append(i18n.t("tournament-lobby.tables.no-tables"));
         }
     },
     updateBlindsStructure : function(blindsStructure) {

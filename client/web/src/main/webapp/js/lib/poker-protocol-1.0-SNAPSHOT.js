@@ -2316,6 +2316,10 @@ com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function (c, a
         case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:
             b = new com.cubeia.games.poker.io.protocol.AchievementNotificationPacket();
             b.load(a);
+            return b;
+        case com.cubeia.games.poker.io.protocol.TournamentTables.CLASSID:
+            b = new com.cubeia.games.poker.io.protocol.TournamentTables();
+            b.load(a);
             return b
     }
     return null
@@ -2849,6 +2853,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
     this.payoutInfo = {};
     this.tournamentStatistics = {};
     this.tournamentInfo = {};
+    this.tournamentTables = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeArray(this.players.save());
@@ -2856,6 +2861,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
         a.writeArray(this.payoutInfo.save());
         a.writeArray(this.tournamentStatistics.save());
         a.writeArray(this.tournamentInfo.save());
+        a.writeArray(this.tournamentTables.save());
         return a
     };
     this.load = function (a) {
@@ -2868,7 +2874,9 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
         this.tournamentStatistics = new com.cubeia.games.poker.io.protocol.TournamentStatistics();
         this.tournamentStatistics.load(a);
         this.tournamentInfo = new com.cubeia.games.poker.io.protocol.TournamentInfo();
-        this.tournamentInfo.load(a)
+        this.tournamentInfo.load(a);
+        this.tournamentTables = new com.cubeia.games.poker.io.protocol.TournamentTables();
+        this.tournamentTables.load(a)
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2880,6 +2888,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
         a.details.payoutInfo = this.payoutInfo.getNormalizedObject();
         a.details.tournamentStatistics = this.tournamentStatistics.getNormalizedObject();
         a.details.tournamentInfo = this.tournamentInfo.getNormalizedObject();
+        a.details.tournamentTables = this.tournamentTables.getNormalizedObject();
         return a
     }
 };
@@ -3136,6 +3145,41 @@ com.cubeia.games.poker.io.protocol.TournamentTable = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID = 63;
+com.cubeia.games.poker.io.protocol.TournamentTables = function () {
+    this.classId = function () {
+        return com.cubeia.games.poker.io.protocol.TournamentTables.CLASSID
+    };
+    this.tables = [];
+    this.save = function () {
+        var a = new FIREBASE.ByteArray();
+        a.writeInt(this.tables.length);
+        var b;
+        for (b = 0; b < this.tables.length; b++) {
+            a.writeInt(this.tables[b])
+        }
+        return a
+    };
+    this.load = function (a) {
+        var c;
+        var b = a.readInt();
+        this.tables = [];
+        for (c = 0; c < b; c++) {
+            this.tables.push(a.readInt())
+        }
+    };
+    this.getNormalizedObject = function () {
+        var a = {};
+        var b;
+        a.summary = "com.cubeia.games.poker.io.protocol.TournamentTables";
+        a.details = {};
+        a.details.tables = [];
+        for (b = 0; b < this.tables.length; b++) {
+            a.details.tables.push(this.tables[b].getNormalizedObject())
+        }
+        return a
+    }
+};
+com.cubeia.games.poker.io.protocol.TournamentTables.CLASSID = 76;
 com.cubeia.games.poker.io.protocol.VariantEnum = function () {
 };
 com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM = 0;

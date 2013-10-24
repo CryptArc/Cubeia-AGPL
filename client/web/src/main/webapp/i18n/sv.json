@@ -27,8 +27,8 @@
         "filters" : {
             "show-filters" : "Visa filter",
             "show-tables" : "Visa Bord:",
-            "full" : "Full",
-            "empty" : "Tom",
+            "full" : "Dölj fulla",
+            "empty" : "Dölj tomma",
             "show-limits" : "Visa limits",
             "no-limit" : "NL",
             "fixed-limit" : "FL",
@@ -38,8 +38,7 @@
             "mid" : "Med",
             "high" : "Hög",
             "currency" : "Välj valuta:",
-            "xcc" : "XCC",
-            "xoc" : "XOC"
+            "show-registering" : "Visa enbart öppna"
         },
         "list" : {
             "name" : "Namn",
@@ -137,13 +136,22 @@
         "unregister" : "Avregistrera",
         "go-to-table" : "Gå till bord",
         "please-wait" : "Var god vänta...",
-
+        "menu" : {
+            "players" : "Spelare",
+            "tables" : "Bord",
+            "payouts" : "Utbetalningar",
+            "blinds-structure" : "Blinds-struktur"
+        },
         "players" : {
             "players" : "Spelare",
             "player" : "Spelare",
             "stack" : "Stack",
             "winnings" : "Vinst",
             "loading" : "Laddar spelare..."
+        },
+        "tables" : {
+            "tables" : "Bord",
+            "no-tables" : "För tillfället finns det inga aktiva bord"
         },
         "info" : {
             "title" : "Turneringsinfo",

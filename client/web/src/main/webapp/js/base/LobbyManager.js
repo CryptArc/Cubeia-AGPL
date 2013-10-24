@@ -188,22 +188,34 @@ Poker.LobbyFilter = Poker.Filter.extend({
     id:null,
     filterFunction:null,
     lobbyLayoutManager:null,
+    checkbox : false,
 
     init : function (id, enabled, filterFunction, lobbyLayoutManager) {
         var userSetting = Poker.Utils.loadBoolean(id, enabled);
         this.enabled = userSetting;
-        this.enabled = enabled;
         this.id = id;
         this.filterFunction = filterFunction;
         this.lobbyLayoutManager = lobbyLayoutManager;
 
         var self = this;
-        $("#" + this.id).touchSafeClick(this.clickHandler(self));
-        if (this.enabled == true) {
-            $("#" + this.id).addClass("active");
+        var input = $("#" + this.id);
+        if(input.attr("type")=="checkbox") {
+            this.checkbox = true;
+            input.on("change",this.clickHandler(self));
+            if (this.enabled == true) {
+                input.attr("checked",true);
+            } else {
+                input.attr("checked",false);
+            }
         } else {
-            $("#" + this.id).removeClass("active");
+            input.touchSafeClick(this.clickHandler(self));
+            if (this.enabled == true) {
+                $("#" + this.id).addClass("active");
+            } else {
+                $("#" + this.id).removeClass("active");
+            }
         }
+
     },
     filterUpdated : function () {
         this.lobbyLayoutManager.filterUpdated();
@@ -220,7 +232,9 @@ Poker.LobbyFilter = Poker.Filter.extend({
     clickHandler : function (self) {
         return function () {
             self.enabled = !self.enabled;
-            $(this).toggleClass("active");
+            if(self.checkbox == false) {
+                $(this).toggleClass("active");
+            }
             Poker.Utils.store(self.id, self.enabled);
             self.filterUpdated();
         }
@@ -277,6 +291,21 @@ Poker.PropertyStringFilter = Poker.LobbyFilter.extend({
         var p = lobbyData[this.property];
         if (typeof(p) != "undefined" && !this.enabled) {
             return (p !== this.str);
+        } else {
+            return true;
+        }
+    }
+});
+
+Poker.EqualsFilter = Poker.PropertyStringFilter.extend({
+
+    init:function (id, enabled, lobbyLayoutManager, property, str) {
+        this._super(id, enabled, lobbyLayoutManager, property, str);
+    },
+    doFilter : function (enabled, lobbyData) {
+        var p = lobbyData[this.property];
+        if (typeof(p) != "undefined" && this.enabled==true) {
+            return (p == this.str);
         } else {
             return true;
         }
