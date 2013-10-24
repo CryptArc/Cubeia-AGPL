@@ -50,6 +50,11 @@ Poker.LobbyLayoutManager = Class.extend({
         variantMenu.addItem("#variantTelesina",function(){
             new Poker.LobbyRequestHandler().subscribeToCashGames("telesina");
         });
+
+        variantMenu.addItem("#variantCrazyPineapple",function(){
+            new Poker.LobbyRequestHandler().subscribeToCashGames("crazyp");
+        });
+
         variantMenu.activateItem("#variantTexas");
 
         this.topMenu = new Poker.BasicMenu(".navbar-top");

@@ -123,6 +123,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/ChatInput.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/cards/PlayerHand.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/MyPlayerSeat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/cards/Card.js"></script>
@@ -607,6 +608,7 @@
                                 <ul class="nav nav-pills">
                                     <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
                                     <li id="variantTelesina"><a>Telesina</a></li>
+                                    <li id="variantCrazyPineapple"><a>Crazy Holdem</a></li>
                                     <li><a>&nbsp;</a></li>
                                 </ul>
                             </div>
@@ -1017,6 +1019,9 @@
                 </div>
                 <div class="action-button action-add-on" style="display: none;">
                     <span>{{t "table.buttons.add-on"}}</span>
+                </div>
+                <div class="action-button action-discard" style="display: none;">
+                    <span>{{t "table.buttons.discard"}}</span>
                 </div>
             </div>
             <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">

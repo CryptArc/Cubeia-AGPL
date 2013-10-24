@@ -19,6 +19,7 @@ package com.cubeia.poker.variant.factory;
 
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.crazypineapple.CrazyPineapple;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
@@ -37,6 +38,9 @@ public class GameTypeFactory {
             case TELESINA:
                 gameType = new Telesina(new TelesinaDeckFactory(), new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
                 break;
+            case CRAZY_PINEAPPLE:
+            	gameType = CrazyPineapple.createGame();
+            	break;
             default:
                 throw new UnsupportedOperationException("unsupported poker variant: " + variant);
         }

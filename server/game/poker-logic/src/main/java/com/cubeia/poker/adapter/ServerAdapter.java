@@ -18,6 +18,7 @@
 package com.cubeia.poker.adapter;
 
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.DiscardAction;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
@@ -247,5 +248,7 @@ public interface ServerAdapter {
     void notifyAddOnPeriodClosed();
 
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
+
+	void notifyDiscards(DiscardAction discardAction, PokerPlayer pokerPlayer);
 
 }

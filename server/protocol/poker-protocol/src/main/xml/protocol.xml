@@ -141,6 +141,7 @@
     <enum name="variant">
         <value>TEXAS_HOLDEM</value>
         <value>TELESINA</value>
+        <value>CRAZY_PINEAPPLE</value>
     </enum>
 
     <enum name="bet_strategy">

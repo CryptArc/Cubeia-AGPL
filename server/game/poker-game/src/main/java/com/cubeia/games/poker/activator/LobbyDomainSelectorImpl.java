@@ -32,6 +32,7 @@ public class LobbyDomainSelectorImpl implements LobbyDomainSelector {
 		switch(templ.getVariant()) {
 			case TELESINA : return "telesina";
 			case TEXAS_HOLDEM : return "texas";
+			case CRAZY_PINEAPPLE : return "crazyp";
 		}
 		throw new IllegalArgumentException("Unknown variant: " + templ.getVariant());
 	}

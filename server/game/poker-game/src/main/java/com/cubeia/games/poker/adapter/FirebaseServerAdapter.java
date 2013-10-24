@@ -59,6 +59,7 @@ import com.cubeia.games.poker.tournament.messages.RebuyResponse;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.DiscardAction;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -82,7 +83,9 @@ import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 import org.slf4j.Logger;
@@ -388,6 +391,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
         log.trace("--> Send PerformAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
         handHistory.notifyActionPerformed(pokerAction, pokerPlayer);
+    }
+
+    @Override
+    public void notifyDiscards(DiscardAction discardAction, PokerPlayer pokerPlayer) {
+        PerformAction packet = actionTransformer.transform(discardAction, pokerPlayer);
+        packet.cardsToDiscard = Ints.toArray(discardAction.getCardsToDiscard());
+        GameDataAction action = protocolFactory.createGameAction(packet, discardAction.getPlayerId(), table.getId());
+        log.trace("--> Send PerformAction[" + packet + "] to everyone");
+        sendPublicPacket(action, -1);
+        handHistory.notifyActionPerformed(discardAction, pokerPlayer);
     }
 
     @Override

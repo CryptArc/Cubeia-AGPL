@@ -30,6 +30,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     infoElement : null,
     seatBase : null,
+
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
@@ -63,6 +64,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             var time = timeToAct;
             self.progressbar.start(time);
         });
+        for (var a in allowedActions) {
+            var act = allowedActions[a];
+            if (act.type.id == Poker.ActionType.DISCARD.id) {
+                this.cardsContainer.addClass("discard-enable");
+                this.hand.enableDiscards(act.minAmount, act.maxAmount);
+            }
+        }
         Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
@@ -80,7 +88,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.myActionsManager.hideAddOnButton();
     },
 
-    onAction : function(actionType,amount){
+    onAction : function(actionType,amount,cardsToDiscard){
         this.running = false;
         this.progressbar.stop();
         this.showActionData(actionType,amount);
@@ -90,6 +98,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
         } else if(actionType.id == Poker.ActionType.SIT_IN.id) {
 
+        } else if(actionType == Poker.ActionType.DISCARD) {
+            this.discardCards(cardsToDiscard);
         }
     },
     clearSeat : function() {
@@ -150,6 +160,9 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     onReset : function() {
         Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
+        if ( this.hand != null ) {
+            this.hand.removeAllCards();
+        }
     },
     fold : function() {
 
@@ -173,4 +186,5 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     isMySeat : function() {
         return true;
     }
+
 });

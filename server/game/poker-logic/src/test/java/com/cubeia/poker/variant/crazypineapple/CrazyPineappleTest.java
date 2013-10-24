@@ -110,8 +110,8 @@ public class CrazyPineappleTest {
 
         // Discard round
         discard(p[1], 0);
-        discard(p[2], 2);
-        discard(p[0], 1);
+        discard(p[2], 6);
+        discard(p[0], 11);
 
         // Turn
         timeout();
@@ -168,7 +168,7 @@ public class CrazyPineappleTest {
     private PokerContext prepareContext(int numberOfPlayers) {
         BlindsLevel level = new BlindsLevel(new BigDecimal(50), new BigDecimal(100), BigDecimal.ZERO);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,level, betStrategy, new BigDecimal(100), new BigDecimal(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
+        PokerSettings settings = new PokerSettings(PokerVariant.CRAZY_PINEAPPLE,level, betStrategy, new BigDecimal(100), new BigDecimal(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
         PokerContext context = new PokerContext(settings);
         crazyPineapple.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

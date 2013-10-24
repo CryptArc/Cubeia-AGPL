@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.DiscardAction;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -275,5 +276,12 @@ public class MockServerAdapter implements ServerAdapter {
     @Override
     public void notifyDisconnected(int playerId) {
     }
+
+	@Override
+	public void notifyDiscards(DiscardAction discardAction,
+			PokerPlayer pokerPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

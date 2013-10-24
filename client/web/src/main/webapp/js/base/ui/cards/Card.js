@@ -77,5 +77,5 @@ Poker.Card = Class.extend({
     },
     getCardDivId:function () {
         return "playerCard-" + this.id + "-" + this.tableId;
-    }
+    },
 });

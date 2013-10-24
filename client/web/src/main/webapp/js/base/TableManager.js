@@ -220,10 +220,10 @@ Poker.TableManager = Class.extend({
      * @param {Poker.ActionType} actionType
      * @param {Number} amount
      */
-    handlePlayerAction : function(tableId,playerId,actionType,amount){
+    handlePlayerAction : function(tableId,playerId,actionType,amount,cardsToDiscard){
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
-        table.getLayoutManager().onPlayerActed(player,actionType,amount);
+        table.getLayoutManager().onPlayerActed(player,actionType,amount,cardsToDiscard);
     },
     /**
      *
