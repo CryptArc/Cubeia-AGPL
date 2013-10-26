@@ -150,7 +150,18 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         crazyPineapple.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         crazyPineapple.setCurrency("EUR");
         
-        return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina,crazyPineapple);
+        // return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina,crazyPineapple);
+        
+        return Arrays.asList(
+        		texasNoLimit, 
+        		//texasFixedLimit, 
+        		//texasNoLimit2Plrs,
+        		//texasNoLimit5Plrs,
+        		texasNoLimit6Plrs
+        		//telesina,
+        		//crazyPineapple
+        		);
+        
     }
 
 

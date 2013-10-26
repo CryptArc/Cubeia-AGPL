@@ -27,9 +27,11 @@ import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
 import com.cubeia.game.poker.bot.ai.PokerGameHandler;
 import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.Enums.ActionType;
 import com.cubeia.games.poker.io.protocol.Enums.HandPhaseHoldem;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -86,13 +88,25 @@ public class GameHandler implements PacketVisitor {
             int wait = 1000;
             if (strategy.useDelay(request.allowedActions)) {
                 int expected = request.timeToAct / 8;
-                int deviation = request.timeToAct / 3;
+                int deviation = request.timeToAct / 4;
                 wait = gaussianAverage(expected, deviation);
                 wait = wait < 1000 ? 1000 : wait;
             }
 
             bot.executor.schedule(action, wait, TimeUnit.MILLISECONDS);
         }
+        
+        // Store big blind/ante in game state. Used by AI.
+        for (PlayerAction pa : request.allowedActions) {
+        	if (pa.type == ActionType.BIG_BLIND) {
+        		pokerHandler.getState().setBigBlind(new BigDecimal(pa.minAmount));
+        	} else if (pa.type == ActionType.ANTE) {
+        		pokerHandler.getState().setBigBlind(new BigDecimal(pa.minAmount));
+        	} else if (pa.type == ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND) {
+        		pokerHandler.getState().setBigBlind(new BigDecimal(pa.minAmount));
+        	}
+        }
+        
     }
 
     @Override
@@ -327,6 +341,7 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(BlindsLevel packet) {
+    	pokerHandler.getState().setBigBlind(new BigDecimal(packet.bigBlind));
     }
 
     @Override
