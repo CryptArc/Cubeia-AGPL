@@ -41,6 +41,6 @@ public class TelesinaCardComparator implements Comparator<Card> {
             return c1.getRank().ordinal() - c2.getRank().ordinal();
         }
 
-        return c1.getSuit().telesinaSuitValue - c2.getSuit().telesinaSuitValue;
+        return c1.getSuit().specialSuitValue - c2.getSuit().specialSuitValue;
     }
 }

@@ -140,13 +140,14 @@ public class Hand implements Serializable {
     }
 
 	
-	public void removeCardByid(Integer cardId) {
+	public Card removeCardByid(Integer cardId) {
 		for (Card card : cards) {
 			if ( card.getId().equals(cardId) ) {
 				cards.remove(card);
-				return;
+				return card;
 			}
         }
+		return null;
 	}
 
 }

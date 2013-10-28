@@ -74,7 +74,7 @@ public class TelesinaHandComparator implements Comparator<Hand>, Serializable {
         }
 
         if (c1Strength.getHandType() != c2Strength.getHandType()) {
-            return c1Strength.getHandType().telesinaHandTypeValue - c2Strength.getHandType().telesinaHandTypeValue;
+            return c1Strength.getHandType().specialHandTypeValue - c2Strength.getHandType().specialHandTypeValue;
         }
 
         if (c1Strength.getHandType() == HandType.FLUSH) {
@@ -82,7 +82,7 @@ public class TelesinaHandComparator implements Comparator<Hand>, Serializable {
             Suit c2Suit = c2Strength.getGroup(0).get(0).getSuit();
 
             if (c1Suit != c2Suit) {
-                return c1Suit.telesinaSuitValue - c2Suit.telesinaSuitValue;
+                return c1Suit.specialSuitValue - c2Suit.specialSuitValue;
             }
         }
 

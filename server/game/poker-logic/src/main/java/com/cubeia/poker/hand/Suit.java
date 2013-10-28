@@ -32,10 +32,10 @@ public enum Suit {
     HEARTS(3),
     SPADES(0);
 
-    public final int telesinaSuitValue;
+    public int specialSuitValue;
 
-    private Suit(int telesinaSuitValue) {
-        this.telesinaSuitValue = telesinaSuitValue;
+    private Suit(int specialSuitValue) {
+        this.specialSuitValue = specialSuitValue;
     }
 
     public GameCard.Suit translate() {

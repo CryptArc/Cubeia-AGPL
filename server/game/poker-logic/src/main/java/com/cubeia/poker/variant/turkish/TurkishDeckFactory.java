@@ -15,35 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.hand;
+package com.cubeia.poker.variant.turkish;
 
-import com.cubeia.poker.handhistory.api.BestHandType;
+import com.cubeia.poker.hand.DeckProvider;
 
-public enum HandType {
-    NOT_RANKED(0),
-    HIGH_CARD(1),
-    PAIR(2),
-    TWO_PAIRS(3),
-    THREE_OF_A_KIND(4),
-    STRAIGHT(5),
-    FLUSH(7),
-    FULL_HOUSE(6),
-    FOUR_OF_A_KIND(8),
-    STRAIGHT_FLUSH(9),
-    ROYAL_STRAIGHT_FLUSH(10);
+import java.io.Serializable;
+import java.util.Random;
 
-    public int specialHandTypeValue;
+public class TurkishDeckFactory implements DeckProvider, Serializable {
 
-    private HandType(int specialHandTypeValue) {
-        this.specialHandTypeValue = specialHandTypeValue;
+	private static final long serialVersionUID = -8229945175509404507L;
+
+	@Override
+    public TurkishDeck createNewDeck(Random randomizer, int tableSize) {
+        return new TurkishDeck(new TurkishDeckUtil(), randomizer, tableSize);
     }
-
-    public BestHandType translate() {
-        return BestHandType.values()[ordinal()];
-    }
-    
-    public void setSpecialHandTypeValue(int specialHandTypeValue) {
-        this.specialHandTypeValue = specialHandTypeValue;
-    }
-
 }

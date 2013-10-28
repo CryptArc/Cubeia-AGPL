@@ -18,6 +18,7 @@
 package com.cubeia.poker.variant;
 
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.rounds.betting.BettingRoundName;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
@@ -35,6 +36,9 @@ import static com.cubeia.poker.variant.RoundCreators.dealFaceUpCards;
 import static com.cubeia.poker.variant.RoundCreators.discardRound;
 import static com.cubeia.poker.variant.RoundCreators.fromBestHand;
 import static com.cubeia.poker.variant.RoundCreators.fromBigBlind;
+import static com.cubeia.poker.variant.RoundCreators.turkishOpenRound;
+import static com.cubeia.poker.variant.RoundCreators.dealNewCards;
+import static com.cubeia.poker.variant.RoundCreators.fromOpener;
 
 public class GameTypes {
 
@@ -68,4 +72,19 @@ public class GameTypes {
                         .withDeckProvider(new TelesinaDeckFactory()).
                         withHandEvaluator(new TelesinaHandStrengthEvaluator(Rank.SEVEN)).build();
     }
+    
+    public static GenericPokerGame createTurkish() {
+        return new PokerGameBuilder().
+                        withRounds(
+                                ante(),
+                                dealFaceDownCards(5),
+                                bettingRound(turkishOpenRound()),
+                                discardRound(4),
+                                dealNewCards(),	
+                                bettingRound(fromOpener()))
+                        .withDeckProvider(new TelesinaDeckFactory()).
+                        withHandEvaluator(new TelesinaHandStrengthEvaluator(Rank.SEVEN)).build();
+    }
+
+	
 }

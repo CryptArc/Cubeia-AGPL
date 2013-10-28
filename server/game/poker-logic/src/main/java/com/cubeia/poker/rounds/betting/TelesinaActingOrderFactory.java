@@ -22,7 +22,9 @@ import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
 public class TelesinaActingOrderFactory implements PlayerToActCalculatorFactory {
 
-    @Override
+    private static final long serialVersionUID = 949755345585148883L;
+
+	@Override
     public PlayerToActCalculator createPlayerToActCalculator(PokerContext context) {
         return new TelesinaPlayerToActCalculator(context.getDeck().getDeckLowestRank());
     }

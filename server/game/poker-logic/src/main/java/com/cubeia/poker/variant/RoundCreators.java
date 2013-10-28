@@ -17,20 +17,21 @@
 
 package com.cubeia.poker.variant;
 
+import static com.cubeia.poker.rounds.betting.BettingRoundName.FLOP;
+
 import com.cubeia.poker.rounds.RoundCreator;
 import com.cubeia.poker.rounds.ante.AnteRoundCreator;
 import com.cubeia.poker.rounds.betting.BettingRoundCreator;
 import com.cubeia.poker.rounds.betting.BettingRoundName;
 import com.cubeia.poker.rounds.betting.FromBigBlindFactory;
 import com.cubeia.poker.rounds.betting.FromDealerButtonFactory;
+import com.cubeia.poker.rounds.betting.TurkishSecondRoundActingOrderFactory;
 import com.cubeia.poker.rounds.betting.PlayerToActCalculatorFactory;
 import com.cubeia.poker.rounds.betting.TelesinaActingOrderFactory;
 import com.cubeia.poker.rounds.blinds.BlindsRoundCreator;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsCreator;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRoundCreator;
 import com.cubeia.poker.rounds.discard.DiscardRoundCreator;
-
-import static com.cubeia.poker.rounds.betting.BettingRoundName.FLOP;
 
 public class RoundCreators {
     public static RoundCreator dealFaceDownAndFaceUpCards(int faceDownCards, int faceUpCards) {
@@ -64,6 +65,13 @@ public class RoundCreators {
     public static PlayerToActCalculatorFactory fromBestHand() {
         return new TelesinaActingOrderFactory();
     }
+    
+    public static PlayerToActCalculatorFactory fromOpener() {
+    	return new TurkishSecondRoundActingOrderFactory();
+    }
+    public static PlayerToActCalculatorFactory turkishOpenRound() {
+		return new FromDealerButtonFactory();
+	}
 
     public static BettingRoundCreator bettingRound(PlayerToActCalculatorFactory playerToActCalculatorFactory) {
         return new BettingRoundCreator(FLOP, playerToActCalculatorFactory); // TODO: Flop isn't really right.
@@ -79,5 +87,9 @@ public class RoundCreators {
 
     public static AnteRoundCreator ante() {
         return new AnteRoundCreator();
+    }
+    
+    public static DealPocketCardsRoundCreator dealNewCards() {
+    	return new DealPocketCardsRoundCreator(2);
     }
 }

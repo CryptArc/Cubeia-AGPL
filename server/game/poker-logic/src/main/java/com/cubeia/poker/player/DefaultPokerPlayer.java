@@ -54,12 +54,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
     protected Set<Card> publicPocketCards = new HashSet<Card>();
 
     protected Set<Card> privatePocketCards = new HashSet<Card>();
+    
+    protected Set<Card> discardedCards = new HashSet<Card>();
 
     protected boolean hasActed;
 
     protected boolean hasFolded;
 
     protected boolean hasOption;
+    
+    protected boolean hasOpened;
 
     protected boolean sittingOutNextHand = false;
 
@@ -156,6 +160,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
         return privatePocketCards;
     }
 
+    public Set<Card> getDiscardedCards() {
+        return discardedCards;
+    }
+
     public ActionRequest getActionRequest() {
         return actionRequest;
     }
@@ -240,7 +248,11 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     private void discardCard(Integer cardId) {
-        pocketCards.removeCardByid(cardId);
+        discardedCards.add(pocketCards.removeCardByid(cardId));
+    }
+    
+    public int getNumberOfDiscardedCards() {
+    	return discardedCards.size();
     }
 
     @Override
@@ -248,6 +260,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
         pocketCards.clear();
         publicPocketCards.clear();
         privatePocketCards.clear();
+        discardedCards.clear();
         exposingPocketCards = false;
     }
 
@@ -552,4 +565,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+
+    @Override
+	public boolean hasOpened() {
+		return hasOpened;
+	}
+
+    @Override
+	public void setHasOpened(boolean hasOpened) {
+		this.hasOpened = hasOpened;
+	}
 }

@@ -268,4 +268,8 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus);
 
     public MissedBlindsStatus getMissedBlindsStatus();
+
+	boolean hasOpened();
+
+	void setHasOpened(boolean hasOpened);
 }

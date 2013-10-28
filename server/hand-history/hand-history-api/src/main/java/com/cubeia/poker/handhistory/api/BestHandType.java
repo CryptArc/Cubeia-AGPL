@@ -30,27 +30,27 @@ public enum BestHandType {
     STRAIGHT_FLUSH(9, "Straight Flush"),
     ROYAL_STRAIGHT_FLUSH(10, "Royal Straight Flush");
 
-    public int telesinaHandTypeValue;
+    public int specialHandTypeValue;
     private String name;
 
     private BestHandType() {
     }
 
-    private BestHandType(int telesinaHandTypeValue, String name) {
-        this.telesinaHandTypeValue = telesinaHandTypeValue;
+    private BestHandType(int specialHandTypeValue, String name) {
+        this.specialHandTypeValue = specialHandTypeValue;
         this.name = name;
     }
 
-    private BestHandType(int telesinaHandTypeValue) {
-        this.telesinaHandTypeValue = telesinaHandTypeValue;
+    private BestHandType(int specialHandTypeValue) {
+        this.specialHandTypeValue = specialHandTypeValue;
     }
 
-    public int getTelesinaHandTypeValue() {
-        return telesinaHandTypeValue;
+    public int getSpecialHandTypeValue() {
+        return specialHandTypeValue;
     }
 
-    public void setTelesinaHandTypeValue(int telesinaHandTypeValue) {
-        this.telesinaHandTypeValue = telesinaHandTypeValue;
+    public void setSpecialHandTypeValue(int specialHandTypeValue) {
+        this.specialHandTypeValue = specialHandTypeValue;
     }
 
     public String getName() {
