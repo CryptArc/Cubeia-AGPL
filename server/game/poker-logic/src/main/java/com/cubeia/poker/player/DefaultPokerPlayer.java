@@ -233,14 +233,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public void discard(List<Integer> cardsToDiscard) {
         log.debug("Cards before discarding: " + getPocketCards());
-        for (Integer cardNumber : cardsToDiscard) {
-            discardCard(cardNumber);
+        for (Integer cardId : cardsToDiscard) {
+            discardCard(cardId);
         }
         log.debug("Cards after discarding: " + getPocketCards());
     }
 
-    private void discardCard(Integer cardNumber) {
-        pocketCards.removeCard(cardNumber);
+    private void discardCard(Integer cardId) {
+        pocketCards.removeCardByid(cardId);
     }
 
     @Override

@@ -24,6 +24,7 @@ Poker.Seat = Class.extend({
     animationManager: null,
     currentProgressBarAnimation: null,
     dealerButtonTarget : null,
+    hand : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
         this.seatId = seatId;
@@ -31,6 +32,7 @@ Poker.Seat = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.seatElement = $("#" + elementId);
         this.renderSeat();
+        this.hand = new Poker.PlayerHand();
     },
     setSeatPos: function(previousPos, position) {
         this.seatElement.removeClass("seat-empty").removeClass("seat-pos-" + previousPos).removeClass("seat-inactive").addClass("seat-pos-" + position);
@@ -116,12 +118,17 @@ Poker.Seat = Class.extend({
     hideActionText: function() {
         this.actionText.html("").hide();
     },
-    onAction: function(actionType, amount) {
+    onAction: function(actionType, amount, cardsToDiscard) {
         this.inactivateSeat();
         this.showActionData(actionType, amount);
         if (actionType == Poker.ActionType.FOLD) {
             this.fold();
+        } else if(actionType == Poker.ActionType.DISCARD) {
+            this.discardCards(cardsToDiscard);
         }
+    },
+    discardCards : function(cardsToDiscard) {
+        this.hand.discardCards(cardsToDiscard);
     },
     showActionData: function(actionType, amount) {
         this.actionText.html(actionType.text).show();
@@ -144,12 +151,14 @@ Poker.Seat = Class.extend({
     },
     dealCard: function(card) {
         this.cardsContainer.append(card.render(this.cardsContainer.children().length));
+        this.hand.addCard(card);
         this.onCardDealt(card);
     },
     onCardDealt: function(card) {
         var div = card.getJQElement();
         //animate deal card
         new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+
 
     },
     inactivateSeat: function() {

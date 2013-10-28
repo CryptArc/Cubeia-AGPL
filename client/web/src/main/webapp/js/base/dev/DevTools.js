@@ -40,7 +40,7 @@ Poker.DevTools = Class.extend({
             self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             new Poker.PositionEditor("#tableView-"+self.tableId);
-            tableLayoutManager.updateVariant(0);
+            tableLayoutManager.updateVariant(2);
         };
 
         var cleanUpFunction = function() {
@@ -234,7 +234,9 @@ Poker.DevTools = Class.extend({
         if(playerId == Poker.MyPlayer.id) {
             this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"as");
             this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"kd")
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"qd")
         } else {
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
             this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
             this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
         }

@@ -54,9 +54,12 @@ Poker.PokerRequestHandler = Class.extend({
             this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
         }
     },
-    sendAction : function(actionType, betAmount, raiseAmount) {
+    sendDiscards : function(discards) {
+        this.sendAction(Poker.ActionUtils.getActionEnumType(Poker.ActionType.DISCARD), 0, 0, discards);
+    },
+    sendAction : function(actionType, betAmount, raiseAmount, discards) {
         var action = Poker.ActionUtils.getPlayerAction(this.tableId,Poker.PokerSequence.getSequence(this.tableId),
-            actionType, betAmount, raiseAmount);
+            actionType, betAmount, raiseAmount, discards);
         this.sendGameTransportPacket(action);
     },
     sendGameTransportPacket : function(gamedata) {

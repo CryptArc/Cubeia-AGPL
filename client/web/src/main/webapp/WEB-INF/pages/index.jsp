@@ -123,6 +123,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/ChatInput.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/cards/PlayerHand.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/MyPlayerSeat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/cards/Card.js"></script>
@@ -560,7 +561,7 @@
                         <nav class="navbar-inverse currencies">
                             <div class="filter-group currencies">
                                 <ul id="currencyMenu" class="nav nav-pills">
-                                    <li class="filter-button" >
+                                    <li class="filter-button">
                                         <a data-i18n="lobby.filters.currency" class="description">Select Currency:</a>
                                     </li>
                                 </ul>
@@ -607,6 +608,7 @@
                                 <ul class="nav nav-pills">
                                     <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
                                     <li id="variantTelesina"><a>Telesina</a></li>
+                                    <li id="variantCrazyPineapple"><a>Crazy Holdem</a></li>
                                     <li><a>&nbsp;</a></li>
                                 </ul>
                             </div>
@@ -618,6 +620,23 @@
                                 <li id="limitsFL"><a>Fixed Limit</a></li>
                             </ul>
                         </nav>
+                        <div class="lobby-checkbox-filter tournament-filter sitandgo-filter">
+                            <input class="checkbox" checked="checked" id="registeringOnly" type="checkbox"/>
+                            <label class="checkbox-icon-label" for="registeringOnly"  data-i18n="lobby.filters.show-registering">
+                                Show registering only
+                            </label>
+                        </div>
+                        <div class="lobby-checkbox-filter cashgame-filter">
+                            <input class="checkbox" type="checkbox" id="hideFullTables"/>
+                            <label class="checkbox-icon-label" for="hideFullTables"  data-i18n="lobby.filters.full">
+                                Hide full tables
+                            </label>
+                            <input class="checkbox" type="checkbox" id="hideEmptyTables"/>
+                            <label class="checkbox-icon-label" for="hideEmptyTables" data-i18n="lobby.filters.empty">
+                                Hide empty tables
+                            </label>
+
+                        </div>
 
                     </div>
                     <div class="col-sm-4">
@@ -705,7 +724,7 @@
 </div>
 
 <script type="text/mustache" id="currencyFilterTemplate">
-    <li class="filter-button" id="filterButton{{code}}"><a>{{longName}}</a></li>
+    <li class="filter-button currency" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
@@ -1001,6 +1020,9 @@
                 <div class="action-button action-add-on" style="display: none;">
                     <span>{{t "table.buttons.add-on"}}</span>
                 </div>
+                <div class="action-button action-discard" style="display: none;">
+                    <span>{{t "table.buttons.discard"}}</span>
+                </div>
             </div>
             <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
                     <div class="future-action check" style="display:none;">
@@ -1208,9 +1230,10 @@
                     </div>
                     <div class="navbar-collapse navbar-tournament-collapse collapse">
                         <ul class="nav nav-pills">
-                            <li class="players-link active"><a>Players</a></li>
-                            <li class="payouts-link"><a>Payouts</a></li>
-                            <li class="blinds-link"><a>Blinds Structure</a></li>
+                            <li class="players-link active"><a>{{t "tournament-lobby.menu.players" }}</a></li>
+                            <li class="tables-link"><a>{{t "tournament-lobby.menu.tables" }}</a></li>
+                            <li class="payouts-link"><a>{{t "tournament-lobby.menu.payouts" }}</a></li>
+                            <li class="blinds-link"><a>{{t "tournament-lobby.menu.blinds-structure" }}</a></li>
                         </ul>
                     </div>
 
@@ -1230,6 +1253,23 @@
                         <tbody>
                         <tr>
                             <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row tables-row tournament-section" style="display:none;">
+                <div class="col-sm-7">
+                    <table class="table default-table table-list">
+                        <thead>
+                        <tr>
+                            <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -1438,6 +1478,12 @@
         <td>{{name}}</td>
         <td>{{currency stackSize}}</td>
         <td>{{currency winnings}}</td>
+    </tr>
+</script>
+<script type="text/mustache" id="tournamentTableListItem" style="display:none;">
+    <tr>
+        <td>Table {{index}}</td>
+        <td><a class="btn btn-lobby" id="tournamentTable{{id}}">Go to table</a></td>
     </tr>
 </script>
 

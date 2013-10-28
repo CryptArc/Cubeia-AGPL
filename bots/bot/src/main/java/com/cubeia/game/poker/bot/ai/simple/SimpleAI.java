@@ -15,6 +15,7 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +40,9 @@ public class SimpleAI implements PokerAI {
 
     /** Percent chance that the bot will bluff or act out of hand strength */
     private int bluffProbability = 10;
+    
+    /** How aggressive the bot will bet/raise on a scale of 1->X. */
+    private int aggression = 1;
 
     enum Strategy {
         WEAK,
@@ -49,6 +53,8 @@ public class SimpleAI implements PokerAI {
 
     public SimpleAI() {
         bluffProbability = bluffProbability + rng.nextInt(25);
+        //aggression = aggression + rng.nextInt(10);
+        aggression = aggression + NonLinearRng.nextInt(20);
     }
 
     @Override
@@ -59,6 +65,7 @@ public class SimpleAI implements PokerAI {
     @Override
     public PerformAction onActionRequest(RequestAction request, GameState state) {
         HandStrength handStrength = getHandStrength(state);
+        HandStrength communityHandStrength = getCommunityHandStrength(state);
 
         PerformAction response = new PerformAction();
         response.seq = request.seq;
@@ -86,7 +93,7 @@ public class SimpleAI implements PokerAI {
         }
 
         // We need to act
-        Strategy strategy = strengthCalculator.getStrategy(request, state, handStrength);
+        Strategy strategy = strengthCalculator.getStrategy(request, state, handStrength, communityHandStrength);
 
         boolean bluff = false;
         if (doBluff()) {
@@ -101,9 +108,17 @@ public class SimpleAI implements PokerAI {
                 case STRONG:
                     strategy = WEAK_BLUFF;
                     break;
+			default:
+				break;
             }
         }
 
+        int amountModifier = getRelativeCallSizeModifier(request, state);
+        BigDecimal potSizeModifier = getRelativePotSizeModifier(request, state);
+        int betModifier = potSizeModifier.intValue()+1;
+        bot.getBot().logInfo("Relative Call Amount Modifier: "+amountModifier);
+        bot.getBot().logInfo("Bet Amount Modifier: "+betModifier);
+        
         BigDecimal betAmount = BigDecimal.ZERO;
 
         if (strategy == Strategy.WEAK) {
@@ -126,15 +141,15 @@ public class SimpleAI implements PokerAI {
 
             }
         }
-
+        
         if (strategy == Strategy.NEUTRAL) {
-            if (hasPlayerAction(CALL, request)) {
+            if (prob(60-amountModifier*2) && hasPlayerAction(CALL, request)) {
                 playerAction = getPlayerAction(CALL, request);
-                betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
+                betAmount = new BigDecimal(playerAction.minAmount);
 
-            } else if (hasPlayerAction(BET, request)) {
+            } else if (prob(75-betModifier*2) && hasPlayerAction(BET, request)) {
                 playerAction = getPlayerAction(BET, request);
-                betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
+                betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
             } else if (hasPlayerAction(CHECK, request)) {
                 playerAction = getPlayerAction(CHECK, request);
@@ -146,17 +161,17 @@ public class SimpleAI implements PokerAI {
         }
 
         if (strategy == Strategy.STRONG) {
-            if (hasPlayerAction(RAISE, request)) {
+            if (prob(50-amountModifier) && hasPlayerAction(RAISE, request)) {
                 playerAction = getPlayerAction(RAISE, request);
-                betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
+                betAmount = calculateBet(playerAction, request, strategy);
 
-            } else if (hasPlayerAction(BET, request)) {
+            } else if (prob(80) && hasPlayerAction(BET, request)) {
                 playerAction = getPlayerAction(BET, request);
-                betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
+                betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
-            } else if (hasPlayerAction(CALL, request)) {
+            } else if (prob(90-amountModifier) && hasPlayerAction(CALL, request)) {
                 playerAction = getPlayerAction(CALL, request);
-                betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
+                betAmount = new BigDecimal(playerAction.minAmount);
 
             } else if (hasPlayerAction(CHECK, request)) {
                 playerAction = getPlayerAction(CHECK, request);
@@ -192,19 +207,71 @@ public class SimpleAI implements PokerAI {
         return response;
     }
 
-    private BigDecimal calculateBet(PlayerAction playerAction, String currentPotSize, Strategy strategy) {
+	private int getRelativeCallSize(RequestAction request, GameState state) {
+        if (hasPlayerAction(CALL, request)) {
+        	PlayerAction action = getPlayerAction(CALL, request);
+        	BigDecimal callAmount = new BigDecimal(action.minAmount);
+        	BigDecimal bigBlind = state.getBigBlind();
+        	if (bigBlind != null && bigBlind.intValue() > 0) {
+            	return callAmount.divide(bigBlind).intValue();
+            }
+        }
+		return 1;
+	}
+
+	/**
+	 * Suppress aggression depending on pot size. I.e. don't keep on raising with high stakes. 
+	 * 
+	 * @param request
+	 * @param state
+	 * @return
+	 */
+	private int getRelativeCallSizeModifier(RequestAction request, GameState state) {
+		int relativeCallSize = getRelativeCallSize(request, state);
+		if (relativeCallSize <= 2) {
+			return 0;
+		} else if (relativeCallSize > 100) {
+			return 50;
+		} else {
+			return relativeCallSize/2;
+		} 
+	}
+	
+	private BigDecimal getRelativePotSizeModifier(RequestAction request, GameState state) {
+		BigDecimal pot = new BigDecimal(request.currentPotSize);
+		BigDecimal bigBlind = state.getBigBlind();
+		if (bigBlind != null && bigBlind.intValue() > 0) {
+			return pot.divide(bigBlind).divide(new BigDecimal(10));
+		} 
+		return new BigDecimal(0);
+	}
+
+    /**
+     * Probability to do something. The return value of true is considered an aggressive move so high aggression value
+     * will increase the probability to act. This means that the probability to act will almost always be higher than
+     * the supplied probability since aggression is an added factor. 
+     * 
+     * Real Probability In Percent = probability + aggression.
+     * 
+     * 
+     * @param i
+     * @return
+     */
+    private boolean prob(int probability) {
+		return rng.nextInt(100) <  probability + aggression;
+	}
+
+	private BigDecimal calculateBet(PlayerAction playerAction, RequestAction request, Strategy strategy) {
         BigDecimal minAmount = new BigDecimal(playerAction.minAmount);
-        BigDecimal maxAmount = new BigDecimal(playerAction.minAmount);
-        BigDecimal pot = new BigDecimal(currentPotSize);
-
+        BigDecimal maxAmount = new BigDecimal(playerAction.maxAmount);
+        BigDecimal pot = new BigDecimal(request.currentPotSize);
+        
         BigDecimal betAmount;
-
+        
         if (strategy == STRONG) {
-            int potMultiplier = rng.nextInt(2) + 1;
-            betAmount = pot.multiply(new BigDecimal(potMultiplier));
+            betAmount = calculateStrongBetAmount(pot, minAmount);
         } else {
-            int minBetMultiplier = rng.nextInt(2) + 1;
-            betAmount = pot.multiply(new BigDecimal(minBetMultiplier));
+            betAmount = calculateNeutralBetAmount(minAmount, pot);
         }
 
         // Adjust if outside boundaries.
@@ -217,6 +284,38 @@ public class SimpleAI implements PokerAI {
         return betAmount;
     }
 
+	private BigDecimal calculateStrongBetAmount(BigDecimal pot, BigDecimal minAmount) {
+		BigDecimal betAmount;
+		
+		// Check if all-in/betting pot level. % chance of all in/pot bet is same as aggression level
+		if (rng.nextInt(100) < aggression) {
+			int potMultiplier = NonLinearRng.nextInt(aggression/4 + 1);
+			betAmount = pot.multiply(new BigDecimal(potMultiplier));
+			//bot.getBot().logInfo("Betting STRONG - ALL IN/POT LEVEL. Multiplier["+potMultiplier+"] Pot["+pot+"]");
+			
+		} else {
+			int multiplier = NonLinearRng.nextInt(aggression/2 + 1);
+			betAmount = minAmount.multiply(new BigDecimal(multiplier));
+			//bot.getBot().logInfo("Betting STRONG - USING MIN BET LEVEL. Multiplier["+multiplier+"] minAmount["+minAmount+"]");
+		}
+		
+		
+		
+		bot.getBot().logInfo("Betting STRONG. Aggression["+aggression+"] pot["+pot+"] betAmount["+betAmount+"]");
+		return betAmount;
+	}
+
+	private BigDecimal calculateNeutralBetAmount(BigDecimal minAmount, BigDecimal pot) {
+		BigDecimal betAmount;
+		int minBetMultiplier = NonLinearRng.nextInt(aggression/3+1);
+		betAmount = minAmount.multiply(new BigDecimal(minBetMultiplier));
+		if (betAmount.compareTo(pot) > 1) {
+			betAmount = minAmount;
+			//bot.getBot().logInfo("Betting NEUTRAL. Aggression["+aggression+"] Capping betAmount["+betAmount+"] to minBet["+minAmount+"]");
+		}
+		//bot.getBot().logInfo("Betting NEUTRAL Aggression["+aggression+"]. minBetMultiplier["+minBetMultiplier+"] minBet["+minAmount+"] betAmount["+betAmount+"]");
+		return betAmount;
+	}
 
     private boolean doBluff() {
         return rng.nextInt(100) < bluffProbability;
@@ -238,6 +337,12 @@ public class SimpleAI implements PokerAI {
     public HandStrength getHandStrength(GameState state) {
         List<Card> cards = new ArrayList<Card>(state.getPrivateCards());
         cards.addAll(state.getCommunityCards());
+        Hand hand = new Hand(cards);
+        return handCalculator.getHandStrength(hand);
+    }
+    
+    public HandStrength getCommunityHandStrength(GameState state) {
+        List<Card> cards = new ArrayList<Card>(state.getCommunityCards());
         Hand hand = new Hand(cards);
         return handCalculator.getHandStrength(hand);
     }

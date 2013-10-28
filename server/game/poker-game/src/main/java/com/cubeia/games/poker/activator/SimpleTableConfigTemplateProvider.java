@@ -29,6 +29,7 @@ import java.util.List;
 import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;;
 
 @Singleton
 public class SimpleTableConfigTemplateProvider implements TableConfigTemplateProvider {
@@ -133,7 +134,34 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         telesina.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         telesina.setCurrency("EUR");
 
-        return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina);
+        TableConfigTemplate crazyPineapple = new TableConfigTemplate();
+        crazyPineapple.setId(7);
+        crazyPineapple.setSmallBlind(bd(0.5));
+        crazyPineapple.setBigBlind(bd(1));
+        crazyPineapple.setMinBuyIn(bd(10));
+        crazyPineapple.setMaxBuyIn(bd(100));
+        crazyPineapple.setSeats(10);
+        crazyPineapple.setVariant(CRAZY_PINEAPPLE);
+        crazyPineapple.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        crazyPineapple.setBetStrategy(BetStrategyType.NO_LIMIT);
+        crazyPineapple.setTTL(60000);
+        crazyPineapple.setMinEmptyTables(5);
+        crazyPineapple.setMinTables(10);
+        crazyPineapple.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        crazyPineapple.setCurrency("EUR");
+        
+        // return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina,crazyPineapple);
+        
+        return Arrays.asList(
+        		texasNoLimit, 
+        		//texasFixedLimit, 
+        		//texasNoLimit2Plrs,
+        		//texasNoLimit5Plrs,
+        		texasNoLimit6Plrs
+        		//telesina,
+        		//crazyPineapple
+        		);
+        
     }
 
 

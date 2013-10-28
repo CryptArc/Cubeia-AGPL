@@ -107,6 +107,10 @@ Poker.ActionType = {
     ADD_ON : {
         text : "Add-on",
         id : "add-on"
+    },
+    DISCARD : {
+        text : "Discard",
+        id : "discard"
     }
 
 

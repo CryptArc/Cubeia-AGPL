@@ -27,8 +27,8 @@
         "filters" : {
             "show-filters" : "Show filters",
             "show-tables" : "Show Tables",
-            "full" : "Full",
-            "empty" : "Empty",
+            "full" : "Hide full tables",
+            "empty" : "Hide empty tables",
             "show-limits" : "Show limits",
             "no-limit" : "NL",
             "fixed-limit" : "FL",
@@ -38,8 +38,7 @@
             "mid" : "Mid",
             "high" : "High",
             "currency" : "Select Currency:",
-            "xcc" : "XCC",
-            "xoc" : "XOC"
+            "show-registering" : "Show registering only"
         },
         "list" : {
             "name" : "Name",
@@ -138,7 +137,12 @@
         "unregister" : "Unregister",
         "go-to-table" : "Go to table",
         "please-wait" : "Please wait...",
-
+        "menu" : {
+            "players" : "Players",
+            "tables" : "Tables",
+            "payouts" : "Payouts",
+            "blinds-structure" : "Blinds structure"
+        },
         "players" : {
             "players" : "Players",
             "player" : "Player",
@@ -146,6 +150,10 @@
             "winnings" : "Winnings",
             "loading" : "Loading Players...",
             "no-players" : "No players registered"
+        },
+        "tables" : {
+            "tables" : "tables",
+            "no-tables" : "Currently no active tables"
         },
         "info" : {
             "title" : "Tournament Info",

@@ -8,9 +8,21 @@ import com.cubeia.poker.hand.HandStrength;
 
 public class StrengthCalculator {
 
-	public Strategy getStrategy(RequestAction request, GameState state, HandStrength handStrength) {
+	/**
+	 * 
+	 * @param request
+	 * @param state
+	 * @param handStrength, for the private and community cards combined
+	 * @param communityHandStrength, for the community cards only
+	 * @return
+	 */
+	public Strategy getStrategy(RequestAction request, GameState state, HandStrength handStrength, HandStrength communityHandStrength) {
 
 		Strategy strategy = Strategy.WEAK;
+		
+		if (handStrength.getHandType() == communityHandStrength.getHandType()) {
+			return Strategy.NEUTRAL;
+		}
 
 		if (state.getPhase() == HandPhaseHoldem.PREFLOP) {
 			switch (handStrength.getHandType()) {

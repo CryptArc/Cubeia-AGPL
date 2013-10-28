@@ -56,6 +56,9 @@
 *,*:before, *:after {
     box-sizing: content-box;
 }
+label {
+    .user-select(none);
+}
 #gritter-notice-wrapper {
     top:50px;
 }
@@ -187,7 +190,6 @@ label {
 @media (max-width:480px), (max-height:480px){
     @import "devices/iphone/iphone-base.less";
 }
-
 
 
 @import "dev.less";

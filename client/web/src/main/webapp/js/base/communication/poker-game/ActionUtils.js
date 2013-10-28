@@ -52,6 +52,9 @@ Poker.ActionUtils = Class.extend({
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND:
                 type = Poker.ActionType.WAIT_FOR_BIG_BLIND;
                 break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.DISCARD:
+                type = Poker.ActionType.DISCARD;
+                break;
             default:
                 console.log("Unhandled ActionTypeEnum " + actType);
                 break;
@@ -89,7 +92,7 @@ Poker.ActionUtils = Class.extend({
      * @param {Number}raiseAmount
      * @return {com.cubeia.games.poker.io.protocol.PerformAction}
      */
-    getPlayerAction : function(tableId, seq, actionType, betAmount, raiseAmount) {
+    getPlayerAction : function(tableId, seq, actionType, betAmount, raiseAmount, cardsToDiscard) {
 
         var performAction = new com.cubeia.games.poker.io.protocol.PerformAction();
         performAction.player = Poker.MyPlayer.id;
@@ -101,7 +104,7 @@ Poker.ActionUtils = Class.extend({
         performAction.raiseAmount = "" + (raiseAmount || 0);
         performAction.timeOut = 0;
         performAction.seq = seq;
-        performAction.cardsToDiscard = [];
+        performAction.cardsToDiscard = cardsToDiscard || [];
         return performAction;
     },
     /**
@@ -137,6 +140,8 @@ Poker.ActionUtils = Class.extend({
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET;
             case Poker.ActionType.WAIT_FOR_BIG_BLIND.id:
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND;
+            case Poker.ActionType.DISCARD.id:
+                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DISCARD;
             default:
                 console.log("Unhandled action " + actionType.text);
                 return null;

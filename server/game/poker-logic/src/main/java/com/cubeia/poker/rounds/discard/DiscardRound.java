@@ -27,17 +27,24 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
+import com.cubeia.poker.timing.Periods;
 import com.google.common.collect.Lists;
+
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DiscardRound implements Round {
 
-    private static final Logger log = Logger.getLogger(DiscardRound.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6746436704056656995L;
+	private static final Logger log = Logger.getLogger(DiscardRound.class);
     private final PokerContext context;
     private final ServerAdapterHolder serverAdapterHolder;
-    private final PlayerToActCalculator playerToActCalculator;
     private final int cardsToDiscard;
     private int playerToAct;
     private boolean forceDiscard;
@@ -49,7 +56,6 @@ public class DiscardRound implements Round {
                         boolean forceDiscard)  {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
-        this.playerToActCalculator = playerToActCalculator;
         this.cardsToDiscard = cardsToDiscard;
         this.forceDiscard = forceDiscard;
         initRound();
@@ -57,7 +63,7 @@ public class DiscardRound implements Round {
 
     private void initRound() {
         resetHasActed();
-        requestFirstAction();
+        requestDiscard(context.getPlayersInHand());
     }
 
     private void resetHasActed() {
@@ -66,68 +72,82 @@ public class DiscardRound implements Round {
         }
     }
 
-    private void requestFirstAction() {
+    private void requestDiscard(Collection<PokerPlayer> players) {
         // Check if we should request actions at all
-        PokerPlayer playerToAct = playerToActCalculator.getFirstPlayerToAct(context.getCurrentHandSeatingMap(), context.getCommunityCards());
-
-        if (playerToAct == null) {
-            throw new RuntimeException("No player can discard, something is wrong. Players: " + context.getCurrentHandSeatingMap().values());
-        } else {
-            requestAction(playerToAct);
-        }
+		Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>();
+         for (PokerPlayer player : players) {
+             if (player.isSittingOut()) {
+                 activePlayers.remove(player);
+             }
+         }
+         requestDiscardFromAllPlayersInHand(activePlayers);
     }
 
-    private void requestAction(PokerPlayer player) {
+    private void requestDiscardFromAllPlayersInHand(Collection<PokerPlayer> players) {
+    	ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
+    	 for (PokerPlayer player : context.getPlayersInHand()) {
+             ActionRequest request = getActionRequest(player);
+             requests.add(request);
+         }
+    	 serverAdapterHolder.get().requestMultipleActions(requests);
+
+	}
+
+	private ActionRequest getActionRequest(PokerPlayer player) {
         playerToAct = player.getId();
         ActionRequest actionRequest = new ActionRequest();
         actionRequest.enable(new DiscardRequest(cardsToDiscard));
+        actionRequest.setTimeToAct(context.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
         actionRequest.setPlayerId(player.getId());
-        serverAdapterHolder.get().requestAction(actionRequest);
+        return actionRequest;
     }
 
     @Override
     public boolean act(PokerAction action) {
-        PokerPlayer player = context.getPlayer(action.getPlayerId());
+        PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
         if (action instanceof DiscardAction && isValidAction(action, player)) {
             DiscardAction discard = (DiscardAction) action;
             log.debug("Player " + player.getId() + " discards: " + discard.getCardsToDiscard());
             player.setHasActed(true);
             player.discard(discard.getCardsToDiscard());
-            if (!isFinished()) {
-                requestNextAction(player.getSeatId());
-            }
+            player.clearActionRequest();
+            serverAdapterHolder.get().notifyDiscards(discard, player);
             return true;
         } else {
             return false;
         }
     }
 
-    private void requestNextAction(int lastActedSeatId) {
-        PokerPlayer nextPlayerToAct = playerToActCalculator.getNextPlayerToAct(lastActedSeatId, context.getCurrentHandSeatingMap());
-        requestAction(nextPlayerToAct);
-    }
 
     private boolean isValidAction(PokerAction action, PokerPlayer player) {
-        if (!action.getPlayerId().equals(playerToAct)) {
+/*        if (!action.getPlayerId().equals(playerToAct)) {
             log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
             return false;
         }
+       */
         return true;
     }
 
+    private Collection<PokerPlayer> getAllSeatedPlayers() {
+        return context.getCurrentHandSeatingMap().values();
+    }
+    
     @Override
     public void timeout() {
-        PokerPlayer player = context.getPlayer(playerToAct);
-        if (forceDiscard) {
-            List<Integer> forcedCardsToDiscard = Lists.newArrayList();
-            for (int i = 0; i < this.cardsToDiscard; i++) {
-                forcedCardsToDiscard.add(i);
+    	for (PokerPlayer player : getAllSeatedPlayers()) {
+            if (!player.hasActed()) {
+            	if (forceDiscard) {
+            		List<Integer> forcedCardsToDiscard = Lists.newArrayList();
+            		for (int i = 0; i < this.cardsToDiscard; i++) {
+            			forcedCardsToDiscard.add(i);
+            		}
+            		player.setHasActed(true);
+            		player.discard(forcedCardsToDiscard);
+            		DiscardAction action = new DiscardAction(playerToAct, forcedCardsToDiscard);
+            		serverAdapterHolder.get().notifyDiscards(action, player);
+            	}
             }
-            player.discard(forcedCardsToDiscard);
-        }
-        if (!isFinished()) {
-            requestNextAction(player.getSeatId());
-        }
+    	}
     }
 
     @Override

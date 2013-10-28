@@ -139,4 +139,14 @@ public class Hand implements Serializable {
         return handCardsWithoutIds.containsAll(givenCardsWithoutIds);
     }
 
+	
+	public void removeCardByid(Integer cardId) {
+		for (Card card : cards) {
+			if ( card.getId().equals(cardId) ) {
+				cards.remove(card);
+				return;
+			}
+        }
+	}
+
 }

@@ -27,6 +27,7 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this._addActionButton($(".action-rebuy", view), Poker.ActionType.REBUY, actionCallback, true);
         this._addActionButton($(".action-decline-rebuy", view), Poker.ActionType.DECLINE_REBUY, actionCallback, true);
         this._addActionButton($(".action-add-on", view), Poker.ActionType.ADD_ON, actionCallback, true);
+        this._addActionButton($(".action-discard", view), Poker.ActionType.DISCARD, actionCallback, true);
 
 
         //we can't put it in actionButtons since it's a duplicate action

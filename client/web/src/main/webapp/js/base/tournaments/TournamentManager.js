@@ -126,15 +126,20 @@ Poker.TournamentManager = Class.extend({
     handleTournamentLobbyData : function(tournamentId, tournamentData) {
         var tournament = this.getTournamentById(tournamentId);
         this.handlePlayerList(tournament,tournamentData.players);
+        this.handleTableList(tournament,tournamentData.tournamentTables.tables);
         this.handleBlindsStructure(tournament,tournamentData.blindsStructure);
         this.handlePayoutInfo(tournament,tournamentData.payoutInfo);
         $.extend(tournamentData.tournamentInfo, { prizePool: tournamentData.payoutInfo.prizePool });
         this.handleTournamentInfo(tournament, tournamentData.tournamentInfo);
+        console.log("tournament data", tournamentData);
         if (this.isTournamentRunning(tournamentData.tournamentInfo.tournamentStatus)) {
             this.handleTournamentStatistics(tournament, tournamentData.tournamentStatistics);
         } else {
             tournament.tournamentLayoutManager.hideTournamentStatistics();
         }
+    },
+    handleTableList : function(tournament,tables){
+        tournament.tournamentLayoutManager.updateTableList(tables);
     },
     handlePlayerList : function(tournament,playerList) {
         var players = [];

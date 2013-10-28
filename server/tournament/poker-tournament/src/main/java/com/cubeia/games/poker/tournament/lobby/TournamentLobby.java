@@ -31,14 +31,17 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
 import com.google.inject.assistedinject.Assisted;
 import org.apache.log4j.Logger;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
@@ -172,6 +175,23 @@ public class TournamentLobby {
         return list;
     }
 
+    TournamentTables getTournamentTables() {
+        TournamentTables tournamentTables = new TournamentTables();
+        Set<Integer> tables = state.getTables();
+        if(tables==null || tables.size()==0) {
+            tournamentTables.tables = new int[0];
+            return tournamentTables;
+        }
+        int[] tableIds = new int[tables.size()];
+        int i = 0;
+        for(Integer tId : tables) {
+            tableIds[i] = tId;
+            i++;
+        }
+        tournamentTables.tables = tableIds;
+        return tournamentTables;
+    }
+
     private int getTableFor(int playerId) {
         return pokerState.getTableFor(playerId, state);
     }
@@ -240,6 +260,7 @@ public class TournamentLobby {
         lobbyData.players = getPlayerList();
         lobbyData.tournamentStatistics = getTournamentStatistics();
         lobbyData.tournamentInfo = getTournamentInfo();
+        lobbyData.tournamentTables = getTournamentTables();
         sendPacketToPlayer(lobbyData, playerId);
     }
 

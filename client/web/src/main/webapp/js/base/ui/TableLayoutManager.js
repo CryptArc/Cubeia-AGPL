@@ -124,8 +124,10 @@ Poker.TableLayoutManager = Class.extend({
         });
         if(variant == com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM) {
             this.tableView.addClass("variant-texas-holdem");
-        } else {
+        } else if(variant == com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA) {
             this.tableView.addClass("variant-telesina");
+        } else {
+            this.tableView.addClass("variant-crazy-pineapple");
         }
     },
     onChatMessage : function(player, message) {
@@ -146,6 +148,9 @@ Poker.TableLayoutManager = Class.extend({
                 return true;
             });
             return;
+        } else if (actionType.id == Poker.ActionType.DISCARD.id) {
+            var discards = this.seats.get(this.myPlayerSeatId).hand.getDiscards();
+            new Poker.PokerRequestHandler(this.tableId).sendDiscards(discards);
         }
         new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
     },
@@ -341,7 +346,7 @@ Poker.TableLayoutManager = Class.extend({
             this.tableInfoElement.find(".time-to-next-level").hide();
         }
     },
-    onPlayerActed : function(player,actionType,amount) {
+    onPlayerActed : function(player,actionType,amount,cardsToDiscard) {
         var seat = this.getSeatByPlayerId(player.id);
         if (seat == null) {
             throw "unable to find seat for player " + player.id;
@@ -352,7 +357,7 @@ Poker.TableLayoutManager = Class.extend({
              this._hideSeatActionText();
         }
         this.soundManager.playerAction(actionType, this.tableId, player, amount);
-        seat.onAction(actionType,amount);
+        seat.onAction(actionType,amount,cardsToDiscard);
 
         this.tableLog.appendAction(player,actionType,amount);
     },

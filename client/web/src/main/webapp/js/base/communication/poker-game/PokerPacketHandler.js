@@ -70,7 +70,7 @@ Poker.PokerPacketHandler = Class.extend({
             amount = Poker.Utils.formatCurrency(performAction.stackAmount);
         }
 
-        this.tableManager.handlePlayerAction(this.tableId,performAction.player,actionType,amount);
+        this.tableManager.handlePlayerAction(this.tableId,performAction.player,actionType,amount, performAction.cardsToDiscard);
     },
     handleDealPublicCards : function(packet) {
         this.tableManager.bettingRoundComplete(this.tableId);
