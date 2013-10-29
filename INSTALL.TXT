@@ -37,6 +37,12 @@ additional barriers. Use the command-line and simple editors. Later, when you
 feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
 IntelliJ, etc.).
 
+* It is assumed that you have already fetched the code from:
+
+  https://bitbucket.org/cubeia/cubeia-poker/overview
+
+ideally via mercurial, or via download.
+
 
 
 QUICK-START
@@ -83,9 +89,9 @@ the default configuration is: db: poker, user: poker, pass: poker
 to change: ./backoffice/poker-admin/src/test/resources/jetty-env.xml
 
 A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
-mysql command-lin, or execute it, giving the full path, e.g. 
+mysql command-line, or execute it, giving the full path, e.g. 
 
-mysql> source ./backoffice/poker-admin/initdb.sql
+mysql> source ./backoffice/poker-admin/initdb.sql;
 
 
 MONGO DB
@@ -112,8 +118,8 @@ thus you can use your own.
 Stop and start the poker game with firebase:run, then go on with the next step.
 
 
-ADMIN DATA
-==========
+CREATE TABLE AND TOURNAMET TEMPLATES
+====================================
 
 Create a Table Templates, which should result in tables showing up in the lobby.
 The names for the tables are picked up from a list.
@@ -127,12 +133,10 @@ Last, create a Scheduled Tournament template.
 USER, ACCOUNT AND OPERATOR MANAGEMENT
 ================================================================================
 
-Within the Poker Admin, create the basic data.
-
 OPERATOR
 ========
 
-Create an Operator with the ID 1
+Within the Poker Admin, create an Operator with the ID 1
 
 CURRENCY & ACCOUNTS
 ===================
@@ -141,16 +145,7 @@ From within the mysql cmd-line, execute:
 
 mysql> use wallet_service; source ./backoffice/poker-admin/wallet.sql;
 
-This will create EUR currency and 3 accounts.
-
-Important: if you create more currencies later, you have to create those 3
-accounts for the currencies, too.
-
-The type is SYSTEM_ACCOUNT and enable to option "negative balance allowed".
-
- * SYSTEM_ACCOUNT | EUR | OPEN | UserID -1000 | Rake
- * SYSTEM_ACCOUNT | EUR | OPEN | UserID -2000 | Promotions
- * SYSTEM_ACCOUNT | EUR | OPEN | UserID -3000 | General 
+This will create EUR currency and the 3 related system accounts.
 
 
 CREATE USERS & BOTS
@@ -167,8 +162,8 @@ add an account with some cash for the created user.
 BOTS
 ====
 
-Bots are like other users, so if you want to use the bots, you have to create
-accounts for them, too.
+Bots are like other users, so if you want to use the bots in an integrated 
+system, you have to create accounts for them, too.
 
 
 INTEGRATION BUILD
@@ -192,8 +187,11 @@ You now login with the user credentials created earlier.
 FULL REBUILD
 ============
 
-After source code updates, to build all relevant sources in one pass, go to the
-root directory (e.g. cubeia-poker) and execute
+After source code updates via
+
+hg pull -u
+
+in the root directory, build all relevant sources in one pass with
 
 mvn clean package install -U -Pclient,bots,admin,network,use-integrations
 
