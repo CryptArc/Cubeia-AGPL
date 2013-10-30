@@ -3,7 +3,7 @@ package com.cubeia.game.poker.bot.ai;
 import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.AbstractAI;
 import com.cubeia.game.poker.bot.AiProvider;
-import com.cubeia.game.poker.bot.ai.random.RandomAI;
+import com.cubeia.game.poker.bot.ai.simple.SimpleAI;
 import com.cubeia.games.poker.io.protocol.GameCard;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.RequestAction;
@@ -30,8 +30,8 @@ public class PokerGameHandler {
             Class<PokerAI> forName = (Class<PokerAI>) Class.forName(aiClass);
             ai = forName.newInstance();
         } catch (Exception e) {
-            bot.getBot().logWarn("Could not create AI class: " + aiClass + ". Will use Random AI instead. Error: " + e);
-            ai = new RandomAI();
+            bot.getBot().logWarn("Could not create AI class: " + aiClass + ". Will use Simple AI instead. Error: " + e);
+            ai = new SimpleAI();
         }
 
         ai.setBot(bot);
