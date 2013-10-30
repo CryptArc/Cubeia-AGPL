@@ -6,6 +6,7 @@ Poker.CheckboxAction = Class.extend({
     container : null,
     enabled : false,
     onChangeFunction : null,
+    disabled : false,
 
     init : function(view,container,checked) {
         this.enabled = checked;
@@ -33,7 +34,9 @@ Poker.CheckboxAction = Class.extend({
         this.container.hide();
     },
     show : function() {
-        this.container.show();
+        if(this.disabled != true) {
+            this.container.show();
+        }
     },
     setEnabled : function(enabled)  {
         this.checkbox.off("change");
@@ -46,6 +49,10 @@ Poker.CheckboxAction = Class.extend({
     },
     isEnabled : function() {
         return this.enabled;
+    },
+    disable : function() {
+        this.disabled = true;
+        this.hide();
     }
 
 });

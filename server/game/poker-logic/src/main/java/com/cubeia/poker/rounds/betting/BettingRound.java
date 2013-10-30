@@ -29,6 +29,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -139,12 +140,14 @@ public class BettingRound implements Round, BettingRoundContext {
         PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(context.getCurrentHandSeatingMap(), context.getCommunityCards());
 
         log.debug("first player to act = {}", p == null ? null : p.getId());
-
+        long additionalTime = 0;
         if (p == null || allOtherNonFoldedPlayersAreAllIn(p)) {
             // No or only one player can act. We are currently in an all-in show down scenario
             log.debug("No players left to act. We are in an all-in show down scenario");
             notifyAllPlayersOfNoPossibleFutureActions();
             isFinished = true;
+            additionalTime = context.countNonFoldedPlayers() * context.getTimingProfile().getAdditionalAllInRoundDelayPerPlayer();
+
         } else {
             requestAction(p);
         }
@@ -154,7 +157,8 @@ public class BettingRound implements Round, BettingRoundContext {
          * each and every player in sit out scenarios.
          */
         if (isFinished()) {
-            roundHelper.scheduleRoundTimeout(context, getServerAdapter());
+            log.trace("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
+            getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER) + additionalTime);
         }
     }
 

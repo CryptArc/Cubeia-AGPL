@@ -18,6 +18,7 @@ Poker.TableManager = Class.extend({
      * table packets, not very pretty maybe...
      */
     tableNames : null,
+
     init : function() {
         this.tables = new Poker.Map();
         this.tableNames = new Poker.Map();
@@ -143,6 +144,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         table.handCount++;
         table.handId = handId;
+        this.removeToBeRemovedPlayers(tableId);
         table.layoutManager.onStartHand(handId);
     },
     /**
@@ -197,6 +199,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         if (table.handCount == handCount) {
             console.log("No hand started clearing table");
+            this.removeToBeRemovedPlayers(tableId);
             table.layoutManager.onStartHand(this.dealerSeatId);
         } else {
             console.log("new hand started, skipping clear table")
@@ -242,6 +245,7 @@ Poker.TableManager = Class.extend({
      * @param {String} playerName
      */
     addPlayer : function(tableId,seat,playerId, playerName) {
+        this.removeToBeRemovedPlayers(tableId);
         var self = this;
         console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
@@ -282,7 +286,28 @@ Poker.TableManager = Class.extend({
      * @param {Number} playerId
      */
     removePlayer : function(tableId,playerId) {
-        console.log("removing player with playerId " + playerId);
+        if(this.isTournamentTable(tableId)) {
+            console.log("adding player to be removed later, playerId " + playerId);
+            var table = this.tables.get(tableId);
+            table.addPlayerToBeRemoved(playerId);
+        } else {
+            this.removePlayerNow(tableId,playerId);
+        }
+
+    },
+    removeToBeRemovedPlayers : function(tableId) {
+        var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
+        var playerIds = table.getPlayersToBeRemoved();
+        for(var i = 0; i<playerIds.length; i++) {
+            this.removePlayerNow(tableId,playerIds[i]);
+        }
+        table.clearPlayersToBeRemoved();
+    },
+    removePlayerNow : function(tableId,playerId) {
+        console.log("removing player with playerId " + playerId)
         var table = this.tables.get(tableId);
         table.removePlayer(playerId);
         if(playerId == Poker.MyPlayer.id) {
@@ -344,7 +369,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
-        table.getLayoutManager().onRequestPlayerAction(player, allowedActions, timeToAct, this.totalPot, fixedLimit);
+        table.getLayoutManager().onRequestPlayerAction(player, allowedActions, timeToAct, table.totalPot, fixedLimit);
     },
     handleRebuyOffer : function(tableId, playerId, rebuyCost, chipsForRebuy, timeToAct) {
         var table = this.tables.get(tableId);
@@ -431,11 +456,14 @@ Poker.TableManager = Class.extend({
      * @param variant
      * @param  currency
      */
-    notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
+    notifyGameStateUpdate : function(tableId, capacity, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
         console.log("Seconds to next level: " + secondsToNextLevel);
         console.log("notifyGameStateUpdate = " + betStrategy);
         var table = this.getTable(tableId);
         table.betStrategy = betStrategy;
+        if(table.capacity!=capacity) {
+            table.capacity = capacity;
+        }
         table.currency = currency;
         this.notifyBlindsUpdated(tableId, newBlinds, currency, secondsToNextLevel);
         this.notifyVariantUpdated(tableId,variant);
@@ -537,6 +565,9 @@ Poker.TableManager = Class.extend({
                 console.log("onChatMessage: player not found at table");
             }
         }
+    },
+    isTournamentTable : function(tableId) {
+        return Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
     }
 
 });

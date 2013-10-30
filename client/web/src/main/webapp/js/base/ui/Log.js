@@ -6,6 +6,8 @@ Poker.Log = Class.extend({
     templateManager : null,
     messageCount : 0,
     maxMessageCount: 100,
+    messagesRead : false,
+    active : false,
     init : function(logContainer) {
         this.logContainer = logContainer;
         this.templateManager = Poker.AppCtx.getTemplateManager();
@@ -28,6 +30,9 @@ Poker.Log = Class.extend({
             $(this.logContainer.children().get(0)).remove();
             this.messageCount--;
         }
+        if(this.active==false) {
+            this.messagesRead = false;
+        }
     },
     scrollDown : function() {
         this.logContainer.scrollTop(this.logContainer[0].scrollHeight);
@@ -35,5 +40,12 @@ Poker.Log = Class.extend({
     appendTemplate : function(templateId,data) {
         var html = this.templateManager.render(templateId,data);
         this.append(html);
+    },
+    activate : function() {
+        this.messagesRead = true;
+        this.active = true;
+    },
+    inactivate : function() {
+        this.active = false;
     }
 });

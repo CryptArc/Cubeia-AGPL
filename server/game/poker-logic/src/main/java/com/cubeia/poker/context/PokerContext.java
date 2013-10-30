@@ -348,6 +348,7 @@ public class PokerContext implements Serializable {
         return getNumberOfAllinPlayers() >= currentHandPlayerMap.size() - 1;
     }
 
+
     public BigDecimal getPlayersTotalContributionToPot(PokerPlayer player) {
         if (potHolder != null) {
             return potHolder.calculatePlayersContributionToPotIncludingBetStacks(player);

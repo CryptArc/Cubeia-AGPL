@@ -85,7 +85,7 @@ Poker.TournamentLayoutManager = Class.extend({
         $.each(tables,function(i,t) {
             self.tableListBody.append(template.render({index : (i+1), id : t }));
             self.tableListBody.find("#tournamentTable"+t).click(function(e){
-                new Poker.TableRequestHandler(t).openTable(10);
+                new Poker.TableRequestHandler(t).openTournamentTable(self.tournamentId,10);
             });
         });
         if(tables.length==0) {

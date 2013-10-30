@@ -39,6 +39,8 @@ Poker.TableLayoutManager = Class.extend({
      */
     clock : null,
 
+    tournamentTable : false,
+
     /**
      *
      * @param {Number} tableId
@@ -55,11 +57,18 @@ Poker.TableLayoutManager = Class.extend({
         this.tableViewContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
+
+        this.tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(this.tableId);
+
         var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId, capacity : capacity});
         this.viewContainerOffsetTop = tableViewContainer.offset().top;
         tableViewContainer.prepend(tableViewHtml);
         var viewId = "#tableView-"+tableId;
         this.tableView = $(viewId);
+
+        if(this.tournamentTable==true) {
+            this.tableView.addClass("tournament-table");
+        }
 
         new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
             new Poker.TableRequestHandler(tableId).sendChatMessage(message);
@@ -102,6 +111,7 @@ Poker.TableLayoutManager = Class.extend({
             $(this).addClass("active");
             self.tableView.find(".show-chat-tab").removeClass("active");
             self.tableLog.scrollDown();
+            self.chatLog.inactivate();
 
         });
         this.tableView.find(".show-chat-tab").click(function(e){
@@ -110,13 +120,14 @@ Poker.TableLayoutManager = Class.extend({
             $(this).addClass("active");
             self.tableView.find(".show-log-tab").removeClass("active");
             self.chatLog.scrollDown();
+            self.chatLog.activate();
+            $(this).find(".new-chat-messages").hide();
 
         });
 
         $(".future-action").show();
         this.updateVariant(com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM);
     },
-
     updateVariant : function(variant) {
         console.log("UPDATING VARIANT",variant);
         this.tableView.removeClass (function (index, css) {
@@ -132,6 +143,9 @@ Poker.TableLayoutManager = Class.extend({
     },
     onChatMessage : function(player, message) {
         this.chatLog.appendChatMessage(player,message);
+        if(this.chatLog.messagesRead == false) {
+            this.tableView.find(".show-chat-tab .new-chat-messages").show();
+        }
     },
     handleAction : function(actionType,amount) {
         var self = this;
@@ -255,10 +269,8 @@ Poker.TableLayoutManager = Class.extend({
         var seat = this.getSeatByPlayerId(playerId);
         if (this.myPlayerSeatId == seat.seatId) {
             this.myPlayerSeatId = -1;
-            var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(this.tableId);
-            console.log("TOURNAMENT TABLE = " + tournamentTable);
-            console.log(Poker.AppCtx.getTournamentManager().tournamentTables);
-            if(tournamentTable==false) {
+
+            if(this.tournamentTable==false) {
                 Poker.AppCtx.getDialogManager().displayGenericDialog(
                     {header: "Seating info", message : "You have been removed from table "});
             }

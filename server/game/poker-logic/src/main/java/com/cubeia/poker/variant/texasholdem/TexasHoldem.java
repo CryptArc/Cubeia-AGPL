@@ -196,8 +196,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @Override
     public void scheduleRoundTimeout() {
-        log.debug("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
-        getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
+        long time = context.getTimingProfile().getTime(Periods.RIVER);
+        int nonFoldedPlayers = context.countNonFoldedPlayers();
+        time = Math.max(time,time + (nonFoldedPlayers-1)*400);
+        log.debug("scheduleRoundTimeout in: " + time);
+        getServerAdapter().scheduleTimeout(time);
     }
 
     @Override
