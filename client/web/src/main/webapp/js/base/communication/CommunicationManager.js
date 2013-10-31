@@ -157,6 +157,12 @@ Poker.CommunicationManager = Class.extend({
 
         var tablePacketHandler = new Poker.TablePacketHandler(tableId);
         switch (packet.classId) {
+            case FB_PROTOCOL.SystemMessagePacket.CLASSID:
+                Poker.AppCtx.getDialogManager().displayGenericDialog({
+                    header : "System Message",
+                    message : packet.message
+                });
+                break;
             case FB_PROTOCOL.TableChatPacket.CLASSID:
                 tablePacketHandler.handleChatMessage(packet);
                 break;
