@@ -416,10 +416,28 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            <execution>                            
+                                <id>copy-network-config</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/conf</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>../backoffice/network/resources/</directory>
+                                            <includes>
+                                                <include>*.sql</include>
+                                                <include>*.properties</include>
+                                            </includes>
+                                        </resource>                                                                           
+                                    </resources>
+                                </configuration>
+                            </execution>                            
                         </executions>
                     </plugin>
-                    
-                    
                 </plugins>
             </build>                
          </profile>
