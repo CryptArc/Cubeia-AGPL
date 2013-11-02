@@ -48,8 +48,8 @@ ideally via mercurial, or via download.
 QUICK-START
 ================================================================================
 
-mvn clean package -Pclient,bots,admin,network,no-integrations
-cd  uar
+mvn clean package
+cd  uar-quick
 mvn firebase:run
 
 CLIENT: you should be able to access the game at:
@@ -178,7 +178,7 @@ In order to build & start a poker system which integrates fully:
 * build the poker code with "use-integrations" (instead of "no-integrations").
 
 mvn clean package -Pclient,bots,admin,network,use-integrations
-cd  uar
+cd  uar-quick
 mvn firebase:run
 
 You now login with the user credentials created earlier.
