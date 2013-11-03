@@ -10,7 +10,7 @@
         <groupId>com.cubeia.games</groupId>
         <artifactId>poker-uar-root</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../uar-root/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
      <build>

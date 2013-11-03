@@ -14,9 +14,7 @@
         <module>client</module>
         <module>tools</module>
         <module>server</module>
-        <module>uar-root</module>
-        <module>uar</module>
-        <module>uar-quick</module>
+        <module>system</module>
 	</modules>
 
     <organization>
