@@ -925,7 +925,10 @@
         <div class="bottom-bar">
             <ul class="table-log-tabs">
                 <li class="show-log-tab active"><a>Dealer</a></li>
-                <li class="show-chat-tab"><a>Chat</a></li>
+                <li class="show-chat-tab">
+                    <a>Chat <span class="new-chat-messages" style="display:none;">+1</span></a>
+
+                </li>
             </ul>
             <div class="table-log-container">
                 <div class="table-event-log-settings" style="display:none;"></div>

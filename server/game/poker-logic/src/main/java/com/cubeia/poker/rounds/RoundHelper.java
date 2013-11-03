@@ -68,6 +68,7 @@ public class RoundHelper implements Serializable {
         serverAdapter.get().notifyRakeInfo(context.calculateRakeInfo());
     }
 
+
     public void scheduleRoundTimeout(PokerContext context, ServerAdapter serverAdapter) {
         log.trace("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
         serverAdapter.scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));

@@ -19,9 +19,12 @@ Poker.BlindsActions = Class.extend({
      * @param tableId
      * @param actionCallback
      */
-    init : function(view,tableId,actionCallback) {
+    init : function(view,tableId,actionCallback,tournamentTable) {
         this.actionCallback = actionCallback;
         this.noMoreBlinds = new Poker.CheckboxAction(view,".no-more-blinds",false);
+        if(tournamentTable == true) {
+            this.noMoreBlinds.disable();
+        }
         this.waitForBigBlind = new Poker.CheckboxAction(view,".wait-for-big-blind",true);
         this.tableId = tableId;
     },

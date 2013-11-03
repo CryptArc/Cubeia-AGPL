@@ -59,6 +59,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
+        console.log("REQUESTED ACTION MAIN POT = " + mainPot);
         var self = this;
         this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
             var time = timeToAct;

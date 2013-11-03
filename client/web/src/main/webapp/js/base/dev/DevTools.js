@@ -39,7 +39,7 @@ Poker.DevTools = Class.extend({
 
             self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
-            new Poker.PositionEditor("#tableView-"+self.tableId);
+            //new Poker.PositionEditor("#tableView-"+self.tableId);
             tableLayoutManager.updateVariant(2);
         };
 
@@ -70,7 +70,7 @@ Poker.DevTools = Class.extend({
                 bl.smallBlind = "0.5";
                 bl.isBreak = false;
                 var bs =
-                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
+                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT);
         }));
         this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){

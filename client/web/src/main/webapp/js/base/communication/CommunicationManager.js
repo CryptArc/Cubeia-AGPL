@@ -157,6 +157,12 @@ Poker.CommunicationManager = Class.extend({
 
         var tablePacketHandler = new Poker.TablePacketHandler(tableId);
         switch (packet.classId) {
+            case FB_PROTOCOL.SystemMessagePacket.CLASSID:
+                Poker.AppCtx.getDialogManager().displayGenericDialog({
+                    header : "System Message",
+                    message : packet.message
+                });
+                break;
             case FB_PROTOCOL.TableChatPacket.CLASSID:
                 tablePacketHandler.handleChatMessage(packet);
                 break;
@@ -285,7 +291,7 @@ Poker.CommunicationManager = Class.extend({
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.GameState.CLASSID:
                 console.log(protocolObject.capacity);
-                this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy, protocolObject.variant,protocolObject.currency);
+                this.tableManager.notifyGameStateUpdate(tableId,protocolObject.capacity, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy, protocolObject.variant,protocolObject.currency);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 this.tableManager.updateHandStrength(tableId,protocolObject,false);

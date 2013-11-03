@@ -42,6 +42,10 @@ Poker.TableRequestHandler = Class.extend({
         this.tableManager.tableNames.put(this.tableId,name);
         this.openTable(capacity);
     },
+    openTournamentTable : function(tournamentId,capacity) {
+         Poker.AppCtx.getTournamentManager().setTournamentTable(tournamentId,this.tableId);
+         this.openTable(capacity);
+    },
     openTable : function (capacity) {
         var t = this.tableManager.getTable(this.tableId);
         if(t!=null) {

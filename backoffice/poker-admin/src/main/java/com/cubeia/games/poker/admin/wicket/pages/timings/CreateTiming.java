@@ -53,6 +53,7 @@ public class CreateTiming extends BasePage {
         timingForm.add(new RequiredTextField<Long>("autoPostBlindDelay"));
         timingForm.add(new RequiredTextField<Long>("latencyGracePeriod"));
         timingForm.add(new RequiredTextField<Long>("disconnectExtraTime"));
+        timingForm.add(new RequiredTextField<Long>("additionalAllInRoundDelayPerPlayer"));
 
         add(timingForm);
 

@@ -29,7 +29,7 @@ public class StrengthCalculatorTest {
 		HandStrength handStrength = new HandStrength(HandType.STRAIGHT);
 		HandStrength communityHandStrength = new HandStrength(HandType.STRAIGHT);
 		Strategy strategy = calc.getStrategy(null, null, handStrength, communityHandStrength);
-		assertThat(strategy, is(Strategy.NEUTRAL));
+		assertThat(strategy, is(Strategy.WEAK));
 	}
 	
 	@Test

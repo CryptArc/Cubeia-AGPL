@@ -54,6 +54,7 @@ public class EditTiming extends BasePage {
         timingForm.add(new RequiredTextField<Long>("autoPostBlindDelay", new PropertyModel<Long>(this, "timing.autoPostBlindDelay")));
         timingForm.add(new RequiredTextField<Long>("latencyGracePeriod", new PropertyModel<Long>(this, "timing.latencyGracePeriod")));
         timingForm.add(new RequiredTextField<Long>("disconnectExtraTime", new PropertyModel<Long>(this, "timing.disconnectExtraTime")));
+        timingForm.add(new RequiredTextField<Long>("additionalAllInRoundDelayPerPlayer", new PropertyModel<Long>(this, "timing.additionalAllInRoundDelayPerPlayer")));
 
         add(timingForm);
 
