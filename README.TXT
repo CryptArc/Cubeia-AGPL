@@ -25,6 +25,9 @@ DEVELOPMENT
 Information subjecting development is contained within the module folders. Some
 general info can be found in the folder doc.
 
+The project-structure is kept as much as possible "natural" and logical. There
+are however some limitations of maven, which can result in an unusual structure.
+
 
 COMMERCIAL SUPPORT
 ==================
