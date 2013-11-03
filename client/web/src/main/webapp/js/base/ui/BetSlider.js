@@ -20,7 +20,7 @@ Poker.BetSlider = Class.extend({
     minBet : 0,
     maxBet : 0,
     bigBlind : 0,
-    delta : 10,
+    delta : 12,
     markers : null,
     slider : null,
     valueOutputs : null,
