@@ -83,7 +83,7 @@
                                     <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
-                                            <directory>../client/web/src/test/resources/</directory>
+                                            <directory>../../client/web/src/test/resources/</directory>
                                             <includes>
                                                 <include>client.properties</include>
                                             </includes>
@@ -136,7 +136,7 @@
                                     <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
-                                            <directory>../backoffice/poker-admin/src/test/resources/</directory>
+                                            <directory>../../backoffice/poker-admin/src/test/resources/</directory>
                                             <includes>
                                                 <include>*.properties</include>
                                                 <include>jetty-env.xml</include>
@@ -205,7 +205,7 @@
                                     <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
-                                            <directory>../backoffice/network/resources/</directory>
+                                            <directory>../../backoffice/network/resources/</directory>
                                             <includes>
                                                 <include>*-ds.xml</include>
                                             </includes>
@@ -224,7 +224,7 @@
                                     <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
-                                            <directory>../backoffice/network/resources/</directory>
+                                            <directory>../../backoffice/network/resources/</directory>
                                             <includes>
                                                 <include>*.sql</include>
                                                 <include>*.properties</include>
