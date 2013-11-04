@@ -49,7 +49,7 @@ QUICK-START
 ================================================================================
 
 mvn clean package
-cd  system/uar-quick
+cd  system/simple
 mvn firebase:run
 
 http://localhost:8181 - CLIENT
@@ -179,7 +179,7 @@ management.
 In order to build & start a poker system which integrates fully:
 
 mvn clean package -Puse-integrations
-cd  system/uar-quick
+cd  system/simple
 mvn firebase:run
 
 You now login with the user credentials created earlier.
@@ -210,7 +210,7 @@ FIREBASE
 Firebase was fetched during the build. You can start the poker-server directly
 by starting firebase from within
 
-./system/uar-quick/target/firebase-run/firebase-<version>-CE
+./system/simple/target/firebase-run/firebase-<version>-CE
 
 This location (the "target" folder) is overwritten by a clean build (mvn clean).
 
