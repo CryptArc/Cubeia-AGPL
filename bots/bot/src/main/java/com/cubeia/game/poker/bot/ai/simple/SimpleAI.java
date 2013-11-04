@@ -1,5 +1,18 @@
 package com.cubeia.game.poker.bot.ai.simple;
 
+import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.STRONG;
+import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.WEAK_BLUFF;
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.BET;
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CALL;
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CHECK;
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.FOLD;
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.RAISE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import com.cubeia.firebase.bot.ai.AbstractAI;
 import com.cubeia.game.poker.bot.ai.GameState;
 import com.cubeia.game.poker.bot.ai.PokerAI;
@@ -13,20 +26,6 @@ import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.STRONG;
-import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.WEAK_BLUFF;
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.BET;
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CALL;
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CHECK;
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.FOLD;
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.RAISE;
 
 public class SimpleAI implements PokerAI {
 
@@ -44,6 +43,8 @@ public class SimpleAI implements PokerAI {
     /** How aggressive the bot will bet/raise on a scale of 1->X. */
     private int aggression = 1;
 
+	private boolean bluffedPrevious = false;
+
     enum Strategy {
         WEAK,
         WEAK_BLUFF,
@@ -52,7 +53,7 @@ public class SimpleAI implements PokerAI {
     }
 
     public SimpleAI() {
-        bluffProbability = bluffProbability + rng.nextInt(25);
+        bluffProbability = bluffProbability + rng.nextInt(20);
         //aggression = aggression + rng.nextInt(10);
         aggression = aggression + NonLinearRng.nextInt(20);
     }
@@ -81,6 +82,7 @@ public class SimpleAI implements PokerAI {
                 case ANTE:
                 case ENTRY_BET:
                     playerAction = action;
+                    bluffedPrevious = false;
                     break;
                 default:
             }
@@ -113,11 +115,15 @@ public class SimpleAI implements PokerAI {
             }
         }
 
+        // Keep track of bluffing. If we bluffed once we want to increase
+        // the chance of bluffing again.
+        bluffedPrevious = bluff;
+        
         int amountModifier = getRelativeCallSizeModifier(request, state);
         BigDecimal potSizeModifier = getRelativePotSizeModifier(request, state);
         int betModifier = potSizeModifier.intValue()+1;
-        bot.getBot().logInfo("Relative Call Amount Modifier: "+amountModifier);
-        bot.getBot().logInfo("Bet Amount Modifier: "+betModifier);
+        //bot.getBot().logInfo("Relative Call Amount Modifier: "+amountModifier);
+        //bot.getBot().logInfo("Bet Amount Modifier: "+betModifier);
         
         BigDecimal betAmount = BigDecimal.ZERO;
 
@@ -143,11 +149,11 @@ public class SimpleAI implements PokerAI {
         }
         
         if (strategy == Strategy.NEUTRAL) {
-            if (prob(60-amountModifier*2) && hasPlayerAction(CALL, request)) {
+            if (prob(60-amountModifier*2+aggression/4) && hasPlayerAction(CALL, request)) {
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 
-            } else if (prob(75-betModifier*2) && hasPlayerAction(BET, request)) {
+            } else if (prob(75-betModifier*2+aggression/4) && hasPlayerAction(BET, request)) {
                 playerAction = getPlayerAction(BET, request);
                 betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
@@ -161,15 +167,15 @@ public class SimpleAI implements PokerAI {
         }
 
         if (strategy == Strategy.STRONG) {
-            if (prob(50-amountModifier) && hasPlayerAction(RAISE, request)) {
+            if (prob(50-amountModifier+aggression/3) && hasPlayerAction(RAISE, request)) {
                 playerAction = getPlayerAction(RAISE, request);
                 betAmount = calculateBet(playerAction, request, strategy);
 
-            } else if (prob(80) && hasPlayerAction(BET, request)) {
+            } else if (prob(80+aggression/3) && hasPlayerAction(BET, request)) {
                 playerAction = getPlayerAction(BET, request);
                 betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
-            } else if (prob(90-amountModifier) && hasPlayerAction(CALL, request)) {
+            } else if (prob(90-amountModifier) && hasPlayerAction(CALL, request) && !bluff) { 
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 
@@ -318,7 +324,11 @@ public class SimpleAI implements PokerAI {
 	}
 
     private boolean doBluff() {
-        return rng.nextInt(100) < bluffProbability;
+    	int probability = bluffProbability;
+    	if (bluffedPrevious) {
+    		probability += 25;
+    	}
+        return rng.nextInt(100) < probability;
     }
 
     private PlayerAction getPlayerAction(ActionType type, RequestAction request) {
