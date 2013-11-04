@@ -294,7 +294,7 @@ public class HandStrengthComparatorTest {
 	@Test
     public void test_issue_POK48_HighCardQueenVsKing() {
         TexasHoldemHandCalculator calculator = new TexasHoldemHandCalculator();
-        Hand hand1 = new Hand("QC TC 9C 7D 5S");
+        Hand hand1 = new Hand("QC TC 8C 7D 5S");
         HandStrength handStrength1 = calculator.getHandStrength(hand1);
         assertThat(handStrength1.getHandType(), is(HIGH_CARD));
         assertThat(handStrength1.getHighestRank(), is(QUEEN));
@@ -310,7 +310,7 @@ public class HandStrengthComparatorTest {
         hands.add(handStrength1);
         hands.add(handStrength2);
 
-        sort(hands,new HandStrengthComparator());
+        sort(hands, new HandStrengthComparator());
 
         assertEquals(handStrength2, hands.get(0));
         assertEquals(handStrength1, hands.get(1));
