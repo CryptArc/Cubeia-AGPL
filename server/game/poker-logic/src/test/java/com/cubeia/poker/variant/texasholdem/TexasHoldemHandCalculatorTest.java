@@ -18,12 +18,13 @@ package com.cubeia.poker.variant.texasholdem;
 
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.handhistory.api.HandStrengthCommon;
+import com.cubeia.poker.settings.RakeSettings;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -116,11 +117,58 @@ public class TexasHoldemHandCalculatorTest {
         translate = hs.translate();
 
 
+    }
+
+    @Test
+    public void testHighCard() {
+
+        Hand h1 = new Hand("8S KC 2C QC TC 5S 7D");
+
+        HandInfo bestHandInfo = calculator.getBestHandInfo(h1);
+        assertThat(bestHandInfo.getHandType(),is(HandType.HIGH_CARD));
+        assertThat(bestHandInfo.getCards().get(0).getRank(),is(Rank.KING));
+
+        Hand h2 = new Hand("3S 8C 2C QC TC 5S 7D");
+        bestHandInfo = calculator.getBestHandInfo(h2);
+        assertThat(bestHandInfo.getHandType(),is(HandType.HIGH_CARD));
+        assertThat(bestHandInfo.getCards().get(0).getRank(),is(Rank.QUEEN));
 
 
     }
 
+    /*
+    @Test
+    public void testRatedPlayerHands() {
+        HandResultCreator creator = new HandResultCreator(calculator);
+        List<Card> communityCards = new Hand("2C QC TC 5S 7D").getCards();
+        Currency currency = new Currency("TRM", 0);
+
+        LinearRakeWithLimitCalculator rakeCalculator = new LinearRakeWithLimitCalculator(getRakeSetting(), currency);
+
+        PotHolder potHolder = new PotHolder(rakeCalculator);
+        potHolder.
+
+        Map<Integer, PokerPlayer> seatingMap = new HashMap<>();
+        DefaultPokerPlayer player80 = new DefaultPokerPlayer(80);
+        player80.addPocketCard(Card.fromString("3S"),false);
+        player80.addPocketCard(Card.fromString("8C"), false);
+        seatingMap.put(80, player80);
+
+        DefaultPokerPlayer player1627 = new DefaultPokerPlayer(1627);
+        player1627.addPocketCard(Card.fromString("8S"),false);
+        player1627.addPocketCard(Card.fromString("KC"),false);
+        seatingMap.put(1627, player1627);
+
+        HandResult handResult = creator.createHandResult(communityCards, new HandResultCalculator(calculator), potHolder, seatingMap,
+                new ArrayList<Integer>(), new HashSet<PokerPlayer>(), currency);
+
+        Map<PokerPlayer,Result> results = handResult.getResults();
+       assertThat(results.get(player1627).getNetResult(),is(new BigDecimal("160")));
 
 
+    } */
 
+    public RakeSettings getRakeSetting() {
+        return RakeSettings.createDefaultRakeSettings(BigDecimal.ZERO);
+    }
 }

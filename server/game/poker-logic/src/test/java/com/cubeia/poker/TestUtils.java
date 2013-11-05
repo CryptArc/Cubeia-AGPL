@@ -47,14 +47,24 @@ public class TestUtils {
         MockPlayer[] players = new MockPlayer[numberOfPlayers];
 
         for (int i = 0; i < numberOfPlayers; i++) {
-            players[i] = new MockPlayer(i);
-            players[i].setSeatId(i);
-            players[i].setBalance(balance);
-            players[i].setHasActed(false);
+            createMockPlayer(balance, players, i);
 
         }
 
         return players;
+    }
+
+    public static void createMockPlayer(BigDecimal balance, MockPlayer[] players, int seatId) {
+        createMockPlayer(balance,players,seatId,seatId);
+    }
+    public static void createMockPlayer(BigDecimal balance, MockPlayer[] players, int playerId, int seatId){
+        createMockPlayer(balance,players,playerId,seatId,seatId);
+    }
+    public static void createMockPlayer(BigDecimal balance, MockPlayer[] players, int playerId, int seatId,int arrayPos) {
+        players[arrayPos] = new MockPlayer(playerId);
+        players[arrayPos].setSeatId(seatId);
+        players[arrayPos].setBalance(balance);
+        players[arrayPos].setHasActed(false);
     }
 
     public static int[] createPlayerIdArray(MockPlayer[] players) {

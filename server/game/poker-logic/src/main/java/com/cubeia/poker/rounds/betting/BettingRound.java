@@ -293,7 +293,12 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected boolean calculateIfRoundFinished() {
         if (context.countNonFoldedPlayers(playersInPlayAtRoundStart) < 2) {
-            return true;
+            if(hasPlayersLeftToAct(playersInPlayAtRoundStart))   {
+                return false;
+            } else {
+                return true;
+            }
+
         }
         for (PokerPlayer p : context.getPlayersInHand()) {
             if (!p.hasFolded() && !p.hasActed()) {
@@ -301,6 +306,15 @@ public class BettingRound implements Round, BettingRoundContext {
             }
         }
         return true;
+    }
+
+    private boolean hasPlayersLeftToAct(Set<PokerPlayer> playersInPlayAtRoundStart) {
+        for (PokerPlayer p : context.getPlayersInHand()) {
+            if (!p.hasFolded() && !p.hasActed() && getAmountToCall(p).compareTo(BigDecimal.ZERO)>0) {
+                return true;
+            }
+        }
+        return  false;
     }
 
     @VisibleForTesting
