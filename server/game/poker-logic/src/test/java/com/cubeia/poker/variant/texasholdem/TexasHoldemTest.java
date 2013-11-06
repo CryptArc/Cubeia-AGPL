@@ -17,7 +17,6 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
-import com.cubeia.games.poker.common.money.*;
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.TestUtils;
@@ -29,6 +28,7 @@ import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
@@ -60,9 +60,11 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.cubeia.poker.action.PokerActionType.*;
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -111,6 +113,9 @@ public class TexasHoldemTest {
     private RakeSettings rakeSettings;
 
     private MockPlayer[] p;
+
+    @Mock
+    private Deck mockDeck;
 
     @Before
     public void setup() {
@@ -427,6 +432,9 @@ public class TexasHoldemTest {
         assertTrue(p[1].isAllIn());
     }
 
+
+
+
     @Test
     public void testShowdown() {
         PokerContext context = prepareContext(3);
@@ -623,19 +631,29 @@ public class TexasHoldemTest {
     private void act(MockPlayer player, PokerActionType actionType, int value) {
         texas.act(new PokerAction(player.getId(), actionType, new BigDecimal(value)));
     }
-
     private PokerContext prepareContext(int numberOfPlayers) {
+        return prepareContext(numberOfPlayers,false);
+    }
+
+    private PokerContext prepareContext(int numberOfPlayers, boolean tournament) {
         BlindsLevel level = new BlindsLevel(bd(10), bd(20), bd(0));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
         PokerSettings settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,level, betStrategy, bd(100), bd(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
         PokerContext context = new PokerContext(settings);
+        if(tournament) {
+            context.setTournamentId(1);
+            context.setTournamentTable(true);
+        }
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);
         for (PokerPlayer player : p) {
-            player.setHasPostedEntryBet(true);
+            if(tournament) {
+                player.setHasPostedEntryBet(true);
+            }
             context.addPlayer(player);
         }
         return context;
     }
+
 
 }

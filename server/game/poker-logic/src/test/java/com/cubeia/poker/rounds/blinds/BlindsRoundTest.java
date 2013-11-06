@@ -18,7 +18,8 @@
 package com.cubeia.poker.rounds.blinds;
 
 import com.cubeia.games.poker.common.money.Currency;
-import com.cubeia.poker.*;
+import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
@@ -217,6 +218,59 @@ public class BlindsRoundTest extends TestCase {
         assertEquals(p[0].getSeatId(), round.getBlindsInfo().getDealerButtonSeatId());
     }
 
+    public void testTournamentBlindsWhenLessThanSmallBlind() throws Exception {
+
+        context.setTournamentTable(true);
+        // Seat three players.
+        MockPlayer[] p = new MockPlayer[3];
+
+        TestUtils.createMockPlayer(new BigDecimal("120"), p, 1);
+        TestUtils.createMockPlayer(new BigDecimal("1000"), p, 2);
+        TestUtils.createMockPlayer(new BigDecimal("1000"), p, 0);
+
+        addPlayers(p);
+        when(settings.getSmallBlindAmount()).thenReturn(new BigDecimal("160"));
+        when(settings.getBigBlindAmount()).thenReturn(new BigDecimal("320"));
+        round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
+        round.act(new PokerAction(101,PokerActionType.SMALL_BLIND));
+        round.act(new PokerAction(102,PokerActionType.BIG_BLIND));
+
+
+        // Check that the blinds round is finished.
+        assertTrue(round.isFinished());
+
+        assertThat(p[1].getBetStack(),is(new BigDecimal("120")));
+        assertTrue(p[1].isAllIn());
+        assertThat(p[1].getBalance(),is(BigDecimal.ZERO));
+    }
+
+    public void testTournamentBlindsWhenLessThanBigBlind() throws Exception {
+
+        context.setTournamentTable(true);
+        // Seat three players.
+        MockPlayer[] p = new MockPlayer[3];
+
+        TestUtils.createMockPlayer(new BigDecimal("1000"), p, 1);
+        TestUtils.createMockPlayer(new BigDecimal("120"), p, 2);
+        TestUtils.createMockPlayer(new BigDecimal("1000"), p, 0);
+
+        addPlayers(p);
+        when(settings.getSmallBlindAmount()).thenReturn(new BigDecimal("160"));
+        when(settings.getBigBlindAmount()).thenReturn(new BigDecimal("320"));
+        round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
+        round.act(new PokerAction(101,PokerActionType.SMALL_BLIND));
+        round.act(new PokerAction(102,PokerActionType.BIG_BLIND));
+
+        // Check that the blinds round is finished.
+        assertTrue(round.isFinished());
+
+        assertThat(p[2].getBetStack(),is(new BigDecimal("120")));
+        assertTrue(p[2].isAllIn());
+
+        assertThat(p[1].getBetStack(),is(new BigDecimal("160")));
+        assertFalse(p[1].isAllIn());
+    }
+
     private void assertOptionEnabled(PokerActionType option, MockPlayer player) {
         assertTrue(player.getActionRequest().isOptionEnabled(option));
     }
@@ -377,10 +431,16 @@ public class BlindsRoundTest extends TestCase {
         getRequestedAction();
         assertEquals(p[2].getId(), requestedAction.getPlayerId());
     }
-
-    private ActionRequest getRequestedAction() {
+    private ActionRequest getRequestedAction(){
+        return getRequestedAction(false);
+    }
+    private ActionRequest getRequestedAction(boolean tournamentBlindsRound) {
         ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
-        verify(serverAdapter, atLeastOnce()).requestAction(captor.capture());
+        if(tournamentBlindsRound) {
+            verify(serverAdapter,times(0)).requestAction(captor.capture());
+        } else {
+            verify(serverAdapter, atLeastOnce()).requestAction(captor.capture());
+        }
         requestedAction = captor.getValue();
         return requestedAction;
     }
@@ -679,19 +739,23 @@ public class BlindsRoundTest extends TestCase {
     private void setPreviousBlindsInfo(BlindsInfo blindsInfo) {
         context.setBlindsInfo(blindsInfo);
     }
-
-    private void verifyAndAct(MockPlayer player, PokerActionType action) {
-        getRequestedAction();
+    private void verifyAndAct(MockPlayer player, PokerActionType action){
+        verifyAndAct(player,action,false);
+    }
+    private void verifyAndAct(MockPlayer player, PokerActionType action,boolean tournamentBlindsRound) {
+        getRequestedAction(tournamentBlindsRound);
         assertTrue("Player " + player + " should have option: " + action,
                 player.getActionRequest().isOptionEnabled(action));
         assertTrue(requestedAction.isOptionEnabled(action));
         assertEquals(player.getId(), requestedAction.getPlayerId());
         act(player, action);
     }
-
     private void act(MockPlayer player, PokerActionType action) {
+        act(player,action,false);
+    }
+    private void act(MockPlayer player, PokerActionType action,boolean tournamentBlindsRound) {
         PokerAction a = new PokerAction(player.getId(), action);
         round.act(a);
-        getRequestedAction();
+        getRequestedAction(tournamentBlindsRound);
     }
 }
