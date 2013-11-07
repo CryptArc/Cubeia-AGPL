@@ -32,7 +32,6 @@ Poker.ConnectionManager = Class.extend({
         this.disconnectDialog = new Poker.DisconnectDialog();
     },
     onUserLoggedIn : function(playerId, name, token) {
-
         Poker.MyPlayer.onLogin(playerId,name, token);
         Poker.AppCtx.getNavigation().onLoginSuccess();
         Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
@@ -43,8 +42,10 @@ Poker.ConnectionManager = Class.extend({
         viewManager.onLogin();
         Poker.AppCtx.getTableManager().onPlayerLoggedIn();
         Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
-        Poker.Utils.storeUser(name,Poker.MyPlayer.password);
-        
+        if(token!=null) {
+            Poker.Utils.storeUser(name,Poker.MyPlayer.password);
+        }
+
         // check deposit return...
         var depositType = purl().fparam("deposit");
         if(depositType) {

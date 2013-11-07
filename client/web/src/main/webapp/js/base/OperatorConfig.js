@@ -38,6 +38,13 @@ Poker.OperatorConfig = Class.extend({
 
         }
     },
+    isCurrencyEnabled : function(currencyCode) {
+        if(this.currencyMap.size()==0) {
+            return true;
+        } else {
+            return this.currencyMap.contains(currencyCode);
+        }
+    },
     populate : function(params) {
         for(var p in params) {
           this.configMap.put(p,params[p]);

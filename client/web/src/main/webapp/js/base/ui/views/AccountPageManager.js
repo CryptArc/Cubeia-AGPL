@@ -16,7 +16,9 @@ Poker.AccountPageManager = Class.extend({
         this.setupUserPanel();
         var self = this;
         var vm =  Poker.AppCtx.getViewManager();
-
+        $("#refillButton").click(function(e){
+            self.requestTopUp();
+        });
         $("#editProfileButton").click(function(e){
             self.closeAccountOverlay();
             if(self.editProfileView==null) {
@@ -144,12 +146,94 @@ Poker.AccountPageManager = Class.extend({
     },
     openAccountFrame : function() {
         $.ga._trackEvent("user_navigation", "open_account_frame");
-        var iframe = $("#accountIframe");
+
         var url = Poker.OperatorConfig.getAccountInfoUrl();
-        var urlWithParams = this.addToken(url);
-        // Add currency params so we can show currencies in the way specified by the operator.
-        urlWithParams += this.createParametersFromCurrencies(Poker.OperatorConfig.getEnabledCurrencies());
-        iframe.attr("src", urlWithParams);
+        if(url!=null && url=="internal") {
+           this.displayInternalAccountPage();
+        } else {
+            $("#internalAccountContent").hide();
+            var iframe = $("#accountIframe");
+            var urlWithParams = this.addToken(url);
+            // Add currency params so we can show currencies in the way specified by the operator.
+            urlWithParams += this.createParametersFromCurrencies(Poker.OperatorConfig.getEnabledCurrencies());
+            iframe.attr("src", urlWithParams);
+        }
+
+    },
+    displayInternalAccountPage : function() {
+        $("#internalAccountContent").show();
+        $("#accountIframe").hide();
+        var self = this;
+        Poker.AppCtx.getPlayerApi().requestAccountInfo(Poker.MyPlayer.sessionToken,
+            function(data){
+                var name = "";
+                if(typeof(data.screenname)!="undefined") {
+                    name = data.screenname;
+                } else if(typeof(data.externalUsername)!="undefined") {
+                    name = data.externalUsername;
+                } else if(typeof(data.username)!="undefined") {
+                    name = data.username;
+                }
+                $("#user_name").html(name);
+
+            },
+            function(){
+                console.log("Error fetching account info");
+            }
+        );
+        Poker.AppCtx.getPlayerApi().requestBonusInfo(Poker.MyPlayer.sessionToken,
+            function(data){
+              self.onBonusInfo(data);
+            },
+            function(){}
+        );
+    },
+    onBonusInfo : function(data) {
+        console.log(data);
+        var accounts = [];
+        $.each(data.accounts,function(i,a){
+            if(Poker.OperatorConfig.isCurrencyEnabled(a.currency)) {
+                var formattedBalance = Poker.Utils.formatWithSymbol(a.balance, a.currency);
+                accounts.push({ balance : formattedBalance});
+            }
+        });
+        var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("balanceTemplate");
+
+        $("#accountBalancesContainer").html(template.render({accounts : accounts}));
+
+        if(data.bonus.timeToNextCollect>0) {
+            $("#coolDownProgress").show();
+            $("#bonusCollectContainer .top-up-progress").show();
+            $("#bonusCollectContainer .balance-too-high").hide();
+            var fractionRemaining = 100 * data.bonus.timeToNextCollect / data.bonus.coolDown;
+            $("#coolDownProgress").width(fractionRemaining+"%");
+            $("#refillButton").attr("class","").addClass("refill-unavailable");
+            var time = new Date().getTime()+data.bonus.timeToNextCollect;
+            $("#coolDownLabel").html(moment(time).fromNow());
+        } else if(data.bonus.canCollect == true) {
+            $("#bonusCollectContainer .top-up-progress").show();
+            $("#bonusCollectContainer .balance-too-high").hide();
+            $("#coolDownProgress").hide();
+            $("#refillButton").attr("class","").addClass("refill-available");
+            $("#coolDownLabel").html("Top up is available!");
+        } else {
+            $("#bonusCollectContainer .balance-too-high").show();
+            $("#bonusCollectContainer .top-up-progress").hide();
+            $("#bonusCoolDownTime").html((data.bonus.coolDown/3600000));
+            $("#bonusBalanceLowerLimit").html(data.bonus.bonusBalanceLowerLimit);
+        }
+
+    },
+    requestTopUp : function() {
+        var self = this;
+        Poker.AppCtx.getPlayerApi().requestTopUp(Poker.MyPlayer.sessionToken,
+            function(data){
+                self.onBonusInfo(data);
+            },
+            function(){
+
+            }
+        );
     }
 });
 

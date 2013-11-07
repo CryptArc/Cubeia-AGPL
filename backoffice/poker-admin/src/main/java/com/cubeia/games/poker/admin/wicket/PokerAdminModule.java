@@ -5,6 +5,7 @@ import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.CreateRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.EditRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.ListRakes;
+import com.cubeia.games.poker.admin.wicket.pages.system.SystemManagement;
 import com.cubeia.games.poker.admin.wicket.pages.tables.CreateTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.EditTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
@@ -70,6 +71,8 @@ public class PokerAdminModule extends AdminWebModule {
         add(pages, "Rake Configurations", ListRakes.class, "icon-list-alt",
                 node("Create Rake Configuration", CreateRake.class),
                 node("Edit Rake Configuration", EditRake.class, false));
+
+        add(pages,"System Management", "system", SystemManagement.class,"icon-list-alt");
     }
 
     @Override

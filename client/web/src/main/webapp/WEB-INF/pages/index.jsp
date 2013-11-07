@@ -660,6 +660,43 @@
             <div class="account-button logout-link">
                 <span data-i18n="user.log-out"></span>
             </div>
+            <div id="internalAccountContent">
+                <div class="account-block" id="account_details">
+                    <div class="account-row">
+                        Screen Name:
+                        <div id="user_name"></div>
+                    </div>
+              </div>
+              <div class="account-block" id="accountBalancesContainer">
+
+              </div>
+              <div class="account-block " id="bonusCollectContainer">
+                    <h3>Top up</h3>
+                    <div class="refill_field">
+
+                        <div class="top-up-progress">
+                            <div class="small-label">
+                                Time to next top up:  <span id="coolDownLabel"></span>
+                            </div>
+
+                            <div class="list_field">
+                                <div class="progress_container">
+                                    <div class="progress_bar" id="coolDownProgress"></div>
+                                </div>
+                            </div>
+                            <div class="refill-button-container">
+                                <div id="refillButton" class="account-button refill-unavailable">Top Up!</div>
+                            </div>
+                        </div>
+
+                        <div class="balance-too-high">
+                            You are able to top up once every <span id="bonusCoolDownTime"></span> hours when
+                            your balance is <span id="bonusBalanceLowerLimit"></span> or less.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
             <iframe id="accountIframe" class="account-iframe" scrolling="no"></iframe>
             <div class="account-buttons">
                 <div class="account-button" id="editProfileButton">
@@ -682,6 +719,18 @@
     </div>
 
 </div>
+<script id="balanceTemplate" type="text/mustache">
+    {{#accounts}}
+    <div class="account-row">
+        <span class="balance-header">Balance:</span>
+        <div>
+            <span class="account-balance">{{balance}}</span>
+        </div>
+    </div>
+    {{/accounts}}
+
+</script>
+
 <div id="emptySeatTemplate" style="display: none;">
     <div class="avatar-base">
         <div class="open-seat">{{t "table.open"}}</div>
