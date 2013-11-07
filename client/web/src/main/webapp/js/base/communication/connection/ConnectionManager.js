@@ -3,7 +3,7 @@ var Poker = Poker || {};
 
 Poker.ConnectionManager = Class.extend({
 
-    MAX_RECONNECT_ATTEMPTS : 30,
+    MAX_RECONNECT_ATTEMPTS : 15,
 
     retryCount : 0,
 
