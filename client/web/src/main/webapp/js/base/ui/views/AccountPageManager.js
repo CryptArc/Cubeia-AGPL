@@ -202,6 +202,7 @@ Poker.AccountPageManager = Class.extend({
         $("#accountBalancesContainer").html(template.render({accounts : accounts}));
 
         if(data.bonus.timeToNextCollect>0) {
+            $("#coolDownProgress").show();
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
             var fractionRemaining = 100 * data.bonus.timeToNextCollect / data.bonus.coolDown;
@@ -212,6 +213,7 @@ Poker.AccountPageManager = Class.extend({
         } else if(data.bonus.canCollect == true) {
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
+            $("#coolDownProgress").hide();
             $("#refillButton").attr("class","").addClass("refill-available");
             $("#coolDownLabel").html("Top up is available!");
         } else {
