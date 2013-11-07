@@ -58,7 +58,7 @@ Poker.TableLayoutManager = Class.extend({
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
 
-        this.tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(this.tableId);
+        this.tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
 
         var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId, capacity : capacity});
         this.viewContainerOffsetTop = tableViewContainer.offset().top;
