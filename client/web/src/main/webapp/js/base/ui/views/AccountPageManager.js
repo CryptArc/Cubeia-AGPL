@@ -166,7 +166,16 @@ Poker.AccountPageManager = Class.extend({
         var self = this;
         Poker.AppCtx.getPlayerApi().requestAccountInfo(Poker.MyPlayer.sessionToken,
             function(data){
-                console.log("Account info:",data);
+                var name = "";
+                if(typeof(data.screenname)!="undefined") {
+                    name = data.screenname;
+                } else if(typeof(data.externalUsername)!="undefined") {
+                    name = data.externalUsername;
+                } else if(typeof(data.username)!="undefined") {
+                    name = data.username;
+                }
+                $("#user_name").html(name);
+
             },
             function(){
                 console.log("Error fetching account info");
@@ -208,7 +217,7 @@ Poker.AccountPageManager = Class.extend({
         } else {
             $("#bonusCollectContainer .balance-too-high").show();
             $("#bonusCollectContainer .top-up-progress").hide();
-            $("#bonusCoolDownTime").html((data.bonus.coolDown/));
+            $("#bonusCoolDownTime").html((data.bonus.coolDown/3600000));
             $("#bonusBalanceLowerLimit").html(data.bonus.bonusBalanceLowerLimit);
         }
 
