@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cubeia.backoffice.operator.api.OperatorConfigParamDTO;
 import com.cubeia.backoffice.operator.client.OperatorServiceClient;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ClientController {
@@ -165,6 +166,10 @@ public class ClientController {
         modelMap.addAttribute("tableId",tableId);
         modelMap.addAttribute("cp",request.getContextPath());
         return "hand-history";
+    }
+    @RequestMapping(value = {"/ping"})
+    public @ResponseBody String ping() {
+        return "";
     }
 
     public void setDefaultSkin(String defaultSkin) {

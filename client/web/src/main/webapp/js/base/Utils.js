@@ -157,6 +157,17 @@ Poker.Utils = {
             return null;
         }
     },
+    loadJSON : function(name) {
+        var json = Poker.Utils.load(name,null);
+        if(json==null) {
+            return null;
+        }
+        return JSON.parse(json);
+    },
+    storeJSON : function(name,value) {
+        var json = JSON.stringify(value);
+        Poker.Utils.store(name,value);
+    },
     loadBoolean: function(name, defaultValue) {
         var val = Poker.Utils.load(name, defaultValue);
         if (val != null) {

@@ -71,6 +71,11 @@ Poker.CommunicationManager = Class.extend({
     setIgnoreNextForceLogout : function() {
         this.ignoreNextForceLogout = true;
     },
+    logoutAndDisconnect : function() {
+        this.getConnector().logout(true);
+        this.getConnector().close();
+        this.connected = false;
+    },
     forceLogout : function(packet) {
         console.log("Forcing log out");
         console.log(packet);
@@ -114,7 +119,11 @@ Poker.CommunicationManager = Class.extend({
         }
         var self = this;
         FIREBASE.ReconnectStrategy.MAX_ATTEMPTS = 0;
-        this.connector = new FIREBASE.Connector(
+
+
+
+
+        this.connector = new CustomConnector(
             function(po) {
                 Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.handlePacket(po);
@@ -129,6 +138,7 @@ Poker.CommunicationManager = Class.extend({
             function(status){
                 self.statusCallback(status);
             });
+
 
         console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
         this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
@@ -227,6 +237,9 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.ServiceTransportPacket.CLASSID:
                 this.handleServicePacket(packet);
                 break;
+            case FB_PROTOCOL.VersionPacket.CLASSID:
+                Poker.AppCtx.getPingManager().versionPacketReceived();
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
@@ -268,7 +281,6 @@ Poker.CommunicationManager = Class.extend({
                 break;
         }
     },
-
     handleGameDataPacket:function (gameTransportPacket) {
         if(Poker.Settings.isEnabled(Poker.Settings.Param.FREEZE_COMMUNICATION,null)==true) {
             return;
@@ -448,6 +460,20 @@ Poker.CommunicationManager = Class.extend({
         }
     }
 });
+
+var CustomConnector = function(a,b,c,d) {
+    this.sup = FIREBASE.Connector;
+    this.sup(a,b,c,d);
+
+    var self = this;
+    var superSendProtocolObject = this.sendProtocolObject;
+    this.sendProtocolObject = function(po) {
+        if(po.classId() != FB_PROTOCOL.VersionPacket.CLASSID) {
+            Poker.AppCtx.getConnectionManager().onUserActivity();
+        }
+        superSendProtocolObject.call(self,po);
+    };
+};
 
 FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {
     var _socket = this.getSocket();

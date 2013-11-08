@@ -28,8 +28,42 @@ Poker.ConnectionManager = Class.extend({
      * @type {Poker.DisconnectDialog}
      */
     disconnectDialog : null,
+
+    lastActivity : null,
+    activityCheckTimer : null,
+    maxInactivityTime : 1800000, //30 MIN
+
     init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
+
+        this.startActivityCheck();
+
+    },
+    startActivityCheck : function() {
+        var self = this;
+        this.onUserActivity();
+        this.activityCheckTimer = setInterval(function(){
+            var now = new Date().getTime();
+            var inactiveTime = now - self.lastActivity
+            if(inactiveTime>self.maxInactivityTime) {
+                self.clearTimeouts();
+                var cm = Poker.AppCtx.getCommunicationManager();
+                cm.setIgnoreNextForceLogout();
+                cm.logoutAndDisconnect();
+                Poker.AppCtx.getDialogManager().displayGenericDialog(
+                    { header : "Logged out", message :"You've been logged out due to inactivity"},
+                    function(){
+                        document.location.reload();
+                    }
+                );
+                return;
+            } else {
+                console.log("User last activity = " + inactiveTime);
+            }
+        },60000);
+    },
+    onUserActivity : function() {
+        this.lastActivity = new Date().getTime();
     },
     onUserLoggedIn : function(playerId, name, token) {
         Poker.MyPlayer.onLogin(playerId,name, token);
@@ -105,6 +139,7 @@ Poker.ConnectionManager = Class.extend({
         }
     },
     handleDisconnect : function() {
+        Poker.AppCtx.getPingManager().onDisconnect();
         console.log("DISCONNECTED");
         this.showConnectStatus(i18n.t("login.disconnected", {sprintf : [this.retryCount]}));
         this.clearTimeouts();
@@ -132,7 +167,6 @@ Poker.ConnectionManager = Class.extend({
         var self = this;
         this.disconnectCheckTimeout = setTimeout(function(){
             self.sendVersionPacket();
-            console.log("Starting reconnect grace timeout");
             self.startReconnectingGraceTimeout = setTimeout(function(){
                 console.log("version packet not received, handle disconnect");
                 self.handleDisconnect();
@@ -177,6 +211,7 @@ Poker.ConnectionManager = Class.extend({
         versionPacket.operatorid = 0;
         versionPacket.protocol = 8559;
         Poker.AppCtx.getCommunicationManager().getConnector().sendProtocolObject(versionPacket);
+        Poker.AppCtx.getPingManager().versionPacketSent();
     }
 });
 
