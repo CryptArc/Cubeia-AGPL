@@ -8,7 +8,7 @@ describe("Poker.TimeStatistics Test", function(){
         stats.add(10);
         stats.add(2);
 
-        expect(stats.getAverage()).toEqual(6);
+        expect(stats.getAverage()).toEqual(6.00);
         expect(stats.max).toEqual(10);
         expect(stats.min).toEqual(2);
         expect(stats.count).toEqual(2);
@@ -20,7 +20,7 @@ describe("Poker.TimeStatistics Test", function(){
         stats.add(10);
         stats.add(2);
 
-        expect(stats.getAverage()).toEqual(5.6);
+        expect(stats.getAverage()).toEqual(5.60);
         expect(stats.max).toEqual(100);
         expect(stats.min).toEqual(1);
         expect(stats.count).toEqual(8);
