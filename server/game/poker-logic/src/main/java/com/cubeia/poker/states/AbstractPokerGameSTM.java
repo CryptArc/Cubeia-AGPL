@@ -111,6 +111,10 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     @Override
     public void setPlayerSitOutNextHand(int playerId) {
         PokerPlayer player = context.getPlayer(playerId);
+        if(player==null) {
+            log.warn("Player {} not found in context when trying to sit out",playerId);
+            return;
+        }
         log.info("Player with id " + playerId + " wants to sit out next hand.");
         if (player.hasFolded()) {
             markPlayerAsSittingOutOrAway(player);
