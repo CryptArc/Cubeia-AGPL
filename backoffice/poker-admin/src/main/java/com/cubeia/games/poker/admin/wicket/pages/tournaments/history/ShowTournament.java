@@ -76,7 +76,10 @@ public class ShowTournament extends BasePage {
             @Override
             protected void populateItem(Item<PlayerPosition> item) {
                 PlayerPosition position = item.getModelObject();
-                item.add(new BookmarkablePageLink<>("player", UserSummary.class));
+                PageParameters userId = new PageParameters().add("userId", position.getPlayerId());
+                BookmarkablePageLink<Object> player = new BookmarkablePageLink<>("player", UserSummary.class, userId);
+                player.add(new Label("playerId",position.getPlayerId()));
+                item.add(player);
                 item.add(new Label("position", String.valueOf(position.getPosition())));
                 item.add(new Label("payout",position.getPayout().toPlainString()));
             }
