@@ -1,0 +1,241 @@
+================================================================================
+               CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+================================================================================
+
+
+PREREQUISITES
+=============
+
+* Java SDK 1.7
+* Maven 3.0.4 or higher
+
+
+IMPORTANT
+=========
+
+Please follow this sequence *strictly*, otherwise you will run into a cascade of
+problems. If you ask for support on the forum, please mention which steps
+succeeded so far, and with which step you got the problem.
+
+You will need half an hour for the first steps, but some hours (or days) to
+complete until the integration of Cubeia Network.
+
+Finally: don't forget that Cubeia Poker is under development. This alone makes
+things sometimes very difficult, especially when updating to newer versions.
+
+
+BASICS
+======
+
+* Ensure that maven has enough memory reserved, otherwise you will possibly run
+into annoying "java.lang.OutOfMemoryError: PermGen space". On linux just do:
+
+export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
+
+* Avoid using an IDE if you are not familiar with one, as this can introduce
+additional barriers. Use the command-line and simple editors. Later, when you
+feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
+IntelliJ, etc.).
+
+* It is assumed that you have already fetched the code from:
+
+  https://bitbucket.org/cubeia/cubeia-poker/overview
+
+ideally via mercurial, or via download.
+
+
+
+QUICK-START
+================================================================================
+
+mvn clean package
+cd  system/simple
+mvn firebase:run
+
+http://localhost:8181 - CLIENT
+
+There is no user registration at this point. Use any name, and the password
+should be an integer > 1000 (e.g.: test/1001). Open a 2nd browser to sit with
+a 2nd player to make a quick test.
+
+
+http://localhost:8081 - BOTS (to get some opponents)
+
+The default values will create 100 bots, just press OK button. You should see
+within the lobby that tables are getting players. Join one or more tables
+and check the game.
+
+After this, you can start tournament bots, and join a tournament.
+
+
+http://localhost:8088 - ADMIN
+
+You can see the functionality, but most of it is not usable. To
+make the Poker Admin functional, go on with the next steps, which will allow you
+to manages the poker-game (timings, tables, tournaments etc.).
+
+
+DATABASES
+================================================================================
+
+MYSQL DB
+========
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/jetty-env.xml
+
+A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
+mysql command-line, or execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/initdb.sql;
+
+
+MONGO DB
+========
+
+Optionally: for hand histories and tournament histories, create a mongodb
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/admin.properties
+
+
+CONFIG
+======
+
+within file:
+
+./system/uar/src/test/resources/firebase/conf/cluster.props
+
+change "use-mock-integrations=true"
+to     "use-mock-integrations=false"
+
+This will disable the use of the predefined test (mock) tables and tournaments,
+thus you can use your own.
+
+Stop and start the poker game with 
+
+mvn firebase:run -Dhibernate.hbm2ddl.auto=create
+
+the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
+of the initial data. Please take care when restarting, as this will overwrite
+any existing data.
+
+
+CREATE TABLE AND TOURNAMET TEMPLATES
+====================================
+
+Create a Table Template, which should result in tables showing up in the lobby.
+The names for the tables are picked up from a list.
+
+Now you can create a simple Sit&Go, which should show up in the lobby.
+
+Last, create a Scheduled Tournament template.
+
+
+
+USER, ACCOUNT AND OPERATOR MANAGEMENT
+================================================================================
+
+OPERATOR
+========
+
+Within the Poker Admin, create an Operator with the ID 1
+
+CURRENCY & ACCOUNTS
+===================
+
+From within the mysql cmd-line, execute:
+
+mysql> use wallet_service; source ./backoffice/poker-admin/wallet.sql;
+
+This will create EUR currency and the 3 related system accounts.
+
+
+CREATE USERS & BOTS
+===================
+
+Create some users. Username, password and Operator ID (1) is enough data.
+
+Alternatively, you can use the user-creator tool, which will
+add an account with some cash for the created user.
+
+./tools/user-creator/README.TXT
+
+
+BOTS
+====
+
+Bots are like other users, so if you want to use the bots in an integrated 
+system, you have to create accounts for them, too.
+
+
+INTEGRATION BUILD
+=================
+
+Τhe default build of the poker-server results in a system with mock-services
+(or mock-integrations). This means that there is no reall user and account
+management.
+
+In order to build & start a poker system which integrates fully:
+
+mvn clean package -Puse-integrations
+cd  system/simple
+mvn firebase:run
+
+You now login with the user credentials created earlier.
+
+
+FULL REBUILD
+============
+
+After source code updates via
+
+hg pull -u
+
+in the root directory, build all relevant sources in one pass with
+
+mvn clean package install -U -Puse-integrations
+
+The "-U" flag ensures that dependencies are updated (important when sources are
+under development).
+
+
+
+ADVANCED STEPS
+================================================================================
+
+FIREBASE
+========
+
+Firebase was fetched during the build. You can start the poker-server directly
+by starting firebase from within
+
+./system/simple/target/firebase-run/firebase-<version>-CE
+
+This location (the "target" folder) is overwritten by a clean build (mvn clean).
+
+Once your poker-system runs fine, you can copy the firebase folder to another
+location. If your poker directory resides in e.g. mycubeia/poker, you could copy
+firebase to mycubeia/firebase.
+
+In this case, you either have to copy new versions of the poker-uar.uar into the
+firebase/game/deploy directory, or you have to make a symbolic link. Remember to
+verify the configuration files (new files or new configuration data).
+
+
+USER REGISTRATION
+================= 
+
+At this point, there is not user registration available. This is be-
+cause Cubeia has decided to not provide any public-facing websites / code (e.g.
+where users can register themselves).
+
+Edit the OPERATOR 1 to setup links to the website (e.g. wordpress site) you 
+want to integrate).
+
+
+PRODUCTION SETUP
+================================================================================
+
+See ./PRODUCTION.TXT for some basic instructions.
+
