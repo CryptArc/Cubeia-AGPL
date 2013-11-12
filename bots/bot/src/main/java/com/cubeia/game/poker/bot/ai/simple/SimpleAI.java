@@ -149,7 +149,7 @@ public class SimpleAI implements PokerAI {
         }
         
         if (strategy == Strategy.NEUTRAL) {
-            if (prob(60-amountModifier*2+aggression/4) && hasPlayerAction(CALL, request)) {
+            if (prob(70-amountModifier*2+aggression/4) && hasPlayerAction(CALL, request)) {
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 
@@ -175,7 +175,7 @@ public class SimpleAI implements PokerAI {
                 playerAction = getPlayerAction(BET, request);
                 betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
-            } else if (prob(90-amountModifier) && hasPlayerAction(CALL, request) && !bluff) { 
+            } else if (prob(94-amountModifier) && hasPlayerAction(CALL, request) && !bluff) { 
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 

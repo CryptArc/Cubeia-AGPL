@@ -22,10 +22,11 @@ Poker.BlindsActions = Class.extend({
     init : function(view,tableId,actionCallback,tournamentTable) {
         this.actionCallback = actionCallback;
         this.noMoreBlinds = new Poker.CheckboxAction(view,".no-more-blinds",false);
+        this.waitForBigBlind = new Poker.CheckboxAction(view,".wait-for-big-blind",true);
         if(tournamentTable == true) {
             this.noMoreBlinds.disable();
+            this.waitForBigBlind.disable();
         }
-        this.waitForBigBlind = new Poker.CheckboxAction(view,".wait-for-big-blind",true);
         this.tableId = tableId;
     },
 
