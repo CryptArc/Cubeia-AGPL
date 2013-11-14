@@ -45,13 +45,15 @@ public class ShutdownSTM extends AbstractPokerGameSTM {
 
     @Override
     public boolean act(PokerAction action) {
-        log.warn("table {} is shut down, dropping incoming action: {}", context.getTableId(), action);
+        int tableId = context != null ? context.getTableId() : -1;
+        log.warn("table {} is shut down, dropping incoming action: {}", tableId, action);
         return false;
     }
 
     @Override
     public void timeout() {
-        log.warn("table {} is shut down, dropping incoming timeout", context.getTableId());
+        int tableId = context != null ? context.getTableId() : -1;
+        log.warn("table {} is shut down, dropping incoming timeout", tableId);
     }
 
 }
