@@ -129,6 +129,9 @@ public class MapTableNameManager implements TableNameManager {
     private List<String> tryReadFromSystemProperty() {
         String name = null;
         String fileName = System.getProperty("table.names");
+        if(fileName==null || fileName.length()==0) {
+            return null;
+        }
         InputStream in = null;
         try {
             in = new FileInputStream(new File(fileName));
