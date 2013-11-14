@@ -28,6 +28,8 @@ public class DiceArenaGroupConfig implements BotGroupConfig {
     private static final int DA_MAX_LENGTH = 12;
 
     private static transient Logger log = Logger.getLogger(DiceArenaGroupConfig.class);
+    
+	private String currency;
 
     public String createBotScreenName(int id) {
         String s = "Bot_" + id;
@@ -56,4 +58,14 @@ public class DiceArenaGroupConfig implements BotGroupConfig {
         log.debug("Not joinable table: " + table);
         return false;
     }
+
+	@Override
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	@Override
+	public String getCurrency() {
+		return currency;
+	}
 }
