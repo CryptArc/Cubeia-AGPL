@@ -17,10 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -103,11 +100,18 @@ public class MapTableNameManager implements TableNameManager {
     }
 
     private void initNamesFromClassPath() {
-        log.info("Trying to read table names from file on class path: " + listName);
-        List<String> names = tryRead(listName, false);
+        List<String> names = null;
+
+        names = tryReadFromSystemProperty();
+
+        if(names == null ) {
+            log.info("Trying to read table names from file on class path: " + listName);
+            names = tryReadFromClasspath(listName, false);
+        }
+
         if (names == null) {
             log.info("Could not find '" + listName + "' falling back on default names");
-            names = tryRead(DEFAULT_TABLE_NAMES, true);
+            names = tryReadFromClasspath(DEFAULT_TABLE_NAMES, true);
         }
         int count = 0;
         for (String name : names) {
@@ -117,8 +121,24 @@ public class MapTableNameManager implements TableNameManager {
         log.info("Initiated with " + count + " table names");
     }
 
-    private List<String> tryRead(String name, boolean required) {
+    private List<String> tryReadFromClasspath(String name, boolean required) {
         InputStream in = getClass().getClassLoader().getResourceAsStream(name);
+        return readFile(name, required, in);
+    }
+
+    private List<String> tryReadFromSystemProperty() {
+        String name = null;
+        String fileName = System.getProperty("table.names");
+        InputStream in = null;
+        try {
+            in = new FileInputStream(new File(fileName));
+        } catch (FileNotFoundException e) {
+            log.info("File: " + fileName + " not found using default");
+            return null;
+        }
+        return readFile(name, false, in);
+    }
+    private List<String> readFile(String name, boolean required, InputStream in) {
         if (in == null) {
             if (required) {
                 throw new IllegalStateException("Could not find default table file: " + name);
