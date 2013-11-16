@@ -69,6 +69,8 @@
     <script type="text/javascript" src="${cp}/js/base/ui/NotificationsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/AchievementManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/communication/achievement/AchievementPacketHandler.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/TimeStatistics.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/communication/PingManager.js"></script>
 
 
     <script src="${cp}/js/base/communication/poker-game/ActionUtils.js" type="text/javascript"></script>

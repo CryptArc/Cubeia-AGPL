@@ -20,6 +20,9 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+
+
+
         //this
         var templateManager = new Poker.TemplateManager();
 
@@ -218,6 +221,14 @@ Poker.AppCtx = Class.extend({
          */
         this.getAchievementManager = function() {
             return achievementManager;
+        }
+
+        var pingManager = new Poker.PingManager();
+        /**
+         * @return {Poker.PingManager}
+         */
+        this.getPingManager = function() {
+            return pingManager;
         }
 
     }

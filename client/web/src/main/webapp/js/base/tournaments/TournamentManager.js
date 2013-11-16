@@ -131,7 +131,6 @@ Poker.TournamentManager = Class.extend({
         this.handlePayoutInfo(tournament,tournamentData.payoutInfo);
         $.extend(tournamentData.tournamentInfo, { prizePool: tournamentData.payoutInfo.prizePool });
         this.handleTournamentInfo(tournament, tournamentData.tournamentInfo);
-        console.log("tournament data", tournamentData);
         if (this.isTournamentRunning(tournamentData.tournamentInfo.tournamentStatus)) {
             this.handleTournamentStatistics(tournament, tournamentData.tournamentStatistics);
         } else {
@@ -175,8 +174,6 @@ Poker.TournamentManager = Class.extend({
      * @param {com.cubeia.games.poker.io.protocol.TournamentInfo} info
      */
     handleTournamentInfo : function(tournament, info) {
-        console.log("registered tournaments " + this.registeredTournaments.contains(tournament.id));
-        console.log(this.registeredTournaments);
         var view = Poker.AppCtx.getViewManager().findViewByTournamentId(tournament.id);
         if(view!=null){
             view.updateName(info.tournamentName);
@@ -280,7 +277,6 @@ Poker.TournamentManager = Class.extend({
     onBuyInInfo : function(tournamentId, buyIn, fee, currency, balanceInWallet, sufficientFunds) {
         console.log("on buy info " + tournamentId);
         var tournament = this.getTournamentById(tournamentId);
-        console.log(tournament);
         if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
         } else {

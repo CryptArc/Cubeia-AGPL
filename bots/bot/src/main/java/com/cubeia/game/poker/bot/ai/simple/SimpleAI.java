@@ -9,6 +9,8 @@ import static com.cubeia.games.poker.io.protocol.Enums.ActionType.FOLD;
 import static com.cubeia.games.poker.io.protocol.Enums.ActionType.RAISE;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -149,7 +151,7 @@ public class SimpleAI implements PokerAI {
         }
         
         if (strategy == Strategy.NEUTRAL) {
-            if (prob(60-amountModifier*2+aggression/4) && hasPlayerAction(CALL, request)) {
+            if (prob(70-amountModifier*2+aggression/4) && hasPlayerAction(CALL, request)) {
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 
@@ -175,7 +177,7 @@ public class SimpleAI implements PokerAI {
                 playerAction = getPlayerAction(BET, request);
                 betAmount = calculateBet(playerAction, request, strategy).multiply(new BigDecimal(betModifier));
 
-            } else if (prob(90-amountModifier) && hasPlayerAction(CALL, request) && !bluff) { 
+            } else if (prob(94-amountModifier) && hasPlayerAction(CALL, request) && !bluff) { 
                 playerAction = getPlayerAction(CALL, request);
                 betAmount = new BigDecimal(playerAction.minAmount);
 
@@ -219,7 +221,7 @@ public class SimpleAI implements PokerAI {
         	BigDecimal callAmount = new BigDecimal(action.minAmount);
         	BigDecimal bigBlind = state.getBigBlind();
         	if (bigBlind != null && bigBlind.intValue() > 0) {
-            	return callAmount.divide(bigBlind).intValue();
+            	return callAmount.divide(bigBlind, new MathContext(2,RoundingMode.HALF_DOWN)).intValue();
             }
         }
 		return 1;
@@ -247,7 +249,7 @@ public class SimpleAI implements PokerAI {
 		BigDecimal pot = new BigDecimal(request.currentPotSize);
 		BigDecimal bigBlind = state.getBigBlind();
 		if (bigBlind != null && bigBlind.intValue() > 0) {
-			return pot.divide(bigBlind).divide(new BigDecimal(10));
+			return pot.divide(bigBlind,2,RoundingMode.DOWN).divide(new BigDecimal(10),2,RoundingMode.DOWN);
 		} 
 		return new BigDecimal(0);
 	}
@@ -260,7 +262,7 @@ public class SimpleAI implements PokerAI {
      * Real Probability In Percent = probability + aggression.
      * 
      * 
-     * @param i
+     * @param probability
      * @return
      */
     private boolean prob(int probability) {

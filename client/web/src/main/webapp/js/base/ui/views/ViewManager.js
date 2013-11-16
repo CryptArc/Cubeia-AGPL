@@ -39,6 +39,7 @@ Poker.ViewManager = Class.extend({
         this.activateView(this.loginView);
 
         var timer = null;
+
         $(window).resize(function(){
             if(timer!=null) {
                 clearTimeout(timer);

@@ -21,6 +21,8 @@ import com.cubeia.firebase.api.game.table.Table;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.*;
+
 import static junit.framework.Assert.assertEquals;
 
 public class MapTableNameManagerTest {
@@ -39,6 +41,54 @@ public class MapTableNameManagerTest {
         // remove and readd
         man.tableDestroyed(5); // B 2
         assertEquals("B 2", man.tableCreated(table(7)));
+    }
+
+    @Test
+    public void testSystemProperty() throws IOException {
+        File tempFile = File.createTempFile("test_name", "txt");
+        PrintWriter writer = new PrintWriter(new FileOutputStream(tempFile));
+        writer.println("Table 1");
+        writer.println("Table 2");
+        writer.println("Table 3");
+        writer.close();
+
+
+        System.setProperty("table.names",tempFile.getAbsolutePath());
+        TableNameManager man = new MapTableNameManager("test_table_names.txt", false);
+        // test 3 first
+        assertEquals("Table 1", man.tableCreated(table(1)));
+        assertEquals("Table 2", man.tableCreated(table(2)));
+        assertEquals("Table 3", man.tableCreated(table(3)));
+        // new 3 more
+        assertEquals("Table 1 2", man.tableCreated(table(4)));
+        assertEquals("Table 2 2", man.tableCreated(table(5)));
+        assertEquals("Table 3 2", man.tableCreated(table(6)));
+
+       tempFile.delete();
+    }
+
+    @Test
+    public void testInvalidSystemProperty() throws IOException {
+        File tempFile = File.createTempFile("test_name", "txt");
+        PrintWriter writer = new PrintWriter(new FileOutputStream(tempFile));
+        writer.println("Table 1");
+        writer.println("Table 2");
+        writer.println("Table 3");
+        writer.close();
+
+
+        System.setProperty("table.names",tempFile.getAbsolutePath()+"abc");
+        TableNameManager man = new MapTableNameManager("test_table_names.txt", false);
+
+        // test 3 first
+        assertEquals("A", man.tableCreated(table(1)));
+        assertEquals("B", man.tableCreated(table(2)));
+        assertEquals("C", man.tableCreated(table(3)));
+        // new 3 more
+        assertEquals("A 2", man.tableCreated(table(4)));
+        assertEquals("B 2", man.tableCreated(table(5)));
+        assertEquals("C 2", man.tableCreated(table(6)));
+        tempFile.delete();
     }
 
     @Test
