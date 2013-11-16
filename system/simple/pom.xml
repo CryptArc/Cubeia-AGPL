@@ -16,12 +16,15 @@
      <build>
         <plugins>
             <plugin>
+                <!-- plugin setting are inherited from root pom -->                          
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
                 <version>${firebase.version}</version>
                 <configuration>
-                    <!-- override source specified in parent pom, point to the uar-module resources -->
-                    <overlaySourceDirectory>${basedir}/../uar/src/test/resources/firebase</overlaySourceDirectory>
+                    <!-- will copy files the standard way, so disable -->
+                    <overlaysEnabled>false</overlaysEnabled>
+                    <!-- keep original configuration -->
+                    <modifyLog4jConfiguration>false</modifyLog4jConfiguration>           
                 </configuration>
             </plugin>
         </plugins>
@@ -194,45 +197,29 @@
 
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
-                            <execution>
-                                <id>copy-network-datasources</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/game/deploy</outputDirectory>
-                                    <overwrite>true</overwrite>
-                                    <resources>
-                                        <resource>
-                                            <directory>../../backoffice/network/resources/</directory>
-                                            <includes>
-                                                <include>*-ds.xml</include>
-                                            </includes>
-                                        </resource>                                                                           
-                                    </resources>
-                                </configuration>
-                            </execution>
+                            
                             <execution>                            
-                                <id>copy-network-config</id>
+                                <id>copy-firebase-resources</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/conf</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/</outputDirectory>
                                     <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
-                                            <directory>../../backoffice/network/resources/</directory>
-                                            <includes>
-                                                <include>*.sql</include>
-                                                <include>*.properties</include>
-                                            </includes>
-                                        </resource>                                                                           
+                                            <!-- "inherit" firebase resources from parent-->
+                                            <directory>${basedir}/../uar/src/test/resources/firebase</directory>
+                                        </resource>
+                                        <resource>
+                                            <!-- override with the firebase dir of current module -->
+                                            <directory>${basedir}/resources/firebase</directory>
+                                        </resource>                                                                                                                   
                                     </resources>
                                 </configuration>
-                            </execution>                            
+                            </execution>                                                                             
+                                                                            
                         </executions>
                     </plugin>
                 </plugins>
