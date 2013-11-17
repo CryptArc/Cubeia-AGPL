@@ -41,95 +41,46 @@ IntelliJ, etc.).
 
   https://bitbucket.org/cubeia/cubeia-poker/overview
 
-ideally via mercurial, or via download.
+ideally via mercurial version-control, or via download.
 
-
+hg clone https://bitbucket.org/cubeia/cubeia-poker
 
 QUICK-START
 ================================================================================
 
+cd cubeia-poker
 mvn clean package
 cd  system/simple
-mvn firebase:run
-
-http://localhost:8181 - CLIENT
-
-There is no user registration at this point. Use any name, and the password
-should be an integer > 1000 (e.g.: test/1001). Open a 2nd browser to sit with
-a 2nd player to make a quick test.
-
-
-http://localhost:8081 - BOTS (to get some opponents)
-
-The default values will create 100 bots, just press OK button. You should see
-within the lobby that tables are getting players. Join one or more tables
-and check the game.
-
-After this, you can start tournament bots, and join a tournament.
-
-
-http://localhost:8088 - ADMIN
-
-You can see the functionality, but most of it is not usable. To
-make the Poker Admin functional, go on with the next steps, which will allow you
-to manages the poker-game (timings, tables, tournaments etc.).
-
-
-DATABASES
-================================================================================
-
-MYSQL DB
-========
-
-Mandatory: create a mysql database.
-the default configuration is: db: poker, user: poker, pass: poker
-to change: ./backoffice/poker-admin/src/test/resources/jetty-env.xml
-
-A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
-mysql command-line, or execute it, giving the full path, e.g. 
-
-mysql> source ./backoffice/poker-admin/initdb.sql;
-
-
-MONGO DB
-========
-
-Optionally: for hand histories and tournament histories, create a mongodb
-the default configuration is: db: poker, user: poker, pass: poker
-to change: ./backoffice/poker-admin/src/test/resources/admin.properties
-
-
-CONFIG
-======
-
-within file:
-
-./system/uar/src/test/resources/firebase/conf/cluster.props
-
-change "use-mock-integrations=true"
-to     "use-mock-integrations=false"
-
-This will disable the use of the predefined test (mock) tables and tournaments,
-thus you can use your own.
-
-Stop and start the poker game with 
-
 mvn firebase:run -Dhibernate.hbm2ddl.auto=create
 
 the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
 of the initial data. Please take care when restarting, as this will overwrite
 any existing data.
 
+http://localhost:8181 - CLIENT
 
-CREATE TABLE AND TOURNAMET TEMPLATES
-====================================
+There is no user registration at this point. Use any name, and the password
+should be an integer > 1000 (e.g.: test/1001).
+
+http://localhost:8088 - ADMIN
 
 Create a Table Template, which should result in tables showing up in the lobby.
-The names for the tables are picked up from a list.
+The names for the tables are picked up from a list. Join a table, and use a 2nd
+browser to sit with a 2nd player to make a quick test.
 
 Now you can create a simple Sit&Go, which should show up in the lobby.
 
 Last, create a Scheduled Tournament template.
+
+
+http://localhost:8081 - BOTS (to get some more opponents)
+
+The default values will create 100 bots, just press OK button. You should see
+within the lobby that tables are getting players. Join one or more tables
+and check the game.
+
+After this, you can start tournament bots, asking them to leave one seat open,
+thus you can join a tournament.
 
 
 
@@ -141,23 +92,14 @@ OPERATOR
 
 Within the Poker Admin, create an Operator with the ID 1
 
-CURRENCY & ACCOUNTS
-===================
-
-From within the mysql cmd-line, execute:
-
-mysql> use wallet_service; source ./backoffice/poker-admin/wallet.sql;
-
-This will create EUR currency and the 3 related system accounts.
-
 
 CREATE USERS & BOTS
 ===================
 
 Create some users. Username, password and Operator ID (1) is enough data.
 
-Alternatively, you can use the user-creator tool, which will
-add an account with some cash for the created user.
+You can use the user-creator tool, which will add an account with some cash for 
+the created user.
 
 ./tools/user-creator/README.TXT
 
@@ -172,12 +114,20 @@ system, you have to create accounts for them, too.
 INTEGRATION BUILD
 =================
 
-Τhe default build of the poker-server results in a system with mock-services
-(or mock-integrations). This means that there is no reall user and account
+The default build of the poker-system results in a system with mock-services
+(or mock-integrations). This means that there is no real user and account
 management.
 
 In order to build & start a poker system which integrates fully:
 
+
+MONGO DB
+========
+
+Mandatory: for hand histories and tournament histories, create a mongodb
+the default configuration is: db: poker, user: poker, pass: poker
+
+cd cubeia-poker
 mvn clean package -Puse-integrations
 cd  system/simple
 mvn firebase:run
@@ -212,7 +162,8 @@ by starting firebase from within
 
 ./system/simple/target/firebase-run/firebase-<version>-CE
 
-This location (the "target" folder) is overwritten by a clean build (mvn clean).
+This location (the "target" folder) is overwritten by a clean build (mvn clean),
+or when calling firebase:run.
 
 Once your poker-system runs fine, you can copy the firebase folder to another
 location. If your poker directory resides in e.g. mycubeia/poker, you could copy
@@ -221,6 +172,47 @@ firebase to mycubeia/firebase.
 In this case, you either have to copy new versions of the poker-uar.uar into the
 firebase/game/deploy directory, or you have to make a symbolic link. Remember to
 verify the configuration files (new files or new configuration data).
+
+
+DATABASES
+================================================================================
+
+The simple system uses an embedded H2 database, enabling this way a simplified
+setup. You may want to change to a mysql database.
+
+MYSQL DB
+========
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+
+A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
+mysql command-line, or execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/initdb.sql;
+
+This will create 4 mysql databases (poker,accounting, user, operator).
+
+You have to change the deployed datasources within:
+
+./resources/firebase/conf/game/deploy
+
+
+
+CONFIG
+======
+
+within file:
+
+.system/simple/resources/firebase/conf/cluster.props
+
+change "use-mock-integrations=false"
+to     "use-mock-integrations=true"
+
+This will enable the use of the predefined test (mock) tables and tournaments,
+thus you can trouble-shoot your simple system. If it works with mock, then
+something with your databases is wrong.
+
 
 
 USER REGISTRATION
