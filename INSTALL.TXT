@@ -87,6 +87,35 @@ thus you can join a tournament.
 USER, ACCOUNT AND OPERATOR MANAGEMENT
 ================================================================================
 
+The default build of the poker-system results in a system with mock-services
+(or mock-integrations). This means that there is no real user and account
+management.
+
+In order to build & start a poker system which integrates fully:
+
+MONGO DB
+========
+
+Mandatory: for hand histories and tournament histories, install mongodb on your
+system.
+
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
+http://www.mongodb.org/downloads
+
+Install and ensure to have mongod running.
+
+The database will be created by the software, default configuration is: 
+db: poker, user: poker, pass: poker
+
+INTEGRATION BUILD
+=================
+
+cd cubeia-poker
+mvn clean package -Puse-integrations
+cd  system/simple
+mvn firebase:run
+
+
 OPERATOR
 ========
 
@@ -103,36 +132,10 @@ the created user.
 
 ./tools/user-creator/README.TXT
 
+You can now login with the user credentials created.
 
-BOTS
-====
-
-Bots are like other users, so if you want to use the bots in an integrated 
+BOTS: are like other users, so if you want to use the bots in an integrated 
 system, you have to create accounts for them, too.
-
-
-INTEGRATION BUILD
-=================
-
-The default build of the poker-system results in a system with mock-services
-(or mock-integrations). This means that there is no real user and account
-management.
-
-In order to build & start a poker system which integrates fully:
-
-
-MONGO DB
-========
-
-Mandatory: for hand histories and tournament histories, create a mongodb
-the default configuration is: db: poker, user: poker, pass: poker
-
-cd cubeia-poker
-mvn clean package -Puse-integrations
-cd  system/simple
-mvn firebase:run
-
-You now login with the user credentials created earlier.
 
 
 FULL REBUILD
@@ -191,7 +194,7 @@ mysql command-line, or execute it, giving the full path, e.g.
 
 mysql> source ./backoffice/poker-admin/initdb.sql;
 
-This will create 4 mysql databases (poker,accounting, user, operator).
+This will create 4 mysql databases (poker, accounting, user, operator).
 
 You have to change the deployed datasources within:
 
