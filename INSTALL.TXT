@@ -84,7 +84,7 @@ thus you can join a tournament.
 
 
 
-USER, ACCOUNT AND OPERATOR MANAGEMENT
+INTEGRATED (USER, ACCOUNT AND OPERATOR MANAGEMENT)
 ================================================================================
 
 The default build of the poker-system results in a system with mock-services
@@ -102,10 +102,8 @@ system.
 http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
 http://www.mongodb.org/downloads
 
-Install and ensure to have mongod running.
-
-The database will be created by the software, default configuration is: 
-db: poker, user: poker, pass: poker
+Ensure to have mongod running. The database will be created by the software, 
+default configuration is: db: poker, user: poker, pass: poker
 
 INTEGRATION BUILD
 =================
@@ -114,12 +112,6 @@ cd cubeia-poker
 mvn clean package -Puse-integrations
 cd  system/simple
 mvn firebase:run
-
-
-OPERATOR
-========
-
-Within the Poker Admin, create an Operator with the ID 1
 
 
 CREATE USERS & BOTS
