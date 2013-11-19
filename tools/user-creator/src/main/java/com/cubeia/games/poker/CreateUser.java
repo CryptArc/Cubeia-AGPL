@@ -88,9 +88,20 @@ public class CreateUser {
 	
 	@Argument(alias="h", description="hash bot password with md5, defaults to false", required=false)
 	private Boolean hashPassword = false;
+    
+	@Argument(alias="r", description="repeat n times (Username_1, Username_2, ...)", required=false)
+	private Long repeat = 1L;
+    
+	@Argument(alias="s", description="start id, used as password and appendix (Username_1, Username_2, ...)", required=false)
+	private Long start = 1L;      
+    
+	@Argument(alias="d", description="use development-ports (9090,9091), defaults to false", required=false)
+	private Boolean devports = false;      
+    
 	
-	public void execute() throws Exception {
-		long userId = tryCreateUser();
+
+    private void createUser() throws Exception {
+        long userId = tryCreateUser();
 		System.out.println("User " + userId + " created.");
 		long accountId = tryCreateAccounts(userId);
 		System.out.println("User " + userId + " get main account " + accountId);
@@ -98,6 +109,27 @@ public class CreateUser {
 		if(transactionId != -1) {
 			System.out.println("User " + userId + " got initial balance " + balance);
 		}
+    }
+    
+	public void execute() throws Exception {
+        if (devports) {
+            System.out.println("Set User service on port 9090, wallet on 9091");
+            userService = "http://localhost:9090/user-service-rest/rest";
+            walletService = "http://localhost:9091/wallet-service-rest/rest";
+        }
+        
+        String usernameBase = username;
+        if (repeat == 1) {
+            createUser();
+        } else {
+            System.out.println("Creating " + repeat + " users with username " + username + "_<n>.");
+            System.out.println("Provided password ignored. Appended number becomes password.");
+            for (Long i = start; i <= repeat; i++) {
+                username = usernameBase + "_" + i;
+                password = Long.toString(i);
+                createUser();
+            }
+        }
 	}
 	
 	private long tryInitialAmount(long accountId, long userId) throws Exception {

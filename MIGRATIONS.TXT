@@ -4,7 +4,8 @@ MIGRATIONS:
 Date        Change                                                                  
             Recommended actions
 --------------------------------------------------------------------------------
-1013-10-18  admin.properties, introduced two more properties:
+2013-11-19  user-creator, created executable jar is now "user-creator.jar"
+2013-10-18  admin.properties, introduced two more properties:
                 hibernate.hbm2ddl.auto
                 hibernate.hbm2ddl.import_files        
 2013-07-23  tools/user-creator "mvn package" creates the jar-with-dependencies

@@ -8,6 +8,7 @@ PREREQUISITES
 
 * Java SDK 1.7
 * Maven 3.0.4 or higher
+* Mercurial 
 
 
 IMPORTANT
@@ -37,17 +38,11 @@ additional barriers. Use the command-line and simple editors. Later, when you
 feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
 IntelliJ, etc.).
 
-* It is assumed that you have already fetched the code from:
-
-  https://bitbucket.org/cubeia/cubeia-poker/overview
-
-ideally via mercurial version-control, or via download.
-
-hg clone https://bitbucket.org/cubeia/cubeia-poker
 
 QUICK-START
 ================================================================================
 
+hg clone https://bitbucket.org/cubeia/cubeia-poker
 cd cubeia-poker
 mvn clean package
 cd  system/simple
@@ -120,14 +115,19 @@ CREATE USERS & BOTS
 Create some users. Username, password and Operator ID (1) is enough data.
 
 You can use the user-creator tool, which will add an account with some cash for 
-the created user.
+the created user. The following will create 10 users:
 
-./tools/user-creator/README.TXT
+  cd tools/user-creator/target
+  java -jar user-creator.jar -u Test -p 1 -o 1 -r 10
 
 You can now login with the user credentials created.
 
 BOTS: are like other users, so if you want to use the bots in an integrated 
 system, you have to create accounts for them, too.
+
+  java -jar user-creator.jar -u Bot -p 1 -o 0 -r 100
+
+For more info on the user-creator tool, see the README.TXT.
 
 
 FULL REBUILD

@@ -62,6 +62,8 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                            <finalName>user-creator</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>                            
                         </configuration>
                     </execution>
                 </executions>     
