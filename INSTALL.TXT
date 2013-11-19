@@ -184,7 +184,7 @@ the default configuration is: db: poker, user: poker, pass: poker
 A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
 mysql command-line, or execute it, giving the full path, e.g. 
 
-mysql> source ./backoffice/poker-admin/initdb.sql;
+mysql> source ./backoffice/poker-admin/src/sql/initdb.sql;
 
 This will create 4 mysql databases (poker, accounting, user, operator).
 
