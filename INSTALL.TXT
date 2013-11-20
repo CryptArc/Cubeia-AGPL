@@ -1,0 +1,228 @@
+================================================================================
+               CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+================================================================================
+
+
+PREREQUISITES
+=============
+
+* Java SDK 1.7
+* Maven 3.0.4 or higher
+* Mercurial 
+
+
+IMPORTANT
+=========
+
+Please follow this sequence *strictly*, otherwise you will run into a cascade of
+problems. If you ask for support on the forum, please mention which steps
+succeeded so far, and with which step you got the problem.
+
+You will need half an hour for the first steps, but some hours (or days) to
+complete until the integration of Cubeia Network.
+
+Finally: don't forget that Cubeia Poker is under development. This alone makes
+things sometimes very difficult, especially when updating to newer versions.
+
+
+BASICS
+======
+
+* Ensure that maven has enough memory reserved, otherwise you will possibly run
+into annoying "java.lang.OutOfMemoryError: PermGen space". On linux just do:
+
+export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
+
+* Avoid using an IDE if you are not familiar with one, as this can introduce
+additional barriers. Use the command-line and simple editors. Later, when you
+feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
+IntelliJ, etc.).
+
+
+QUICK-START
+================================================================================
+
+hg clone https://bitbucket.org/cubeia/cubeia-poker
+cd cubeia-poker
+mvn clean package
+cd  system/simple
+mvn firebase:run -Dhibernate.hbm2ddl.auto=create
+
+the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
+of the initial data. Please take care when restarting, as this will overwrite
+any existing data.
+
+http://localhost:8181 - CLIENT
+
+There is no user registration at this point. Use any name, and the password
+should be an integer > 1000 (e.g.: test/1001).
+
+http://localhost:8088 - ADMIN
+
+Create a Table Template, which should result in tables showing up in the lobby.
+The names for the tables are picked up from a list. Join a table, and use a 2nd
+browser to sit with a 2nd player to make a quick test.
+
+Now you can create a simple Sit&Go, which should show up in the lobby.
+
+Last, create a Scheduled Tournament template.
+
+
+http://localhost:8081 - BOTS (to get some more opponents)
+
+The default values will create 100 bots, just press OK button. You should see
+within the lobby that tables are getting players. Join one or more tables
+and check the game.
+
+After this, you can start tournament bots, asking them to leave one seat open,
+thus you can join a tournament.
+
+
+
+INTEGRATED (USER, ACCOUNT AND OPERATOR MANAGEMENT)
+================================================================================
+
+The default build of the poker-system results in a system with mock-services
+(or mock-integrations). This means that there is no real user and account
+management.
+
+In order to build & start a poker system which integrates fully:
+
+MONGO DB
+========
+
+Mandatory: for hand histories and tournament histories, install mongodb on your
+system.
+
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
+http://www.mongodb.org/downloads
+
+Ensure to have mongod running. The database will be created by the software, 
+default configuration is: db: poker, user: poker, pass: poker
+
+INTEGRATION BUILD
+=================
+
+cd cubeia-poker
+mvn clean package -Puse-integrations
+cd  system/simple
+mvn firebase:run
+
+
+CREATE USERS & BOTS
+===================
+
+Create some users. Username, password and Operator ID (1) is enough data.
+
+You can use the user-creator tool, which will add an account with some cash for 
+the created user. The following will create 10 users:
+
+  cd tools/user-creator/target
+  java -jar user-creator.jar -u Test -p 1 -o 1 -r 10
+
+You can now login with the user credentials created.
+
+BOTS: are like other users, so if you want to use the bots in an integrated 
+system, you have to create accounts for them, too.
+
+  java -jar user-creator.jar -u Bot -p 1 -o 0 -r 100
+
+For more info on the user-creator tool, see the README.TXT.
+
+
+FULL REBUILD
+============
+
+After source code updates via
+
+hg pull -u
+
+in the root directory, build all relevant sources in one pass with
+
+mvn clean package install -U -Puse-integrations
+
+The "-U" flag ensures that dependencies are updated (important when sources are
+under development).
+
+
+
+ADVANCED STEPS
+================================================================================
+
+FIREBASE
+========
+
+Firebase was fetched during the build. You can start the poker-server directly
+by starting firebase from within
+
+./system/simple/target/firebase-run/firebase-<version>-CE
+
+This location (the "target" folder) is overwritten by a clean build (mvn clean),
+or when calling firebase:run.
+
+Once your poker-system runs fine, you can copy the firebase folder to another
+location. If your poker directory resides in e.g. mycubeia/poker, you could copy
+firebase to mycubeia/firebase.
+
+In this case, you either have to copy new versions of the poker-uar.uar into the
+firebase/game/deploy directory, or you have to make a symbolic link. Remember to
+verify the configuration files (new files or new configuration data).
+
+
+DATABASES
+================================================================================
+
+The simple system uses an embedded H2 database, enabling this way a simplified
+setup. You may want to change to a mysql database.
+
+MYSQL DB
+========
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+
+A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
+mysql command-line, or execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/src/sql/initdb.sql;
+
+This will create 4 mysql databases (poker, accounting, user, operator).
+
+You have to change the deployed datasources within:
+
+./resources/firebase/conf/game/deploy
+
+
+
+CONFIG
+======
+
+within file:
+
+.system/simple/resources/firebase/conf/cluster.props
+
+change "use-mock-integrations=false"
+to     "use-mock-integrations=true"
+
+This will enable the use of the predefined test (mock) tables and tournaments,
+thus you can trouble-shoot your simple system. If it works with mock, then
+something with your databases is wrong.
+
+
+
+USER REGISTRATION
+================= 
+
+At this point, there is not user registration available. This is be-
+cause Cubeia has decided to not provide any public-facing websites / code (e.g.
+where users can register themselves).
+
+Edit the OPERATOR 1 to setup links to the website (e.g. wordpress site) you 
+want to integrate).
+
+
+PRODUCTION SETUP
+================================================================================
+
+See ./PRODUCTION.TXT for some basic instructions.
+
