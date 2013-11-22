@@ -147,6 +147,8 @@ Poker.CommunicationManager = Class.extend({
         if (useCometd) {
         	console.log("Using cometd transport");
             this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", false, function() {
+            	org.cometd.JSON.toJSON = JSON.stringify;
+            	org.cometd.JSON.fromJSON = JSON.parse;
                 var cometd = new org.cometd.Cometd();
                 cometd.registerTransport("long-polling", new org.cometd.LongPollingTransport());
                 return cometd
