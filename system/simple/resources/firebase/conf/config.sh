@@ -22,6 +22,9 @@
 # max java heap memory
 # export MAX_MEMORY=1024M
 
+# MaxPermSize (Permanent Generation Memory, PermGen) in megs
+export MAXPERMSIZE=256M
+
 # java GC setting
 # export GC_ARGUMENTS="-XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC"
 

@@ -20,8 +20,8 @@ for /R lib\common %%j in (*.jar) do SET CLASS_P=!CLASS_P!;%%j
 
 
 set JMX=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.port=8999 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false
-set MAXMEMORY=256M
-set MAXPERMSIZE=128M
+set MAXMEMORY=512M
+set MAXPERMSIZE=256M
 set MAIN_CLASS=com.game.server.bootstrap.Server
 
 java %JMX% %* -Djava.net.preferIPv4Stack=true -Xms%MAXMEMORY% -Xmx%MAXMEMORY% -XX:MaxPermSize=%MAXPERMSIZE% -XX:+UseParallelGC -classpath %CLASS_P% %MAIN_CLASS% -n singleton

@@ -46,6 +46,14 @@ if [ "${SILENT}" != "YES" ]; then
 fi
 export MEMORY=${MAX_MEMORY}
 
+# MaxPermSize (Permanent Generation Memory, PermGen) in megs
+if [ "${MAXPERMSIZE}" ]; then
+	export PERMSIZEARGS="-XX:MaxPermSize=${MAXPERMSIZE}"
+    if [ "${SILENT}" != "YES" ]; then
+	    echo "Using PERMSIZEARGS: ${PERMSIZEARGS}"
+    fi
+fi
+
 # Max startup/shutdown wait in seconds 
 if [ -z "${MAX_WAIT}" ]; then
 	MAX_WAIT=90
@@ -433,7 +441,7 @@ startserver()
 	if [ "${SILENT}" != "YES" ]; then	
 		echo "Starting ${SERVERDISPLAYNAME}"
 	fi
-	${BINARY} -server ${FIREBASE_OPTS} ${DEBUG} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} -classpath ${CLASSPATH} com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} >> "logs/stdout.txt" 2>> "logs/stderr.txt" &
+	${BINARY} -server ${FIREBASE_OPTS} ${DEBUG} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} ${PERMSIZEARGS} -classpath ${CLASSPATH} com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} >> "logs/stdout.txt" 2>> "logs/stderr.txt" &
 	SERVERPID=$!
 	echo $SERVERPID>bin/server.pid
 	waitforstartup $SERVERPID
@@ -455,7 +463,7 @@ runserver()
 	fi
 
 	echo "Running ${SERVERDISPLAYNAME}"
-	${BINARY} -server ${DEBUG} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} -classpath ${CLASSPATH} com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} 
+	${BINARY} -server ${DEBUG} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} ${PERMSIZEARGS} -classpath ${CLASSPATH} com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} 
 }
 
 stopserver()
