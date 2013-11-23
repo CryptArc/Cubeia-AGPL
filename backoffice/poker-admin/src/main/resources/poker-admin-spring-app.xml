@@ -21,7 +21,7 @@
   <!-- import_files sql is executed only when "auto" is set to "create" or "create-drop" -->
   <util:properties id="adminProperties">
        <prop key="hibernate.hbm2ddl.auto">update</prop>
-       <prop key="hibernate.hbm2ddl.import_files">/META-INF/sql/rakes.sql,/META-INF/sql/timings.sql,/META-INF/sql/payouts.sql,/META-INF/sql/blinds.sql</prop>
+       <prop key="hibernate.hbm2ddl.import_files">/META-INF/sql/rakes.sql,/META-INF/sql/timings.sql,/META-INF/sql/payouts.sql,/META-INF/sql/blinds.sql,/META-INF/sql/tables.sql,/META-INF/sql/tournaments.sql</prop>
        <prop key="db-type">jndi</prop>        
   </util:properties>    
 
