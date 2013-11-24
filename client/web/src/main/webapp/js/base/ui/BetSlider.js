@@ -227,7 +227,6 @@ Poker.BetSlider = Class.extend({
      * @param value - the value of the marker
      */
     addMarker : function(name, value) {
-        console.log("ADDING marker name = " + name + " val = " + value);
         value = parseFloat(value);
         if(value<=this.maxBet && value>=this.minBet && !this.closeValueExist(value)) {
             this.markers.push({name : name, value  : value})

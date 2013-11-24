@@ -74,25 +74,37 @@ Poker.TournamentManager = Class.extend({
             this.tournamentUpdater.start();
         }
     },
-    onRemovedFromTournament : function(tableId, playerId) {
-        this.tableManager.updatePlayerStatus(tableId,playerId,
-            Poker.PlayerTableStatus.TOURNAMENT_OUT);
-        this.tableManager.removePlayer(tableId, playerId);
+    onRemovedFromTournament : function(tableId,keepWatching) {
+        console.log("On removed from tournament table " + tableId + " keep watching = " + keepWatching);
+
+        this.tableManager.updatePlayerStatus(tableId,Poker.MyPlayer.id,Poker.PlayerTableStatus.TOURNAMENT_OUT);
+        this.tableManager.removePlayer(tableId, Poker.MyPlayer.id);
+
+        if(keepWatching==false) {
+            this.tableManager.leaveTable(tableId,false);
+        }
+
+
     },
     setTournamentTable : function(tournamentId, tableId) {
-        this.tournamentTables.put(tournamentId,tableId);
+        if(this.tournamentTables.contains(tournamentId)) {
+            this.tournamentTables.get(tournamentId).push(tableId);
+        } else {
+            var tables = [];
+            tables.push(tableId);
+            this.tournamentTables.put(tournamentId,tables);
+        }
     },
     isTournamentTable : function(tableId) {
         var tables = this.tournamentTables.values();
-        for(var i = 0; i<tables;i++) {
-            if(tables[i]===tableId) {
-                return true;
+        for(var i = 0; i<tables.length;i++) {
+            for(var j = 0; j<tables[i].length; j++) {
+                if(tables[i][j]===tableId) {
+                    return true;
+                }
             }
         }
         return false;
-    },
-    getTableByTournament : function(tournamentId) {
-        return this.tournamentTables.get(tournamentId);
     },
     removeTournament : function(tournamentId) {
         var tournament = this.tournaments.remove(tournamentId);
@@ -184,6 +196,7 @@ Poker.TournamentManager = Class.extend({
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(registered);
         } else if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(false);
+
         } else if (registered == true) {
             tournament.tournamentLayoutManager.setPlayerRegisteredState();
         } else {
@@ -275,7 +288,6 @@ Poker.TournamentManager = Class.extend({
         return status == running || status == onBreak || status == preparingForBreak;
     },
     onBuyInInfo : function(tournamentId, buyIn, fee, currency, balanceInWallet, sufficientFunds) {
-        console.log("on buy info " + tournamentId);
         var tournament = this.getTournamentById(tournamentId);
         if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
@@ -295,7 +307,6 @@ Poker.TournamentManager = Class.extend({
         }
     },
     openTournamentLobbyByName : function(name) {
-        console.log("open tournament with name",name);
         var request = new com.cubeia.games.poker.routing.service.io.protocol.TournamentIdRequest();
         request.name = name;
         var packet = new FB_PROTOCOL.ServiceTransportPacket();

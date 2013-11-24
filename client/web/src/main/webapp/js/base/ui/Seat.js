@@ -199,7 +199,8 @@ Poker.Seat = Class.extend({
         this.actionText.html("").hide();
         if (hand.id != Poker.Hand.UNKNOWN.id) {
             this.handStrength.visible = true;
-            this.handStrength.html(hand.text).show();
+            this.handStrength.removeClass("long").removeClass("short");
+            this.handStrength.addClass(hand.type).html(hand.text).show();
         }
 
     },

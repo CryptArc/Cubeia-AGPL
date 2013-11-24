@@ -19,9 +19,12 @@ Poker.TableManager = Class.extend({
      */
     tableNames : null,
 
+    tablesToBeRemoved : null,
+
     init : function() {
         this.tables = new Poker.Map();
         this.tableNames = new Poker.Map();
+        this.tablesToBeRemoved = [];
     },
     /**
      * Checks whether a table exist
@@ -63,6 +66,8 @@ Poker.TableManager = Class.extend({
             this.createTable(tableId, capacity, name , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
         }
+
+
     },
 
     onPlayerLoggedIn : function() {
@@ -309,6 +314,9 @@ Poker.TableManager = Class.extend({
     removePlayerNow : function(tableId,playerId) {
         console.log("removing player with playerId " + playerId)
         var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
         table.removePlayer(playerId);
         if(playerId == Poker.MyPlayer.id) {
             table.myPlayerSeat = null;
@@ -352,6 +360,9 @@ Poker.TableManager = Class.extend({
      */
     updatePlayerStatus : function(tableId, playerId, status, away, sitOutNextHand) {
         var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
         var p = table.getPlayerById(playerId);
         if(p==null) {
             throw "Player with id " + playerId + " not found";
@@ -498,16 +509,22 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onBettingRoundComplete();
 
     },
-    leaveTable : function(tableId) {
+    leaveTable : function(tableId,activatePrevious) {
+        if(typeof(activatePrevious)=="undefined") {
+            activatePrevious = true;
+        }
         console.log("REMOVING TABLE = " + tableId);
         var table = this.tables.remove(tableId);
         if (table == null) {
             console.log("table not found when removing " + tableId);
         } else {
-            table.getLayoutManager().onLeaveTableSuccess();
             table.leave();
         }
-        Poker.AppCtx.getViewManager().removeTableView(tableId);
+        Poker.AppCtx.getViewManager().removeTableView(tableId,activatePrevious);
+    },
+
+    scheduleRemoveTable : function(tableId) {
+        this.tablesToBeRemoved.push(tableId);
     },
     /**
      *

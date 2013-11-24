@@ -42,6 +42,8 @@
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/lib/org/cometd.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
     <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
@@ -1296,6 +1298,10 @@
             </div>
             <div class="row players-row tournament-section">
                 <div class="col-sm-7">
+                    <div class="tournament-statistics">
+                        <div>Remaining players: <span class="remaining-players"></span></div>
+
+                    </div>
                     <table class="table default-table player-list">
                         <thead>
                         <tr>

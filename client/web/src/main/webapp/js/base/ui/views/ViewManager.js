@@ -254,7 +254,10 @@ Poker.ViewManager = Class.extend({
      * Removes a table view and activates the previous view
      * @param tableId - the id for the table who's view to close
      */
-    removeTableView : function(tableId) {
+    removeTableView : function(tableId,activatePrevious) {
+        if(typeof(activatePrevious)=="undefined") {
+            activatePrevious = true;
+        }
         if(this.multiTableView!=null) {
             this.multiTableView.removeTableView(tableId);
             if(this.multiTableView.isEmpty()) {
@@ -263,7 +266,9 @@ Poker.ViewManager = Class.extend({
                 $(".multi-view-switch").addClass("multi");
                 $(".table-view-container").hide();
                 this.activeView = null;
-                this.safeActivateView(pv);
+                if(activatePrevious == true) {
+                    this.safeActivateView(pv);
+                }
             }
         } else {
             for(var i = 0; i<this.views.length; i++) {
@@ -271,10 +276,14 @@ Poker.ViewManager = Class.extend({
                 if(typeof(v.getTableId)!="undefined" && v.getTableId()==tableId) {
                     var pv = this.getPreviousView();
                     v.close();
-                    $(".table-view-container").hide();
+                    if(activatePrevious==true) {
+                        $(".table-view-container").hide();
+                    }
                     this.views.splice(i,1);
-                    this.activeView = null;
-                    this.safeActivateView(pv);
+                    if(activatePrevious==true) {
+                        this.activeView = null;
+                        this.safeActivateView(pv);
+                    }
 
                 }
             }

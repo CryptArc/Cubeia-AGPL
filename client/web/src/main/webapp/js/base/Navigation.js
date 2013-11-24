@@ -12,7 +12,6 @@ Poker.Navigation = Class.extend({
         this.mountHandler("tournament", this.handleTournament);
         this.mountHandler("table", this.handleTable);
         this.mountHandler("section", this.handleSection);
-        this.mountHandler("filter", this.handleFilter);
     },
     mountHandler : function(id,handler) {
         this.views.put(id,handler);
@@ -34,12 +33,15 @@ Poker.Navigation = Class.extend({
             if(viewName!=null) {
                 var handler = this.views.get(viewName);
                 if(handler!=null) {
+                    var removeHash = false;
                     if(arg != "undefined") {
-                        handler.apply(this, [arg]);
+                        removeHash = handler.apply(this, [arg]);
                     } else  {
-                        handler.call(this);
+                        removeHash = handler.call(this);
                     }
-                    document.location.hash="";
+                    if(removeHash==true) {
+                        document.location.hash="";
+                    }
                 }
             }
         }
@@ -62,17 +64,12 @@ Poker.Navigation = Class.extend({
     },
     handleSection : function(sectionName) {
         if(typeof(sectionName)=="undefined") {
-            return;
+            return true;
         }
         if (sectionName == "sitandgo") {
             setTimeout("$('#sitAndGoMenu').click()", 200);
         }
-    },
-    handleFilter : function(filter) {
-        if (filter == 'xoc') {
-            // Note, just doing this because I had problems with scoping the filter variable within the setTimeout call, feel free to improve.
-            setTimeout0("$('#filterButtonXOC').click()", 300);
-        }
+        return false;
     }
 
 });

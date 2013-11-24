@@ -141,7 +141,22 @@ Poker.CommunicationManager = Class.extend({
 
 
         console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
-        this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
+        
+        var useCometd = $.url().param("cometd") != undefined;
+        
+        if (useCometd) {
+        	console.log("Using cometd transport");
+            this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", false, function() {
+            	org.cometd.JSON.toJSON = JSON.stringify;
+            	org.cometd.JSON.fromJSON = JSON.parse;
+                var cometd = new org.cometd.Cometd();
+                cometd.registerTransport("long-polling", new org.cometd.LongPollingTransport());
+                return cometd
+            });
+        } else {
+        	console.log("Using websocket transport");
+           this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
+        }
     },
 
     /**

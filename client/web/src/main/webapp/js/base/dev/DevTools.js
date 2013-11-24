@@ -10,7 +10,7 @@ Poker.DevTools = Class.extend({
     mockEventManager : null,
     variant : null,
     TEXAS_HOLDEM : { numCards : 2, id : 0},
-    capacity : 2,
+    capacity : 10,
 
     init : function() {
         var self = this;
@@ -65,7 +65,7 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Add players",function(){
                 for(var i = 0; i<capacity; i++) {
-                    self.addPlayer(i,i,"CoolPlayer"+i);
+                    self.addPlayer(i,i,"Cool_P2_layerLongName"+i);
                 }
             })
         );
@@ -75,7 +75,6 @@ Poker.DevTools = Class.extend({
                 bl.bigBlind = "1";
                 bl.smallBlind = "0.5";
                 bl.isBreak = false;
-                var bs =
                 self.tableManager.notifyGameStateUpdate(self.tableId,10, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT,self.variant.id,null);
             }));
         this.mockEventManager.addEvent(
@@ -210,7 +209,7 @@ Poker.DevTools = Class.extend({
             var bestHands = [];
 
             var bh = new com.cubeia.games.poker.io.protocol.BestHand();
-            bh.handType =  com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD;
+            bh.handType =  com.cubeia.games.poker.io.protocol.HandTypeEnum.THREE_OF_A_KIND;
             bh.player = 1;
             bh.cards = [self.getCard(1,"s"),self.getCard(2,"d")];
             bestHands.push(bh);

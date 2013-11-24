@@ -17,9 +17,6 @@ Poker.PokerRequestHandler = Class.extend({
         this.tableManager = Poker.AppCtx.getTableManager();
     },
     onMyPlayerAction : function (actionType, amount) {
-        console.log("ON my player action");
-        console.log(actionType);
-        console.log(amount);
         var tableRequestHandler = new Poker.TableRequestHandler(this.tableId);
         if (actionType.id == Poker.ActionType.JOIN.id) {
             tableRequestHandler.joinTable();
@@ -73,7 +70,6 @@ Poker.PokerRequestHandler = Class.extend({
         this.sendGameTransportPacket(buyInRequest);
     },
     requestBuyInInfo : function() {
-        console.log("REQUEST BUY-IN INFO!");
         var buyInInfoRequest = new com.cubeia.games.poker.io.protocol.BuyInInfoRequest();
         this.sendGameTransportPacket(buyInInfoRequest);
 

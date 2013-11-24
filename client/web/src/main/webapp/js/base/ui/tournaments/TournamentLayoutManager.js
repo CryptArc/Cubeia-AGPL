@@ -109,13 +109,10 @@ Poker.TournamentLayoutManager = Class.extend({
         this.viewElement.find(".tournament-info").html(infoTemplate.render(info));
 
         if(info.sitAndGo==false) {
-            console.log(this.viewElement);
-            console.log(this.viewElement.find(".tournament-start-date"));
             var m = moment(parseInt(info.startTime));
             this.viewElement.find(".tournament-start-date").html(m.format("lll") + " ("+ m.fromNow()+")");
         }
 
-        console.log("INFO", info);
         if(info.description!=null && info.description!=""){
             this.viewElement.find(".tournament-description").html(info.description);
         } else {
@@ -128,11 +125,16 @@ Poker.TournamentLayoutManager = Class.extend({
 
     },
     updateTournamentStatistics : function(statistics) {
-        var statsTemplate = this.templateManager.getRenderTemplate("tournamentStatsTemplate");
-        this.viewElement.find(".tournament-stats").show().html(statsTemplate.render(statistics));
+        if(statistics.playersLeft.remainingPlayers>0) {
+            this.viewElement.find(".tournament-statistics").show();
+            this.viewElement.find(".remaining-players").html(statistics.playersLeft.remainingPlayers);
+        } else {
+            this.hideTournamentStatistics();
+        }
+
     },
     hideTournamentStatistics : function()  {
-        this.viewElement.find(".tournament-stats").hide();
+        this.viewElement.find(".tournament-statistics").hide();
     },
     updatePayoutInfo : function(payoutInfo) {
         var payoutTemplate = this.templateManager.getRenderTemplate("tournamentPayoutStructureTemplate");
