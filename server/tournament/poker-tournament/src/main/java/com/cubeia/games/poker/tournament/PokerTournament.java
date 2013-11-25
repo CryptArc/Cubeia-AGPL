@@ -933,6 +933,9 @@ public class PokerTournament implements TableNotifier, Serializable {
         if(pokerState.getPlayerSession(request.getPlayer().getPlayerId())!=null) {
             return MttRegisterResponse.DENIED_ALREADY_REGISTERED;
         }
+        if(pokerState.hasPendingRegistrations(request.getPlayer().getPlayerId())) {
+            return MttRegisterResponse.DENIED;
+        }
         if (instance.getState().getCapacity() <= instance.getState().getRegisteredPlayersCount()) {
         	return MttRegisterResponse.DENIED; 
         }

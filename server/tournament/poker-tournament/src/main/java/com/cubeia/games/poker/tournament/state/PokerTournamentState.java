@@ -360,6 +360,10 @@ public class PokerTournamentState implements Serializable {
         return !pendingRequests.isEmpty();
     }
 
+    public boolean hasPendingRegistrations(int playerId) {
+        return pendingRequests.playerHasPendingRequests(playerId);
+    }
+
     public void addPlayerSession(PlayerSessionId sessionId) {
         playerSessions.put(sessionId.playerId, sessionId);
     }
