@@ -46,8 +46,8 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.19-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.10.0-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.10.0-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
