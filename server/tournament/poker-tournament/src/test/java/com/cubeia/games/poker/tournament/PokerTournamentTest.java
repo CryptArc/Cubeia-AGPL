@@ -76,6 +76,7 @@ import static com.cubeia.games.poker.tournament.configuration.payouts.PayoutStru
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.*;
 import static com.google.common.collect.ImmutableSet.of;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
@@ -298,6 +299,28 @@ public class PokerTournamentTest {
         resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
         Assert.assertEquals(MttRegisterResponse.DENIED_ALREADY_REGISTERED, resp);
 
+        verify(backend,times(1)).openTournamentPlayerSession(any(OpenTournamentSessionRequest.class),any(TournamentSessionId.class));
+
+    }
+    @Test
+    public void denyPlayerAlreadyHavePendingRegistration() {
+        prepareTournamentWithMockLifecycle();
+        when(playerRegistry.getPlayers()).thenReturn(Arrays.asList(new MttPlayer(1,"name")));
+        User user = mock(User.class);
+
+        when(user.getOperatorId()).thenReturn(666L); // Tournament public, the operator ID shouldn't matter
+        when(userService.getUserById(anyInt())).thenReturn(user);
+        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+
+        MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+        Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+
+        try {
+            resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+            Assert.assertEquals(MttRegisterResponse.DENIED, resp);
+        } catch(IllegalArgumentException e) {
+            fail("Exception should not have been thrown, user should have been denied");
+        }
         verify(backend,times(1)).openTournamentPlayerSession(any(OpenTournamentSessionRequest.class),any(TournamentSessionId.class));
 
     }
