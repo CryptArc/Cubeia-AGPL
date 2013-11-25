@@ -425,13 +425,11 @@ Poker.TableManager = Class.extend({
      *
      * @param {Number} tableId
      * @param {Poker.Pot[]} pots
+     * @param {String} totalPot
      */
-    updatePots : function(tableId,pots) {
+    updatePots : function(tableId,pots,totalPot) {
         var table = this.tables.get(tableId);
-        var totalPot = 0;
-        for(var i = 0; i<pots.length; i++) {
-            totalPot+=pots[i].amount;
-        }
+
         table.getLayoutManager().onTotalPotUpdate(totalPot);
         table.getLayoutManager().onPotUpdate(pots);
     },

@@ -61,7 +61,7 @@ Poker.TournamentPacketHandler = Class.extend({
             console.log(tournamentPacket);
             //TODO: we need snapshot to get capacity
             console.log("Handle open tournament table  " + tournamentPacket.tableId);
-            new Poker.TableRequestHandler(tournamentPacket.tableId).openTable(10);
+            new Poker.TableRequestHandler(tournamentPacket.tableId).openTournamentTable(this.tournamentId,10);
         } else {
             console.log("Unable to find table in tournament");
         }
