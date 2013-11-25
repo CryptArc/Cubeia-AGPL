@@ -17,7 +17,6 @@
     </parent>
     
     <modules>
-        <module>uar</module>
         <module>simple</module>
     </modules>    
 
