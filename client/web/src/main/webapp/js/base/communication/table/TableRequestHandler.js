@@ -52,8 +52,11 @@ Poker.TableRequestHandler = Class.extend({
             Poker.AppCtx.getViewManager().activateViewByTableId(this.tableId);
         } else {
             this.tableManager.handleOpenTableAccepted(this.tableId,capacity);
-            this.connector.watchTable(this.tableId);
+            this.watchTable();
         }
+    },
+    watchTable : function() {
+        this.connector.watchTable(this.tableId);
     },
     reactivateTable : function() {
         this.connector.watchTable(this.tableId);

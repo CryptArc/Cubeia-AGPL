@@ -106,6 +106,17 @@ Poker.TournamentManager = Class.extend({
         }
         return false;
     },
+    getTournamentByTableId : function(tableId) {
+        var tables = this.tournamentTables.keyValuePairs();
+        for(var i = 0; i<tables.length;i++) {
+            for(var j = 0; j<tables[i].values.length; j++) {
+                if(tables[i].values[j]===tableId) {
+                    return tables[i].key;
+                }
+            }
+        }
+        return -1;
+    },
     removeTournament : function(tournamentId) {
         var tournament = this.tournaments.remove(tournamentId);
         if (tournament!=null) {

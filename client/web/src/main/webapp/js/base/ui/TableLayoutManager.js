@@ -276,10 +276,14 @@ Poker.TableLayoutManager = Class.extend({
             }
 
         }
+        this.removeSeat(playerId);
+        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
+    },
+    removeSeat : function(playerId) {
+        var seat = this.getSeatByPlayerId(playerId);
         seat.clearSeat();
         this.seats.remove(seat.seatId);
         this.addEmptySeatContent(seat.seatId,-1,(this.myPlayerSeatId==-1));
-        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
 
     /**
@@ -333,6 +337,14 @@ Poker.TableLayoutManager = Class.extend({
         }
         console.log("Hand " + handId + " started");
         this.tableLog.appendNewHand(handId);
+    },
+    reset : function() {
+        this._resetSeats();
+        this._resetCommunity();
+        this.tableView.find(".pot-transfer").remove();
+        this.cardElements = new Poker.Map();
+        this.myActionsManager.onStartHand();
+        this.tableLog.clear();
     },
     /**
      * Updates the blinds info given a new level.
@@ -544,7 +556,6 @@ Poker.TableLayoutManager = Class.extend({
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
-        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
     _hideSeatActionText : function() {
         var seats = this.seats.values();

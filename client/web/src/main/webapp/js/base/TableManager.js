@@ -59,24 +59,50 @@ Poker.TableManager = Class.extend({
             if (name == null) {
                 name = "Table"; //TODO: fix
             }
-            var tableViewContainer = $(".table-view-container");
-            var templateManager = new Poker.TemplateManager();
-            var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
-            var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
-            this.createTable(tableId, capacity, name , tableLayoutManager);
+            var tableLayoutManager = this.initTable(tableId,capacity);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
         }
 
+
+    },
+    initTable : function(tableId,capacity,name) {
+        var tableViewContainer = $(".table-view-container");
+        var templateManager = new Poker.TemplateManager();
+        var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
+        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
+        this.createTable(tableId, capacity, name , tableLayoutManager);
+        return tableLayoutManager;
+    },
+    reopenTable : function(tableId, capacity) {
+        var name = this.tableNames.get(tableId);
+        if (name == null) {
+            name = "Table"; //TODO: fix
+        }
+        var table = this.tables.get(tableId);
+        table.layoutManager.reset();
+        var players = table.players.values();
+        for(var i = 0; i<players.length; i++) {
+            table.layoutManager.removeSeat(players[i].id);
+        }
+        table.resetTable();
 
     },
 
     onPlayerLoggedIn : function() {
        console.log("Checking if there are open tables to reconnect to");
        var tables =  this.tables.values();
+
         for(var i = 0; i<tables.length; i++) {
             this.leaveTable(tables[i].id);
-            //TODO: we need snapshot to get capacity
-            new Poker.TableRequestHandler(tables[i].id).openTable(10);
+
+            if(this.tournamentManager.isTournamentTable(tables[i].id)) {
+                var mttid = this.tournamentManager.getTournamentByTableId(tables[i].id);
+                new Poker.TableRequestHandler(tables[i].id).openTournamentTable(mttid,10);
+            } else {
+                new Poker.TableRequestHandler(tables[i].id).openTable(10);
+            }
+
+
         }
     },
     /**

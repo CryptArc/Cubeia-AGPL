@@ -34,6 +34,9 @@ Poker.Log = Class.extend({
             this.messagesRead = false;
         }
     },
+    clear : function() {
+        this.logContainer.empty();
+    },
     scrollDown : function() {
         this.logContainer.scrollTop(this.logContainer[0].scrollHeight);
     },

@@ -30,6 +30,13 @@ Poker.Table = Class.extend({
         this.id = id;
         this.name = name;
         this.capacity = capacity;
+        this.resetTable();
+    },
+    resetTable : function() {
+        this.handId = -1,
+        this.dealerSeatId=-1;
+        this.myPlayerSeat = null;
+        this.handCount = 0;
         this.players = new Poker.Map();
         this.playersToBeRemoved = [];
     },
