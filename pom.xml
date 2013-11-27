@@ -37,7 +37,7 @@
         <firebase.version>1.10.1-BETA1</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.5.1-SNAPSHOT</cubeia.network.version>
-        <jetty-version>8.1.4.v20120524</jetty-version> 
+        <jetty-version>9.1.0.RC0</jetty-version> 
     </properties>
 
     <dependencies>

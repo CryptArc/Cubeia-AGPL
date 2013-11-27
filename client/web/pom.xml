@@ -167,19 +167,20 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-version}</version>
                 <configuration>
-					<useTestClasspath>true</useTestClasspath>
+		<useTestClasspath>true</useTestClasspath>
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
+                     <httpConnector>
+                         <port>8181</port>
+                         <idleTimeout>60000</idleTimeout>
+                     </httpConnector>
                     <connectors>
-                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-                            <port>8181</port>
-                            <maxIdleTime>60000</maxIdleTime>
-                        </connector>
+                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector"/>
                     </connectors>
                 </configuration>
             </plugin>
