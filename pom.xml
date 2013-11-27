@@ -134,7 +134,7 @@
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots</artifactId>
-                <version>1.13</version>
+                <version>1.14-SNAPSHOT</version>
             </dependency>
 
             <dependency>
