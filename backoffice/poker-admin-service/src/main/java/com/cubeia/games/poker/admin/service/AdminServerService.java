@@ -40,7 +40,7 @@ public class AdminServerService implements AdminServerContract, Service {
 
     @Override
     public void start() {
-        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/");
+        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/", "admin");
         try {
             je.start();
 

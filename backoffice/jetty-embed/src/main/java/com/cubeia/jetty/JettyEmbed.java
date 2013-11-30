@@ -19,7 +19,11 @@ package com.cubeia.jetty;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
@@ -33,14 +37,34 @@ public class JettyEmbed  {
     public final int port;
     public final String warFile;
     public final String warContextPath;
+    public final Properties prop;
+
     private static  Logger log;
 
-    public JettyEmbed(Object caller, int port, String warFile, String warContextPath) {
+    public JettyEmbed(Object caller, int port, String warFile, String warContextPath, String id) {
+        this.prop = prepareProperties();
         this.caller = caller;
-        this.port = port;
-        this.warFile = warFile;
-        this.warContextPath = warContextPath;
+        
+        String portStr = prop.getProperty(id + ".port", Integer.toString(port) );         
+        this.port = Integer.parseInt(portStr);        
+
+        this.warContextPath = prop.getProperty(id + ".contextPath", warContextPath);
+        this.warFile = prop.getProperty(id + ".warFile", warFile);
+        
         this.log =  Logger.getLogger(caller.getClass());
+    }
+    
+    public Properties prepareProperties() {
+        Properties prop = new Properties();
+        try {
+            InputStream stream = this.getClass().getClassLoader().getResourceAsStream("embed.properties");            
+            if (stream != null) {
+                prop.load(stream);
+            }
+        } catch (IOException ex) {
+            log.info(null, ex);
+        }
+        return prop;
     }
     
     public String finalFileName(String libDir) {

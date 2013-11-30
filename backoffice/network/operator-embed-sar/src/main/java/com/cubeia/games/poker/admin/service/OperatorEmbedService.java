@@ -41,7 +41,7 @@ public class OperatorEmbedService implements OperatorEmbedContract, Service {
 
     @Override
     public void start() {
-        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, WAR_PATH);
+        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, WAR_PATH, "operator");
         try {
             je.start();
         } catch (Exception ex) {
