@@ -17,6 +17,8 @@
     </parent>
     
     <modules>
+        <module>jetty-embed</module>
+        <module>network</module>
         <module>simple</module>
     </modules>    
 

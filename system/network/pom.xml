@@ -12,8 +12,9 @@
 
     <parent>
         <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-backoffice</artifactId>
+        <artifactId>poker-root</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>      
     </parent>
 
     <modules>

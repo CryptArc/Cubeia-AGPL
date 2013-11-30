@@ -15,8 +15,6 @@
     <modules>
         <module>poker-admin</module>
         <module>poker-admin-service</module>
-        <module>network</module>
-        <module>jetty-embed</module> 
     </modules>
 
 </project>
