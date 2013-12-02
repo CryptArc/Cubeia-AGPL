@@ -17,12 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -37,10 +35,14 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ListPayoutStructures extends BasePage {
 
@@ -52,7 +54,8 @@ public class ListPayoutStructures extends BasePage {
         return "Blinds Structures";
     }
 
-    public ListPayoutStructures(final PageParameters parameters) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public ListPayoutStructures(final PageParameters parameters) {
         super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
@@ -75,7 +78,7 @@ public class ListPayoutStructures extends BasePage {
             }
         });
 
-        columns.add(new PropertyColumn(new Model<String>("Name"), "name"));
+        columns.add(new PropertyColumn<String, String>(new Model<String>("Name"), "name"));
         columns.add(new AbstractColumn<PayoutStructure,String>(new Model<String>("Delete")) {
 
             @Override
@@ -113,7 +116,7 @@ public class ListPayoutStructures extends BasePage {
 
         @Override
         public IModel<PayoutStructure> model(PayoutStructure object) {
-            return new Model(object);
+            return Model.of(object);
         }
 
         @Override

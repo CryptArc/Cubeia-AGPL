@@ -17,15 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toDateOrNull;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toIntOrNull;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toStringOrNull;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
@@ -46,14 +48,15 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.*;
-import static com.google.common.collect.Lists.newArrayList;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 
 /**
  * Page for searching for and viewing hand histories.
@@ -61,7 +64,7 @@ import static com.google.common.collect.Lists.newArrayList;
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class HandHistory extends BasePage {
 
-    private static final Logger log = Logger.getLogger(HandHistory.class);
+    private static final Logger log = LoggerFactory.getLogger(HandHistory.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -142,7 +145,8 @@ public class HandHistory extends BasePage {
         return columns;
     }
 
-    private void addForms() {
+    @SuppressWarnings("serial")
+	private void addForms() {
         Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
             @Override
             protected void onSubmit() {
@@ -183,7 +187,8 @@ public class HandHistory extends BasePage {
 		String handId;
     }
 
-    private class HandProvider extends SortableDataProvider<HistoricHand,String> {
+    @SuppressWarnings("serial")
+	private class HandProvider extends SortableDataProvider<HistoricHand,String> {
 
         private List<HistoricHand> hands;
 

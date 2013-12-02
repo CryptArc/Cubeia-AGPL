@@ -17,13 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentArchiver;
-import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -38,9 +35,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentArchiver;
+import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
@@ -58,7 +59,8 @@ public class ListTournaments extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public ListTournaments(final PageParameters parameters) {
+    @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+	public ListTournaments(final PageParameters parameters) {
         super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
@@ -125,7 +127,7 @@ public class ListTournaments extends BasePage {
 
         @Override
         public IModel<ScheduledTournamentConfiguration> model(ScheduledTournamentConfiguration object) {
-            return new Model(object);
+            return Model.of(object);
         }
 
         @Override

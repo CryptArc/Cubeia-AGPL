@@ -17,13 +17,15 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.network.shared.web.wicket.pages.login.LoginPage;
-import com.cubeia.network.shared.web.wicket.BaseApplication;
-import org.apache.log4j.Logger;
 import org.apache.wicket.Page;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.cubeia.network.shared.web.wicket.BaseApplication;
+import com.cubeia.network.shared.web.wicket.pages.login.LoginPage;
 
 @Component("wicketApplication")
 public class PokerAdminWebApplication extends BaseApplication {
@@ -32,8 +34,6 @@ public class PokerAdminWebApplication extends BaseApplication {
      * Constructor
      */
     public PokerAdminWebApplication() {}
-
-	private static final Logger log = Logger.getLogger(AuthenticatedWebApplication.class);
 
     @Override
 	public Class<? extends Page> getHomePage() {

@@ -17,22 +17,14 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
-import org.apache.log4j.Logger;
+import java.util.Date;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateField;
-import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.form.validation.AbstractFormValidator;
-import org.apache.wicket.markup.html.form.validation.FormValidatorAdapter;
-import org.apache.wicket.markup.html.form.validation.IFormValidator;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
@@ -40,12 +32,23 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Date;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
+import com.cubeia.games.poker.admin.wicket.util.CronExpressionValidator;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 
+@SuppressWarnings("serial")
 public class CreateTournament extends BasePage {
 
-    private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
+    private static final transient Logger log = LoggerFactory.getLogger(CreateSitAndGo.class);
     private RebuyConfigurationPanel rebuyConfigurationPanel;
 
     @SpringBean(name = "adminDAO")
@@ -53,7 +56,7 @@ public class CreateTournament extends BasePage {
     private PropertyModel<TournamentConfiguration> configuration = new PropertyModel<TournamentConfiguration>(new ScheduledTournamentConfiguration(), "configuration");
 
 
-    public CreateTournament(final PageParameters parameters) {
+	public CreateTournament(final PageParameters parameters) {
         super(parameters);
         Form<ScheduledTournamentForm> tournamentForm = new Form<ScheduledTournamentForm>("tournamentForm",
             new CompoundPropertyModel<ScheduledTournamentForm>(new ScheduledTournamentForm())) {
@@ -77,7 +80,7 @@ public class CreateTournament extends BasePage {
         tournamentForm.add(new TournamentConfigurationPanel("configuration",tournamentForm, configuration, false));
         tournamentForm.add(new DateField("startDate").setRequired(true));
         tournamentForm.add(new DateField("endDate").setRequired(true));
-        tournamentForm.add(new RequiredTextField<String>("schedule"));
+        tournamentForm.add(new RequiredTextField<String>("schedule").add(new CronExpressionValidator()));
         tournamentForm.add(new RequiredTextField<Integer>("minutesInAnnounced"));
         tournamentForm.add(new RequiredTextField<Integer>("minutesInRegistering"));
         tournamentForm.add(new RequiredTextField<Integer>("minutesVisibleAfterFinished"));
@@ -110,7 +113,6 @@ public class CreateTournament extends BasePage {
     }
 
     private static class ScheduledTournamentForm implements IClusterable {
-        boolean rebuysEnabled;
         Date startDate = new Date();
         Date endDate = new DateTime().plusYears(5).toDate();
         String schedule;

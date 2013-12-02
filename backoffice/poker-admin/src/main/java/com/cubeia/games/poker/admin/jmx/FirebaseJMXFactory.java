@@ -27,11 +27,11 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
-import org.springframework.stereotype.Component;
+import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
 
 @Component
 public class FirebaseJMXFactory {

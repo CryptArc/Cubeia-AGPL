@@ -17,17 +17,19 @@
 
 package com.cubeia.games.poker.admin.service.history;
 
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.google.code.morphia.query.Query;
-import com.mongodb.BasicDBObject;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
+
+import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.google.code.morphia.query.Query;
+import com.mongodb.BasicDBObject;
 
 @Service
 public class HistoryServiceImpl implements HistoryService {
