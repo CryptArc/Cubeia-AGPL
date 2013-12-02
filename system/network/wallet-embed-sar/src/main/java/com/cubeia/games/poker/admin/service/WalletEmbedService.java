@@ -23,13 +23,14 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import org.apache.log4j.Logger;
 import com.cubeia.jetty.JettyEmbed;
 
-public class AdminServerService implements AdminServerContract, Service {
+public class WalletEmbedService implements WalletEmbedContract, Service {
 
-    public static final int WAR_PORT = 8088;
-    public static final String WAR_FILE = "poker-admin*.war";
+    public static final int WAR_PORT = 9091;
+    public static final String WAR_FILE = "wallet-service-rest*.war";
+    public static final String WAR_PATH = "/wallet-service-rest";        
     
-    private static final Logger log = Logger.getLogger(AdminServerService.class);   
-        
+    private static final Logger log = Logger.getLogger(WalletEmbedService.class);
+          
     @Override
     public void init(ServiceContext con) throws SystemException {
     }
@@ -40,10 +41,9 @@ public class AdminServerService implements AdminServerContract, Service {
 
     @Override
     public void start() {
-        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/", "admin");
+        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, WAR_PATH, "wallet");
         try {
             je.start();
-
         } catch (Exception ex) {
             log.debug(ex, ex);
         }
