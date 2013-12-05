@@ -113,6 +113,8 @@ public class CreateTournament extends BasePage {
     }
 
     private static class ScheduledTournamentForm implements IClusterable {
+        @SuppressWarnings("unused")
+		boolean rebuysEnabled;
         Date startDate = new Date();
         Date endDate = new DateTime().plusYears(5).toDate();
         String schedule;
