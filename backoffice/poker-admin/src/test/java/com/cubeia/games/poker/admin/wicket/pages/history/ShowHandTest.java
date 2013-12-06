@@ -17,20 +17,19 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createMockHand;
+import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.text.DecimalFormat;
-
-import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createMockHand;
-import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 
 public class ShowHandTest {
 

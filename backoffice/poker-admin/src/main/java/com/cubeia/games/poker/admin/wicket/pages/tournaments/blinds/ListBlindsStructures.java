@@ -17,12 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.blinds;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -37,9 +35,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ListBlindsStructures extends BasePage {
@@ -54,7 +55,8 @@ public class ListBlindsStructures extends BasePage {
         return "Blinds Structures";
     }
 
-    public ListBlindsStructures(final PageParameters parameters) {
+    @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+	public ListBlindsStructures(final PageParameters parameters) {
         super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
@@ -115,7 +117,7 @@ public class ListBlindsStructures extends BasePage {
 
         @Override
         public IModel<BlindsStructure> model(BlindsStructure object) {
-            return new Model(object);
+            return Model.of(object);
         }
 
         @Override

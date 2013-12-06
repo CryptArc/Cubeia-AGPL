@@ -17,16 +17,19 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.system;
 
-import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
-import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
+import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+
+@SuppressWarnings("serial")
 public class Clients extends BasePage {
-    private static final transient Logger log = Logger.getLogger(Clients.class);
+    private static final transient Logger log = LoggerFactory.getLogger(Clients.class);
     
     private transient StateClientRegistryMBean mbeanProxy;
 

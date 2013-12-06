@@ -1,15 +1,12 @@
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.components.datepicker.BootstrapDatePicker;
-import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.googlecode.wicket.jquery.ui.Options;
-import org.apache.log4j.Logger;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
@@ -31,18 +28,23 @@ import org.apache.wicket.util.io.IClusterable;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.components.datepicker.BootstrapDatePicker;
+import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.googlecode.wicket.jquery.ui.Options;
 
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class SearchTournamentHistory extends BasePage {
 
-    private static final Logger log = Logger.getLogger(SearchTournamentHistory.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchTournamentHistory.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -119,7 +121,8 @@ public class SearchTournamentHistory extends BasePage {
         return columns;
     }
 
-    private void addForm() {
+    @SuppressWarnings("serial")
+	private void addForm() {
         Form<TournamentSearch> form = new Form<TournamentSearch>("form",  new CompoundPropertyModel<TournamentSearch>(new TournamentSearch())) {
             @Override
             protected void onSubmit() {
@@ -148,7 +151,8 @@ public class SearchTournamentHistory extends BasePage {
         return "Search Tournament History";
     }
 
-    private class TournamentProvider extends SortableDataProvider<HistoricTournament,String> {
+    @SuppressWarnings("serial")
+	private class TournamentProvider extends SortableDataProvider<HistoricTournament,String> {
 
         private List<HistoricTournament> tournaments = newArrayList();
 
@@ -181,7 +185,8 @@ public class SearchTournamentHistory extends BasePage {
         }
     }
 
-    private static class TournamentSearch implements IClusterable {
+    @SuppressWarnings("serial")
+	private static class TournamentSearch implements IClusterable {
         Date fromDate = new Date();
         String fromTime = "00:00";
         Date toDate = DateTime.now().plusDays(1).toDate();
