@@ -1,17 +1,19 @@
 package com.cubeia.games.poker.admin.wicket.util;
 
-import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.Iterator;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
+import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
+
+@SuppressWarnings("serial")
 public class PayoutStructureRowProvider implements IDataProvider<List<? extends String>> {
 
     private List<List<String>> rows = newArrayList();

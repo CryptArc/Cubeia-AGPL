@@ -34,7 +34,7 @@
     </prerequisites>
 
     <properties>
-        <firebase.version>1.10.1-BETA1</firebase.version>
+        <firebase.version>1.10.1-BETA2-SNAPSHOT</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.5.1-SNAPSHOT</cubeia.network.version>
         <jetty-version>9.1.0.RC0</jetty-version> 
@@ -134,7 +134,7 @@
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots</artifactId>
-                <version>1.13</version>
+                <version>1.14-SNAPSHOT</version>
             </dependency>
 
             <dependency>

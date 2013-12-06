@@ -1,5 +1,14 @@
 package com.cubeia.games.poker.admin.wicket;
 
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.add;
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.node;
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.nodeWithChildren;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
 import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.CreateRake;
@@ -24,15 +33,9 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTourn
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
-import com.cubeia.network.shared.web.wicket.pages.search.SearchPage;
 import com.cubeia.network.shared.web.wicket.module.AdminWebModule;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.*;
+import com.cubeia.network.shared.web.wicket.pages.search.SearchPage;
 
 @Component
 public class PokerAdminModule extends AdminWebModule {

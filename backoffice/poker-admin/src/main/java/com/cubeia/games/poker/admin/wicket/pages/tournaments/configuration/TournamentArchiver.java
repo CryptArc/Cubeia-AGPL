@@ -17,11 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
+import java.io.Serializable;
+
 import com.cubeia.games.poker.admin.wicket.util.Archiver;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
-import java.io.Serializable;
-
+@SuppressWarnings("serial")
 public class TournamentArchiver implements Archiver, Serializable {
 
     private final TournamentConfiguration configuration;

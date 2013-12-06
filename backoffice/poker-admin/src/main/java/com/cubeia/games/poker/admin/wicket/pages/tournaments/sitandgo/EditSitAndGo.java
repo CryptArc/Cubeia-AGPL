@@ -17,27 +17,21 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.poker.timing.TimingProfile;
-
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.math.BigDecimal;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditSitAndGo extends BasePage {
 

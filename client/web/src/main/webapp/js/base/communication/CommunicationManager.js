@@ -150,7 +150,7 @@ Poker.CommunicationManager = Class.extend({
             	org.cometd.JSON.toJSON = JSON.stringify;
             	org.cometd.JSON.fromJSON = JSON.parse;
                 var cometd = new org.cometd.Cometd();
-                cometd.registerTransport("long-polling", new org.cometd.LongPollingTransport());
+                cometd.registerTransport("long-polling", new LongPollingTransportImpl());
                 return cometd
             });
         } else {
@@ -488,6 +488,36 @@ var CustomConnector = function(a,b,c,d) {
         }
         superSendProtocolObject.call(self,po);
     };
+};
+
+var LongPollingTransportImpl = function() {
+    var _super = new org.cometd.LongPollingTransport();
+    var that = org.cometd.Transport.derive(_super);
+    
+    var _setHeaders = function(xhr, headers) {
+        var headerName;
+        if (headers) {
+            for (headerName in headers) {
+                if (headerName.toLowerCase() === "content-type") {
+                    continue
+                }
+                xhr.setRequestHeader(headerName, headers[headerName])
+            }
+        }
+    };                
+    
+    that.xhrSend = function(packet) {
+        return $.ajax({url: packet.url, async: packet.sync !== true, type: "POST", contentType: "application/json;charset=UTF-8", data: packet.body,withCredentials: true, 
+        	beforeSend: function(xhr) {
+                _setHeaders(xhr, packet.headers);
+                return true
+            }, success: packet.onSuccess,error: function(xhr, reason, exception) {
+                packet.onError(reason, exception)
+            }
+          }
+        );
+    };
+    return that;
 };
 
 FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {

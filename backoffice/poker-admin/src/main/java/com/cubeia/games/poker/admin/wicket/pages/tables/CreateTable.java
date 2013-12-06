@@ -17,24 +17,21 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
+
+import java.math.BigDecimal;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
-
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.resource.JQueryResourceReference;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import java.math.BigDecimal;
-
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTable extends BasePage {

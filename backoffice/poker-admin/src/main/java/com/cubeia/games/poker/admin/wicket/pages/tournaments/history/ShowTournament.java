@@ -17,15 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.network.web.user.UserSummary;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.cubeia.poker.tournament.history.api.PlayerPosition;
-import com.cubeia.poker.tournament.history.api.TournamentEvent;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -44,11 +40,17 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.network.web.user.UserSummary;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.cubeia.poker.tournament.history.api.PlayerPosition;
+import com.cubeia.poker.tournament.history.api.TournamentEvent;
 
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ShowTournament extends BasePage {
 

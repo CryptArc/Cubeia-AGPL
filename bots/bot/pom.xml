@@ -63,7 +63,7 @@
             <plugin>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots-maven-plugin</artifactId>
-                <version>1.12-SNAPSHOT</version>
+                <version>1.14-SNAPSHOT</version>
                 <configuration>
                     <botControlFile>bot.html</botControlFile>
                     <botMenuName>Poker Bot</botMenuName>

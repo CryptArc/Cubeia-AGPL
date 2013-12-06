@@ -17,20 +17,23 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
-import org.apache.log4j.Logger;
+import java.math.BigDecimal;
+
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 
+@SuppressWarnings("serial")
 public class RebuyConfigurationPanel extends Panel {
 
-    private static final Logger log = Logger.getLogger(RebuyConfigurationPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(RebuyConfigurationPanel.class);
     private final CheckBox addOnsEnabled;
     private final TextField<Integer> numberOfLevelsWithRebuys;
     private final TextField<BigDecimal> rebuyCost;
@@ -77,19 +80,22 @@ public class RebuyConfigurationPanel extends Panel {
         }
     }
 
-    private CheckBox checkBox(String expression) {
+    @SuppressWarnings("unchecked")
+	private CheckBox checkBox(String expression) {
         CheckBox checkBox = new CheckBox(expression, model(expression));
         add(checkBox);
         return checkBox;
     }
 
-    private <T> TextField<T> add(String expression) {
+    @SuppressWarnings("unchecked")
+	private <T> TextField<T> add(String expression) {
         TextField<T> textField = new TextField<T>(expression, model(expression));
         add(textField);
         return textField;
     }
 
-    private PropertyModel model(String expression) {
+    @SuppressWarnings("rawtypes")
+	private PropertyModel model(String expression) {
         return new PropertyModel(rebuyConfiguration, expression);
     }
 

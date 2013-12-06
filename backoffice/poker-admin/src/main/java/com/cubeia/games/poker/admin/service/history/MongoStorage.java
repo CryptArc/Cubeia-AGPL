@@ -1,5 +1,9 @@
 package com.cubeia.games.poker.admin.service.history;
 
+import java.net.UnknownHostException;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.games.poker.common.mongo.BigDecimalConverter;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
@@ -7,9 +11,6 @@ import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
 import com.google.code.morphia.query.Query;
 import com.mongodb.Mongo;
-import org.apache.log4j.Logger;
-
-import java.net.UnknownHostException;
 
 public class MongoStorage {
 
