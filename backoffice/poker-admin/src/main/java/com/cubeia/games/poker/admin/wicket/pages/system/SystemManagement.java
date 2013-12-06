@@ -17,10 +17,6 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.system;
 
-import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
-import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -29,6 +25,12 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
+import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
+
+@SuppressWarnings("serial")
 public class SystemManagement extends BasePage {
 
     @SpringBean

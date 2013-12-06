@@ -17,14 +17,6 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
-import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import org.apache.log4j.Logger;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateField;
@@ -38,10 +30,22 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.util.CronExpressionValidator;
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+
+@SuppressWarnings("serial")
 public class EditTournament extends BasePage {
 
-    private static final Logger log = Logger.getLogger(EditTournament.class);
+    private static final Logger log = LoggerFactory.getLogger(EditTournament.class);
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
@@ -51,7 +55,8 @@ public class EditTournament extends BasePage {
     private final Model<Boolean> rebuysEnabled = Model.of(Boolean.FALSE);
     private TournamentConfigurationPanel configPanel;
 
-    public EditTournament(final PageParameters parameters) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public EditTournament(final PageParameters parameters) {
         super(parameters);
         final Integer tournamentId = parameters.get("tournamentId").toInt();
         
@@ -65,7 +70,7 @@ public class EditTournament extends BasePage {
                 ScheduledTournamentConfiguration configuration = getModel().getObject();
                 adminDAO.save(configuration);
                 info("Tournament updated, id = " + tournamentId);
-                setResponsePage(ListTournaments.class);
+//                setResponsePage(ListTournaments.class);
             }
         };
 
@@ -73,7 +78,7 @@ public class EditTournament extends BasePage {
         tournamentForm.add(configPanel);
         tournamentForm.add(new DateField("startDate", new PropertyModel(this, "tournament.schedule.startDate")));
         tournamentForm.add(new DateField("endDate", new PropertyModel(this, "tournament.schedule.endDate")));
-        tournamentForm.add(new RequiredTextField("schedule", new PropertyModel(this, "tournament.schedule.cronSchedule")));
+        tournamentForm.add(new RequiredTextField("schedule", new PropertyModel(this, "tournament.schedule.cronSchedule")).add(new CronExpressionValidator()));
         tournamentForm.add(new TextField<Integer>("minutesInAnnounced", new PropertyModel(this, "tournament.schedule.minutesInAnnounced")));
         tournamentForm.add(new TextField<Integer>("minutesInRegistering", new PropertyModel(this, "tournament.schedule.minutesInRegistering")));
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished", new PropertyModel(this, "tournament.schedule.minutesVisibleAfterFinished")));

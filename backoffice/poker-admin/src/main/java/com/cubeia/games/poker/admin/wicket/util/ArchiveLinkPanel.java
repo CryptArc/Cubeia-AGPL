@@ -17,13 +17,14 @@
 
 package com.cubeia.games.poker.admin.wicket.util;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.network.shared.web.wicket.BasePage;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.network.shared.web.wicket.BasePage;
 
 public class ArchiveLinkPanel extends Panel {
     private static final long serialVersionUID = 1L;
@@ -31,7 +32,8 @@ public class ArchiveLinkPanel extends Panel {
     @SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
 
-    public ArchiveLinkPanel(String id, final Archiver archiver, final Object entity, final Class<? extends BasePage> responsePage) {
+    @SuppressWarnings("serial")
+	public ArchiveLinkPanel(String id, final Archiver archiver, final Object entity, final Class<? extends BasePage> responsePage) {
         super(id);
         Link<String> delete = new Link<String>("link", Model.of("delete")) {
 
