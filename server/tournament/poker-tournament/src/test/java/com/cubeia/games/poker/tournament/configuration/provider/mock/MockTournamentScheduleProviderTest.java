@@ -29,7 +29,7 @@ public class MockTournamentScheduleProviderTest {
 
     @Test
     public void testPayoutsNotNull() {
-        Collection<ScheduledTournamentConfiguration> schedule = new MockTournamentScheduleProvider().getTournamentSchedule();
+        Collection<ScheduledTournamentConfiguration> schedule = new MockTournamentScheduleProvider().getTournamentSchedule(false);
         ScheduledTournamentConfiguration firstTournament = schedule.iterator().next();
         
         System.out.println("First tournament: "+firstTournament.getConfiguration());

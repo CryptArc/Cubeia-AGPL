@@ -38,6 +38,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -52,6 +54,7 @@ import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
@@ -325,25 +328,65 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private void checkScheduledTournaments() {
         log.trace("Checking scheduled tournaments.");
-        Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule();
+        Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule(true);
 
         Set<String> existingTournaments = getExistingTournaments();
+        Set<Integer> existingTournamentConfigIds = extractConfigIdsFromIdentifiers(existingTournaments);
 
+        
+        log.debug("existing tournaments: " + existingTournaments);
+        log.debug("existing tournaments cfx ids: " + existingTournamentConfigIds);
+        
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
-            TournamentSchedule schedule = configuration.getSchedule();
-            DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
-            if (dateFetcher.date().isAfter(nextAnnounceTime)) {
-                ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
-                if (!existingTournaments.contains(instance.getIdentifier())) {
-                	try {
-                		createScheduledTournament(instance);
-                	} catch (Exception e) {
-                		log.error("error creating scheduled tournament, instance id = " + instance.getIdentifier() + ", name = " + instance.getName()
-                		    + ", template id = " + instance.getTemplateId() + ": ", e);
-                	}
+            TournamentConfiguration tournamentCfg = configuration.getConfiguration();
+            
+            if (tournamentCfg.isArchived()) {
+                log.debug("tournament config (" + tournamentCfg.getId() + ") " + tournamentCfg.getName() + " is archived");
+                
+                if (existingTournamentConfigIds.contains(new Integer(tournamentCfg.getId()))) {
+                    log.debug("archived tournament config (" + tournamentCfg.getId() + ") " + tournamentCfg.getName() + " has tournament instance");
+                }
+                
+            } else {
+                TournamentSchedule schedule = configuration.getSchedule();
+                DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
+                
+                log.debug("tournament config (" + tournamentCfg.getId() + ") " + tournamentCfg.getName() + ", next announce: " + nextAnnounceTime);
+                
+                if (dateFetcher.date().isAfter(nextAnnounceTime)) {
+                    ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
+                    if (!existingTournaments.contains(instance.getIdentifier())) {
+                    	try {
+                    		createScheduledTournament(instance);
+                    	} catch (Exception e) {
+                    		log.error("error creating scheduled tournament, instance id = " + instance.getIdentifier() + ", name = " + instance.getName()
+                    		    + ", template id = " + instance.getTemplateId() + ": ", e);
+                    	}
+                    }
                 }
             }
         }
+    }
+    
+    protected Integer extractConfigIdFromIdentifier(String identifier) {
+        Matcher matcher = Pattern.compile("([0-9]+)\\@[0-9]+").matcher("" + identifier);
+        if (matcher.matches() &&  matcher.groupCount() > 0) {
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("error parsing tournament instance identifier: " + identifier);
+            }
+        }
+        
+        return null;
+    }
+    
+    protected Set<Integer> extractConfigIdsFromIdentifiers(Set<String> identifiers) {
+        HashSet<Integer> configIds = new HashSet<Integer>();
+        for (String identifier : identifiers) {
+            configIds.add(extractConfigIdFromIdentifier(identifier));
+        }
+        return configIds;
     }
 
     private Set<String> getExistingTournaments() {
