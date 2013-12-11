@@ -28,7 +28,7 @@ import java.util.Collection;
  */
 public interface TournamentScheduleProvider {
 
-    Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
+    Collection<ScheduledTournamentConfiguration> getTournamentSchedule(boolean includeArchived);
 
     ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id);
 

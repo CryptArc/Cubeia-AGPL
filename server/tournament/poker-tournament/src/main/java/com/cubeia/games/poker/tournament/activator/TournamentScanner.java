@@ -21,14 +21,16 @@ import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.parseBoolean;
+import static java.util.Arrays.asList;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,23 +40,32 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.messages.CancelTournament;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -62,6 +73,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 public class TournamentScanner implements PokerActivator, Runnable {
+
+    private static final List<PokerTournamentStatus> STATUS_PRE_RUNNING = asList(ANNOUNCED, REGISTERING);
 
     public static final long INITIAL_TOURNAMENT_CHECK_DELAY = 5000;
 
@@ -97,6 +110,8 @@ public class TournamentScanner implements PokerActivator, Runnable {
     
     private CashGamesBackendService cashGamesBackendService;
 
+    protected RouterService routerService;
+
     @Inject
     public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
@@ -112,9 +127,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     public void init(ActivatorContext context) throws SystemException {
         this.context = context;
-        this.databaseStorageService = context.getServices().getServiceInstance(TournamentHistoryPersistenceService.class);
-        this.shutdownService = context.getServices().getServiceInstance(ShutdownServiceContract.class);
-        this.cashGamesBackendService = context.getServices().getServiceInstance(CashGamesBackendService.class);
+        ServiceRegistry serviceRegistry = context.getServices();
+        this.databaseStorageService = serviceRegistry.getServiceInstance(TournamentHistoryPersistenceService.class);
+        this.shutdownService = serviceRegistry.getServiceInstance(ShutdownServiceContract.class);
+        this.cashGamesBackendService = serviceRegistry.getServiceInstance(CashGamesBackendService.class);
+        this.routerService = serviceRegistry.getServiceInstance(RouterService.class);
         if (databaseStorageService == null) {
             log.info("No database storage service found, using mock.");
             databaseStorageService = new NullDatabaseStorageService();
@@ -325,35 +342,83 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private void checkScheduledTournaments() {
         log.trace("Checking scheduled tournaments.");
-        Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule();
+        Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule(true);
 
-        Set<String> existingTournaments = getExistingTournaments();
+        Map<String, MttLobbyObject> existingTournaments = getExistingTournaments();
+        Map<Integer, MttLobbyObject> existingTournamentConfigIds = extractConfigIdsFromIdentifiers(existingTournaments);
 
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
-            TournamentSchedule schedule = configuration.getSchedule();
-            DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
-            if (dateFetcher.date().isAfter(nextAnnounceTime)) {
-                ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
-                if (!existingTournaments.contains(instance.getIdentifier())) {
-                	try {
-                		createScheduledTournament(instance);
-                	} catch (Exception e) {
-                		log.error("error creating scheduled tournament, instance id = " + instance.getIdentifier() + ", name = " + instance.getName()
-                		    + ", template id = " + instance.getTemplateId() + ": ", e);
-                	}
+            TournamentConfiguration tournamentCfg = configuration.getConfiguration();
+            
+            if (tournamentCfg.isArchived()) {
+                Integer configId = new Integer(tournamentCfg.getId());
+                if (existingTournamentConfigIds.containsKey(configId)) {
+                    MttLobbyObject mtt = existingTournamentConfigIds.get(configId);
+                    PokerTournamentStatus status = PokerTournamentStatus.valueOf(getStringAttribute(mtt, STATUS.name()));
+                    
+                    log.debug("archived tournament config " + tournamentCfgToString(tournamentCfg) + " has tournament instance with status: " + status);
+                    
+                    if (STATUS_PRE_RUNNING.contains(status)) {
+                        log.info("configuration " + tournamentCfgToString(tournamentCfg) + " is not active, will cancel tournament instance: " 
+                            + mtt.getTournamentId() + ", status = " + status);
+                        
+                        routerService.getRouter().dispatchToTournament(mtt.getTournamentId(), new MttObjectAction(mtt.getTournamentId(), new CancelTournament()));
+                    } 
+                }
+                
+            } else {
+                TournamentSchedule schedule = configuration.getSchedule();
+                DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
+                
+                if (dateFetcher.date().isAfter(nextAnnounceTime)) {
+                    ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
+                    if (!existingTournaments.containsKey(instance.getIdentifier())) {
+                    	try {
+                    		createScheduledTournament(instance);
+                    	} catch (Exception e) {
+                    		log.error("error creating scheduled tournament, instance id = " + instance.getIdentifier() + ", name = " + instance.getName()
+                    		    + ", template id = " + instance.getTemplateId() + ": ", e);
+                    	}
+                    }
                 }
             }
         }
     }
+    
+    private String tournamentCfgToString(TournamentConfiguration tcfg) {
+        return "(" + tcfg.getId() + ") " + tcfg.getName();
+    }
+    
+    
+    protected Integer extractConfigIdFromIdentifier(String identifier) {
+        Matcher matcher = Pattern.compile("([0-9]+)\\@[0-9]+").matcher("" + identifier);
+        if (matcher.matches() &&  matcher.groupCount() > 0) {
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("error parsing tournament instance identifier: " + identifier);
+            }
+        }
+        
+        return null;
+    }
+    
+    protected Map<Integer, MttLobbyObject> extractConfigIdsFromIdentifiers(Map<String, MttLobbyObject> identifierToMttMap) {
+        Map<Integer, MttLobbyObject> configIdToMttMap = new HashMap<Integer, MttLobbyObject>();
+        for (Map.Entry<String, MttLobbyObject> entry : identifierToMttMap.entrySet()) {
+            configIdToMttMap.put(extractConfigIdFromIdentifier(entry.getKey()), entry.getValue());
+        }
+        return configIdToMttMap;
+    }
 
-    private Set<String> getExistingTournaments() {
-        Set<String> existingTournaments = newHashSet();
+    private Map<String, MttLobbyObject> getExistingTournaments() {
+        Map<String, MttLobbyObject> existingTournaments = new HashMap<String, MttLobbyObject>();
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
         for (MttLobbyObject tournament : tournamentInstances) {
             String identifier = getStringAttribute(tournament, IDENTIFIER.name());
             if (!isNullOrEmpty(identifier)) {
                 log.trace("Found tournament with identifier " + identifier);
-                existingTournaments.add(identifier);
+                existingTournaments.put(identifier, tournament);
             }
         }
         return existingTournaments;

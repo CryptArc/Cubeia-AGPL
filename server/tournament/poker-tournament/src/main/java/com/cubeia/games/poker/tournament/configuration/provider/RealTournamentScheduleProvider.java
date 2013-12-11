@@ -17,34 +17,55 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider;
 
+import static com.cubeia.games.poker.tournament.configuration.provider.TransactionHelper.doInTrasaction;
+
+import java.util.Collection;
+import java.util.concurrent.Callable;
+
+import javax.persistence.EntityManager;
+
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.dao.TournamentConfigurationDao;
 import com.google.inject.Inject;
 
-import java.util.Collection;
-
 public class RealTournamentScheduleProvider implements TournamentScheduleProvider {
 
     private TournamentConfigurationDao dao;
-
+    
+    private EntityManager entityManager;
+    
     @Inject
-    public RealTournamentScheduleProvider(TournamentConfigurationDao dao) {
+    public RealTournamentScheduleProvider(TournamentConfigurationDao dao, EntityManager entityManager) {
         this.dao = dao;
+        this.entityManager = entityManager;
     }
 
     @Override
-    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
-        return dao.getScheduledTournamentConfigurations();
+    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule(final boolean includeArchived) {
+        return doInTrasaction(entityManager, new Callable<Collection<ScheduledTournamentConfiguration>>() {
+            @Override public Collection<ScheduledTournamentConfiguration> call() throws Exception {
+                return dao.getScheduledTournamentConfigurations(includeArchived);
+            }
+        });
     }
 
     @Override
-    public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {
-        return dao.getScheduledTournamentConfiguration(id);
+    public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(final int id) {
+        return doInTrasaction(entityManager, new Callable<ScheduledTournamentConfiguration>() {
+            @Override public ScheduledTournamentConfiguration call() throws Exception {
+                return dao.getScheduledTournamentConfiguration(id);
+            }
+        });
     }
 
     @Override
-    public SitAndGoConfiguration getSitAndGoTournamentConfiguration(int id) {
-        return dao.getSitAndGoConfiguration(id);
+    public SitAndGoConfiguration getSitAndGoTournamentConfiguration(final int id) {
+        return doInTrasaction(entityManager, new Callable<SitAndGoConfiguration>() {
+            @Override public SitAndGoConfiguration call() throws Exception {
+                return dao.getSitAndGoConfiguration(id);
+            }
+        });
     }
+    
 }

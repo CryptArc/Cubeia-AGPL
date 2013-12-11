@@ -15,47 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.scanner;
-
-import com.cubeia.backend.firebase.CashGamesBackendService;
-import com.cubeia.firebase.api.common.AttributeValue;
-import com.cubeia.firebase.api.mtt.MttFactory;
-import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
-import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
-import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.ServiceRegistry;
-import com.cubeia.firebase.io.protocol.Enums;
-import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
-import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.TournamentScanner;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
-import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
-import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
-import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.common.collect.Maps;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
+package com.cubeia.games.poker.tournament.activator;
 
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
@@ -67,6 +32,44 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+
+import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.common.AttributeValue;
+import com.cubeia.firebase.api.mtt.MttFactory;
+import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
+import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
+import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.firebase.io.protocol.Enums;
+import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
+import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import com.google.common.collect.Maps;
 
 public class TournamentScannerTest {
 
@@ -96,6 +99,9 @@ public class TournamentScannerTest {
 
     @Mock
     private TournamentHistoryPersistenceService tournamentHistoryPersistenceService;
+
+    @Mock
+    private RouterService router;
 
     private TournamentScanner scanner;
 
@@ -132,7 +138,7 @@ public class TournamentScannerTest {
         Date end = new DateTime(2013, 7, 5, 9, 0, 0).toDate();
         TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 30 14 * * ?", 10, 20, 30);
         ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
-        when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
+        when(tournamentScheduleProvider.getTournamentSchedule(true)).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14.00.
         when(dateFetcher.date()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2));
@@ -150,7 +156,7 @@ public class TournamentScannerTest {
 
         TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 30 14 * * ?", 10, 20, 30);
         ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
-        when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
+        when(tournamentScheduleProvider.getTournamentSchedule(true)).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14:00.02 and 14:00.03.
         when(dateFetcher.date()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2)).thenReturn(new DateTime(2012, 7, 5, 14, 0, 3));
@@ -214,5 +220,13 @@ public class TournamentScannerTest {
         map.put(Enums.TournamentAttributes.STATUS.name(), AttributeValue.wrap(PokerTournamentStatus.REGISTERING.name()));
         when(lobbyObject.getAttributes()).thenReturn(map);
         return lobbyObject;
+    }
+    
+    @Test
+    public void testExtractConfigIdFromIdentifier() {
+    	assertThat(scanner.extractConfigIdFromIdentifier("30@53409580380"), is(30));
+        assertThat(scanner.extractConfigIdFromIdentifier("30@"), nullValue());
+        assertThat(scanner.extractConfigIdFromIdentifier("@53409580380"), nullValue());
+        assertThat(scanner.extractConfigIdFromIdentifier(null), nullValue());
     }
 }
