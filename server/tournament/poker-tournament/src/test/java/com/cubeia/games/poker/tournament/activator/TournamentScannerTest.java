@@ -17,49 +17,6 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
-import com.cubeia.backend.firebase.CashGamesBackendService;
-import com.cubeia.firebase.api.common.AttributeValue;
-import com.cubeia.firebase.api.mtt.MttFactory;
-import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
-import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
-import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.ServiceRegistry;
-import com.cubeia.firebase.io.protocol.Enums;
-import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
-import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.TournamentScanner;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
-import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
-import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
-import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.common.collect.Maps;
-
-import org.hamcrest.CoreMatchers;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-
-import javax.persistence.EntityNotFoundException;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -75,6 +32,44 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+
+import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.common.AttributeValue;
+import com.cubeia.firebase.api.mtt.MttFactory;
+import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
+import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
+import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.firebase.io.protocol.Enums;
+import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
+import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import com.google.common.collect.Maps;
 
 public class TournamentScannerTest {
 
@@ -104,6 +99,9 @@ public class TournamentScannerTest {
 
     @Mock
     private TournamentHistoryPersistenceService tournamentHistoryPersistenceService;
+
+    @Mock
+    private RouterService router;
 
     private TournamentScanner scanner;
 
