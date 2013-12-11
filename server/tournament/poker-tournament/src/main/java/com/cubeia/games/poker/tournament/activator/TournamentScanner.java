@@ -74,7 +74,7 @@ import com.google.inject.Inject;
 
 public class TournamentScanner implements PokerActivator, Runnable {
 
-    private static final List<PokerTournamentStatus> STATUS_PRE_RUNNING = asList(ANNOUNCED, REGISTERING);
+    protected static final List<PokerTournamentStatus> STATUS_PRE_RUNNING = asList(ANNOUNCED, REGISTERING);
 
     public static final long INITIAL_TOURNAMENT_CHECK_DELAY = 5000;
 
@@ -340,7 +340,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
         }
     }
 
-    private void checkScheduledTournaments() {
+    protected void checkScheduledTournaments() {
         log.trace("Checking scheduled tournaments.");
         Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule(true);
 
@@ -356,12 +356,9 @@ public class TournamentScanner implements PokerActivator, Runnable {
                     MttLobbyObject mtt = existingTournamentConfigIds.get(configId);
                     PokerTournamentStatus status = PokerTournamentStatus.valueOf(getStringAttribute(mtt, STATUS.name()));
                     
-                    log.debug("archived tournament config " + tournamentCfgToString(tournamentCfg) + " has tournament instance with status: " + status);
-                    
                     if (STATUS_PRE_RUNNING.contains(status)) {
                         log.info("configuration " + tournamentCfgToString(tournamentCfg) + " is not active, will cancel tournament instance: " 
                             + mtt.getTournamentId() + ", status = " + status);
-                        
                         routerService.getRouter().dispatchToTournament(mtt.getTournamentId(), new MttObjectAction(mtt.getTournamentId(), new CancelTournament()));
                     } 
                 }

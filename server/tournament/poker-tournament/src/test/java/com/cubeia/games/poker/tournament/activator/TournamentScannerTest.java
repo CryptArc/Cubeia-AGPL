@@ -17,6 +17,11 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -33,13 +38,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -47,14 +55,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.firebase.api.service.router.RouterService;
 import com.cubeia.firebase.io.protocol.Enums;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -62,9 +73,11 @@ import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.messages.CancelTournament;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
@@ -101,7 +114,10 @@ public class TournamentScannerTest {
     private TournamentHistoryPersistenceService tournamentHistoryPersistenceService;
 
     @Mock
-    private RouterService router;
+    private ServiceRouter serviceRouter;
+    
+    @Mock
+    private RouterService routerService;
 
     private TournamentScanner scanner;
 
@@ -121,7 +137,9 @@ public class TournamentScannerTest {
         scanner.init(context);
         scanner.setMttFactory(factory);
         
+        scanner.routerService = routerService;
         
+        when(routerService.getRouter()).thenReturn(serviceRouter);
         when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[]{});
     }
 
@@ -229,4 +247,97 @@ public class TournamentScannerTest {
         assertThat(scanner.extractConfigIdFromIdentifier("@53409580380"), nullValue());
         assertThat(scanner.extractConfigIdFromIdentifier(null), nullValue());
     }
+    
+    @Test
+    public void testCheckScheduledTournamentsShouldCreate() {
+        ScheduledTournamentConfiguration scheduledTournamentCfg = mock(ScheduledTournamentConfiguration.class);
+        TournamentConfiguration tournamentCfg = mock(TournamentConfiguration.class);
+        when(dateFetcher.date()).thenReturn(new DateTime());
+        when(tournamentCfg.isArchived()).thenReturn(false);
+        when(scheduledTournamentCfg.getConfiguration()).thenReturn(tournamentCfg);
+        TournamentSchedule schedule = mock(TournamentSchedule.class);
+        when(scheduledTournamentCfg.getSchedule()).thenReturn(schedule);
+        when(schedule.getNextAnnounceTime(Mockito.any(DateTime.class))).thenReturn(new DateTime(0));
+        when(tournamentScheduleProvider.getTournamentSchedule(true)).thenReturn(asList(scheduledTournamentCfg));
+        when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[] {});
+        DateTime startTime = new DateTime();
+        when(schedule.getNextStartTime(Mockito.any(DateTime.class))).thenReturn(startTime );
+        ScheduledTournamentInstance tournamentInstance = mock(ScheduledTournamentInstance.class);
+        when(scheduledTournamentCfg.createInstanceWithStartTime(startTime)).thenReturn(tournamentInstance );
+        Integer mttId = 2343;
+        when(context.getMttId()).thenReturn(mttId);
+        String name = "name";
+        when(tournamentCfg.getName()).thenReturn(name);
+        when(tournamentInstance.getName()).thenReturn(name);
+        
+        scanner.checkScheduledTournaments();
+        
+        verify(factory).createMtt(Mockito.eq(mttId), Mockito.eq(name), Mockito.any(ScheduledTournamentCreationParticipant.class));
+    }
+    
+    @Test
+    public void testCheckScheduledTournamentsShouldNotCreateInstanceExists() {
+        ScheduledTournamentConfiguration scheduledTournamentCfg = mock(ScheduledTournamentConfiguration.class);
+        TournamentConfiguration tournamentCfg = mock(TournamentConfiguration.class);
+        when(dateFetcher.date()).thenReturn(new DateTime());
+        when(tournamentCfg.isArchived()).thenReturn(false);
+        when(scheduledTournamentCfg.getConfiguration()).thenReturn(tournamentCfg);
+        TournamentSchedule schedule = mock(TournamentSchedule.class);
+        when(scheduledTournamentCfg.getSchedule()).thenReturn(schedule);
+        when(schedule.getNextAnnounceTime(Mockito.any(DateTime.class))).thenReturn(new DateTime(0));
+        when(tournamentScheduleProvider.getTournamentSchedule(true)).thenReturn(asList(scheduledTournamentCfg));
+        MttLobbyObject mttLobbyObject = mock(MttLobbyObject.class);
+        String identifier = "222@100000";
+        AttributeValue attribValue = new AttributeValue(identifier);
+        when(mttLobbyObject.getAttributes()).thenReturn(Collections.singletonMap(IDENTIFIER.name(), attribValue));
+        when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[] { mttLobbyObject  });
+        DateTime startTime = new DateTime();
+        when(schedule.getNextStartTime(Mockito.any(DateTime.class))).thenReturn(startTime );
+        ScheduledTournamentInstance tournamentInstance = mock(ScheduledTournamentInstance.class);
+        when(scheduledTournamentCfg.createInstanceWithStartTime(startTime)).thenReturn(tournamentInstance );
+        Integer mttId = 2343;
+        when(context.getMttId()).thenReturn(mttId);
+        String name = "name";
+        when(tournamentCfg.getName()).thenReturn(name);
+        when(tournamentInstance.getName()).thenReturn(name);
+        when(tournamentInstance.getIdentifier()).thenReturn(identifier);
+        
+        scanner.checkScheduledTournaments();
+        
+        verify(factory, never()).createMtt(Mockito.anyInt(), Mockito.anyString(), Mockito.any(ScheduledTournamentCreationParticipant.class));
+    }    
+    
+    @Test
+    public void testCheckScheduledTournamentsShouldCancel() {
+        ScheduledTournamentConfiguration scheduledTournamentCfg = mock(ScheduledTournamentConfiguration.class);
+        TournamentConfiguration tournamentCfg = mock(TournamentConfiguration.class);
+        when(dateFetcher.date()).thenReturn(new DateTime());
+        when(tournamentCfg.isArchived()).thenReturn(true);
+        int cfgId = 222;
+        when(tournamentCfg.getId()).thenReturn(cfgId);
+        MttLobbyObject mttLobbyObject = mock(MttLobbyObject.class);
+        Integer tournamentInstanceId = 2344433;
+        when(mttLobbyObject.getTournamentId()).thenReturn(tournamentInstanceId );
+        String identifier = "" + cfgId + "@100000";
+        HashMap<String, AttributeValue> attribs = new HashMap<String, AttributeValue>();
+        attribs.put(IDENTIFIER.name(), new AttributeValue(identifier));
+        attribs.put(STATUS.name(), new AttributeValue(PokerTournamentStatus.REGISTERING.name()));
+        when(mttLobbyObject.getAttributes()).thenReturn(attribs);
+        when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[] { mttLobbyObject  });
+        when(scheduledTournamentCfg.getConfiguration()).thenReturn(tournamentCfg);
+        when(tournamentScheduleProvider.getTournamentSchedule(true)).thenReturn(asList(scheduledTournamentCfg));
+        scanner.checkScheduledTournaments();
+        
+        ArgumentCaptor<MttObjectAction> actionCaptor = ArgumentCaptor.forClass(MttObjectAction.class);
+        verify(serviceRouter).dispatchToTournament(Mockito.eq(tournamentInstanceId), actionCaptor.capture());
+        
+        assertThat(actionCaptor.getValue().getMttId(), is(tournamentInstanceId));
+        assertThat(actionCaptor.getValue().getAttachment(), CoreMatchers.instanceOf(CancelTournament.class));
+    }
+    
+    @Test
+    public void testPreRunningStatuses() {
+        assertThat(TournamentScanner.STATUS_PRE_RUNNING, is(Arrays.asList(ANNOUNCED, REGISTERING)));
+    }
+    
 }
