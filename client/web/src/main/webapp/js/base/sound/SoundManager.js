@@ -29,15 +29,19 @@ Poker.SoundManager = Class.extend({
         this.ready = ready;
     },
     playSound:function (sound, selection) {
-        if (this.soundsEnabled() && this.ready == true) {
+        var playAlerts = this.alertsEnabled() && sound.alert;
+        var playSounds = this.soundsEnabled() && !sound.alert;
+        if ((playSounds || playAlerts) && this.ready == true) {
             var soundPlayer = this.soundPlayer;
             setTimeout(function() {
                 soundPlayer.play(sound, selection);
             }, sound.delay);
         }
     },
-
-    soundsEnabled:function () {
+    alertsEnabled : function() {
+        return Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ALERTS_ENABLED,true);
+    },
+    soundsEnabled:function() {
         var check = Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ENABLED);
         return check;
     },

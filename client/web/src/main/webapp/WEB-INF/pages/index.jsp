@@ -341,9 +341,21 @@
             <div class="item">
                 <fieldset class="toggle">
                     <input id="soundEnabled" type="checkbox">
-                    <label onclick="" for="soundEnabled">Toggle Sounds</label>
+                    <label onclick="" for="soundEnabled">
+                        Game Play Sounds
+                        <div class="setting-description">Cards and chips sounds</div>
+                    </label>
                     <span class="toggle-button"></span>
                 </fieldset>
+            </div>
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="soundAlertsEnabled" type="checkbox">
+                    <label onclick="" for="soundAlertsEnabled">
+                        Alert Sounds</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+                <div class="setting-description">Turn notifications etc.</div>
             </div>
         </div>
     </div>

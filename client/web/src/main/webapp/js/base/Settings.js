@@ -9,6 +9,7 @@ var Poker = Poker || {};
 Poker.Settings = {
     Param : {
         SOUND_ENABLED : "sound.enabled",
+        SOUND_ALERTS_ENABLED : "sound.alerts.enabled",
         SWIPE_ENABLED : "settings.swipe",
         FREEZE_COMMUNICATION : "swttings.freeze"
     },
@@ -37,9 +38,12 @@ Poker.Settings = {
      * @param checkbox
      * @param param
      */
-    bindSettingToggle : function(checkbox,param) {
+    bindSettingToggle : function(checkbox,param,defaultValue) {
         var self = this;
-        var enabled = this.isEnabled(param,null);
+        if(typeof(defaultValue)=="undefined") {
+            defaultValue = null;
+        }
+        var enabled = this.isEnabled(param,defaultValue);
 
         checkbox.attr("checked",enabled);
         checkbox.change(function(){
