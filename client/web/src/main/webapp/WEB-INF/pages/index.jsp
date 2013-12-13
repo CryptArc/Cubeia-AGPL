@@ -1366,6 +1366,7 @@
     {{^sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.tournament-id"}} <span>{{tournamentId}}</span> </div>
     <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</span></div>
     <div class="stats-item">

@@ -48,7 +48,7 @@ public class ClientController {
     @Resource(name = "operatorService")
     private OperatorServiceClient operatorService;
     
-    private final String SAFE_PATTER = "[a-zA-Z0-9\\.-_]*";
+    private final String SAFE_PATTER = "[a-zA-Z0-9\\.\\-_]*";
     
     // TODO: Cache config (see below), we don't want to hit the 
     // oeprator config too hard /LJN

@@ -19,13 +19,17 @@ Poker.SoundManager = Class.extend({
      */
     tableId:null,
 
+    ready : false,
+
     init:function (soundRepository, tableId) {
         this.soundPlayer = new Poker.SoundPlayer(soundRepository);
         this.tableId = tableId;
     },
-
+    setReady : function(ready) {
+        this.ready = ready;
+    },
     playSound:function (sound, selection) {
-        if (this.soundsEnabled()) {
+        if (this.soundsEnabled() && this.ready == true) {
             var soundPlayer = this.soundPlayer;
             setTimeout(function() {
                 soundPlayer.play(sound, selection);
@@ -40,6 +44,10 @@ Poker.SoundManager = Class.extend({
 
     handleTableUpdate:function(sound, tableId) {
         if (tableId != this.tableId) return;
+        var selection = Math.floor(Math.random()*sound.soundList.length);
+        this.playSound(sound, selection)
+    },
+    handlePlaySound:function(sound) {
         var selection = Math.floor(Math.random()*sound.soundList.length);
         this.playSound(sound, selection)
     },

@@ -112,6 +112,7 @@ Poker.ConnectionManager = Class.extend({
      * Tries to login with credentials stored in local storage
      */
     handlePersistedLogin : function() {
+
         var username = Poker.Utils.load("username");
         if(username!=null) {
             var password = Poker.Utils.load("password");
