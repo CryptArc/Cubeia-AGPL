@@ -95,7 +95,6 @@ Poker.ConnectionManager = Class.extend({
         this.showConnectStatus(i18n.t("login.connected"));
     },
     onClientReady : function() {
-        return;
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
         } else {
