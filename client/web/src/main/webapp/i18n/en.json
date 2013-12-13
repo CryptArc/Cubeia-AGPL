@@ -137,6 +137,7 @@
         "unregister" : "Unregister",
         "go-to-table" : "Go to table",
         "please-wait" : "Please wait...",
+        "tournament-id" : "Tournament id:",
         "menu" : {
             "players" : "Players",
             "tables" : "Tables",

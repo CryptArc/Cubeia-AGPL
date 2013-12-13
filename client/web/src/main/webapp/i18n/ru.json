@@ -133,6 +133,7 @@
         "unregister" : "Отменить",
         "go-to-table" : "К Столу",
         "please-wait" : "Подождите...",
+        "tournament-id" : "Tournament id:",
         "menu" : {
             "players" : "Players",
             "tables" : "Tables",

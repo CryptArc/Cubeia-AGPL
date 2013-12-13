@@ -30,15 +30,16 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     infoElement : null,
     seatBase : null,
+    soundManager : null,
 
-    init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
+    init : function(tableId,elementId, seatId, player, myActionsManager, animationManager,soundManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#"+elementId);
         this.renderSeat();
         this.infoElement = $("#"+elementId+"Info").show();
-        this.progressbar = new Poker.CanvasProgressbar("#"+elementId+"Progressbar canvas");
+        this.progressbar = new Poker.CanvasProgressbar("#"+elementId+"Progressbar canvas",null,soundManager);
         this.seatBalance = this.seatElement.find(".seat-balance");
         this.myActionsManager.onSatDown();
         this.seatBase = this.seatElement.find(".avatar-base");
@@ -61,7 +62,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
         console.log("REQUESTED ACTION MAIN POT = " + mainPot);
         var self = this;
-        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
+        var auto = this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
             var time = timeToAct;
             self.progressbar.start(time);
         });
@@ -72,7 +73,10 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
                 this.hand.enableDiscards(act.minAmount, act.maxAmount);
             }
         }
-        Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
+        if(auto==false) {
+            Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
+        }
+        return auto;
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
         this.progressbar.start(timeToAct);

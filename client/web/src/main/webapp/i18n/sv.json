@@ -136,6 +136,7 @@
         "unregister" : "Avregistrera",
         "go-to-table" : "Gå till bord",
         "please-wait" : "Var god vänta...",
+        "tournament-id" : "Tournament id:",
         "menu" : {
             "players" : "Spelare",
             "tables" : "Bord",

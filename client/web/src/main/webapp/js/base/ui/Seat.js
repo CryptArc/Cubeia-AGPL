@@ -174,6 +174,7 @@ Poker.Seat = Class.extend({
    activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");
        this.progressbar.start(timeToAct);
+       return true;
     },
     rebuyRequested: function(rebuyCost, chipsForRebuy, timeToAct) {
         this.showTimer(timeToAct);
