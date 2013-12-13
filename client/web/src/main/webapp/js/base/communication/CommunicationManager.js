@@ -166,8 +166,16 @@ Poker.CommunicationManager = Class.extend({
      */
     doLogin : function(username,password) {
         Poker.MyPlayer.password = password;
-        this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        
+        if (Poker.MyPlayer.pureToken) {
+        	console.log("pure token");
+        	var tokenArray = utf8.toByteArray(Poker.MyPlayer.loginToken);
+        	this.connector.login("", "", Poker.SkinConfiguration.operatorId, tokenArray);
+        } else {
+        	this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        }
     },
+    
 
     handlePacket : function (packet) {
         var tournamentId = -1;

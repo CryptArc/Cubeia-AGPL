@@ -6,17 +6,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cubeia.backoffice.operator.api.OperatorConfigParamDTO;
 import com.cubeia.backoffice.operator.client.OperatorServiceClient;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ClientController {
@@ -119,6 +118,20 @@ public class ClientController {
                                        @PathVariable("operatorId") Long operatorId,
                                        @PathVariable("token") String token) {
 
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, false);
+    }
+
+    @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/session/{token}"})
+    public String handleStartWithPureToken(HttpServletRequest request, ModelMap modelMap,
+                                       @PathVariable("skin") String skin,
+                                       @PathVariable("operatorId") Long operatorId,
+                                       @PathVariable("token") String token) {
+
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, true);
+    }
+
+    private String doHandleStartWithToken(HttpServletRequest request, ModelMap modelMap, String skin, Long operatorId,
+        String token, boolean pure) {
         modelMap.addAttribute("cp",request.getContextPath());
         modelMap.addAttribute("operatorId",operatorId);
 
@@ -131,13 +144,16 @@ public class ClientController {
             modelMap.addAttribute("skin","");
         }
         if(opConfig != null && opConfig.get(CSS_URL) != null) {
-        	modelMap.addAttribute("cssOverride", opConfig.get(CSS_URL));
+            modelMap.addAttribute("cssOverride", opConfig.get(CSS_URL));
         }
+        
+        modelMap.addAttribute("pureToken", true);
+        
         checkSetFirebaseAttributes(modelMap);
         
         return "index";
     }
-
+    
 	private Map<OperatorConfigParamDTO, String> safeGetOperatorConfig(Long operatorId) {
 		// try {
 			return operatorService.getConfig(operatorId); // operatorConfig.get(operatorId);
@@ -154,6 +170,16 @@ public class ClientController {
 
         return handleStartWithToken(request,modelMap,defaultSkin,operatorId,token);
     }
+    
+    @RequestMapping(value = {"/operator/{operatorId}/session/{token}"})
+    public String handleStartWithPureTokenAndDefaultSkin(HttpServletRequest request, ModelMap modelMap,
+                                       @PathVariable("operatorId") Long operatorId,
+                                       @PathVariable("token") String token) {
+
+        return handleStartWithToken(request,modelMap,defaultSkin,operatorId,token);
+    }
+    
+    
 
     @RequestMapping(value = {"/skin/{skin}/hand-history/{tableId}"})
     public String handleHansHistory(HttpServletRequest request, ModelMap modelMap,
