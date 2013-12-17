@@ -125,10 +125,7 @@ public class EditTournament extends BasePage {
     	pc.setOutputMarkupId(true);
     	
     	
-    	
-    	
-    	final Model<String> model = Model.of("urgelo");
-		final PreviewScheduleFragment previewContent = new PreviewScheduleFragment("previewContent", model);
+		final PreviewScheduleFragment previewContent = new PreviewScheduleFragment("previewContent");
     	previewContent.setOutputMarkupId(true);
     	
     	pcAjaxBehaviour = new AbstractDefaultAjaxBehavior() {
@@ -157,8 +154,6 @@ public class EditTournament extends BasePage {
 				
 				previewContent.setStart(start);
 				previewContent.setEnd(end);
-				
-				model.setObject("bla:" + System.currentTimeMillis());
 				
 		        target.add(previewContent);
 		    }
@@ -216,14 +211,19 @@ public class EditTournament extends BasePage {
     
     class PreviewScheduleFragment extends Fragment {
     	
-    	private Date start;
-    	private Date end;
-    	private String cron;
+    	private IModel<Date> now = new Model<>();
+    	private IModel<Date> start = new Model<>();
+    	private IModel<Date> end = new Model<>();
+    	private IModel<String> cron = new Model<>();
     	
-		public PreviewScheduleFragment(String id, IModel<String> model) {
+		public PreviewScheduleFragment(String id) {
 			super(id, "previewScheduleFragment", EditTournament.this);
 			
-			add(new Label("timeNow", model));
+			add(new Label("now", now));
+			add(new Label("start", start));
+			add(new Label("end", end));
+			add(new Label("cron", cron));
+			
 			setOutputMarkupId(true);
 		}
 		
@@ -234,18 +234,20 @@ public class EditTournament extends BasePage {
 			System.err.println("  start: " + start);
 			System.err.println("  end: " + end);
 			System.err.println("  cron: " + cron);
+			
+			now.setObject(new Date());
 		}
 
 		public void setStart(Date start) {
-			this.start = start;
+			this.start.setObject(start);
 		}
 
 		public void setEnd(Date end) {
-			this.end = end;
+			this.end.setObject(end);
 		}
 
 		public void setCron(String cron) {
-			this.cron = cron;
+			this.cron.setObject(cron);
 		}
     	
 		
