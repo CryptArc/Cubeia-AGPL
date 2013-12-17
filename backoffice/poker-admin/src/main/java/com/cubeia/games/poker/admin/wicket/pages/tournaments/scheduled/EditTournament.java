@@ -17,19 +17,37 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
+import static org.apache.wicket.ajax.attributes.CallbackParameter.explicit;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DateField;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +73,10 @@ public class EditTournament extends BasePage {
     private final Model<Boolean> rebuysEnabled = Model.of(Boolean.FALSE);
     private TournamentConfigurationPanel configPanel;
 
+	private Form<ScheduledTournamentConfiguration> tournamentForm;
+
+	private AbstractDefaultAjaxBehavior pcAjaxBehaviour;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public EditTournament(final PageParameters parameters) {
         super(parameters);
@@ -62,11 +84,12 @@ public class EditTournament extends BasePage {
         
         loadFormData(tournamentId);
         
-        Form<ScheduledTournamentConfiguration> tournamentForm = new Form<ScheduledTournamentConfiguration>("tournamentForm",
+        tournamentForm = new Form<ScheduledTournamentConfiguration>("tournamentForm",
                                                                 new CompoundPropertyModel<ScheduledTournamentConfiguration>(tournament)) {
             private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit() {
+            	log.debug("submit");
                 ScheduledTournamentConfiguration configuration = getModel().getObject();
                 adminDAO.save(configuration);
                 info("Tournament updated, id = " + tournamentId);
@@ -84,12 +107,81 @@ public class EditTournament extends BasePage {
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished", new PropertyModel(this, "tournament.schedule.minutesVisibleAfterFinished")));
 
         addRebuyPanel(tournamentForm);
+        
 
-        add(tournamentForm);
 
         add(new FeedbackPanel("feedback"));
+        add(tournamentForm);
+    }
+    
+    @Override
+    protected void onInitialize() {
+    	super.onInitialize();
+    	addPreviewSchedule(tournamentForm);
     }
 
+    private void addPreviewSchedule(Form<ScheduledTournamentConfiguration> tournamentForm) {
+    	WebMarkupContainer pc = new WebMarkupContainer("previewContainer");
+    	pc.setOutputMarkupId(true);
+    	
+    	
+    	
+    	
+    	final Model<String> model = Model.of("urgelo");
+		final PreviewScheduleFragment previewContent = new PreviewScheduleFragment("previewContent", model);
+    	previewContent.setOutputMarkupId(true);
+    	
+    	pcAjaxBehaviour = new AbstractDefaultAjaxBehavior() {
+			@Override
+			protected void respond(AjaxRequestTarget target) {
+				
+				IRequestParameters params = getRequestCycle().getRequest().getRequestParameters();
+//				for (String paramName : params.getParameterNames()) {
+//					System.err.println("" + paramName + " = " + params.getParameterValue(paramName).toTime());
+//				}
+				
+				System.err.println("ajax, start: " + params.getParameterValue("start"));
+				
+				SimpleDateFormat sdf = new SimpleDateFormat(new DateTextField("dummy").getTextFormat());
+				
+				
+				previewContent.setCron(params.getParameterValue("cron").toOptionalString());
+				Date start = new Date(0);
+				Date end = new Date(0);
+				try {
+					start = sdf.parse(params.getParameterValue("start").toString());
+					end = sdf.parse(params.getParameterValue("end").toString());
+				} catch (ParseException e) {
+					log.warn("error parsing start/end date");
+				}
+				
+				previewContent.setStart(start);
+				previewContent.setEnd(end);
+				
+				model.setObject("bla:" + System.currentTimeMillis());
+				
+		        target.add(previewContent);
+		    }
+		};
+		pc.add(pcAjaxBehaviour);
+		pc.add(previewContent);
+		
+		tournamentForm.add(pc);
+    	
+    	
+    	
+    }
+    
+    @Override
+    public void renderHead(IHeaderResponse response) {
+    	super.renderHead(response);
+    	
+    	CharSequence callbackFunction = pcAjaxBehaviour.getCallbackFunction(explicit("start"), explicit("end"), explicit("cron"));
+		HeaderItem onDomReadyHeaderItem = JavaScriptHeaderItem.forScript("var previewTournamentSchedule = " +  callbackFunction.toString(), null);
+    	response.render(onDomReadyHeaderItem);
+    }
+    
+    
     private void addRebuyPanel(Form<ScheduledTournamentConfiguration> tournamentForm) {
         if (tournament.getConfiguration().getRebuyConfiguration() == null) {
             tournament.getConfiguration().setRebuyConfiguration(new RebuyConfiguration());
@@ -120,4 +212,45 @@ public class EditTournament extends BasePage {
     public String getPageTitle() {
         return "Edit Tournament";
     }
+    
+    
+    class PreviewScheduleFragment extends Fragment {
+    	
+    	private Date start;
+    	private Date end;
+    	private String cron;
+    	
+		public PreviewScheduleFragment(String id, IModel<String> model) {
+			super(id, "previewScheduleFragment", EditTournament.this);
+			
+			add(new Label("timeNow", model));
+			setOutputMarkupId(true);
+		}
+		
+		@Override
+		protected void onBeforeRender() {
+			super.onBeforeRender();
+			System.err.println("before render");
+			System.err.println("  start: " + start);
+			System.err.println("  end: " + end);
+			System.err.println("  cron: " + cron);
+		}
+
+		public void setStart(Date start) {
+			this.start = start;
+		}
+
+		public void setEnd(Date end) {
+			this.end = end;
+		}
+
+		public void setCron(String cron) {
+			this.cron = cron;
+		}
+    	
+		
+		
+    }
+    
+    
 }
