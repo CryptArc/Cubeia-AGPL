@@ -71,7 +71,7 @@ public class ListTournaments extends BasePage {
                 ScheduledTournamentConfiguration tournament = model.getObject();
                 Component panel = new LabelLinkPanel(
                     componentId,
-                    "" + tournament.getConfiguration().getId(),
+                    "" + tournament.getId(),
                     EditTournament.class,
                     ParamBuilder.params("tournamentId", tournament.getId()));
                 item.add(panel);

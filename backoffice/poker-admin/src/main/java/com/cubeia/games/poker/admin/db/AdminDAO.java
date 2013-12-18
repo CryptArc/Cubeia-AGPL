@@ -33,7 +33,7 @@ public interface AdminDAO {
 
     public abstract void persist(Object entity);
 
-    public abstract void save(Object entity);
+    public abstract <T> T merge(T entity);
 
     public List<SitAndGoConfiguration> getSitAndGoConfigurations();
 

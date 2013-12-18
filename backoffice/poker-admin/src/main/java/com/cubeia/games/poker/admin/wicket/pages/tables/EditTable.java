@@ -45,7 +45,7 @@ public class EditTable extends BasePage {
 
             @Override
             protected void onSubmit(TableConfigTemplate config) {
-                adminDAO.save(config);
+                adminDAO.merge(config);
                 // info("Table template updated, id = " + templateId);
                 setResponsePage(ListTables.class);
             }

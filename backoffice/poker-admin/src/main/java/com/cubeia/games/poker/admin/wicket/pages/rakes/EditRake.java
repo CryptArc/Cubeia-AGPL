@@ -40,7 +40,7 @@ public class EditRake extends BasePage {
             @Override
             protected void onSubmit() {
                 RakeSettings object = getModel().getObject();
-                adminDAO.save(object);
+                adminDAO.merge(object);
                 // info("Rake configuration updated, id = " + templateId);
                 setResponsePage(ListRakes.class);
             }

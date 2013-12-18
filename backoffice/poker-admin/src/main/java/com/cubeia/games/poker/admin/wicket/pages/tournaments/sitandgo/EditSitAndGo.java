@@ -52,7 +52,7 @@ public class EditSitAndGo extends BasePage {
             @Override
             protected void onSubmit() {
                 SitAndGoConfiguration object = getModel().getObject();
-                adminDAO.save(object);
+                adminDAO.merge(object);
                 info("Tournament updated, id = " + tournamentId);
                 setResponsePage(ListSitAndGoTournaments.class);
             }

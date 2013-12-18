@@ -27,7 +27,6 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.history.SearchTourn
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.CreateOrEditPayoutStructure;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ListPayoutStructures;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ViewPayoutStructure;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.CreateTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
@@ -51,7 +50,7 @@ public class PokerAdminModule extends AdminWebModule {
 
         add(pages,"Tournaments", "", ListTournaments.class, "icon-list-alt",
                 nodeWithChildren("Scheduled Tournaments", "tournament", ListTournaments.class, "icon-calendar",
-                        node("Create tournament", "create",CreateTournament.class, false),
+                        node("Create tournament", "create",EditTournament.class, false),
                         node("Edit Tournament", "edit",EditTournament.class, false)),
                 nodeWithChildren("Sit & Go Tournaments", "sitandgo",ListSitAndGoTournaments.class, "icon-tags",
                         node("Create Sit & Go", "create",CreateSitAndGo.class, false),

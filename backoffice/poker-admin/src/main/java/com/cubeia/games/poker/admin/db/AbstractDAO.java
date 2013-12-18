@@ -66,8 +66,8 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
         getJpaTemplate().persist(entity);
     }
 
-    public void save(Object entity) {
-        getJpaTemplate().merge(entity);
+    public <T> T merge(T entity) {
+        return getJpaTemplate().merge(entity);
     }
 
     @Override
