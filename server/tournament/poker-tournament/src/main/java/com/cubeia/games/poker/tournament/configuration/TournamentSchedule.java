@@ -17,19 +17,21 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.quartz.Trigger;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.io.Serializable;
-import java.util.Date;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.quartz.Trigger;
 
+@SuppressWarnings("serial")
 @Entity
 public class TournamentSchedule implements Serializable {
 
@@ -99,6 +101,16 @@ public class TournamentSchedule implements Serializable {
             return new DateTime(nextStartTime);
         }
     }
+    
+    public DateTime getNextRegisteringTime(DateTime now) {
+        DateTime nextStartTime = getNextStartTime(now);
+        if (nextStartTime == null) {
+            return null;
+        } else {
+            DateTime nextRegisteringTime = new DateTime(nextStartTime).minusMinutes(minutesInRegistering);
+            return nextRegisteringTime;
+        }
+    }
 
     public Trigger getSchedule() {
         return newTrigger().withSchedule(cronSchedule(cronSchedule)).startAt(startDate).endAt(endDate).build();
@@ -147,4 +159,5 @@ public class TournamentSchedule implements Serializable {
     public void setCronSchedule(String cronSchedule) {
         this.cronSchedule = cronSchedule;
     }
+
 }

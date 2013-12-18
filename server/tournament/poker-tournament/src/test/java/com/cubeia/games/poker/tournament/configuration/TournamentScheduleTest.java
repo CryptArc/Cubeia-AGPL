@@ -17,26 +17,20 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import org.hamcrest.CoreMatchers;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.ScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-
-import java.util.Date;
-import java.util.TimeZone;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.Date;
+import java.util.TimeZone;
+
+import org.hamcrest.CoreMatchers;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TournamentScheduleTest {
 
@@ -64,6 +58,17 @@ public class TournamentScheduleTest {
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 6, 2, 9, 0, 0));
         assertEquals(new DateTime(2012, 6, 2, 14, 0, 0), nextAnnounceTime);
     }
+    
+    @Test
+    public void testNextRegisteringTime() {
+        Date startDate = new DateTime(2011, 7, 5, 9, 0, 0).toDate();
+        Date endDate = new DateTime(2012, 7, 5, 9, 0, 0).toDate();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(startDate, endDate, "0 30 14 * * ?", 10, 20, 30);
+
+        DateTime nextRegisteringTime = tournamentSchedule.getNextRegisteringTime(new DateTime(2012, 6, 2, 9, 0, 0));
+        assertEquals(new DateTime(2012, 6, 2, 14, 10, 0), nextRegisteringTime);
+    }
+    
 
     @Test
     public void testNoMoreTournamentsAfterEndDate() {
