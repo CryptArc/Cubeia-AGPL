@@ -69,7 +69,7 @@ public class CreateOrEditBlindsStructure extends BasePage {
             protected void onSubmit() {
                 removeInvalidLevels();
                 if (structure.getId() != 0) {
-                    adminDAO.save(structure);
+                    adminDAO.merge(structure);
                 } else {
                     adminDAO.persist(structure);
                 }

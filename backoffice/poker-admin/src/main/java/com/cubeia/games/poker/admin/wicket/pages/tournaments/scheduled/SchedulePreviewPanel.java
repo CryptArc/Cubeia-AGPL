@@ -3,7 +3,6 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 import static java.lang.System.currentTimeMillis;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -44,11 +43,10 @@ public class SchedulePreviewPanel extends Panel {
         super.onConfigure();
         
         TournamentSchedule sched = schedule.getObject();
-        addOrReplace(new Label("schedStart", sched.getStartDate()), new Label("schedEnd", sched.getEndDate()),
-            new Label("schedCron", sched.getCronSchedule()), new Label("tz", creatTzString()));
         
-        
-        if (!valid) {
+        if (sched == null) {
+            addOrReplace(new Fragment("instance", "noDataFragment", SchedulePreviewPanel.this));
+        } else if (!valid) {
             Fragment frag = new Fragment("instance", "invalidCronFragment", SchedulePreviewPanel.this);
             frag.add(new Label("errorMsg", Model.of(error)));
             addOrReplace(frag);
@@ -59,6 +57,10 @@ public class SchedulePreviewPanel extends Panel {
             
             Fragment instanceContainer = new Fragment("instance", "instanceFragment", SchedulePreviewPanel.this);
             addOrReplace(instanceContainer);
+            
+            instanceContainer.add(new Label("schedStart", sched.getStartDate()), new Label("schedEnd", sched.getEndDate()),
+                new Label("schedCron", sched.getCronSchedule()), new Label("tz", creatTzString()));
+            
             
             instanceContainer.add(new Label("instanceNumber", Model.of(index + 1)));
             instanceContainer.add(new Label("instanceCount", Model.of(startTimes.size() > MAX ? "" + MAX + "+" : startTimes.size())));

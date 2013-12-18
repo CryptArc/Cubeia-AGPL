@@ -41,7 +41,7 @@ public class ArchiveLinkPanel extends Panel {
             public void onClick() {
                 try {
                     archiver.archive();
-                    adminDAO.save(entity);
+                    adminDAO.merge(entity);
                     setResponsePage(responsePage);
                 }
                 catch (Exception ex) {

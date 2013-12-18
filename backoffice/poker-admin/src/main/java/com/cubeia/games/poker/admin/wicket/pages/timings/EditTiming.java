@@ -38,7 +38,7 @@ public class EditTiming extends BasePage {
             @Override
             protected void onSubmit() {
                 TimingProfile object = getModel().getObject();
-                adminDAO.save(object);
+                adminDAO.merge(object);
                 // info("Timing configuration updated, id = " + templateId);
                 setResponsePage(ListTimings.class);
             }

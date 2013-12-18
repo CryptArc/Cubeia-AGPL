@@ -61,7 +61,7 @@ public class CreateTable extends BasePage {
 
             @Override
             protected void onSubmit(TableConfigTemplate config) {
-                adminDAO.save(config);
+                adminDAO.merge(config);
                 setResponsePage(ListTables.class);
             }
         };
