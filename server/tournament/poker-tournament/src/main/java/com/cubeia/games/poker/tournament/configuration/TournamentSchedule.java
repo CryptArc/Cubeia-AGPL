@@ -21,7 +21,9 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -93,6 +95,11 @@ public class TournamentSchedule implements Serializable {
         }
     }
 
+    /**
+     * Calculate the next start time by the given time.
+     * @param now time start use as base
+     * @return next start time after the given time, null if there is none
+     */
     public DateTime getNextStartTime(DateTime now) {
         Date nextStartTime = getSchedule().getFireTimeAfter(now.toDate());
         if (nextStartTime == null) {
@@ -111,7 +118,29 @@ public class TournamentSchedule implements Serializable {
             return nextRegisteringTime;
         }
     }
-
+    
+    
+    /**
+     * Calculate a list, limited by max, of tournament start times after the given date.
+     * 
+     * @param startTime date to start calculation from
+     * @param max max number of start dates to calculate
+     * @return list of start dates, never null
+     */
+    public List<DateTime> calculateStartTimes(DateTime startTime, int max) {
+        Trigger trigger = getSchedule();
+        List<DateTime> startTimes = new ArrayList<>();
+        Date time = new Date(startTime.getMillis());
+        
+        while (time != null  &&  startTimes.size() < max) {
+            time = trigger.getFireTimeAfter(time);
+            if (time != null) {
+                startTimes.add(new DateTime(time));
+            }
+        }
+        
+        return startTimes;
+    }
     public Trigger getSchedule() {
         return newTrigger().withSchedule(cronSchedule(cronSchedule)).startAt(startDate).endAt(endDate).build();
     }

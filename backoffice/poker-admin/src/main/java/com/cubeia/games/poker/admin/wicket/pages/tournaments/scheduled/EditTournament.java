@@ -17,16 +17,20 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
+import static java.lang.Math.max;
 import static org.apache.wicket.ajax.attributes.CallbackParameter.explicit;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DateField;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -49,6 +53,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.time.Time;
 import org.joda.time.DateTime;
+import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +100,6 @@ public class EditTournament extends BasePage {
                 ScheduledTournamentConfiguration configuration = getModel().getObject();
                 adminDAO.save(configuration);
                 info("Tournament updated, id = " + tournamentId);
-//                setResponsePage(ListTournaments.class);
             }
         };
 
@@ -127,8 +131,9 @@ public class EditTournament extends BasePage {
     	pc.setOutputMarkupId(true);
     	
     	
-		final PreviewScheduleFragment previewContent = new PreviewScheduleFragment("previewContent");
+		final SchedulePreviewPanel previewContent = new SchedulePreviewPanel("previewContent");
     	previewContent.setOutputMarkupId(true);
+    	
     	TournamentSchedule schedule = tournament.getSchedule();
         updatePreviewValues(previewContent, schedule.getCronSchedule(), schedule.getStartDate(), schedule.getEndDate(),
             schedule.getMinutesInAnnounced(), schedule.getMinutesInRegistering(), schedule.getMinutesVisibleAfterFinished());
@@ -138,11 +143,6 @@ public class EditTournament extends BasePage {
 			protected void respond(AjaxRequestTarget target) {
 				
 				IRequestParameters params = getRequestCycle().getRequest().getRequestParameters();
-//				for (String paramName : params.getParameterNames()) {
-//					System.err.println("" + paramName + " = " + params.getParameterValue(paramName).toTime());
-//				}
-				
-				System.err.println("ajax, start: " + params.getParameterValue("start"));
 				
 				SimpleDateFormat sdf = new SimpleDateFormat(new DateTextField("dummy").getTextFormat());
 				
@@ -173,14 +173,11 @@ public class EditTournament extends BasePage {
 		tournamentForm.add(pc);
     }
     
-    private void updatePreviewValues(final PreviewScheduleFragment previewContent, String cron, Date start, Date end, 
+    private void updatePreviewValues(final SchedulePreviewPanel previewContent, String cron, Date start, Date end, 
         int minAnnounced, int minRegistering, int minVisibleAfter) {
         
         TournamentSchedule sched = new TournamentSchedule(start, end, cron, minAnnounced, minRegistering, minVisibleAfter);
         previewContent.setSchedule(sched);
-//        previewContent.setCron(cron);
-//        previewContent.setStart(start);
-//        previewContent.setEnd(end);
     }
     
     @Override
@@ -225,74 +222,6 @@ public class EditTournament extends BasePage {
         return "Edit Tournament";
     }
     
-    
-    class PreviewScheduleFragment extends Fragment {
-    	
-        private IModel<TournamentSchedule> schedule = new Model<>();
-    	private IModel<Date> now = new Model<>();
-//    	private IModel<Date> start = new Model<>();
-//    	private IModel<Date> end = new Model<>();
-//    	private IModel<String> cron = new Model<>();
-    	
-		public PreviewScheduleFragment(String id) {
-			super(id, "previewScheduleFragment", EditTournament.this);
-			
-			add(new Label("now", now));
-			
-			setOutputMarkupId(true);
-			
-			
-		}
-		
-		@Override
-		protected void onBeforeRender() {
-			super.onBeforeRender();
-			System.err.println("before render");
-//			System.err.println("  start: " + start);
-//			System.err.println("  end: " + end);
-//			System.err.println("  cron: " + cron);
-			
-			now.setObject(new Date());
-		}
-		
-		@Override
-		protected void onConfigure() {
-		    super.onConfigure();
-		    
-            Date now = new Date();
-            this.now.setObject(now);
-            addOrReplace(new Label("schedStart", now), new Label("schedEnd", now), new Label("schedCron", now));
-
-            
-            WebMarkupContainer instanceContainer = new WebMarkupContainer("instance");
-            addOrReplace(instanceContainer);
-            
-            instanceContainer.add(new Label("instanceNumber", "13"));
-            
-            instanceContainer.add(new Label("announce", schedule.getObject().getNextAnnounceTime(new DateTime(now))));
-            instanceContainer.add(new Label("register", schedule.getObject().getNextRegisteringTime(new DateTime(now))));
-            instanceContainer.add(new Label("start", schedule.getObject().getNextStartTime(new DateTime(now))));
-		}
-
-		public void setSchedule(TournamentSchedule sched) {
-		    this.schedule.setObject(sched);
-		}
-		
-//		public void setStart(Date start) {
-//			this.start.setObject(start);
-//		}
-//
-//		public void setEnd(Date end) {
-//			this.end.setObject(end);
-//		}
-//
-//		public void setCron(String cron) {
-//			this.cron.setObject(cron);
-//		}
-    	
-		
-		
-    }
     
     
 }

@@ -73,32 +73,41 @@
 	                        
 	                        <div class="control-group">
 	                            <div class="controls">
+	                            <!--  
 		                            <a href="#previewScheduleModal" data-toggle="modal" class="btn">Preview Schedule</a>
+	                            -->
+	                            
+		                            <a class="btn" onclick="$('#previewContainerWrapper').toggle();">Preview Schedule</a>
 	                            </div>
 	                            
-		                        <div wicket:id="previewContainer"><span wicket:id="previewContent">nope...</span></div>
+	                            <div class="controls" style="display: hidden;">
+	                              <div id="previewContainerWrapper" style="display: none;">
 	                            
-	                            
-	                            <script>
-	                            	function doPreviewSchedule() {
-	                            		console.log("preview");
-										var start = $("#startDate input").val();	                            		
-										var end = $("#endDate input").val();	                            		
-										var cron = $("#schedule").val();	
-										
-										var minAnnounced = $("#minutesInAnnounced").val();	
-										var minRegistering = $("#minutesInRegistering").val();	
-										var minVisible = $("#minutesVisibleAfterFinished").val();	
-										
-										console.log("start: %s, end: %s, cron: %s, ann: %s, reg: %s, after: %s", start, end, cron, 
-												minAnnounced, minRegistering, minVisible);
-										
-										previewTournamentSchedule(start, end, cron, minAnnounced, minRegistering, minVisible);
-	                            	};
-	                            
-	                            </script>
-	                            
-	                            <a class="btn" onclick="doPreviewSchedule();">do stuff</a>
+			                        <div wicket:id="previewContainer"><span wicket:id="previewContent"></span></div>
+		                            
+		                            <script>
+		                            	function doPreviewSchedule() {
+		                            		console.log("preview");
+											var start = $("#startDate input").val();	                            		
+											var end = $("#endDate input").val();	                            		
+											var cron = $("#schedule").val();	
+											
+											var minAnnounced = $("#minutesInAnnounced").val();	
+											var minRegistering = $("#minutesInRegistering").val();	
+											var minVisible = $("#minutesVisibleAfterFinished").val();	
+											
+											console.log("start: %s, end: %s, cron: %s, ann: %s, reg: %s, after: %s", start, end, cron, 
+													minAnnounced, minRegistering, minVisible);
+											
+											previewTournamentSchedule(start, end, cron, minAnnounced, minRegistering, minVisible);
+		                            	};
+		                            
+		                            </script>
+		                            
+		                            <a class="btn" onclick="doPreviewSchedule();">Refresh</a>
+		                            
+	                              </div>
+	                            </div>
 	                            
 	                        </div>
 
@@ -176,33 +185,7 @@
 		</div>
 	</div>
 	
-    <wicket:fragment wicket:id="previewScheduleFragment">
-    
-    		Now: <span wicket:id="now"/>
-    		Start: <span wicket:id="schedStart"/>
-    		End: <span wicket:id="schedEnd"/>
-    		Cron: <span wicket:id="schedCron"/>
-    		
-    
-    	<span wicket:id="instance">
-    
-			<h5>Instance <span wicket:id="instanceNumber">X</span></h5>
-		
-			<dl class="dl-horizontal">
-			  <dt>Announce</dt>
-			  <dd><span wicket:id="announce"></span></dd>
-			  
-			  <dt>Registering</dt>
-			  <dd><span wicket:id="register"></span></dd>
-			  
-			  <dt>Start</dt>
-			  <dd><span wicket:id="start"></span></dd>
-			  
-			</dl>
 
-    	</span>
-    
-    </wicket:fragment>
 	
 
 </wicket:extend>
