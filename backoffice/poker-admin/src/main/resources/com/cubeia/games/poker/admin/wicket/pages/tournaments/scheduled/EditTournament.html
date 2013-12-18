@@ -86,9 +86,14 @@
 										var end = $("#endDate input").val();	                            		
 										var cron = $("#schedule").val();	
 										
-										console.log("start: %s, end: %s, cron: %s", start, end, cron);
+										var minAnnounced = $("#minutesInAnnounced").val();	
+										var minRegistering = $("#minutesInRegistering").val();	
+										var minVisible = $("#minutesVisibleAfterFinished").val();	
 										
-										previewTournamentSchedule(start, end, cron);
+										console.log("start: %s, end: %s, cron: %s, ann: %s, reg: %s, after: %s", start, end, cron, 
+												minAnnounced, minRegistering, minVisible);
+										
+										previewTournamentSchedule(start, end, cron, minAnnounced, minRegistering, minVisible);
 	                            	};
 	                            
 	                            </script>
@@ -174,26 +179,28 @@
     <wicket:fragment wicket:id="previewScheduleFragment">
     
     		Now: <span wicket:id="now"/>
-    		Start: <span wicket:id="start"/>
-    		End: <span wicket:id="end"/>
-    		Cron: <span wicket:id="cron"/>
+    		Start: <span wicket:id="schedStart"/>
+    		End: <span wicket:id="schedEnd"/>
+    		Cron: <span wicket:id="schedCron"/>
     		
     
-			<h5>Instance X</h5>
+    	<span wicket:id="instance">
+    
+			<h5>Instance <span wicket:id="instanceNumber">X</span></h5>
 		
 			<dl class="dl-horizontal">
 			  <dt>Announce</dt>
-			  <dd>2014-01-03 23:55</dd>
+			  <dd><span wicket:id="announce"></span></dd>
 			  
 			  <dt>Registering</dt>
-			  <dd>2014-01-04 23:55</dd>
+			  <dd><span wicket:id="register"></span></dd>
 			  
 			  <dt>Start</dt>
-			  <dd>2014-01-05 23:55</dd>
+			  <dd><span wicket:id="start"></span></dd>
 			  
-			  <dt>...</dt>
-			  <dd>2014-01-03 23:55</dd>
 			</dl>
+
+    	</span>
     
     </wicket:fragment>
 	

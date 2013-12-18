@@ -48,6 +48,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.time.Time;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ import com.cubeia.games.poker.admin.wicket.util.CronExpressionValidator;
 import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 
 @SuppressWarnings("serial")
 public class EditTournament extends BasePage {
@@ -127,6 +129,9 @@ public class EditTournament extends BasePage {
     	
 		final PreviewScheduleFragment previewContent = new PreviewScheduleFragment("previewContent");
     	previewContent.setOutputMarkupId(true);
+    	TournamentSchedule schedule = tournament.getSchedule();
+        updatePreviewValues(previewContent, schedule.getCronSchedule(), schedule.getStartDate(), schedule.getEndDate(),
+            schedule.getMinutesInAnnounced(), schedule.getMinutesInRegistering(), schedule.getMinutesVisibleAfterFinished());
     	
     	pcAjaxBehaviour = new AbstractDefaultAjaxBehavior() {
 			@Override
@@ -141,8 +146,12 @@ public class EditTournament extends BasePage {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat(new DateTextField("dummy").getTextFormat());
 				
+				String cron = params.getParameterValue("cron").toOptionalString();
+
+                int minInAnnounced = params.getParameterValue("announceMinutes").toInt(0);
+                int minInRegistering = params.getParameterValue("registeringMinutes").toInt(0);
+                int minAfterClose = params.getParameterValue("visibleMinutes").toInt(0);
 				
-				previewContent.setCron(params.getParameterValue("cron").toOptionalString());
 				Date start = new Date(0);
 				Date end = new Date(0);
 				try {
@@ -152,26 +161,34 @@ public class EditTournament extends BasePage {
 					log.warn("error parsing start/end date");
 				}
 				
-				previewContent.setStart(start);
-				previewContent.setEnd(end);
+				updatePreviewValues(previewContent, cron, start, end, minInAnnounced, minInRegistering, minAfterClose);
 				
 		        target.add(previewContent);
 		    }
+
 		};
 		pc.add(pcAjaxBehaviour);
 		pc.add(previewContent);
 		
 		tournamentForm.add(pc);
-    	
-    	
-    	
+    }
+    
+    private void updatePreviewValues(final PreviewScheduleFragment previewContent, String cron, Date start, Date end, 
+        int minAnnounced, int minRegistering, int minVisibleAfter) {
+        
+        TournamentSchedule sched = new TournamentSchedule(start, end, cron, minAnnounced, minRegistering, minVisibleAfter);
+        previewContent.setSchedule(sched);
+//        previewContent.setCron(cron);
+//        previewContent.setStart(start);
+//        previewContent.setEnd(end);
     }
     
     @Override
     public void renderHead(IHeaderResponse response) {
     	super.renderHead(response);
     	
-    	CharSequence callbackFunction = pcAjaxBehaviour.getCallbackFunction(explicit("start"), explicit("end"), explicit("cron"));
+    	CharSequence callbackFunction = pcAjaxBehaviour.getCallbackFunction(explicit("start"), explicit("end"), explicit("cron"),
+    	    explicit("announceMinutes"), explicit("registeringMinutes"), explicit("visibleMinutes"));
 		HeaderItem onDomReadyHeaderItem = JavaScriptHeaderItem.forScript("var previewTournamentSchedule = " +  callbackFunction.toString(), null);
     	response.render(onDomReadyHeaderItem);
     }
@@ -211,44 +228,67 @@ public class EditTournament extends BasePage {
     
     class PreviewScheduleFragment extends Fragment {
     	
+        private IModel<TournamentSchedule> schedule = new Model<>();
     	private IModel<Date> now = new Model<>();
-    	private IModel<Date> start = new Model<>();
-    	private IModel<Date> end = new Model<>();
-    	private IModel<String> cron = new Model<>();
+//    	private IModel<Date> start = new Model<>();
+//    	private IModel<Date> end = new Model<>();
+//    	private IModel<String> cron = new Model<>();
     	
 		public PreviewScheduleFragment(String id) {
 			super(id, "previewScheduleFragment", EditTournament.this);
 			
 			add(new Label("now", now));
-			add(new Label("start", start));
-			add(new Label("end", end));
-			add(new Label("cron", cron));
 			
 			setOutputMarkupId(true);
+			
+			
 		}
 		
 		@Override
 		protected void onBeforeRender() {
 			super.onBeforeRender();
 			System.err.println("before render");
-			System.err.println("  start: " + start);
-			System.err.println("  end: " + end);
-			System.err.println("  cron: " + cron);
+//			System.err.println("  start: " + start);
+//			System.err.println("  end: " + end);
+//			System.err.println("  cron: " + cron);
 			
 			now.setObject(new Date());
 		}
+		
+		@Override
+		protected void onConfigure() {
+		    super.onConfigure();
+		    
+            Date now = new Date();
+            this.now.setObject(now);
+            addOrReplace(new Label("schedStart", now), new Label("schedEnd", now), new Label("schedCron", now));
 
-		public void setStart(Date start) {
-			this.start.setObject(start);
+            
+            WebMarkupContainer instanceContainer = new WebMarkupContainer("instance");
+            addOrReplace(instanceContainer);
+            
+            instanceContainer.add(new Label("instanceNumber", "13"));
+            
+            instanceContainer.add(new Label("announce", schedule.getObject().getNextAnnounceTime(new DateTime(now))));
+            instanceContainer.add(new Label("register", schedule.getObject().getNextRegisteringTime(new DateTime(now))));
+            instanceContainer.add(new Label("start", schedule.getObject().getNextStartTime(new DateTime(now))));
 		}
 
-		public void setEnd(Date end) {
-			this.end.setObject(end);
+		public void setSchedule(TournamentSchedule sched) {
+		    this.schedule.setObject(sched);
 		}
-
-		public void setCron(String cron) {
-			this.cron.setObject(cron);
-		}
+		
+//		public void setStart(Date start) {
+//			this.start.setObject(start);
+//		}
+//
+//		public void setEnd(Date end) {
+//			this.end.setObject(end);
+//		}
+//
+//		public void setCron(String cron) {
+//			this.cron.setObject(cron);
+//		}
     	
 		
 		
