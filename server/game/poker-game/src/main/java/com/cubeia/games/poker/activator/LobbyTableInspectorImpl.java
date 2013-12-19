@@ -26,9 +26,11 @@ import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MO
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus.ENABLED;
 import static java.util.Collections.addAll;
 
 @Singleton
@@ -131,6 +134,11 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
 
         // for each template
         for (TableConfigTemplate config : templates) {
+            if (config.getStatus() != ENABLED) {
+                log.trace("template '" + config.getName() + "' is not enabled, won't create tables");
+                continue;
+            }
+            
             List<LobbyTable> list = tables.get(config.getId());
             // create a list if it doesn't exist
             if (list == null) {

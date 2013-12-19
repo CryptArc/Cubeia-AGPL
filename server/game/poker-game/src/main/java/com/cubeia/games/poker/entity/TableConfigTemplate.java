@@ -24,9 +24,12 @@ import com.cubeia.poker.variant.PokerVariant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -38,9 +41,15 @@ public class TableConfigTemplate implements Serializable {
     public static final int DEF_MIN_BUY_IN_ANTE_MULTIPLIER = 10;
     public static final int DEF_MAX_BUY_IN_ANTE_MULTIPLIER = 100;
 
+    public enum TemplateStatus { REMOVED, DISABLED, ENABLED };
+    
     @Id
     @GeneratedValue
     private int id;
+    
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TemplateStatus status = TemplateStatus.ENABLED;
 
     @Column(nullable = false)
     private String name;
@@ -123,6 +132,14 @@ public class TableConfigTemplate implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public TemplateStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(TemplateStatus status) {
+        this.status = status;
     }
 
     public int getSeats() {
@@ -246,54 +263,105 @@ public class TableConfigTemplate implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TableConfigTemplate that = (TableConfigTemplate) o;
-
-        if (id != that.id) return false;
-        if (maxBuyInMultiplier != that.maxBuyInMultiplier) return false;
-        if (minBuyInMultiplier != that.minBuyInMultiplier) return false;
-        if (minEmptyTables != that.minEmptyTables) return false;
-        if (minTables != that.minTables) return false;
-        if (seats != that.seats) return false;
-        if (ttl != that.ttl) return false;
-        if (ante != null ? !ante.equals(that.ante) : that.ante != null) return false;
-        if (betStrategy != that.betStrategy) return false;
-        if (bigBlind != null ? !bigBlind.equals(that.bigBlind) : that.bigBlind != null) return false;
-        if (currency != null ? !currency.equals(that.currency) : that.currency != null) return false;
-        if (maxBuyIn != null ? !maxBuyIn.equals(that.maxBuyIn) : that.maxBuyIn != null) return false;
-        if (minBuyIn != null ? !minBuyIn.equals(that.minBuyIn) : that.minBuyIn != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (rakeSettings != null ? !rakeSettings.equals(that.rakeSettings) : that.rakeSettings != null) return false;
-        if (smallBlind != null ? !smallBlind.equals(that.smallBlind) : that.smallBlind != null) return false;
-        if (timing != null ? !timing.equals(that.timing) : that.timing != null) return false;
-        if (variant != that.variant) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TableConfigTemplate other = (TableConfigTemplate) obj;
+        if (ante == null) {
+            if (other.ante != null)
+                return false;
+        } else if (!ante.equals(other.ante))
+            return false;
+        if (betStrategy != other.betStrategy)
+            return false;
+        if (bigBlind == null) {
+            if (other.bigBlind != null)
+                return false;
+        } else if (!bigBlind.equals(other.bigBlind))
+            return false;
+        if (currency == null) {
+            if (other.currency != null)
+                return false;
+        } else if (!currency.equals(other.currency))
+            return false;
+        if (id != other.id)
+            return false;
+        if (maxBuyIn == null) {
+            if (other.maxBuyIn != null)
+                return false;
+        } else if (!maxBuyIn.equals(other.maxBuyIn))
+            return false;
+        if (maxBuyInMultiplier != other.maxBuyInMultiplier)
+            return false;
+        if (minBuyIn == null) {
+            if (other.minBuyIn != null)
+                return false;
+        } else if (!minBuyIn.equals(other.minBuyIn))
+            return false;
+        if (minBuyInMultiplier != other.minBuyInMultiplier)
+            return false;
+        if (minEmptyTables != other.minEmptyTables)
+            return false;
+        if (minTables != other.minTables)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (rakeSettings == null) {
+            if (other.rakeSettings != null)
+                return false;
+        } else if (!rakeSettings.equals(other.rakeSettings))
+            return false;
+        if (seats != other.seats)
+            return false;
+        if (smallBlind == null) {
+            if (other.smallBlind != null)
+                return false;
+        } else if (!smallBlind.equals(other.smallBlind))
+            return false;
+        if (status != other.status)
+            return false;
+        if (timing == null) {
+            if (other.timing != null)
+                return false;
+        } else if (!timing.equals(other.timing))
+            return false;
+        if (ttl != other.ttl)
+            return false;
+        if (variant != other.variant)
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (variant != null ? variant.hashCode() : 0);
-        result = 31 * result + (ante != null ? ante.hashCode() : 0);
-        result = 31 * result + (smallBlind != null ? smallBlind.hashCode() : 0);
-        result = 31 * result + (bigBlind != null ? bigBlind.hashCode() : 0);
-        result = 31 * result + minBuyInMultiplier;
-        result = 31 * result + maxBuyInMultiplier;
-        result = 31 * result + (minBuyIn != null ? minBuyIn.hashCode() : 0);
-        result = 31 * result + (maxBuyIn != null ? maxBuyIn.hashCode() : 0);
-        result = 31 * result + minEmptyTables;
-        result = 31 * result + minTables;
-        result = 31 * result + seats;
-        result = 31 * result + (betStrategy != null ? betStrategy.hashCode() : 0);
-        result = 31 * result + (timing != null ? timing.hashCode() : 0);
-        result = 31 * result + (rakeSettings != null ? rakeSettings.hashCode() : 0);
-        result = 31 * result + (int) (ttl ^ (ttl >>> 32));
-        result = 31 * result + (currency != null ? currency.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((ante == null) ? 0 : ante.hashCode());
+        result = prime * result + ((betStrategy == null) ? 0 : betStrategy.hashCode());
+        result = prime * result + ((bigBlind == null) ? 0 : bigBlind.hashCode());
+        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+        result = prime * result + id;
+        result = prime * result + ((maxBuyIn == null) ? 0 : maxBuyIn.hashCode());
+        result = prime * result + maxBuyInMultiplier;
+        result = prime * result + ((minBuyIn == null) ? 0 : minBuyIn.hashCode());
+        result = prime * result + minBuyInMultiplier;
+        result = prime * result + minEmptyTables;
+        result = prime * result + minTables;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((rakeSettings == null) ? 0 : rakeSettings.hashCode());
+        result = prime * result + seats;
+        result = prime * result + ((smallBlind == null) ? 0 : smallBlind.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + ((timing == null) ? 0 : timing.hashCode());
+        result = prime * result + (int) (ttl ^ (ttl >>> 32));
+        result = prime * result + ((variant == null) ? 0 : variant.hashCode());
         return result;
     }
 
