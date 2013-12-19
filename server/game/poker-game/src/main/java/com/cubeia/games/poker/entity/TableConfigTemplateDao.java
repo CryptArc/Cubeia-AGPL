@@ -32,7 +32,7 @@ public class TableConfigTemplateDao {
     private Provider<EntityManager> em;
 
     @SuppressWarnings("unchecked")
-    public List<TableConfigTemplate> get() {
+    public List<TableConfigTemplate> getAllTableConfigTemplates() {
         return em.get().createQuery("from TableConfigTemplate").getResultList();
     }
 }

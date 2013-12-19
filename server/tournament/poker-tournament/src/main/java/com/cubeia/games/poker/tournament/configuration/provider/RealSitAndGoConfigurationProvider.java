@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider;
 
-import static com.cubeia.games.poker.tournament.configuration.provider.TransactionHelper.doInTrasaction;
+import static com.cubeia.games.poker.common.jpa.TransactionHelper.doInTrasaction;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;

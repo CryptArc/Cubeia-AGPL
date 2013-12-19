@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.tournament.configuration.provider;
+package com.cubeia.games.poker.common.jpa;
 
 import java.util.concurrent.Callable;
 

@@ -17,7 +17,12 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.games.poker.common.jpa.TransactionHelper.doInTrasaction;
+
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import javax.persistence.EntityManager;
 
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.entity.TableConfigTemplateDao;
@@ -30,8 +35,15 @@ public class DatabaseTableConfigTemplateProvider implements TableConfigTemplateP
     @Inject
     private TableConfigTemplateDao dao;
 
+    @Inject
+    private EntityManager em;
+    
     @Override
     public List<TableConfigTemplate> getTemplates() {
-        return dao.get();
+        return doInTrasaction(em, new Callable<List<TableConfigTemplate>>() {
+            @Override public List<TableConfigTemplate> call() throws Exception {
+                return dao.getAllTableConfigTemplates();
+            }
+        });
     }
 }
