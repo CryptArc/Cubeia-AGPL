@@ -339,4 +339,10 @@ public class PokerStateTest {
         assertThat(players.size(), is(1));
         assertThat(players, hasItem(player1));
     }
+    
+    @Test(expected = UnsupportedOperationException.class)
+    public void testMarkTableForCloseIllegalOnTournament() {
+        state.setTournamentTable(true);
+        state.setCloseTableAfterHandFinished(true);
+    }
 }

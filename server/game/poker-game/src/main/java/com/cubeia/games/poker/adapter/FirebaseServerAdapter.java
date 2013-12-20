@@ -578,7 +578,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
 
-        if (isSystemShutDown()) {
+        if (isSystemShutDown()  ||  state.isCloseTableAfterHandFinished()) {
             if (tournamentTable) {
                 log.error("System is shut down but tournament seems to still be running. tableId: " + table.getId());
             }

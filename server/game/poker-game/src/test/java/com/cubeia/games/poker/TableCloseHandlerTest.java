@@ -39,7 +39,9 @@ import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+
 import mock.UnmongofiableSet;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -73,14 +75,14 @@ public class TableCloseHandlerTest {
     private BackendPlayerSessionHandler backendPlayerSessionHandler;
     @Mock
     private FirebaseServerAdapter serverAdapter;
-    private TableCloseHandlerImpl tableCrashHandler;
+    private TableCloseHandlerImpl tableCloseHandler;
     private int tableId = 1343;
     private String handId = "4435";
 
     @Before
     public void setup() {
         initMocks(this);
-        tableCrashHandler = new TableCloseHandlerImpl(state, actionCache, backendPlayerSessionHandler, serverAdapter);
+        tableCloseHandler = new TableCloseHandlerImpl(state, actionCache, backendPlayerSessionHandler, serverAdapter);
         when(table.getAttributeAccessor()).thenReturn(attributeAccessor);
         when(table.getId()).thenReturn(tableId);
         when(state.getAdapterState()).thenReturn(fbState);
@@ -89,7 +91,7 @@ public class TableCloseHandlerTest {
     @Test
     public void testCloseAborted() throws IOException {
         setupCloseTableScenario();
-        tableCrashHandler.closeTable(table, false);
+        tableCloseHandler.closeTable(table, false);
         verify(state, times(0)).shutdown();
     }
 
@@ -97,7 +99,7 @@ public class TableCloseHandlerTest {
     public void testCloseForced() throws IOException {
         setupCloseTableScenario();
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
-        tableCrashHandler.closeTable(table, true);
+        tableCloseHandler.closeTable(table, true);
         verify(state, times(1)).shutdown();
         ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(table.getNotifier(), times(4)).notifyPlayer(Mockito.anyInt(), actionCaptor.capture());
@@ -107,6 +109,43 @@ public class TableCloseHandlerTest {
         assertThat(errorPacket.referenceId, is(handId));
     }
 
+    @Test
+    public void testCloseWhileHandIsPlayingOnlyMarksTable() throws Exception {
+        setupCloseTableScenario();
+        when(state.isTournamentTable()).thenReturn(false);
+        when(state.isCloseTableAfterHandFinished()).thenReturn(false);
+        
+        tableCloseHandler.closeTable(table, false);
+        
+        verify(state).setCloseTableAfterHandFinished(true);
+        verify(state, never()).shutdown();
+        verify(table.getNotifier(), never()).notifyPlayer(Mockito.anyInt(), Mockito.any(GameDataAction.class));
+    }
+    
+    @Test
+    public void testCloseMarkedTableWhenFinished() throws Exception {
+        setupCloseTableScenario();
+        when(state.isCloseTableAfterHandFinished()).thenReturn(true);
+        when(state.isFinished()).thenReturn(true);
+        
+        tableCloseHandler.closeTable(table, false);
+        
+        verify(state).shutdown();
+        verify(table.getNotifier(), times(4)).notifyPlayer(Mockito.anyInt(), Mockito.any(GameDataAction.class));
+    }
+    
+    @Test
+    public void testDontCloseMarkedTableIfNotFinished() throws Exception {
+        setupCloseTableScenario();
+        when(state.isCloseTableAfterHandFinished()).thenReturn(true);
+        when(state.isFinished()).thenReturn(false);
+        
+        tableCloseHandler.closeTable(table, false);
+        
+        verify(state, never()).shutdown();
+        verify(table.getNotifier(), never()).notifyPlayer(Mockito.anyInt(), Mockito.any(GameDataAction.class));
+    }
+    
     @Test
     public void testCloseWhenNooneIsSeated() throws Exception {
         setupCloseTableScenario();
@@ -119,11 +158,32 @@ public class TableCloseHandlerTest {
         when(tablePlayerSet.getPlayerCount()).thenReturn(0);
 
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
-        tableCrashHandler.closeTable(table, false);
+        tableCloseHandler.closeTable(table, false);
         verify(state, times(1)).shutdown();
-
         verify(table.getNotifier(), times(2)).notifyPlayer(Mockito.anyInt(), Mockito.any(GameDataAction.class));
     }
+    
+    
+
+    /*
+    @Override
+    public void closeTable(Table table, boolean force) {
+        log.debug("Close table command received; table id = {}, force = {}", table.getId(), force);
+        if (countSeated(table) == 0) {
+            log.info("Closing table {} with {} seated players", table.getId(), countSeated(table));
+            doCloseTable(table, false, getHandId());
+        } else if (force) {
+            log.info("Forcibly closing table {} with {} seated players", table.getId(), countSeated(table));
+            doCloseTable(table, false, getHandId());
+        } else if (state.isCloseTableAfterHandFinished()  &&  state.isFinished()) {
+            log.debug("Closing table, hand finished and marked for close");
+            doCloseTable(table, false, getHandId());
+        } else if (!state.isCloseTableAfterHandFinished()  &&  !state.isTournamentTable()) {
+            log.debug("Marking table to close when current hand finishes, have " + countSeated(table) + " seated players");
+            state.setCloseTableAfterHandFinished(true);
+        }
+    }
+    */
 
     protected void setupCloseTableScenario() {
         TablePlayerSet tablePlayerSet = mock(TablePlayerSet.class);
@@ -189,7 +249,7 @@ public class TableCloseHandlerTest {
         when(tableWatcherSet.getCountWatchers()).thenReturn(2);
 
 
-        tableCrashHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("test crash handling"));
+        tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("test crash handling"));
 
         verify(attributeAccessor).setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         verify(state).shutdown();
@@ -218,7 +278,7 @@ public class TableCloseHandlerTest {
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         doThrow(new RuntimeException("crash")).when(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1, -1, state);
 
-        tableCrashHandler.closePlayerSessions(table, Arrays.asList(pokerPlayer1, pokerPlayer2));
+        tableCloseHandler.closePlayerSessions(table, Arrays.asList(pokerPlayer1, pokerPlayer2));
 
         verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2, 0, state);
     }

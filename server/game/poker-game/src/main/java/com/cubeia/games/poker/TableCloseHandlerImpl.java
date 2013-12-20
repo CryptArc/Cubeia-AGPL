@@ -77,11 +77,18 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
     @Override
     public void closeTable(Table table, boolean force) {
         log.debug("Close table command received; table id = {}, force = {}", table.getId(), force);
-        if (countSeated(table) == 0 || force) {
+        if (countSeated(table) == 0) {
             log.info("Closing table {} with {} seated players", table.getId(), countSeated(table));
             doCloseTable(table, false, getHandId());
-        } else {
-            log.debug("Close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
+        } else if (force) {
+            log.info("Forcibly closing table {} with {} seated players", table.getId(), countSeated(table));
+            doCloseTable(table, false, getHandId());
+        } else if (state.isCloseTableAfterHandFinished()  &&  state.isFinished()) {
+            log.debug("Closing table, hand finished and marked for close");
+            doCloseTable(table, false, getHandId());
+        } else if (!state.isCloseTableAfterHandFinished()  &&  !state.isTournamentTable()) {
+            log.debug("Marking table to close when current hand finishes, have " + countSeated(table) + " seated players");
+            state.setCloseTableAfterHandFinished(true);
         }
     }
 

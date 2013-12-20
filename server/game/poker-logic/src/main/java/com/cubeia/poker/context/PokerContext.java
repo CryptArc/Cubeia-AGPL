@@ -32,6 +32,7 @@ import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +104,8 @@ public class PokerContext implements Serializable {
 
     private boolean handFinished = false;
 
+    private boolean shutdownAfterHandFinished = false;
+    
     @VisibleForTesting
     public PotHolder potHolder;
     
@@ -147,6 +150,17 @@ public class PokerContext implements Serializable {
 
     public boolean isFinished() {
         return handFinished;
+    }
+    
+    /**
+     * Mark this hand to be the last and then close this table.
+     */
+    public void setCloseTableAfterHandFinished(boolean shutdownAfterHandFinished) {
+        this.shutdownAfterHandFinished = shutdownAfterHandFinished;
+    }
+    
+    public boolean isCloseTableAfterHandFinished() {
+        return shutdownAfterHandFinished;
     }
 
     public boolean isPlayerSeated(int playerId) {
