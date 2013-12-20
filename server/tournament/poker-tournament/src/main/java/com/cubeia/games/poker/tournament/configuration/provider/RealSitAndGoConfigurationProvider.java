@@ -17,23 +17,34 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider;
 
+import static com.cubeia.games.poker.common.jpa.TransactionHelper.doInTrasaction;
+
+import java.util.Collection;
+import java.util.concurrent.Callable;
+
+import javax.persistence.EntityManager;
+
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.dao.TournamentConfigurationDao;
 import com.google.inject.Inject;
 
-import java.util.Collection;
-
 public class RealSitAndGoConfigurationProvider implements SitAndGoConfigurationProvider {
 
     private TournamentConfigurationDao dao;
+    private EntityManager em;
 
     @Inject
-    public RealSitAndGoConfigurationProvider(TournamentConfigurationDao dao) {
+    public RealSitAndGoConfigurationProvider(TournamentConfigurationDao dao, EntityManager em) {
         this.dao = dao;
+        this.em = em;
     }
 
     @Override
-    public Collection<SitAndGoConfiguration> getConfigurations() {
-        return dao.getSitAndGoConfigurations();
+    public Collection<SitAndGoConfiguration> getConfigurations(final boolean includeArchived) {
+        return doInTrasaction(em, new Callable<Collection<SitAndGoConfiguration>>() {
+            @Override public Collection<SitAndGoConfiguration> call() throws Exception {
+                return dao.getSitAndGoConfigurations(includeArchived);
+            }
+        });
     }
 }

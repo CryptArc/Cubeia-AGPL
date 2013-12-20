@@ -17,18 +17,19 @@
 
 package com.cubeia.games.poker.admin.db;
 
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.poker.settings.RakeSettings;
-import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.settings.RakeSettings;
+import com.cubeia.poker.timing.TimingProfile;
 
 
 /**
@@ -65,8 +66,8 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
         getJpaTemplate().persist(entity);
     }
 
-    public void save(Object entity) {
-        getJpaTemplate().merge(entity);
+    public <T> T merge(T entity) {
+        return getJpaTemplate().merge(entity);
     }
 
     @Override

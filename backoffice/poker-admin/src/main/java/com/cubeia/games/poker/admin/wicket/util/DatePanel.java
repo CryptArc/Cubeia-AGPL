@@ -17,11 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.util;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
 
 public class DatePanel extends Panel {
 

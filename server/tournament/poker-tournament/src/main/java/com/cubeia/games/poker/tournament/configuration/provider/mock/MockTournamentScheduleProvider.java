@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
 public class MockTournamentScheduleProvider implements TournamentScheduleProvider {
 
     @Override
-    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
+    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule(boolean includeArchived) {
         InputStream resourceAsStream = getClass().getResourceAsStream("default_payouts.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();

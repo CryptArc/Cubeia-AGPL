@@ -17,11 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
+import static com.cubeia.network.shared.web.wicket.util.ParamBuilder.params;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -37,11 +38,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.cubeia.network.shared.web.wicket.util.ParamBuilder.params;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
 
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
@@ -60,7 +61,8 @@ public class ListTables extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public ListTables(final PageParameters parameters) {
+    @SuppressWarnings({ "serial", "unchecked", "rawtypes" })
+	public ListTables(final PageParameters parameters) {
         super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn<TableConfigTemplate,String>> columns = new ArrayList<AbstractColumn<TableConfigTemplate,String>>();

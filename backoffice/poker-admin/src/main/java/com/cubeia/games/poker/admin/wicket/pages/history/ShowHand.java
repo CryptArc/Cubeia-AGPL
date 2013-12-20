@@ -17,11 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.network.web.user.UserSummary;
-import com.cubeia.network.web.wallet.TransactionInfo;
-import com.cubeia.poker.handhistory.api.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -36,10 +36,27 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.network.web.user.UserSummary;
+import com.cubeia.network.web.wallet.TransactionInfo;
+import com.cubeia.poker.handhistory.api.Amount;
+import com.cubeia.poker.handhistory.api.BestHandType;
+import com.cubeia.poker.handhistory.api.GameCard;
+import com.cubeia.poker.handhistory.api.GamePot;
+import com.cubeia.poker.handhistory.api.HandHistoryEvent;
+import com.cubeia.poker.handhistory.api.HandResult;
+import com.cubeia.poker.handhistory.api.HandStrengthCommon;
+import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.handhistory.api.Player;
+import com.cubeia.poker.handhistory.api.PlayerAction;
+import com.cubeia.poker.handhistory.api.PlayerBestHand;
+import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
+import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
+import com.cubeia.poker.handhistory.api.PotUpdate;
+import com.cubeia.poker.handhistory.api.Results;
+import com.cubeia.poker.handhistory.api.ShowDownSummary;
+import com.cubeia.poker.handhistory.api.TableCardsDealt;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class ShowHand extends BasePage {
@@ -64,7 +81,8 @@ public class ShowHand extends BasePage {
 
             private static final long serialVersionUID = 1908334758912501993L;
 
-            @Override
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+			@Override
             protected void populateItem(Item<Player> item) {
                 Player player = item.getModelObject();
                 Results results = hand.getResults();
@@ -119,7 +137,8 @@ public class ShowHand extends BasePage {
         add(new Label("totalRake", formatAmount(hand.getResults().getTotalRake())));
     }
 
-    private void addEvents(final HistoricHand hand) {
+    @SuppressWarnings("serial")
+	private void addEvents(final HistoricHand hand) {
         DataView<HandHistoryEvent> events = new DataView<HandHistoryEvent>("events", new ListDataProvider<HandHistoryEvent>(hand.getEvents())) {
             @Override
             protected void populateItem(Item<HandHistoryEvent> item) {
@@ -242,7 +261,8 @@ public class ShowHand extends BasePage {
         return result.toString();
     }
 
-    private static class CardList extends ListView<GameCard> {
+    @SuppressWarnings("serial")
+	private static class CardList extends ListView<GameCard> {
 
         public CardList(String id) {
             super(id);

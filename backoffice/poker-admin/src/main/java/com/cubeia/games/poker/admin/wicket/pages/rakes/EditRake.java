@@ -4,9 +4,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.rakes;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.poker.settings.RakeSettings;
+import java.math.BigDecimal;
 
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Form;
@@ -17,7 +15,9 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.math.BigDecimal;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.poker.settings.RakeSettings;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditRake extends BasePage {
@@ -40,7 +40,7 @@ public class EditRake extends BasePage {
             @Override
             protected void onSubmit() {
                 RakeSettings object = getModel().getObject();
-                adminDAO.save(object);
+                adminDAO.merge(object);
                 // info("Rake configuration updated, id = " + templateId);
                 setResponsePage(ListRakes.class);
             }

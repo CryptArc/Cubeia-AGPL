@@ -104,7 +104,7 @@ Poker.TournamentLayoutManager = Class.extend({
         if(info.maxPlayers == info.minPlayers) {
             sitAndGo = true;
         }
-        $.extend(info,{sitAndGo : sitAndGo});
+        $.extend(info,{sitAndGo : sitAndGo,tournamentId : this.tournamentId});
         var infoTemplate = this.templateManager.getRenderTemplate("tournamentInfoTemplate");
         this.viewElement.find(".tournament-info").html(infoTemplate.render(info));
 

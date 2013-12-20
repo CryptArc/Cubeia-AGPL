@@ -907,13 +907,14 @@ public class PokerTournament implements TableNotifier, Serializable {
             // Transfer money back from tournament session to player session.
             PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
             resetPlayerSession(playerSession);
-            pokerState.removePlayerSession(playerId);
             historyPersister.playerUnregistered(playerId);
-            pokerState.invalidatePlayerMap();
-            pokerState.removeBuyInFromPrizePool();
-        } catch (CloseSessionFailedException e) {
+        } catch (Exception e) {
             log.error("Failed closing session for player " + playerId, e);
             historyPersister.playerFailedUnregistering(playerId, e.getMessage());
+        } finally {
+            pokerState.removePlayerSession(playerId);
+            pokerState.invalidatePlayerMap();
+            pokerState.removeBuyInFromPrizePool();
         }
     }
 

@@ -3,7 +3,6 @@ package com.cubeia.games.poker.admin.wicket.components;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.validation.AbstractFormValidator;
-import org.apache.wicket.util.lang.Objects;
 
 
 public class TournamentPlayersValidator extends AbstractFormValidator {
@@ -14,7 +13,8 @@ public class TournamentPlayersValidator extends AbstractFormValidator {
     private final FormComponent<Integer>[] components;
 
 
-    public TournamentPlayersValidator(FormComponent<Integer> minPlayers, FormComponent<Integer> maxPlayers) {
+    @SuppressWarnings("unchecked")
+	public TournamentPlayersValidator(FormComponent<Integer> minPlayers, FormComponent<Integer> maxPlayers) {
         components = new FormComponent[] { minPlayers, maxPlayers };
     }
 

@@ -17,14 +17,14 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditTable extends BasePage {
@@ -36,7 +36,8 @@ public class EditTable extends BasePage {
     
     private TableConfigTemplate table;
     
-    public EditTable(final PageParameters parameters) {
+    @SuppressWarnings("serial")
+	public EditTable(final PageParameters parameters) {
         super(parameters);
         final Integer templateId = parameters.get("templateId").toInt();
         loadFormData(templateId);
@@ -44,7 +45,7 @@ public class EditTable extends BasePage {
 
             @Override
             protected void onSubmit(TableConfigTemplate config) {
-                adminDAO.save(config);
+                adminDAO.merge(config);
                 // info("Table template updated, id = " + templateId);
                 setResponsePage(ListTables.class);
             }

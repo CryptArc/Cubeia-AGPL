@@ -17,11 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
-import org.apache.log4j.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -34,15 +33,19 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.file.Files;
 import org.apache.wicket.util.lang.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOrEditPayoutStructure extends BasePage {
 
-    private static final Logger log = Logger.getLogger(CreateOrEditPayoutStructure.class);
+    private static final Logger log = LoggerFactory.getLogger(CreateOrEditPayoutStructure.class);
 
     private final FeedbackPanel feedback = new FeedbackPanel("feedback");
 
@@ -80,14 +83,6 @@ public class CreateOrEditPayoutStructure extends BasePage {
             setMaxSize(Bytes.kilobytes(100));
             add(this.name);
             add(feedback);
-        }
-
-        public RequiredTextField<String> getName() {
-            return name;
-        }
-
-        public void setName(RequiredTextField<String> name) {
-            this.name = name;
         }
 
         /**

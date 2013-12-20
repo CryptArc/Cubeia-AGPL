@@ -23,9 +23,9 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 
 public interface AdminDAO {
 
@@ -33,7 +33,7 @@ public interface AdminDAO {
 
     public abstract void persist(Object entity);
 
-    public abstract void save(Object entity);
+    public abstract <T> T merge(T entity);
 
     public List<SitAndGoConfiguration> getSitAndGoConfigurations();
 

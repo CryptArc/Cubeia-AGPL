@@ -17,16 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket.components.datepicker;
 
-import com.googlecode.wicket.jquery.ui.IJQueryWidget;
-import com.googlecode.wicket.jquery.ui.JQueryBehavior;
-import com.googlecode.wicket.jquery.ui.Options;
+import java.util.Date;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
-import java.util.Date;
+import com.googlecode.wicket.jquery.ui.IJQueryWidget;
+import com.googlecode.wicket.jquery.ui.JQueryBehavior;
+import com.googlecode.wicket.jquery.ui.Options;
 
 public class BootstrapDatePicker extends DateTextField implements IJQueryWidget {
     private static final long serialVersionUID = 1L;

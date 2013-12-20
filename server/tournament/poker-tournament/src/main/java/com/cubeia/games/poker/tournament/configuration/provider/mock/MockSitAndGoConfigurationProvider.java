@@ -17,6 +17,16 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
+import static com.cubeia.poker.timing.TimingFactory.getRegistry;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
@@ -24,15 +34,6 @@ import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.log4j.Logger;
-
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Map;
-
-import static com.cubeia.poker.timing.TimingFactory.getRegistry;
-import static com.google.common.collect.Maps.newLinkedHashMap;
 
 
 /**
@@ -84,7 +85,7 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
         return configuration;
     }
 
-    public Collection<SitAndGoConfiguration> getConfigurations() {
+    public Collection<SitAndGoConfiguration> getConfigurations(boolean includeArchived) {
         return requestedTournaments.values();
     }
 

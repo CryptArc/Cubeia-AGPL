@@ -100,8 +100,13 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
 
     @Override
     public boolean prepareShutdown() {
+    	return prepareShutdown("The system will be closing down shortly, please finish your game sessions.");
+    }
+    
+    @Override
+    public boolean prepareShutdown(String message) {
         log.info("Preparing system shutdown.");
-        broadcastService.broadcastMessage("The system will be closing down shortly, please finish your game sessions.");
+        broadcastService.broadcastMessage(message);
         setPokerSystemStatus(SHUTTING_DOWN);
         return true;
     }

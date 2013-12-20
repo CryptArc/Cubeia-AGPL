@@ -17,20 +17,20 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 
 public class MockSitAndGoConfigurationProviderTest {
 
     @Test
     public void testMockStructures() {
-        Collection<SitAndGoConfiguration> configurations = new MockSitAndGoConfigurationProvider().getConfigurations();
+        Collection<SitAndGoConfiguration> configurations = new MockSitAndGoConfigurationProvider().getConfigurations(true);
         assertThat(configurations.iterator().next().getConfiguration().getPayoutStructure(), notNullValue());
     }
 }

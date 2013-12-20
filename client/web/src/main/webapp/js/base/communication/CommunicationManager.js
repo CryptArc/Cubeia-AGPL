@@ -150,7 +150,7 @@ Poker.CommunicationManager = Class.extend({
             	org.cometd.JSON.toJSON = JSON.stringify;
             	org.cometd.JSON.fromJSON = JSON.parse;
                 var cometd = new org.cometd.Cometd();
-                cometd.registerTransport("long-polling", new org.cometd.LongPollingTransport());
+                cometd.registerTransport("long-polling", new LongPollingTransportImpl());
                 return cometd
             });
         } else {
@@ -166,8 +166,16 @@ Poker.CommunicationManager = Class.extend({
      */
     doLogin : function(username,password) {
         Poker.MyPlayer.password = password;
-        this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        
+        if (Poker.MyPlayer.pureToken) {
+        	console.log("pure token");
+        	var tokenArray = utf8.toByteArray(Poker.MyPlayer.loginToken);
+        	this.connector.login("", "", Poker.SkinConfiguration.operatorId, tokenArray);
+        } else {
+        	this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        }
     },
+    
 
     handlePacket : function (packet) {
         var tournamentId = -1;
@@ -488,6 +496,36 @@ var CustomConnector = function(a,b,c,d) {
         }
         superSendProtocolObject.call(self,po);
     };
+};
+
+var LongPollingTransportImpl = function() {
+    var _super = new org.cometd.LongPollingTransport();
+    var that = org.cometd.Transport.derive(_super);
+    
+    var _setHeaders = function(xhr, headers) {
+        var headerName;
+        if (headers) {
+            for (headerName in headers) {
+                if (headerName.toLowerCase() === "content-type") {
+                    continue
+                }
+                xhr.setRequestHeader(headerName, headers[headerName])
+            }
+        }
+    };                
+    
+    that.xhrSend = function(packet) {
+        return $.ajax({url: packet.url, async: packet.sync !== true, type: "POST", contentType: "application/json;charset=UTF-8", data: packet.body,withCredentials: true, 
+        	beforeSend: function(xhr) {
+                _setHeaders(xhr, packet.headers);
+                return true
+            }, success: packet.onSuccess,error: function(xhr, reason, exception) {
+                packet.onError(reason, exception)
+            }
+          }
+        );
+    };
+    return that;
 };
 
 FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {

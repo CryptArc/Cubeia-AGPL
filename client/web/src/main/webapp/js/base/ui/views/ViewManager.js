@@ -525,5 +525,21 @@ Poker.ViewManager = Class.extend({
             }
         }
         return count;
+    },
+    externalPageView : null,
+    openExternalPage : function(url) {
+        var self = this;
+        if(this.externalPageView == null) {
+            this.externalPageView = new Poker.ExternalPageView("#externalPageView","Promotion","P",url,
+                function(){
+                    self.removeView(self.externalPageView);
+                    self.externalPageView = null;
+                });
+            this.externalPageView.fixedSizeView = true;
+            Poker.AppCtx.getViewManager().addView(self.externalPageView);
+        } else {
+            self.externalPageView.updateUrl(url);
+        }
+        Poker.AppCtx.getViewManager().activateView(self.externalPageView);
     }
 });

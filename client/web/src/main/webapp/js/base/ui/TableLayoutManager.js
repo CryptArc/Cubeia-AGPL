@@ -40,6 +40,7 @@ Poker.TableLayoutManager = Class.extend({
     clock : null,
 
     tournamentTable : false,
+    active : true,
 
     /**
      *
@@ -76,6 +77,10 @@ Poker.TableLayoutManager = Class.extend({
 
         this.tableId = tableId;
         this.soundManager = soundManager;
+        //to prevent a lot of sounds at the same time when starting table
+        setTimeout(function(){
+            self.soundManager.setReady(true);
+        },1000);
 
 
         var actionCallback = function(actionType,amount){
@@ -186,9 +191,11 @@ Poker.TableLayoutManager = Class.extend({
     onActivateView : function() {
         this.animationManager.setActive(true);
         this.tableLog.scrollDown();
+        this.active = true;
     },
     onDeactivateView : function() {
         this.animationManager.setActive(false);
+        this.active=false;
     },
     onBestHands : function(hands) {
 
@@ -232,7 +239,7 @@ Poker.TableLayoutManager = Class.extend({
         var elementId = null;
         if (player.id == Poker.MyPlayer.id) {
             elementId = "myPlayerSeat-"+this.tableId;
-            seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.myActionsManager,this.animationManager);
+            seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.myActionsManager,this.animationManager,this.soundManager);
             this.myPlayerSeatId = seatId;
             this._calculateSeatPositions();
             if(this.currentDealer!=-1) {
@@ -247,7 +254,6 @@ Poker.TableLayoutManager = Class.extend({
             this.tableView.find(".click-area-0").touchSafeClick(function(){
                 new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
             });
-            this.soundManager.playerAction({id:"action-join"}, this.tableId);
 
         } else {
 
@@ -279,7 +285,6 @@ Poker.TableLayoutManager = Class.extend({
         seat.clearSeat();
         this.seats.remove(seat.seatId);
         this.addEmptySeatContent(seat.seatId,-1,(this.myPlayerSeatId==-1));
-        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
 
     /**
@@ -368,13 +373,14 @@ Poker.TableLayoutManager = Class.extend({
              $(".player-action-icon").addClass("action-inactive");
              this._hideSeatActionText();
         }
-        this.soundManager.playerAction(actionType, this.tableId, player, amount);
+        if(this.active==true) {
+            this.soundManager.playerAction(actionType, this.tableId, player, amount);
+        }
         seat.onAction(actionType,amount,cardsToDiscard);
 
         this.tableLog.appendAction(player,actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
-        this.playSound(Poker.Sounds.DEAL_PLAYER);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,this.tableId,cardString,this.templateManager);
         seat.dealCard(card);
@@ -390,7 +396,6 @@ Poker.TableLayoutManager = Class.extend({
         }
     },
     onExposePrivateCard : function(cardId,cardString){
-        this.playSound(Poker.Sounds.REVEAL);
         var card = this.cardElements.get(cardId);
         if(cardString == card.cardString) {
             return;
@@ -412,7 +417,6 @@ Poker.TableLayoutManager = Class.extend({
         var newDealer = this.currentDealer!=seatId;
         this.currentDealer = seatId;
         this.positionDealerButton(newDealer);
-        this.playSound(Poker.Sounds.MOVE_DEALER_BUTTON);
     },
     positionDealerButton : function(newDealer) {
         if(this.currentDealer==-1) {
@@ -496,12 +500,10 @@ Poker.TableLayoutManager = Class.extend({
             seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
-
-        if (player.id == Poker.MyPlayer.id) {
-            this.playSound(Poker.Sounds.REQUEST_ACTION);
+        var autoHandled = seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
+        if(autoHandled==false && player.id == Poker.MyPlayer.id && !this.active) {
+            this.playSound(Poker.Sounds.TIME_WARNING_FIRST,true);
         }
-
-        seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
     },
     onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
 //        var seats = this.seats.values();
@@ -544,7 +546,6 @@ Poker.TableLayoutManager = Class.extend({
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
-        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
     _hideSeatActionText : function() {
         var seats = this.seats.values();
@@ -620,8 +621,13 @@ Poker.TableLayoutManager = Class.extend({
         this.playSound(Poker.Sounds.POT_TO_PLAYERS);
     },
 
-    playSound : function(sound) {
-        this.soundManager.handleTableUpdate(sound, this.tableId);
+    playSound : function(sound,alwaysPlay) {
+        if(typeof(alwaysPlay)=="undefined") {
+            alwaysPlay = false;
+        }
+        if(this.active==true || alwaysPlay == true) {
+            this.soundManager.handleTableUpdate(sound, this.tableId);
+        }
     },
     /**
      * @param {Poker.FutureActionType[]} actions

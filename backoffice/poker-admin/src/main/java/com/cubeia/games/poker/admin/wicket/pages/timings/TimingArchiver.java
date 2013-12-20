@@ -17,11 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.timings;
 
-import com.cubeia.games.poker.admin.wicket.util.Archiver;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.poker.timing.TimingProfile;
-
 import java.io.Serializable;
+
+import com.cubeia.games.poker.admin.wicket.util.Archiver;
+import com.cubeia.poker.timing.TimingProfile;
 
 public class TimingArchiver implements Archiver, Serializable {
 

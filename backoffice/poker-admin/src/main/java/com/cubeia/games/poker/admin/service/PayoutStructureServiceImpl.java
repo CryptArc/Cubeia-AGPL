@@ -1,11 +1,14 @@
 package com.cubeia.games.poker.admin.service;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.util.PayoutStructureRowProvider;
-import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.inject.Inject;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -14,13 +17,12 @@ import org.apache.wicket.model.Model;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import static com.google.common.collect.Lists.newArrayList;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.util.PayoutStructureRowProvider;
+import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 
 @Component
 public class PayoutStructureServiceImpl implements PayoutStructureViewHelper {

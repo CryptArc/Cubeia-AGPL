@@ -62,6 +62,12 @@ Poker.OperatorConfig = Class.extend({
     getProfilePageUrl:function() {
         return this.getValue("PROFILE_PAGE_URL", "http://localhost:8083/player-api/html/profile.html");
     },
+    getLobbyRightPromotionUrl : function() {
+        return this.getValue("LOBBY_RIGHT_PROMOTION_URL",null);
+    },
+    getLobbyTopPromotionUrl : function() {
+        return this.getValue("LOBBY_TOP_PROMOTION_URL",null);
+    },
     getBuyCreditsUrl : function() {
         return this.getValue("BUY_CREDITS_URL", "http://localhost:8083/player-api/html/buy-credits.html");
     },

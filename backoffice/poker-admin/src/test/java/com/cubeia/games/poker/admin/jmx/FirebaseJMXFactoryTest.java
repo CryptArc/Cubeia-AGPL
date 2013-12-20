@@ -25,7 +25,8 @@ public class FirebaseJMXFactoryTest extends TestCase {
         super.setUp();
     }
 
-    public void testFirebaseJMXFactory() {
+    @SuppressWarnings("unused")
+	public void testFirebaseJMXFactory() {
         FirebaseJMXFactory factory = new FirebaseJMXFactory();
     }
 

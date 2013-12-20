@@ -8,10 +8,32 @@ Poker.Navigation = Class.extend({
      */
     views : null,
     init : function() {
+        var self = this;
         this.views = new Poker.Map();
         this.mountHandler("tournament", this.handleTournament);
         this.mountHandler("table", this.handleTable);
         this.mountHandler("section", this.handleSection);
+        var receiver = function(e){
+            self.handleMessage(e);
+        };
+        window.addEventListener("message",receiver,false);
+    },
+    handleMessage : function(e) {
+
+        var msg = null;
+        try {
+            msg = JSON.parse(e.data);
+        } catch(e) {
+            return;
+        }
+        if(msg.action == "tournament") {
+            this.handleTournament(msg.value);
+        } else if(msg.action == "table") {
+            this.handleTable(msg.value);
+        } else if(msg.action == "url") {
+            Poker.AppCtx.getViewManager().openExternalPage(msg.value);
+        }
+
     },
     mountHandler : function(id,handler) {
         this.views.put(id,handler);

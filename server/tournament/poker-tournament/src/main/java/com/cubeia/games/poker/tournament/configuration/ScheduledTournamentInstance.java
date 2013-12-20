@@ -38,9 +38,13 @@ public class ScheduledTournamentInstance {
         this.startTime = startTime;
     }
 
+    /**
+     * Returns a tournament identifier of the form <config id>@<start time millis>.
+     * @return identifier
+     */
     public String getIdentifier() {
         log.trace("Configuration " + configuration.getConfiguration().getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
-        return "" + configuration.getConfiguration().getId() + startTime.getMillis();
+        return "" + configuration.getConfiguration().getId() + "@" + startTime.getMillis();
     }
 
     public String getName() {

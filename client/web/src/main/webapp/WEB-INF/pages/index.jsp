@@ -22,6 +22,7 @@
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
 
+
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -199,6 +200,7 @@
     <c:if test="${not empty token}">
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
+            Poker.MyPlayer.pureToken = "${pureToken}";
             $(document).ready(function(){
                 $(".login-container").hide();
             });
@@ -210,7 +212,6 @@
         var contextPath = "${cp}";
 
         $(document).ready(function(){
-
 
             var browserSupported =  function() {
                 if(Modernizr && Modernizr.websockets && Modernizr.csstransitions) {
@@ -341,9 +342,21 @@
             <div class="item">
                 <fieldset class="toggle">
                     <input id="soundEnabled" type="checkbox">
-                    <label onclick="" for="soundEnabled">Toggle Sounds</label>
+                    <label onclick="" for="soundEnabled">
+                        Game Play Sounds
+                        <div class="setting-description">Cards and chips sounds</div>
+                    </label>
                     <span class="toggle-button"></span>
                 </fieldset>
+            </div>
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="soundAlertsEnabled" type="checkbox">
+                    <label onclick="" for="soundAlertsEnabled">
+                        Alert Sounds</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+                <div class="setting-description">Turn notifications etc.</div>
             </div>
         </div>
     </div>
@@ -573,7 +586,19 @@
                         </nav>
                         <div class="logo-container">
                         </div>
+                    </div>
+                    <div class="col-sm-4">
 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-sm-8">
                         <nav class="navbar-inverse navbar-top" role="navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
@@ -641,18 +666,10 @@
                             </label>
 
                         </div>
-
+                          <div id="tableListContainer"></div>
                     </div>
                     <div class="col-sm-4">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-8" id="tableListContainer">
-
-                    </div>
-                    <div class="col-sm-4">
-
+                        <iframe id="lobbyRightPromotionsIframe" class="lobby-right-promotions-iframe" marginheight="0" scrolling="no"  frameBorder="0"></iframe>
                     </div>
                 </div>
 
@@ -717,6 +734,10 @@
             <a class="close-button">Close</a>
         </div>
         <div class="buy-credits-view" id="buyCreditsView"  style="display: none;">
+            <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
+        </div>
+        <div class="buy-credits-view" id="externalPageView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
             <a class="close-button">Close</a>
         </div>
@@ -1358,6 +1379,7 @@
     {{^sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.tournament-id"}} <span>{{tournamentId}}</span> </div>
     <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</span></div>
     <div class="stats-item">

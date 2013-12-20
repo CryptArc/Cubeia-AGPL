@@ -21,7 +21,6 @@ import com.cubeia.games.poker.tournament.configuration.provider.RealSitAndGoConf
 import com.cubeia.games.poker.tournament.configuration.provider.RealTournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.configuration.dao.TournamentConfigurationDao;
 import com.google.inject.AbstractModule;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
@@ -29,7 +28,7 @@ public class ActivatorModule extends AbstractModule {
 
     public void configure() {
         install(new JpaPersistModule("pokerPersistenceUnit"));
-        bind(TournamentConfigurationDao.class);
+//        bind(TournamentConfigurationDao.class);
         bind(TournamentScheduleProvider.class).to(RealTournamentScheduleProvider.class);
         bind(SitAndGoConfigurationProvider.class).to(RealSitAndGoConfigurationProvider.class);
         bind(PokerActivator.class).to(TournamentScanner.class);
