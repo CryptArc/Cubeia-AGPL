@@ -28,6 +28,7 @@ import static com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus.D
 import static com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus.ENABLED;
 import static com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus.REMOVED;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -35,10 +36,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -119,7 +122,7 @@ public class LobbyTableInspectorImplTest {
         /*
          * One table which is old should be closed
          */
-        TableConfigTemplate templ = createTemplate(0, 0, ENABLED);
+        TableConfigTemplate templ = createTemplate(0, 0, ENABLED, 1);
         LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{table});
         time.set(70000); // 1 min 10 secs
@@ -135,7 +138,7 @@ public class LobbyTableInspectorImplTest {
            * if "min tables" is equal or higher then number of
            * empty tables
            */
-        TableConfigTemplate templ = createTemplate(1, 1, ENABLED);
+        TableConfigTemplate templ = createTemplate(1, 1, ENABLED, 1);
         LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{table});
         time.set(70000); // 1 min 10 secs
@@ -148,7 +151,7 @@ public class LobbyTableInspectorImplTest {
         /*
            * One table which is old should be closed
            */
-        TableConfigTemplate templ = createTemplate(0, 0, ENABLED);
+        TableConfigTemplate templ = createTemplate(0, 0, ENABLED, 1);
         LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
         table.getAttributes().put(TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1)); // MARK CLOSE
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{table});
@@ -163,7 +166,7 @@ public class LobbyTableInspectorImplTest {
            * One table which is old should be closed, but at least
            * one table so expect a CREATE as well
            */
-        TableConfigTemplate templ = createTemplate(1, 1, ENABLED); // AT LEAST ONE
+        TableConfigTemplate templ = createTemplate(1, 1, ENABLED, 1); // AT LEAST ONE
         LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
         table.getAttributes().put(TABLE_READY_FOR_CLOSE.name(), AttributeValue.wrap(1)); // MARK CLOSE
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{table});
@@ -178,7 +181,7 @@ public class LobbyTableInspectorImplTest {
         /*
            * No table exists, min 1 = create one
            */
-        TableConfigTemplate templ = createTemplate(1, 1, ENABLED);
+        TableConfigTemplate templ = createTemplate(1, 1, ENABLED, 1);
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{});
         List<TableModifierAction> result = handler.match(singletonList(templ));
         Assert.assertEquals(1, result.size());
@@ -190,7 +193,7 @@ public class LobbyTableInspectorImplTest {
         /*
          * No table exists, min 1 = create one
          */
-        TableConfigTemplate templ = createTemplate(1, 1, DISABLED);
+        TableConfigTemplate templ = createTemplate(1, 1, DISABLED, 1);
         when(factory.listTables()).thenReturn(new LobbyTable[]{});
         List<TableModifierAction> result = handler.match(singletonList(templ));
         assertThat(result.size(), is(0));
@@ -199,6 +202,24 @@ public class LobbyTableInspectorImplTest {
         result = handler.match(singletonList(templ));
         assertThat(result.size(), is(0));
     }
+    
+    @Test
+    public void closeExistingIfTemplateIsNotEnabled() {
+        TableConfigTemplate templ1 = createTemplate(1, 1, DISABLED, 1);
+        TableConfigTemplate templ2 = createTemplate(1, 1, ENABLED, 2);
+        TableConfigTemplate templ3 = createTemplate(1, 1, REMOVED, 3);
+        LobbyTable table1 = mockTableForTempl(templ1, 666, 0, 10);
+        LobbyTable table2 = mockTableForTempl(templ2, 777, 0, 10);
+        LobbyTable table3 = mockTableForTempl(templ3, 888, 0, 10);
+        when(factory.listTables()).thenReturn(new LobbyTable[]{table1, table2, table3});
+        
+        List<TableModifierAction> result = handler.match(asList(templ1, templ2, templ3));
+        
+        System.err.println(result);
+        assertThat(result.size(), is(2));
+        assertThat(result.get(0), is(TableModifierAction.close(table1.getTableId())));
+        assertThat(result.get(1), is(TableModifierAction.close(table3.getTableId())));
+    }
 
     @Test
     public void trivialMissingTemplate() {
@@ -206,8 +227,8 @@ public class LobbyTableInspectorImplTest {
            * If a template is missing and no-one is sitting
            * the table should be marked close
            */
-        TableConfigTemplate templ = createTemplate(1, 1, ENABLED);
-        TableConfigTemplate templ2 = createTemplate(1, 1, ENABLED);
+        TableConfigTemplate templ = createTemplate(1, 1, ENABLED, 1);
+        TableConfigTemplate templ2 = createTemplate(1, 1, ENABLED, 2);
         templ2.setId(666); // this is the missing template
         LobbyTable table1 = mockTableForTempl(templ, 666, 0, 10);
         LobbyTable table2 = mockTableForTempl(templ2, 666, 0, 10);
@@ -223,7 +244,7 @@ public class LobbyTableInspectorImplTest {
            * Create min of 10 tables and check that they are not
            * closed even though they get stale
            */
-        TableConfigTemplate templ = createTemplate(10, 5, ENABLED);
+        TableConfigTemplate templ = createTemplate(10, 5, ENABLED, 1);
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{});
         List<TableModifierAction> result = handler.match(singletonList(templ));
         Assert.assertEquals(10, result.size());
@@ -243,7 +264,7 @@ public class LobbyTableInspectorImplTest {
            * With min=10, and minEmtpy=5, create 12 tables and check that 2 are
            * closed even though all are stale
            */
-        TableConfigTemplate templ = createTemplate(10, 5, ENABLED);
+        TableConfigTemplate templ = createTemplate(10, 5, ENABLED, 1);
         LobbyTable[] tables = mockTablesForTempl(12, templ, 0, 10);
         Mockito.when(factory.listTables()).thenReturn(tables);
         time.set(70000); // 1 min 10 secs
@@ -256,7 +277,7 @@ public class LobbyTableInspectorImplTest {
         /*
            * With min=10, and minEmtpy=5, create 19 tables of which 12 are non-empty
            */
-        TableConfigTemplate templ = createTemplate(10, 5, ENABLED);
+        TableConfigTemplate templ = createTemplate(10, 5, ENABLED, 1);
         LobbyTable[] tables = mockTablesForTempl(19, templ, 0, 10);
         setNonEmptyTables(tables, 12);
         Mockito.when(factory.listTables()).thenReturn(tables);
@@ -273,7 +294,7 @@ public class LobbyTableInspectorImplTest {
         /*
            * With min=10, and minEmtpy=5, create 12 tables of which 2 are non-empty
            */
-        TableConfigTemplate templ = createTemplate(10, 5, ENABLED);
+        TableConfigTemplate templ = createTemplate(10, 5, ENABLED, 1);
         LobbyTable[] tables = mockTablesForTempl(12, templ, 0, 10);
         setNonEmptyTables(tables, 2);
         Mockito.when(factory.listTables()).thenReturn(tables);
@@ -302,8 +323,9 @@ public class LobbyTableInspectorImplTest {
         return arr;
     }
 
-    private TableConfigTemplate createTemplate(int min, int minEmpty, TemplateStatus status) {
+    private TableConfigTemplate createTemplate(int min, int minEmpty, TemplateStatus status, int templateId) {
         TableConfigTemplate templ = new TableConfigTemplate();
+        templ.setId(templateId);
         templ.setStatus(status);
         templ.setAnte(BigDecimal.TEN);
         templ.setSeats(6);
