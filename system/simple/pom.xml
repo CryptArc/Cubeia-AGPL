@@ -47,7 +47,7 @@
                 <version>${firebase.version}</version>
                 <configuration>
                     <!-- override the base resources location-->
-                    <overlaySourceDirectory>resources/firebase</overlaySourceDirectory>
+                    <overlaySourceDirectory>src/test/resources/firebase</overlaySourceDirectory>
                 </configuration>
             </plugin>
         </plugins>
