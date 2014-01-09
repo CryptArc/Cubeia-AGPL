@@ -41,6 +41,9 @@ public class ClientController {
     @Value("${addthis.pubid}")
     private String addThisPubId;
 
+    @Value("${pure.token.enabled}")
+    private boolean trueTokenEnabled;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -118,7 +121,7 @@ public class ClientController {
                                        @PathVariable("operatorId") Long operatorId,
                                        @PathVariable("token") String token) {
 
-        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, false);
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, trueTokenEnabled);
     }
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/session/{token}"})
@@ -127,7 +130,7 @@ public class ClientController {
                                        @PathVariable("operatorId") Long operatorId,
                                        @PathVariable("token") String token) {
 
-        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, true);
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, trueTokenEnabled);
     }
 
     private String doHandleStartWithToken(HttpServletRequest request, ModelMap modelMap, String skin, Long operatorId,
@@ -147,7 +150,7 @@ public class ClientController {
             modelMap.addAttribute("cssOverride", opConfig.get(CSS_URL));
         }
         
-        modelMap.addAttribute("pureToken", true);
+        modelMap.addAttribute("pureToken", pure);
         
         checkSetFirebaseAttributes(modelMap);
         

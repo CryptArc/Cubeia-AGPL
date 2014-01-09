@@ -200,7 +200,7 @@
     <c:if test="${not empty token}">
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
-            Poker.MyPlayer.pureToken = "${pureToken}";
+            Poker.MyPlayer.pureToken = ${pureToken};
             $(document).ready(function(){
                 $(".login-container").hide();
             });
