@@ -14,29 +14,48 @@
     </parent>
 
      <build>
-        <plugins>
+         
+		<resources>
+			<resource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.props</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.props</exclude>
+				</excludes>
+			</resource>
+		</resources>
+                       
+        <plugins>     
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
                 <executions>
-                                                                                                        
-                    <execution>                                                
-                        <id>copy-override-firebase-resources</id>
-                        <phase>generate-resources</phase>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <!-- first copy the base resources -->
-                                    <directory>../uar/src/test/resources/firebase</directory>
-                                </resource>                                                                                                                   
-                            </resources>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>mysql</groupId>
+                                    <artifactId>mysql-connector-java</artifactId>
+                                    <version>5.1.27</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/classes/firebase/lib/common</outputDirectory>
                         </configuration>
                     </execution>
-                            
+                                                   
                 </executions>
             </plugin>
                         
@@ -47,7 +66,7 @@
                 <version>${firebase.version}</version>
                 <configuration>
                     <!-- override the base resources location-->
-                    <overlaySourceDirectory>src/test/resources/firebase</overlaySourceDirectory>
+                    <overlaySourceDirectory>${project.build.directory}/classes/firebase</overlaySourceDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -212,7 +231,7 @@
                 </dependency>
                 
             </dependencies>
-        </profile>                  
+        </profile>  
     </profiles>
 
 </project>
