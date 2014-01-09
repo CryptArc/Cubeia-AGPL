@@ -32,6 +32,7 @@ Poker.ResourcePreloader = Class.extend({
     },
     onComplete : function() {
         this.completionListener();
+        Poker.AppCtx.getSoundRepository().loadSounds();
     },
     onProgress : function(completedCount, totalCount) {
         $(".loading-progressbar .progress").width((100*completedCount/totalCount) + "%");
