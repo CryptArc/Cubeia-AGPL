@@ -107,6 +107,7 @@ the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
 of the initial data. Please take care when restarting, as this will overwrite
 any existing data.
 
+Within the Poker Admin (http://localhost:8088) create an Operator 1 (e.g. 'Main')
 
 CREATE USERS & BOTS
 ===================
