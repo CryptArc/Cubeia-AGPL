@@ -44,6 +44,9 @@ You can find a running instance at:
 http://cubeiasocial.com
 http://cubeiapoker.com
 
+This Poker Network uses the open source Cubeia Poker, and a few non-open-source
+modules.
+
 
 LINKS
 =====

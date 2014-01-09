@@ -46,11 +46,7 @@ hg clone https://bitbucket.org/cubeia/cubeia-poker
 cd cubeia-poker
 mvn clean package
 cd  system/simple
-mvn firebase:run -Dhibernate.hbm2ddl.auto=create
-
-the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
-of the initial data. Please take care when restarting, as this will overwrite
-any existing data.
+mvn firebase:run
 
 http://localhost:8181 - CLIENT
 
@@ -67,17 +63,13 @@ within the lobby that tables are getting players. Join one or more tables
 and check the game.
 
 After this, you can start tournament bots, asking them to leave one seat open,
-thus you can join a tournament.
+so you can join a tournament.
 
 
 http://localhost:8088 - ADMIN
 
-Create a Table Template, which should result in tables showing up in the lobby.
-The names for the tables are picked up from a list. 
-
-Now you can create a simple Sit&Go, which should show up in the lobby.
-
-Last, create a Scheduled Tournament template.
+Get a look at the Admin application. It will become functional with the next
+steps.
 
 
 INTEGRATED (USER, ACCOUNT AND OPERATOR MANAGEMENT)
@@ -104,10 +96,16 @@ default configuration is: db: poker, user: poker, pass: poker
 INTEGRATION BUILD
 =================
 
-cd cubeia-poker
-mvn clean package -Puse-integrations
+It's not  necessary to rebuild the whole source, just the system/simple will be
+repackaged with integrations:
+
 cd  system/simple
-mvn firebase:run
+mvn clean package -Puse-integrations
+mvn firebase:run -Dhibernate.hbm2ddl.auto=create
+
+the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
+of the initial data. Please take care when restarting, as this will overwrite
+any existing data.
 
 
 CREATE USERS & BOTS
@@ -119,16 +117,33 @@ You can use the user-creator tool, which will add an account with some cash for
 the created user. The following will create 10 users:
 
   cd tools/user-creator/target
-  java -jar user-creator.jar -u Test -p 1 -o 1 -r 10
+  java -jar user-creator.jar -d -u Test -p 1 -o 1 -r 10 
 
 You can now login with the user credentials created.
 
 BOTS: are like other users, so if you want to use the bots in an integrated 
 system, you have to create accounts for them, too.
 
-  java -jar user-creator.jar -u Bot -p 1 -o 0 -r 100
+  java -jar user-creator.jar -d -u Bot -p 1 -o 0 -r 120
 
 For more info on the user-creator tool, see the README.TXT.
+
+
+OPERATE THE GAME
+================
+
+http://localhost:8181 - CLIENT
+
+http://localhost:8081 - BOTS (to get some more opponents)
+
+http://localhost:8088 - ADMIN
+
+Create a Table Template, which should result in tables showing up in the lobby.
+The names for the tables are picked up from a list. 
+
+Now you can create a simple Sit&Go, which should show up in the lobby.
+
+Last, create a Scheduled Tournament template.
 
 
 FULL REBUILD
@@ -191,39 +206,27 @@ This will create 4 mysql databases (poker, accounting, user, operator).
 
 You have to change the deployed datasources within:
 
-./resources/firebase/conf/game/deploy
-
-
-
-CONFIG
-======
-
-within file:
-
-.system/simple/resources/firebase/conf/cluster.props
-
-change "use-mock-integrations=false"
-to     "use-mock-integrations=true"
-
-This will enable the use of the predefined test (mock) tables and tournaments,
-thus you can trouble-shoot your simple system. If it works with mock, then
-something with your databases is wrong.
+./src/test/resources/firebase/conf/game/deploy
 
 
 
 USER REGISTRATION
 ================= 
 
-At this point, there is not user registration available. This is be-
-cause Cubeia has decided to not provide any public-facing websites / code (e.g.
+At this point, there is not user registration available. This is because Cubeia 
+has decided to not provide any public-facing websites / code (e.g.
 where users can register themselves).
+
+The typical use-case is to integrate Cubeia Poker with an existing website.
 
 Edit the OPERATOR 1 to setup links to the website (e.g. wordpress site) you 
 want to integrate).
 
+There are several supporting modules available, like e.g. a simple jdbc login
+to an existent database (of your website, e.g. wordpress based):
 
-PRODUCTION SETUP
-================================================================================
+www.cubeia.org/wiki/index.php/Tutorials/howto_jdbc_login
 
-See ./PRODUCTION.TXT for some basic instructions.
+An alternative way would be, to implement a module which works against the 
+cubeia network user API, using this way the included user database.
 
