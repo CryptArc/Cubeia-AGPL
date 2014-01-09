@@ -36,7 +36,7 @@ Poker.ViewManager = Class.extend({
         this.lobbyView = this.addView(new Poker.ResponsiveTabView("#lobbyView",i18n.t("tabs.lobby"),"L"));
         this.cssAnimator = new Poker.CSSUtils();
         this.toolbar = $("#toolbar");
-        this.activateView(this.loginView);
+
 
         var timer = null;
 

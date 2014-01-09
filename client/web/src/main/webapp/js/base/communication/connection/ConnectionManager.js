@@ -33,6 +33,11 @@ Poker.ConnectionManager = Class.extend({
     activityCheckTimer : null,
     maxInactivityTime : 1800000, //30 MIN
 
+    initialization : {
+        resources : false,
+        settings : false
+    },
+
     init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
 
@@ -94,7 +99,23 @@ Poker.ConnectionManager = Class.extend({
         this.disconnectDialog.close();
         this.showConnectStatus(i18n.t("login.connected"));
     },
+    onResourcesLoaded : function() {
+        this.initialization.resources = true;
+        this.onClientReady();
+    },
+    onSettingsLoaded : function() {
+        this.initialization.settings = true;
+        this.onClientReady();
+    },
     onClientReady : function() {
+
+        if(this.initialization.resources == false || this.initialization.settings==false) {
+            return;
+        }
+        $("#loadingView").hide();
+        $(".loading-progressbar .progress").width("100%");
+        var vm = Poker.AppCtx.getViewManager();
+        vm.activateView(vm.loginView);
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
         } else {

@@ -243,7 +243,17 @@
                 $("title").html(Poker.SkinConfiguration.title);
 
 
-                var onPreLoadComplete = function() {
+                var onResourcesLoaded = function() {
+                    Poker.AppCtx.getConnectionManager().onResourcesLoaded();
+                };
+                var onApplicationWired = function() {
+                    new Poker.ResourcePreloader('${cp}',onResourcesLoaded, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                };
+
+
+                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
+                    $("body").i18n();
+
                     <c:choose>
                     <c:when test="${not empty firebaseHost}">
                     var requestHost = "${firebaseHost}";
@@ -272,12 +282,7 @@
                         tournamentLobbyUpdateInterval : 10000,
                         playerApiBaseUrl : "${playerApiBaseUrl}"
                     });
-
-                };
-
-                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
-                    $("body").i18n();
-                    new Poker.ResourcePreloader('${cp}',onPreLoadComplete, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                    onApplicationWired();
                 });
             }
 
@@ -551,6 +556,9 @@
                 <div class="logo-container"></div>
                 <div class="loading-progressbar">
                     <div class="progress"></div>
+                </div>
+                <div class="status-label" style="font-size:90%; padding-top:6px;">
+                    <span data-i18n="login.status"></span><span class="connect-status"></span>
                 </div>
             </div>
         </div>
@@ -1675,7 +1683,6 @@
     };
 
 </script>
-
 
 </body>
 </html>

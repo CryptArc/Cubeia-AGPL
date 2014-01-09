@@ -56,7 +56,7 @@ Poker.ConnectionPacketHandler = Class.extend({
             packet.servicedata = utf8.toByteArray("" + Poker.SkinConfiguration.operatorId);
             Poker.AppCtx.getConnector().sendProtocolObject(packet);
         } else {
-            Poker.AppCtx.getConnectionManager().onClientReady();
+            Poker.AppCtx.getConnectionManager().onSettingsLoaded();
         }
     }
 });
