@@ -263,6 +263,11 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.VersionPacket.CLASSID:
                 Poker.AppCtx.getPingManager().versionPacketReceived();
                 break;
+            case FB_PROTOCOL.NotifyChannelChatPacket.CLASSID:
+                tournamentPacketHandler.handleChatMessage(packet);
+                break;
+            case FB_PROTOCOL.JoinChatChannelResponsePacket.CLASSID:
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);

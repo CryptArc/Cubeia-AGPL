@@ -3,7 +3,7 @@
 
     .row {
         margin-top: 10px;
-        &.players-row, &.payouts-row, &.blinds-row {
+        &.players-row, &.payouts-row, &.blinds-row, &.chat-row {
             margin-top: 40px;
         }
     }
@@ -94,6 +94,56 @@
         color:#a6cf0b;
     }
 
+
+  .lobby-chat {
+
+    background-color: #333333;
+
+    width:100%;
+    height: 300px;
+
+    overflow: auto;
+    position:relative;
+
+    .chat-message {
+      word-break:break-word;
+      color:#fff;
+
+    }
+    div {
+      width:96%;
+      margin-left: 1%;
+      padding:1% 2%;
+      font-size:100%;
+      color:#333;
+
+      &:nth-child(even) {
+        background-color: #383838;
+      }
+
+      &.chat-message {
+        color:#ccc;
+
+        .chat-player-name {
+          font-weight: bold;
+          color: #fff;
+        }
+      }
+    }
+  }
+  input {
+    display: block;
+    border:1px solid #444;
+    background-color: #333333;
+    .box-shadow(inset 0px 2px 3px #222);
+
+    color:#fff;
+    margin-top: 1%;
+    padding: 1%;
+    width: 100%;
+    clear:both;
+
+  }
 
 }
 

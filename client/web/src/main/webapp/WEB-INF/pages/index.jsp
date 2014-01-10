@@ -22,6 +22,7 @@
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
 
+
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -1322,57 +1323,75 @@
                     </nav>
                 </div>
             </div>
-            <div class="row players-row tournament-section">
-                <div class="col-sm-7">
-                    <div class="tournament-statistics">
-                        <div>Remaining players: <span class="remaining-players"></span></div>
+            <div class="row">
+                 <div class="col-sm-7">
+                     <div class="row players-row tournament-section">
+                        <div class="col-sm-12">
+                            <div class="tournament-statistics">
+                                <div>Remaining players: <span class="remaining-players"></span></div>
 
+                            </div>
+                            <table class="table default-table player-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
+                                    <th>{{t "tournament-lobby.players.stack" }}</th>
+                                    <th>{{t "tournament-lobby.players.winnings" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <table class="table default-table player-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
-                            <th>{{t "tournament-lobby.players.stack" }}</th>
-                            <th>{{t "tournament-lobby.players.winnings" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="row tables-row tournament-section" style="display:none;">
+                        <div class="col-sm-12">
+                            <table class="table default-table table-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row payouts-row tournament-section" style="display:none;">
+                        <div class="col-sm-12 payout-structure">
+
+                        </div>
+                    </div>
+
+                    <div class="row blinds-row tournament-section"  style="display:none;">
+                        <div class="col-sm-12 blinds-structure">
+
+                        </div>
+                    </div>
+                 </div>
+                 <div class="col-sm-5">
+                     <div class="row chat-row">
+                        <div class="col-sm-12">
+                            <div class="table-chat-container">
+                                <div class="lobby-chat table-event-log">
+                                </div>
+                                <input type="text" class="chat-input describe" placeholder="{{t 'table.log.chat-input-desc'}}">
+                            </div>
+                        </div>
+                     </div>
+
+                 </div>
             </div>
 
-            <div class="row tables-row tournament-section" style="display:none;">
-                <div class="col-sm-7">
-                    <table class="table default-table table-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="row payouts-row tournament-section" style="display:none;">
-                <div class="col-sm-7 payout-structure">
 
-                </div>
-            </div>
-
-            <div class="row blinds-row tournament-section"  style="display:none;">
-                <div class="col-sm-7 blinds-structure">
-
-                </div>
-            </div>
 
         </div>
 

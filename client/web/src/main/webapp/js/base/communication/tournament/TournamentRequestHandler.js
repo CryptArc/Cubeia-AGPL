@@ -42,6 +42,23 @@ Poker.TournamentRequestHandler = Class.extend({
         mtt.pid = Poker.MyPlayer.id;
         return mtt;
     },
+    subscribeToChat : function(){
+        var chatPacket = new FB_PROTOCOL.JoinChatChannelRequestPacket();
+        chatPacket.channelid = this.tournamentId;
+        this.connector.sendProtocolObject(chatPacket);
+    },
+    unsubscribeFromChat : function() {
+        var chatPacket = new FB_PROTOCOL.LeaveChatChannelPacket();
+        chatPacket.channelid = this.tournamentId;
+        this.connector.sendProtocolObject(chatPacket);
+    },
+    sendChatMessage : function(msg) {
+        var chatMessage = new FB_PROTOCOL.ChannelChatPacket();
+        chatMessage.channelid = this.tournamentId;
+        chatMessage.message = msg;
+        chatMessage.targetid = -1;
+        this.connector.sendProtocolObject(chatMessage);
+    },
     leaveTournamentLobby : function() {
         Poker.AppCtx.getTournamentManager().removeTournament(this.tournamentId);
         Poker.AppCtx.getViewManager().removeTournamentView(this.tournamentId);
