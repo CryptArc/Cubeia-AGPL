@@ -112,13 +112,17 @@ Poker.ConnectionManager = Class.extend({
         if(this.initialization.resources == false || this.initialization.settings==false) {
             return;
         }
-        $("#loadingView").hide();
         $(".loading-progressbar .progress").width("100%");
         var vm = Poker.AppCtx.getViewManager();
-        vm.activateView(vm.loginView);
+
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
         } else {
+            var cont = $(".login-container").show();
+            setTimeout(function(){
+                cont.addClass("show");
+            },50);
+
             var loggedIn = this.handleLoginOnReconnect();
             if(!loggedIn) {
                 this.handlePersistedLogin();

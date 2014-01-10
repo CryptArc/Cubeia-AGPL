@@ -22,7 +22,6 @@
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
 
-
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -201,9 +200,6 @@
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
             Poker.MyPlayer.pureToken = ${pureToken};
-            $(document).ready(function(){
-                $(".login-container").hide();
-            });
         </script>
     </c:if>
 
@@ -551,30 +547,31 @@
             </div>
         </div>
 
-        <div id="loadingView" class="loading-view">
-            <div class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="loading-progressbar">
-                    <div class="progress"></div>
-                </div>
-                <div class="status-label" style="font-size:90%; padding-top:6px;">
-                    <span data-i18n="login.status"></span><span class="connect-status"></span>
-                </div>
-            </div>
-        </div>
-        <div id="loginView" class="login-view" style="display:none;">
-            <div id="dialog1" class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="login-container">
-                    <div class="login-input-container">
-                        <input name="user" class="describe" id="user" type="text" title="Username" value="" />
-                        <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+        <div id="loginView" class="loading-view">
+            <div class="loading-view-container">
+                <div class="login-dialog">
+                    <div class="logo-container"></div>
+                    <div class="loading-box">
+                        <div class="loading-progressbar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="login-container" style="display:none;">
+                            <div class="login-input-container">
+                                <input name="user" class="describe" id="user" type="text" title="Username" value="" />
+                                <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+                            </div>
+                            <div id="loginButton" class="login-button">
+                                <span data-i18n="login.login"></span>
+                            </div>
+                        </div>
+                        <div class="status-label" style="font-size:90%;">
+                            <span class="connect-status"></span>
+                        </div>
                     </div>
-                    <div id="loginButton" class="login-button">
-                        <span data-i18n="login.login"></span>
+                    <div class="powered-by">
+                        <img src="${cp}/skins/default/images/poweredby.png"/>
                     </div>
                 </div>
-                <div class="status-label"> <span data-i18n="login.status"></span> <span class="connect-status"></span></div>
             </div>
         </div>
 

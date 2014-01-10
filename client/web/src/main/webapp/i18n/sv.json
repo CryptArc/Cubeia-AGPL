@@ -16,7 +16,7 @@
         "disconnected" : "Frånkopplad, försöker igen (försök %s)",
         "connecting" : "Ansluter",
         "connected" : "Ansluten",
-        "login-failed" : "Ansluten (Inloggningen misslyckades med status %s)"
+        "login-failed" : "Inloggningen misslyckades med status %s"
     },
     "lobby" : {
         "menu" : {

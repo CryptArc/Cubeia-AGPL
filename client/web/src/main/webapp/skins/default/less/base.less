@@ -76,21 +76,53 @@ a {
 }
 
 .loading-view {
-    width:400px;
+  width:100%;
+  height:100%;
+  background-color: #252525;
+}
+.loading-view-container {
+    width:250px;
     margin:0 auto;
-    margin-top:15%;
+    padding-top:15%;
+
+
+    .logo-container {
+      width:100%;
+
+      background-size:80%;
+      background-position: center;
+
+    }
+}
+.loading-box {
+  background-color: #2c2c2c;
+  .border-radius(3px);
+  padding:15px;
+
+  .status-label {
+    color:#919191;
+  }
+}
+.powered-by {
+  width:100%;
+  text-align: center;
+  margin-top:50px;
 }
 .loading-progressbar {
     width:99%;
     display: block;
-    height:25px;
+    height:20px;
     padding: 0.5%;
+    margin-bottom: 6px;
     .border-radius(5px);
     background-color:#222;
+    .transition(height 0.5s);
     .progress {
         display: block;
         width:0%;
+
         background-color:@mainGreen;
+        .linear-gradient(top, #dc2727 0%, #b10101 100%);
         height:99%;
         .border-radius(3px);
     }
