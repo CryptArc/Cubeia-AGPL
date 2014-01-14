@@ -92,6 +92,8 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private boolean bettingCapped = false;
 
+    private boolean flipCardsOnAllInShowdown;
+
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(PokerContext context,
                         ServerAdapterHolder serverAdapterHolder,
@@ -550,6 +552,11 @@ public class BettingRound implements Round, BettingRoundContext {
         return "playerToAct=" + playerToAct + " roundFinished=" + calculateIfRoundFinished();
     }
 
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return flipCardsOnAllInShowdown;
+    }
+
     public boolean isFinished() {
         return isFinished;
     }
@@ -618,5 +625,9 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private ServerAdapter getServerAdapter() {
         return serverAdapterHolder.get();
+    }
+
+    public void setFlipCardsOnAllInShowdown(boolean flipCardsOnAllInShowdown) {
+        this.flipCardsOnAllInShowdown = flipCardsOnAllInShowdown;
     }
 }

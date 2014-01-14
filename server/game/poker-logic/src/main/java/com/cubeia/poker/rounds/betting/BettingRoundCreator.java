@@ -29,11 +29,13 @@ import java.io.Serializable;
 public class BettingRoundCreator implements RoundCreator, Serializable {
 
     private BettingRoundName round;
+    private final boolean flipCardsOnAllInShowdown;
     private final PlayerToActCalculatorFactory playerToActCalculatorFactory;
 
-    public BettingRoundCreator(BettingRoundName round, PlayerToActCalculatorFactory playerToActCalculatorFactory) {
+    public BettingRoundCreator(BettingRoundName round, PlayerToActCalculatorFactory playerToActCalculatorFactory, boolean flipCardsOnAllInShowdown) {
         this.round = round;
         this.playerToActCalculatorFactory = playerToActCalculatorFactory;
+        this.flipCardsOnAllInShowdown = flipCardsOnAllInShowdown;
     }
 
     @Override
@@ -45,7 +47,8 @@ public class BettingRoundCreator implements RoundCreator, Serializable {
         ActionRequestFactory requestFactory = new ActionRequestFactory(betStrategy);
         // TODO: Future actions must be generic.
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(betStrategy.getType());
-        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, requestFactory,
-                futureActionsCalculator, betStrategy);
+        BettingRound bettingRound = new BettingRound(context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betStrategy);
+        bettingRound.setFlipCardsOnAllInShowdown(flipCardsOnAllInShowdown);
+        return bettingRound;
     }
 }

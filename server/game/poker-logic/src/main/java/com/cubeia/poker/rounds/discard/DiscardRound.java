@@ -169,4 +169,9 @@ public class DiscardRound implements Round {
     public String getStateDescription() {
         return null;
     }
+
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return true;
+    }
 }

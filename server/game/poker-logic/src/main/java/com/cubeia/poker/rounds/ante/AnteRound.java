@@ -45,6 +45,8 @@ public class AnteRound implements Round {
     
     private ServerAdapterHolder serverAdapterHolder;
 
+    private boolean flipCardsOnAllInShowdown;
+
     public AnteRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, AnteRoundHelper anteRoundHelper) {
         this.context = context;
         this.anteRoundHelper = anteRoundHelper;
@@ -191,6 +193,11 @@ public class AnteRound implements Round {
 
     public String getStateDescription() {
         return "currentState=null";
+    }
+
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return flipCardsOnAllInShowdown;
     }
 
     public boolean isFinished() {

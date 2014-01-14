@@ -29,7 +29,7 @@ import java.util.List;
 import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;;
+import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;
 
 @Singleton
 public class SimpleTableConfigTemplateProvider implements TableConfigTemplateProvider {
@@ -157,9 +157,9 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         		//texasFixedLimit, 
         		//texasNoLimit2Plrs,
         		//texasNoLimit5Plrs,
-        		texasNoLimit6Plrs
+        		texasNoLimit6Plrs,
         		//telesina,
-        		//crazyPineapple
+        		crazyPineapple
         		);
         
     }

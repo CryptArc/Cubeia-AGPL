@@ -411,6 +411,11 @@ public class BlindsRound implements Round, Serializable {
         return currentState != null ? currentState.getClass().getName() : "currentState=null";
     }
 
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return false;
+    }
+
     public boolean isFinished() {
         return currentState.isFinished();
     }
