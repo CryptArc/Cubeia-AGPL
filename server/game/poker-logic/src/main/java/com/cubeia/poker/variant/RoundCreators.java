@@ -82,7 +82,11 @@ public class RoundCreators {
     }
 
     public static BlindsRoundCreator blinds() {
-        return new BlindsRoundCreator();
+        return blinds(true);
+    }
+
+    public static BlindsRoundCreator blinds(boolean flipCardsOnAllInShowdown) {
+        return new BlindsRoundCreator(flipCardsOnAllInShowdown);
     }
 
     public static AnteRoundCreator ante() {

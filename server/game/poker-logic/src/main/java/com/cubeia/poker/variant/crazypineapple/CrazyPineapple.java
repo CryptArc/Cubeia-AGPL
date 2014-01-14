@@ -35,7 +35,7 @@ public class CrazyPineapple {
 
     public static GameType createGame() {
         return new PokerGameBuilder().withRounds(
-                        blinds(),
+                        blinds(false),
                         dealFaceDownCards(3),
                         bettingRound(PRE_FLOP, fromBigBlind(), false),
                         dealCommunityCards(3),
