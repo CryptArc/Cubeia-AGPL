@@ -92,7 +92,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private boolean bettingCapped = false;
 
-    private boolean flipCardsOnAllInShowdown;
+    private boolean flipCardsOnAllInShowdown = true;
 
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(PokerContext context,

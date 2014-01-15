@@ -45,7 +45,7 @@ public class AnteRound implements Round {
     
     private ServerAdapterHolder serverAdapterHolder;
 
-    private boolean flipCardsOnAllInShowdown;
+    private boolean flipCardsOnAllInShowdown = true;
 
     public AnteRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, AnteRoundHelper anteRoundHelper) {
         this.context = context;
