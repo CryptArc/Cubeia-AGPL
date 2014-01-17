@@ -6,3 +6,12 @@
         <entry key="user">sa</entry>
         <entry key="password"></entry>
 </properties>
+
+<!-- To use mysql, disable the above and enable the below -->
+
+<!--properties>
+        <entry key="url">jdbc:mysql://localhost:3306/wallet_service</entry>
+        <entry key="driver">com.mysql.jdbc.Driver</entry>
+        <entry key="user">poker</entry>
+        <entry key="password">poker</entry>
+</properties-->
