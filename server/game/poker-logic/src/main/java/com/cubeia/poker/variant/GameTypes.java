@@ -21,6 +21,8 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.rounds.betting.BettingRoundName;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
+import com.cubeia.poker.variant.turkish.TurkishDeckFactory;
+import com.cubeia.poker.variant.turkish.hand.TurkishHandStrengthEvaluator;
 
 import static com.cubeia.poker.rounds.betting.BettingRoundName.FLOP;
 import static com.cubeia.poker.rounds.betting.BettingRoundName.PRE_FLOP;
@@ -82,8 +84,8 @@ public class GameTypes {
                                 discardRound(4),
                                 dealNewCards(),	
                                 bettingRound(fromOpener()))
-                        .withDeckProvider(new TelesinaDeckFactory()).
-                        withHandEvaluator(new TelesinaHandStrengthEvaluator(Rank.SEVEN)).build();
+                        .withDeckProvider(new TurkishDeckFactory()).
+                        withHandEvaluator(new TurkishHandStrengthEvaluator(Rank.SEVEN)).build();
     }
 
 	

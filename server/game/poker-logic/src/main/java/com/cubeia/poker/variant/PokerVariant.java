@@ -20,5 +20,6 @@ package com.cubeia.poker.variant;
 public enum PokerVariant {
     TEXAS_HOLDEM,
     TELESINA, 
-    CRAZY_PINEAPPLE;
+    CRAZY_PINEAPPLE, 
+    TURKISH;
 }
