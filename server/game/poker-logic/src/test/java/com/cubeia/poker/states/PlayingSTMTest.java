@@ -17,7 +17,28 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.games.poker.common.money.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
@@ -31,22 +52,10 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.google.common.collect.Maps;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PlayingSTMTest {
     
@@ -150,6 +159,37 @@ public class PlayingSTMTest {
         verify(player2, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
     }
 
+    @Test
+    public void testNotifyHandFinishedCloseTable() {
+        PlayingSTM playing = new PlayingSTM();
+        playing.context = context;
+        playing.stateChanger = stateChanger;
+        playing.serverAdapterHolder = serverAdapterHolder;
+        Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
+        PokerPlayer player1 = createMockPlayer(1337, anteLevel - 1);
+        Result result1 = mock(Result.class);
+        results.put(player1, result1);
+        HandResult result = new HandResult(results, new ArrayList<RatedPlayerHand>(), Collections.<PotTransition>emptyList(), null, new ArrayList<Integer>(),new Currency("EUR",2));
+        context.playerMap = new HashMap<Integer, PokerPlayer>();
+        context.playerMap.put(player1.getId(), player1);
+        when(context.isCloseTableAfterHandFinished()).thenReturn(true);
+        
+        playing.handFinished(result, HandEndStatus.NORMAL);
+
+        verify(player1).addChips(Mockito.any(BigDecimal.class));
+        verify(player1).saveStartingBalance();
+
+        verify(serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL, context.isTournamentTable());
+        verify(serverAdapter, never()).performPendingBuyIns(context.playerMap.values());
+        verify(serverAdapter, never()).cleanupPlayers(Mockito.any(SitoutCalculator.class));
+
+        verify(context).setHandFinished(true);
+        verify(stateChanger).changeState(isA(ShutdownSTM.class));
+
+        verify(serverAdapter, never()).notifyPlayerBalance(player1);
+        verify(serverAdapter, never()).notifyBuyInInfo(player1.getId(), true);
+    }
+    
     @Test
     public void testSendBuyInInfoToPlayersWithoutMoney() {
         PokerPlayer p1 = mock(PokerPlayer.class);

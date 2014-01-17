@@ -75,7 +75,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
         if (context.isTournamentTable()) {
             // Report round to tournament coordinator and wait for notification
             sendTournamentRoundReport();
-        } else {
+        } else if (!context.isCloseTableAfterHandFinished()) {
             getServerAdapter().performPendingBuyIns(context.getPlayerMap().values());
 
             // clean up players here and make leaving players leave and so on also update the lobby
@@ -83,7 +83,11 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             sendBuyinInfoToPlayersWithoutMoney();
         }
 
-        changeState(new WaitingToStartSTM());
+        if (context.isCloseTableAfterHandFinished()) {
+            changeState(new ShutdownSTM());
+        } else {
+            changeState(new WaitingToStartSTM());
+        }
     }
 
     @Override

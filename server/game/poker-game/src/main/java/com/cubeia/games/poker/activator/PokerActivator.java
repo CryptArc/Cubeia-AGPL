@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
+import com.cubeia.backend.cashgame.dto.CloseTableRequest;
+import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
 import com.cubeia.firebase.api.game.activator.GameActivator;
 import com.cubeia.firebase.api.game.activator.MttAwareActivator;
@@ -38,6 +40,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
+
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
@@ -79,8 +82,11 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
     @Inject
     private TableFactory tableFactory;
 
+    private ActivatorContext context;
+
     @Override
     public void init(ActivatorContext context) throws SystemException {
+        this.context = context;
         new JmxUtil().mountBean(JMX_BIND_NAME, this);
         boolean useDatabase = !useMockIntegrations(context);
         Injector inj = Guice.createInjector(
@@ -110,6 +116,14 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
         TableConfigTemplate t = createNewTemplate(seats, anteLevel, variant);
         PokerParticipant p = participantFactory.createParticipantFor(t);
         tableFactory.createTable(seats, p);
+    }
+    
+    @Override
+    public void closeTableAfterHandFinishes(int tableId) {
+        log.debug("sending close request to table after hand finishes: " + tableId);
+        GameObjectAction action = new GameObjectAction(tableId);
+        action.setAttachment(new CloseTableRequest(false));
+        context.getActivatorRouter().dispatchToGame(tableId, action);
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,6 +141,26 @@ public class PokerState implements Serializable, IPokerState {
 
     public boolean isFinished() {
         return pokerContext.isFinished();
+    }
+    
+    public boolean isTournamentTable() {
+        return pokerContext.isTournamentTable();
+    }
+    
+    /**
+     * Mark this table to be closed after the current hand finishes.
+     * NOTE: this method can't be called on a tournament table. 
+     * @param close true if this table should be closed when hand finishes
+     */
+    public void setCloseTableAfterHandFinished(boolean close) {
+        if (pokerContext.isTournamentTable()) {
+            throw new UnsupportedOperationException("tournament table can not be marked for close after hand end");
+        }
+        pokerContext.setCloseTableAfterHandFinished(close);
+    }
+    
+    public boolean isCloseTableAfterHandFinished() {
+        return pokerContext.isCloseTableAfterHandFinished();
     }
 
     public void timeout() {

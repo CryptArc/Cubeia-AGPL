@@ -17,6 +17,25 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.entity.TableConfigTemplate.TemplateStatus.ENABLED;
+import static java.util.Collections.addAll;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.activator.TableFactory;
 import com.cubeia.firebase.api.game.lobby.LobbyTable;
@@ -29,23 +48,6 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
-import static java.util.Collections.addAll;
 
 @Singleton
 public class LobbyTableInspectorImpl implements LobbyTableInspector {
@@ -131,12 +133,22 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
 
         // for each template
         for (TableConfigTemplate config : templates) {
+            
             List<LobbyTable> list = tables.get(config.getId());
             // create a list if it doesn't exist
             if (list == null) {
                 list = new ArrayList<LobbyTable>();
                 tables.put(config.getId(), list);
             }
+            
+            if (config.getStatus() != ENABLED) {
+                log.trace("Template '" + config.getName() + "' is not enabled, will close open tables.");
+                for (LobbyTable table : list) {
+                    result.add(TableModifierAction.close(table.getTableId()));
+                }
+                continue;
+            }
+            
             /*
              * Now, if "all" is less than minimum, add. If "empty
              * is less then minimum empty, add. Otherwise, check for
@@ -257,6 +269,9 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         return b;
     }
 
+    /**
+     * Create a map from template id to list of tables for that template
+     */
     private Map<Integer, List<LobbyTable>> partitionTables(List<LobbyTable> tables) {
         Map<Integer, List<LobbyTable>> map = new HashMap<Integer, List<LobbyTable>>();
         for (LobbyTable t : tables) {

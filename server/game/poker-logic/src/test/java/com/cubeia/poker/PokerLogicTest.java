@@ -17,18 +17,6 @@
 
 package com.cubeia.poker;
 
-import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.model.RatedPlayerHand;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.result.HandResult;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Random;
-
 import static com.cubeia.poker.action.PokerActionType.BET;
 import static com.cubeia.poker.action.PokerActionType.BIG_BLIND;
 import static com.cubeia.poker.action.PokerActionType.CALL;
@@ -37,8 +25,22 @@ import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
 import static com.cubeia.poker.action.PokerActionType.FOLD;
 import static com.cubeia.poker.action.PokerActionType.RAISE;
 import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Random;
+
+import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.states.ShutdownSTM;
 
 /**
  * Integration test for poker logic.
@@ -405,8 +407,37 @@ public class PokerLogicTest extends GuiceTest {
         act(p[0], FOLD);
 
         assertTrue(state.isFinished());
-
         assertEquals(chipsInPlay, countChipsAtTable(p));
+    }
+    
+    public void testTableCloseAfterHandFinishes() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(2);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        addPlayers(state, mp);
+
+        // Force start
+        state.timeout();
+
+        // Blinds
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
+        state.timeout();
+        act(p[0], FOLD);
+
+        // Mark table to be closed after hand finishes
+        state.setCloseTableAfterHandFinished(true);
+        
+        // Second hand, check that pocket cards have been cleared.
+        state.timeout();
+        act(p[1], SMALL_BLIND);
+        act(p[0], BIG_BLIND);
+        state.timeout();
+        
+        act(p[1], CALL);
+        act(p[0], FOLD);
+
+        assertThat(state.isFinished(), is(true));
+        assertThat(state.getCurrentState(), instanceOf(ShutdownSTM.class));
     }
 
     public void testEndHandReport() {

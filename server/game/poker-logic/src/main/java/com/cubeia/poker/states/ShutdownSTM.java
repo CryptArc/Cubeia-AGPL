@@ -55,5 +55,5 @@ public class ShutdownSTM extends AbstractPokerGameSTM {
         int tableId = context != null ? context.getTableId() : -1;
         log.warn("table {} is shut down, dropping incoming timeout", tableId);
     }
-
+    
 }

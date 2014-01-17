@@ -27,4 +27,6 @@ public interface PokerActivatorMBean {
 
     public void destroyTable(int id);
 
+    void closeTableAfterHandFinishes(int tableId);
+
 }
