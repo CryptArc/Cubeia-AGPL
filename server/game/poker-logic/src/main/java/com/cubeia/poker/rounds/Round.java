@@ -55,4 +55,6 @@ public interface Round extends Serializable {
     public void visit(RoundVisitor visitor);
 
     public String getStateDescription();
+
+    boolean flipCardsOnAllInShowdown();
 }

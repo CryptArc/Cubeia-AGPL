@@ -1,7 +1,7 @@
 "use strict";
 var Poker = Poker || {};
 
-Poker.LoginView = Poker.TabView.extend({
+Poker.LoginView = Poker.ResponsiveTabView.extend({
     init: function(viewElementId,name){
         this._super(viewElementId,name);
         var self = this;

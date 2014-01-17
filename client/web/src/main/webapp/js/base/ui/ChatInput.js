@@ -17,6 +17,8 @@ Poker.ChatInput = Class.extend({
         }).describe();
     },
     onSendMessage : function(message) {
-        this.sendMessageCallback(message);
+        if(message!=null && $.trim(message).length>0) {
+            this.sendMessageCallback(message);
+        }
     }
 });

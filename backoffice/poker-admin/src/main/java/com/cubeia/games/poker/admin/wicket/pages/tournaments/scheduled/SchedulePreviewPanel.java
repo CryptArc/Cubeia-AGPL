@@ -14,11 +14,15 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 
 @SuppressWarnings("serial")
 public class SchedulePreviewPanel extends Panel {
+
+    private static final Logger log = LoggerFactory.getLogger(SchedulePreviewPanel.class);
 
     private static final int MAX = 100;
 
@@ -80,9 +84,15 @@ public class SchedulePreviewPanel extends Panel {
     private String creatTzString() {
         TimeZone tz = TimeZone.getDefault();
         double offset = ((double) tz.getOffset(currentTimeMillis())) / 3600 / 1000;
-        return String.format("%s, %s (UTC %+.0g)", tz.getID(), tz.getDisplayName(true, TimeZone.SHORT), offset);
+        try {
+            return String.format("%s, %s (UTC %+.0g)", tz.getID(), tz.getDisplayName(true, TimeZone.SHORT), offset);
+        } catch (Exception e) {
+            log.error("error generating timezone string: tz = {}, offset = {}, display name = {}, tz id = {}", 
+                new Object[] { tz, offset, tz.getDisplayName(true, TimeZone.SHORT), tz.getID() });
+            return "N/A";
+        }
     }
-
+    
     private void moveIndex(int offset) {
         index = index + offset;
         if (index >= startTimes.size()) {

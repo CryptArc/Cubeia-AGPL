@@ -1,20 +1,29 @@
 
 .login-container {
-    width:80%;
+
+    width:100%;
     display:block;
     font-size: 120%;
+    height:0px;
+    overflow: hidden;
+    .transition(height 1s);
 
-
+  &.show{
+    height:150px;
+  }
 }
 .login-input-container {
+    box-sizing: border-box;
     width:100%;
     display:block;
     float:left;
     margin-bottom: 0.5em;
 
     input {
+        box-sizing: border-box;
         .basic-input;
         width:100%;
+        font-size:80%;
         margin-bottom:3%;
 
         &:last-child {
@@ -23,13 +32,12 @@
     }
 }
 .login-button {
-   padding: 0.8em;
-    width:100%;
-   font-size: 180%;
-    text-align: center;
-    clear: both;
-    margin-bottom:3%;
-
+   padding: 0.4em;
+   width:auto;
+   font-size: 110%;
+   text-align: center;
+   clear: both;
+   margin-bottom:3%;
 }
 .describe {
     color:@grayText;
@@ -48,8 +56,8 @@
 .status-label {
     font-size: 150%;
 }
-.loading-view {
+.loading-view-container {
     width:400px;
     margin:0 auto;
-    margin-top:15%;
+    padding-top:15%;
 }

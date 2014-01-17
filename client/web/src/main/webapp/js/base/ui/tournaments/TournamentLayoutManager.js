@@ -25,6 +25,8 @@ Poker.TournamentLayoutManager = Class.extend({
     takeSeatButton : null,
     name : null,
     shareDone : false,
+    chat : null,
+
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
         this.tournamentId = tournamentId;
@@ -63,7 +65,14 @@ Poker.TournamentLayoutManager = Class.extend({
             self.viewElement.find(".tables-row").show();
         });
         menu.activateItem(".players-link");
+        this.chat = new Poker.TableEventLog(this.viewElement.find(".table-chat-container"));
+        new Poker.ChatInput(this.viewElement.find(".chat-input"), function(msg){
+            new Poker.TournamentRequestHandler(tournamentId).sendChatMessage(Poker.Utils.filterMessage(msg));
+        });
 
+    },
+    onChatMessage : function(screenName,message) {
+        this.chat.appendChatMessage({name : screenName },message);
     },
     updatePlayerList : function(players) {
         var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");

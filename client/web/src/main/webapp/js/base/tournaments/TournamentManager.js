@@ -48,6 +48,7 @@ Poker.TournamentManager = Class.extend({
         this.registeredTournaments = new Poker.Map();
         this.dialogManager = Poker.AppCtx.getDialogManager();
         this.tableManager = Poker.AppCtx.getTableManager();
+
         var self = this;
         this.tournamentUpdater = new Poker.PeriodicalUpdater(function(){
             self.updateTournamentData();
@@ -63,13 +64,16 @@ Poker.TournamentManager = Class.extend({
 
             var layoutManager = new Poker.TournamentLayoutManager(id, name, this.isRegisteredForTournament(id),
                 viewContainer,function(){
+                        new Poker.TournamentRequestHandler(id).unsubscribeFromChat();
                         self.removeTournament(id);
                     }
             );
             viewManager.addTournamentView(layoutManager.getViewElementId(), name, layoutManager);
 
             this.tournaments.put(id,new Poker.Tournament(id, name, layoutManager));
-            new Poker.TournamentRequestHandler(id).requestTournamentInfo();
+            var trh = new Poker.TournamentRequestHandler(id);
+            trh.requestTournamentInfo();
+            trh.subscribeToChat();
             this.activateTournamentUpdates(id);
             this.tournamentUpdater.start();
         }
@@ -95,6 +99,12 @@ Poker.TournamentManager = Class.extend({
             this.tournamentTables.put(tournamentId,tables);
         }
     },
+    onChatMessage : function(tournamentId, screenName, message) {
+        var tournament = this.getTournamentById(tournamentId);
+        if(tournament!=null) {
+            tournament.tournamentLayoutManager.onChatMessage(screenName,Poker.Utils.filterMessage(message));
+        }
+    },
     isTournamentTable : function(tableId) {
         var tables = this.tournamentTables.values();
         for(var i = 0; i<tables.length;i++) {
@@ -109,6 +119,7 @@ Poker.TournamentManager = Class.extend({
     removeTournament : function(tournamentId) {
         var tournament = this.tournaments.remove(tournamentId);
         if (tournament!=null) {
+            new Poker.TournamentRequestHandler(tournamentId).unsubscribeFromChat();
             if (this.tournaments.size() == 0) {
                 console.log("Stopping updates of lobby for tournament: " + tournamentId);
                 this.tournamentUpdater.stop();

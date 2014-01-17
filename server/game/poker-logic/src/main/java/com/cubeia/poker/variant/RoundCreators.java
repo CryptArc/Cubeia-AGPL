@@ -50,11 +50,19 @@ public class RoundCreators {
     }
 
     public static BettingRoundCreator bettingRound(BettingRoundName roundName) {
-        return new BettingRoundCreator(roundName, new FromDealerButtonFactory());
+        return new BettingRoundCreator(roundName, new FromDealerButtonFactory(), true);
     }
 
     public static BettingRoundCreator bettingRound(BettingRoundName roundName, PlayerToActCalculatorFactory playerToActCalculatorFactory) {
-        return new BettingRoundCreator(roundName, playerToActCalculatorFactory);
+        return new BettingRoundCreator(roundName, playerToActCalculatorFactory, true);
+    }
+
+    public static BettingRoundCreator bettingRound(BettingRoundName roundName, boolean flipCardsOnAllInShowdown) {
+        return new BettingRoundCreator(roundName, new FromDealerButtonFactory(), flipCardsOnAllInShowdown);
+    }
+
+    public static BettingRoundCreator bettingRound(BettingRoundName roundName, PlayerToActCalculatorFactory playerToActCalculatorFactory, boolean flipCardsOnAllInShowdown) {
+        return new BettingRoundCreator(roundName, playerToActCalculatorFactory, flipCardsOnAllInShowdown);
     }
 
     public static PlayerToActCalculatorFactory fromBigBlind() {
@@ -66,7 +74,7 @@ public class RoundCreators {
     }
 
     public static BettingRoundCreator bettingRound(PlayerToActCalculatorFactory playerToActCalculatorFactory) {
-        return new BettingRoundCreator(FLOP, playerToActCalculatorFactory); // TODO: Flop isn't really right.
+        return new BettingRoundCreator(FLOP, playerToActCalculatorFactory, true); // TODO: Flop isn't really right.
     }
 
     public static DealPocketCardsRoundCreator dealFaceDownCards(int numberOfCards) {
@@ -74,7 +82,11 @@ public class RoundCreators {
     }
 
     public static BlindsRoundCreator blinds() {
-        return new BlindsRoundCreator();
+        return blinds(true);
+    }
+
+    public static BlindsRoundCreator blinds(boolean flipCardsOnAllInShowdown) {
+        return new BlindsRoundCreator(flipCardsOnAllInShowdown);
     }
 
     public static AnteRoundCreator ante() {

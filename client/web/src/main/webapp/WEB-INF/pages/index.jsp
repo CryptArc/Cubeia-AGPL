@@ -200,10 +200,7 @@
     <c:if test="${not empty token}">
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
-            Poker.MyPlayer.pureToken = "${pureToken}";
-            $(document).ready(function(){
-                $(".login-container").hide();
-            });
+            Poker.MyPlayer.pureToken = ${pureToken};
         </script>
     </c:if>
 
@@ -243,7 +240,17 @@
                 $("title").html(Poker.SkinConfiguration.title);
 
 
-                var onPreLoadComplete = function() {
+                var onResourcesLoaded = function() {
+                    Poker.AppCtx.getConnectionManager().onResourcesLoaded();
+                };
+                var onApplicationWired = function() {
+                    new Poker.ResourcePreloader('${cp}',onResourcesLoaded, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                };
+
+
+                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
+                    $("body").i18n();
+
                     <c:choose>
                     <c:when test="${not empty firebaseHost}">
                     var requestHost = "${firebaseHost}";
@@ -272,12 +279,7 @@
                         tournamentLobbyUpdateInterval : 10000,
                         playerApiBaseUrl : "${playerApiBaseUrl}"
                     });
-
-                };
-
-                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
-                    $("body").i18n();
-                    new Poker.ResourcePreloader('${cp}',onPreLoadComplete, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                    onApplicationWired();
                 });
             }
 
@@ -546,27 +548,31 @@
             </div>
         </div>
 
-        <div id="loadingView" class="loading-view">
-            <div class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="loading-progressbar">
-                    <div class="progress"></div>
-                </div>
-            </div>
-        </div>
-        <div id="loginView" class="login-view" style="display:none;">
-            <div id="dialog1" class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="login-container">
-                    <div class="login-input-container">
-                        <input name="user" class="describe" id="user" type="text" title="Username" value="" />
-                        <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+        <div id="loginView" class="loading-view">
+            <div class="loading-view-container">
+                <div class="login-dialog">
+                    <div class="logo-container"></div>
+                    <div class="loading-box">
+                        <div class="loading-progressbar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="login-container" style="display:none;">
+                            <div class="login-input-container">
+                                <input name="user" class="describe" id="user" type="text" title="Username" value="" />
+                                <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+                            </div>
+                            <div id="loginButton" class="login-button">
+                                <span data-i18n="login.login"></span>
+                            </div>
+                        </div>
+                        <div class="status-label" style="font-size:90%;">
+                            <span class="connect-status"></span>
+                        </div>
                     </div>
-                    <div id="loginButton" class="login-button">
-                        <span data-i18n="login.login"></span>
+                    <div class="powered-by">
+                        <img src="${cp}/skins/default/images/poweredby.png"/>
                     </div>
                 </div>
-                <div class="status-label"> <span data-i18n="login.status"></span> <span class="connect-status"></span></div>
             </div>
         </div>
 
@@ -611,13 +617,14 @@
                             </div>
                             <div class="navbar-collapse navbar-top-collapse collapse">
                                 <ul class="nav nav-pills">
+
+                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
+                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                     <li class="active" id="cashGameMenu">
                                         <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
                                             [Cash Games]
                                         </a>
                                     </li>
-                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
-                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                 </ul>
                             </div>
 
@@ -1317,57 +1324,75 @@
                     </nav>
                 </div>
             </div>
-            <div class="row players-row tournament-section">
-                <div class="col-sm-7">
-                    <div class="tournament-statistics">
-                        <div>Remaining players: <span class="remaining-players"></span></div>
+            <div class="row">
+                 <div class="col-sm-7">
+                     <div class="row players-row tournament-section">
+                        <div class="col-sm-12">
+                            <div class="tournament-statistics">
+                                <div>Remaining players: <span class="remaining-players"></span></div>
 
+                            </div>
+                            <table class="table default-table player-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
+                                    <th>{{t "tournament-lobby.players.stack" }}</th>
+                                    <th>{{t "tournament-lobby.players.winnings" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <table class="table default-table player-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
-                            <th>{{t "tournament-lobby.players.stack" }}</th>
-                            <th>{{t "tournament-lobby.players.winnings" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="row tables-row tournament-section" style="display:none;">
+                        <div class="col-sm-12">
+                            <table class="table default-table table-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row payouts-row tournament-section" style="display:none;">
+                        <div class="col-sm-12 payout-structure">
+
+                        </div>
+                    </div>
+
+                    <div class="row blinds-row tournament-section"  style="display:none;">
+                        <div class="col-sm-12 blinds-structure">
+
+                        </div>
+                    </div>
+                 </div>
+                 <div class="col-sm-5">
+                     <div class="row chat-row">
+                        <div class="col-sm-12">
+                            <div class="table-chat-container">
+                                <div class="lobby-chat table-event-log">
+                                </div>
+                                <input type="text" class="chat-input describe" placeholder="{{t 'table.log.chat-input-desc'}}">
+                            </div>
+                        </div>
+                     </div>
+
+                 </div>
             </div>
 
-            <div class="row tables-row tournament-section" style="display:none;">
-                <div class="col-sm-7">
-                    <table class="table default-table table-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="row payouts-row tournament-section" style="display:none;">
-                <div class="col-sm-7 payout-structure">
 
-                </div>
-            </div>
-
-            <div class="row blinds-row tournament-section"  style="display:none;">
-                <div class="col-sm-7 blinds-structure">
-
-                </div>
-            </div>
 
         </div>
 
@@ -1675,7 +1700,6 @@
     };
 
 </script>
-
 
 </body>
 </html>

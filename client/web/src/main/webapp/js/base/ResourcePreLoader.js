@@ -6,16 +6,22 @@ Poker.ResourcePreloader = Class.extend({
         this.completionListener = completionListener;
 
         var loader = new PxLoader();
+        var tableLoader = new PxLoader();
         if(images!=null && images.length > 0) {
             for(var i = 0; i<images.length; i++) {
                 if(images[i]!="") {
-                    loader.addImage(contextPath + "/skins" + images[i]);
+                    if(images[i].indexOf(skin + "/images/cards")!=-1 || images[i].indexOf(skin + "/images/table")!=-1)   {
+                        tableLoader.addImage(contextPath + "/skins" + images[i]);
+                    } else {
+                        loader.addImage(contextPath + "/skins" + images[i]);
+                    }
                 }
             }
         } else {
             this.onComplete();
         }
         loader.addCompletionListener(function(){
+            tableLoader.start();
             self.onComplete();
         });
         var self = this;
@@ -25,9 +31,9 @@ Poker.ResourcePreloader = Class.extend({
         loader.start();
     },
     onComplete : function() {
-        $("#loadingView").hide();
+        $(".loading-progressbar").height(0).css({padding:0, margin:0});
         this.completionListener();
-        $(".loading-progressbar .progress").width("100%");
+        Poker.AppCtx.getSoundRepository().loadSounds();
     },
     onProgress : function(completedCount, totalCount) {
         $(".loading-progressbar .progress").width((100*completedCount/totalCount) + "%");

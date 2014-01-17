@@ -82,6 +82,8 @@ public class BlindsRound implements Round, Serializable {
 
     private PokerSettings settings;
 
+    private boolean flipCardsOnAllInShowdown = true;
+
     public BlindsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, BlindsCalculator blindsCalculator) {
         this.serverAdapterHolder = serverAdapterHolder;
         this.blindsCalculator = blindsCalculator;
@@ -409,6 +411,15 @@ public class BlindsRound implements Round, Serializable {
 
     public String getStateDescription() {
         return currentState != null ? currentState.getClass().getName() : "currentState=null";
+    }
+
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return flipCardsOnAllInShowdown;
+    }
+
+    public void setFlipCardsOnAllInShowdown(boolean flipCardsOnAllInShowdown) {
+        this.flipCardsOnAllInShowdown = flipCardsOnAllInShowdown;
     }
 
     public boolean isFinished() {

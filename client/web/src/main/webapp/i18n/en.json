@@ -16,7 +16,7 @@
         "disconnected" : "Disconnected, retrying (count %s)",
         "connecting" : "Connecting",
         "connected" : "Connected",
-        "login-failed" : "Connected (Login failed with status %s)"
+        "login-failed" : "Login failed with status %s"
     },
     "lobby" : {
         "menu" : {

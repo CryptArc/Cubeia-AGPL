@@ -97,6 +97,7 @@
 
                                 skins.each() {
                                     if(!it.contains(".")) {
+
                                         def file = new File(skinsBuildDir + "/${it}/preload-images.js");
                                         file.createNewFile();
                                         def imageDir = skinsDir + "/" + it + "/images";

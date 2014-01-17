@@ -78,6 +78,11 @@ public class DealExposedPocketCardsRound implements Round {
     }
 
     @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return false;
+    }
+
+    @Override
     public boolean isFinished() {
         return true;
     }

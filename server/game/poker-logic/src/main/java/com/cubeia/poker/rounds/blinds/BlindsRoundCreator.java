@@ -28,8 +28,16 @@ import java.io.Serializable;
 
 public class BlindsRoundCreator implements RoundCreator, Serializable {
 
+    private final boolean flipCardsOnAllInShowdown;
+
+    public BlindsRoundCreator(boolean flipCardsOnAllInShowdown) {
+        this.flipCardsOnAllInShowdown = flipCardsOnAllInShowdown;
+    }
+
     @Override
     public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
-        return new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
+        BlindsRound blindsRound = new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
+        blindsRound.setFlipCardsOnAllInShowdown(flipCardsOnAllInShowdown);
+        return blindsRound;
     }
 }

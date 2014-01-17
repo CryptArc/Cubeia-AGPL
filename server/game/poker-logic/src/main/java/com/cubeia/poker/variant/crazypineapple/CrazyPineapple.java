@@ -17,10 +17,6 @@
 
 package com.cubeia.poker.variant.crazypineapple;
 
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.PokerGameBuilder;
 
@@ -35,62 +31,19 @@ import static com.cubeia.poker.variant.RoundCreators.dealFaceDownCards;
 import static com.cubeia.poker.variant.RoundCreators.discardRound;
 import static com.cubeia.poker.variant.RoundCreators.fromBigBlind;
 
-public class CrazyPineapple extends AbstractGameType {
+public class CrazyPineapple {
 
     public static GameType createGame() {
         return new PokerGameBuilder().withRounds(
-                        blinds(),
+                        blinds(false),
                         dealFaceDownCards(3),
-                        bettingRound(PRE_FLOP, fromBigBlind()),
+                        bettingRound(PRE_FLOP, fromBigBlind(), false),
                         dealCommunityCards(3),
-                        bettingRound(FLOP),
+                        bettingRound(FLOP, false),
                         discardRound(1),
                         dealCommunityCards(1),
                         bettingRound(TURN),
                         dealCommunityCards(1),
                         bettingRound(RIVER)).build();
     }
-
-	@Override
-	public void startHand() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean act(PokerAction action) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void scheduleRoundTimeout() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void prepareNewHand() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void timeout() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getStateDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean canPlayerAffordEntryBet(PokerPlayer player,
-			PokerSettings settings, boolean includePending) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

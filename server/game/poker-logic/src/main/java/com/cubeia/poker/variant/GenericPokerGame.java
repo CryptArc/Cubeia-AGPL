@@ -196,7 +196,7 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     }
 
     private boolean allInShowdown() {
-        return (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards());
+        return (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards() && currentRound.flipCardsOnAllInShowdown());
     }
 
     @VisibleForTesting

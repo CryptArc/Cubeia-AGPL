@@ -99,6 +99,13 @@ Poker.TournamentPacketHandler = Class.extend({
 
 
     },
+    /**
+     *
+     * @param {FB_PROTOCOL.NotifyChannelChatPacket} chatPacket
+     */
+    handleChatMessage : function(chatPacket) {
+        this.tournamentManager.onChatMessage(chatPacket.channelid,chatPacket.nick,chatPacket.message);
+    },
     handleRegistrationResponse: function (registrationResponse) {
         console.log("Registration response:");
         console.log(registrationResponse);
