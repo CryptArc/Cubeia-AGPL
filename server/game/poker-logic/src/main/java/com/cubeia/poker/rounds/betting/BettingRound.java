@@ -354,6 +354,10 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private boolean isValidAction(PokerAction action, PokerPlayer player) {
+        if(player==null) {
+            log.warn("Player not null when receiving action:" + action.toString());
+            return false;
+        }
         if (!action.getPlayerId().equals(playerToAct)) {
             log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
             return false;
