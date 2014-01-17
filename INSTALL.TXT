@@ -44,7 +44,7 @@ QUICK-START
 
 hg clone https://bitbucket.org/cubeia/cubeia-poker
 cd cubeia-poker
-mvn clean package
+mvn clean install
 cd  system/simple
 mvn firebase:run
 
