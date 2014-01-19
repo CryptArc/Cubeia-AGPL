@@ -166,7 +166,7 @@ public class TournamentLobby {
 
             int position = player.getStatus() == OUT ? player.getPosition() : runningPosition;
 
-            players.add(new TournamentPlayer(player.getScreenname(), format(stackSize), position, format(getWinningsFor(playerId)), getTableFor(playerId)));
+            players.add(new TournamentPlayer(player.getScreenname(), format(stackSize), position, format(getWinningsFor(playerId)), getTableFor(playerId), playerId));
             lastChipStack = stackSize;
         }
 

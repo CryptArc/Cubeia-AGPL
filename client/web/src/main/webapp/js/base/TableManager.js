@@ -573,12 +573,20 @@ Poker.TableManager = Class.extend({
         var table = this.getTable(tableId);
         if(table!=null) {
             var player = table.getPlayerById(playerId);
-            if(player!=null) {
-                message = Poker.Utils.filterMessage(message);
-                table.getLayoutManager().onChatMessage(player,message);
-            } else {
-                console.log("onChatMessage: player not found at table");
+            message = Poker.Utils.filterMessage(message);
+            if(player==null && message.indexOf("watcher::")==0) {
+                message = message.substring(9, message.length);
+
+                var index = message.indexOf("::");
+                var name = message.substring(0,index);
+                message = message.substring(index+2,message.length);
+
+                player = { name : name + " (Watcher)" };
             }
+            if(player!=null) {
+                table.getLayoutManager().onChatMessage(player,message);
+            }
+
         }
     },
     isTournamentTable : function(tableId) {

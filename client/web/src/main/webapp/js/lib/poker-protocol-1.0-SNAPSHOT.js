@@ -2933,6 +2933,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
     this.position = {};
     this.winnings = {};
     this.tableId = {};
+    this.playerId = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.name);
@@ -2940,6 +2941,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         a.writeInt(this.position);
         a.writeString(this.winnings);
         a.writeInt(this.tableId);
+        a.writeInt(this.playerId);
         return a
     };
     this.load = function (a) {
@@ -2947,7 +2949,8 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         this.stackSize = a.readString();
         this.position = a.readInt();
         this.winnings = a.readString();
-        this.tableId = a.readInt()
+        this.tableId = a.readInt();
+        this.playerId = a.readInt()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2959,6 +2962,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         a.details.position = this.position;
         a.details.winnings = this.winnings;
         a.details.tableId = this.tableId;
+        a.details.playerId = this.playerId;
         return a
     }
 };
