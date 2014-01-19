@@ -439,6 +439,7 @@
         <!-- The amount that the player won, formatted, if the player is out. -->
         <var name="winnings" type="string" />
         <var name="table_id" type="int32" />
+        <var name="playerId" type="int32" />
     </struct>
 
     <struct name="request_blinds_structure" />

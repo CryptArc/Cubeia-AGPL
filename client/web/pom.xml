@@ -261,6 +261,7 @@
                         <source>${js.dir}/base/ui/MyActionsManager.js</source>
                         <source>${js.dir}/base/data/LobbyData.js</source>
                         <source>${js.dir}/base/TimeStatistics.js</source>
+                        <source>${js.dir}/base/ui/Pager.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

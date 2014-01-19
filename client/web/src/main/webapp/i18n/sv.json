@@ -148,7 +148,8 @@
             "player" : "Spelare",
             "stack" : "Stack",
             "winnings" : "Vinst",
-            "loading" : "Laddar spelare..."
+            "loading" : "Laddar spelare...",
+            "no-players" : "Inga spelare"
         },
         "tables" : {
             "tables" : "Bord",

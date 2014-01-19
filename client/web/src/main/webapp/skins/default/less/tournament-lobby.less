@@ -139,12 +139,63 @@
 
     color:#fff;
     margin-top: 1%;
-    padding: 1%;
+    padding: 2%;
     width: 100%;
     clear:both;
 
   }
+  .default-table.player-list {
 
+        tbody {
+            tr {
+
+                td {
+                    &.position {
+                        width:5%;
+                    }
+                    border-top: 4px solid #252525;
+                    padding: 10px 10px 5px 10px;
+                    line-height: 2;
+                }
+            }
+        }
+  }
+
+  .generic-avatar {
+      background: url("../images/generic-avatar.png");
+      background-size: 80% auto;
+      background-repeat: no-repeat;
+      background-position: center;
+      width:35px;
+      height:35px;
+      display: inline-block;
+      background-color:#555;
+      margin-right: 6px;
+
+  }
+  .player-list-pager {
+      margin-bottom: 10px;
+  }
+  .players-row {
+      .filter-input {
+          margin-top:0;
+      }
+  }
+  .page-selector,.page-previous,.page-next{
+      background-color:#555;
+      display: inline-block;
+      width:40px;
+      height: 40px;
+      margin-right: 2px;
+      padding:12px;
+      text-align: center;
+      cursor: pointer;
+      .user-select(none);
+      margin-bottom:2px;
+      &.active {
+          background-color: #dc3b3b;
+      }
+  }
 }
 
 .navbar-tournament-collapse {
