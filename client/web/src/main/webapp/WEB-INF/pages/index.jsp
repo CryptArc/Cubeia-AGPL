@@ -1339,7 +1339,7 @@
 
                             </div>
                             <div>
-                                <input type="text" class="filter-input" placeholder="Search for player"/>
+                                <input type="text" class="filter-input" placeholder="{{t "tournament-lobby.players.search" }}"/>
                             </div>
                             <table class="table default-table player-list">
                                 <thead>
