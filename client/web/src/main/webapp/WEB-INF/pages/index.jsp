@@ -1597,6 +1597,9 @@
         <td><div class="generic-avatar player-{{playerId}}"></div>{{name}}</td>
         <td>{{currency stackSize}}</td>
         <td>{{currency winnings}}</td>
+        <td>
+            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;">Table &raquo;</div>
+        </td>
     </tr>
 </script>
 <script type="text/mustache" id="tournamentTableListItem" style="display:none;">

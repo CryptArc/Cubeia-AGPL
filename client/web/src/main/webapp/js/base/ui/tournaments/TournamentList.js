@@ -7,9 +7,11 @@ Poker.TournamentList = Poker.Pager.extend({
     playerProfiles : null,
     pagerContainer : null,
     filterText : null,
-    init : function(container, pagerContainer, filterInput) {
+    tournamentId : -1,
+    init : function(tournamentId,container, pagerContainer, filterInput) {
         var self = this;
         this._super(15);
+        this.tournamentId = tournamentId;
         this.container = container;
         this.pagerContainer = pagerContainer;
         this.playerProfiles = new Poker.Map();
@@ -29,6 +31,13 @@ Poker.TournamentList = Poker.Pager.extend({
         var self = this;
         $.each(players,function(i,p) {
             self.container.append(template.render(p));
+            console.log("TABLE ID = ",  p.tableId);
+            if(p.tableId!=null && p.tableId>=0) {
+                self.container.find(".go-to-table-"+p.playerId).show().click(function(e){
+                    new Poker.TableRequestHandler(p.tableId).openTournamentTable(self.tournamentId,10);
+                });
+            }
+
             if(self.playerProfiles.contains(p.playerId)) {
                 self.updateAvatar(p.playerId,self.playerProfiles.get(p.playerId));
             } else {

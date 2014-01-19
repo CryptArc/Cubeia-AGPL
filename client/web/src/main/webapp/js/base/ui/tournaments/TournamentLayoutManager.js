@@ -46,7 +46,7 @@ Poker.TournamentLayoutManager = Class.extend({
         this.tableListBody = this.viewElement.find(".table-list tbody");
         var playerListPager = this.viewElement.find(".player-list-pager");
         var filterInput = this.viewElement.find(".filter-input");
-        this.playerList = new Poker.TournamentList(this.playerListBody,playerListPager,filterInput);
+        this.playerList = new Poker.TournamentList(tournamentId,this.playerListBody,playerListPager,filterInput);
         this.initActions();
         if(registered==true) {
             this.setPlayerRegisteredState();
