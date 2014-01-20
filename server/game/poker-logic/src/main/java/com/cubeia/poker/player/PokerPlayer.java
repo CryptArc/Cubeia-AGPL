@@ -58,6 +58,13 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     public void addPocketCard(Card card, boolean publicCard);
 
+    /**
+     * Discards the cards with the given cardIds.
+     *
+     * NOTE: This is NOT the index of the card (0 being the first card), but the ID of the card.
+     *
+     * @param cardsToDiscard
+     */
     void discard(List<Integer> cardsToDiscard);
 
     public void clearHand();

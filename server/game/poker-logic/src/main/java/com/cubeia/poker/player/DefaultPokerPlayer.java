@@ -240,7 +240,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     private void discardCard(Integer cardId) {
-        pocketCards.removeCardByid(cardId);
+        pocketCards.removeCardById(cardId);
     }
 
     @Override
