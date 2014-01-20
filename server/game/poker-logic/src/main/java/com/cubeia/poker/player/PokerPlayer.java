@@ -61,7 +61,7 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     /**
      * Discards the cards with the given cardIds.
      *
-     * NOTE: This is NOTE the index of the card (0 being the first card), but the ID of the card.
+     * NOTE: This is NOT the index of the card (0 being the first card), but the ID of the card.
      *
      * @param cardsToDiscard
      */
