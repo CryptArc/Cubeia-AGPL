@@ -61,7 +61,7 @@ public class DomainEventsServiceImplTest {
 	@Test
 	public void testSimpleCall() {
 		BigDecimal payout = new BigDecimal(100.5);
-		service.sendTournamentPayoutEvent(player, payout, "EUR", 1, instance);
+		service.sendTournamentPayoutEvent(player, BigDecimal.ONE, payout, "EUR", 1, instance);
 		verify(client).send(Mockito.any(GameEvent.class));
 	}
 	
@@ -70,7 +70,7 @@ public class DomainEventsServiceImplTest {
 		when(clientRegistry.getOperatorId(11)).thenReturn(null);
 		
 		BigDecimal payout = new BigDecimal(100.5);
-		service.sendTournamentPayoutEvent(player, payout, "EUR", 1, instance);
+		service.sendTournamentPayoutEvent(player, BigDecimal.ONE, payout, "EUR", 1, instance);
 	}
 
 }
