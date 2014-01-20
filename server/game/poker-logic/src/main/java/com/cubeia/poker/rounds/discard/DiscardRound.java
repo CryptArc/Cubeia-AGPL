@@ -116,7 +116,7 @@ public class DiscardRound implements Round {
 
 
     private boolean isValidAction(PokerAction action, PokerPlayer player) {
-/*        if (!action.getPlayerId().equals(playerToAct)) {
+        /*  if (!action.getPlayerId().equals(playerToAct)) {
             log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
             return false;
         }
@@ -130,16 +130,19 @@ public class DiscardRound implements Round {
     
     @Override
     public void timeout() {
+        log.debug("Timeout in discard round, discarding cards for players who haven't acted. Force: " + forceDiscard);
         for (PokerPlayer player : getAllSeatedPlayers()) {
+            log.debug("Checking player " + player + " has acted: " + player.hasActed());
             if (!player.hasActed()) {
                 if (forceDiscard) {
+                    log.debug("Forcing player to discard " + cardsToDiscard + " cards.");
                     List<Integer> forcedCardsToDiscard = Lists.newArrayList();
                     for (int i = 0; i < this.cardsToDiscard; i++) {
-                        forcedCardsToDiscard.add(i);
+                        forcedCardsToDiscard.add(player.getPocketCards().getCardAt(i).getId());
                     }
                     player.setHasActed(true);
                     player.discard(forcedCardsToDiscard);
-                    DiscardAction action = new DiscardAction(playerToAct, forcedCardsToDiscard);
+                    DiscardAction action = new DiscardAction(player.getId(), forcedCardsToDiscard);
                     serverAdapterHolder.get().notifyDiscards(action, player);
                 }
             }
