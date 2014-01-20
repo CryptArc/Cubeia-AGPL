@@ -156,9 +156,9 @@ public class Payouts implements Serializable {
 
     private BigDecimal calculatePayoutsRoundingToClosestBuyIn(BigDecimal buyIn) {
         //WORKAROUND to allow freerolls
-        if (buyIn.compareTo(BigDecimal.ZERO) == 0 ) {
-            buyIn = BigDecimal.valueOf(1);
-        }
+        //if (buyIn.compareTo(BigDecimal.ZERO) == 0 ) {
+        //    buyIn = BigDecimal.valueOf(1);
+        //}
         BigDecimal totalPayouts = BigDecimal.ZERO;
         for (int i = 1; i < entrantsRange.getStop(); i++) {
             BigDecimal payout = calculatePayoutRoundedToClosestBuyIn(i, buyIn);
