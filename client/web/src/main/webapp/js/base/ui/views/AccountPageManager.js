@@ -8,6 +8,7 @@ Poker.AccountPageManager = Class.extend({
     userOverlay : null,
     buyCreditsView : null,
     editProfileView : null,
+    currentBonus : null,
     init : function() {
         this.templateManager = new Poker.TemplateManager();
         this.menuItemTemplate = "menuItemTemplate";
@@ -148,7 +149,7 @@ Poker.AccountPageManager = Class.extend({
         $.ga._trackEvent("user_navigation", "open_account_frame");
 
         var url = Poker.OperatorConfig.getAccountInfoUrl();
-        if(url!=null && url=="internal") {
+        if(url!=null && (url=="" || url=="internal")) {
            this.displayInternalAccountPage();
         } else {
             $("#internalAccountContent").hide();
@@ -189,7 +190,7 @@ Poker.AccountPageManager = Class.extend({
         );
     },
     onBonusInfo : function(data) {
-        console.log(data);
+        var self = this;
         var accounts = [];
         $.each(data.accounts,function(i,a){
             if(Poker.OperatorConfig.isCurrencyEnabled(a.currency)) {
@@ -200,17 +201,50 @@ Poker.AccountPageManager = Class.extend({
         var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("balanceTemplate");
 
         $("#accountBalancesContainer").html(template.render({accounts : accounts}));
+        $("#topUpCurrencies").empty();
+        $.each(data.bonuses,function(i,bonus){
+            var currencyName = Poker.Utils.translateCurrencyCode(bonus.currencyCode);
+            $("#topUpCurrencies").append($("<div/>").attr("id","topUp"+bonus.currencyCode).html(currencyName).click(function(e){
+                self.displayTopUpInfo(bonus);
+            }));
+        });
+        this.displayTopUpInfo(this.getCurrentBonus(data.bonuses));
+    },
+    getCurrentBonus : function(bonuses) {
+        var name = this.getCurrentBonusName();
+        if(name==null) {
+            return bonuses[0];
+        } else {
+            for(var i = 0; i<bonuses.length; i++) {
+                var b = bonuses[i];
+                if(b.bonusName == name) {
+                    return b;
+                }
+            }
+            return bonuses[0];
+        }
 
-        if(data.bonus.timeToNextCollect>0) {
+    },
+    getCurrentBonusName : function(){
+        if(this.currentBonus == null) {
+            return null;
+        }
+        return this.currentBonus.bonusName;
+    },
+    displayTopUpInfo : function(bonus) {
+        this.currentBonus = bonus;
+        $("#topUpCurrencies .active").removeClass("active");
+        $("#topUp"+bonus.currencyCode).addClass("active");
+        if(bonus.timeToNextCollect>0) {
             $("#coolDownProgress").show();
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
-            var fractionRemaining = 100 * data.bonus.timeToNextCollect / data.bonus.coolDown;
+            var fractionRemaining = 100 * bonus.timeToNextCollect / bonus.coolDown;
             $("#coolDownProgress").width(fractionRemaining+"%");
             $("#refillButton").attr("class","").addClass("refill-unavailable");
-            var time = new Date().getTime()+data.bonus.timeToNextCollect;
+            var time = new Date().getTime()+bonus.timeToNextCollect;
             $("#coolDownLabel").html(moment(time).fromNow());
-        } else if(data.bonus.canCollect == true) {
+        } else if(bonus.canCollect == true) {
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
             $("#coolDownProgress").hide();
@@ -219,14 +253,13 @@ Poker.AccountPageManager = Class.extend({
         } else {
             $("#bonusCollectContainer .balance-too-high").show();
             $("#bonusCollectContainer .top-up-progress").hide();
-            $("#bonusCoolDownTime").html((data.bonus.coolDown/3600000));
-            $("#bonusBalanceLowerLimit").html(data.bonus.bonusBalanceLowerLimit);
+            $("#bonusCoolDownTime").html((bonus.coolDown/3600000));
+            $("#bonusBalanceLowerLimit").html(bonus.bonusBalanceLowerLimit);
         }
-
     },
     requestTopUp : function() {
         var self = this;
-        Poker.AppCtx.getPlayerApi().requestTopUp(Poker.MyPlayer.sessionToken,
+        Poker.AppCtx.getPlayerApi().requestTopUp(this.currentBonus.bonusName,Poker.MyPlayer.sessionToken,
             function(data){
                 self.onBonusInfo(data);
             },

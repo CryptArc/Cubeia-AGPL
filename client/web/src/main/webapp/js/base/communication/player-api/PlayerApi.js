@@ -42,8 +42,8 @@ Poker.PlayerApi = Class.extend({
         this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
 
     },
-    requestTopUp : function(sessionToken,callback,errorCallback) {
-        var url = this.baseUrl + "/player/bonus";
+    requestTopUp : function(bonusName,sessionToken,callback,errorCallback) {
+        var url = this.baseUrl + "/player/bonus/"+bonusName;
         this.requestInfo(url,sessionToken,"POST",callback,errorCallback);
     },
     requestInfo : function(url,sessionToken,method,callback,errorCallback) {

@@ -706,6 +706,7 @@
               </div>
               <div class="account-block " id="bonusCollectContainer">
                     <h3>Top up</h3>
+                    <div id="topUpCurrencies"></div>
                     <div class="refill_field">
 
                         <div class="top-up-progress">
