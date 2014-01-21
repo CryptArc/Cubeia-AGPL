@@ -150,7 +150,8 @@
             "stack" : "Stack",
             "winnings" : "Winnings",
             "loading" : "Loading Players...",
-            "no-players" : "No players registered"
+            "no-players" : "No players",
+            "search" : "Search player"
         },
         "tables" : {
             "tables" : "tables",

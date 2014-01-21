@@ -97,7 +97,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	}
 
 	@Override
-	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
+	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
 		try {
 			int tournamentId = instance.getState().getId();
 			String tournamentName = instance.getState().getName();
@@ -134,6 +134,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			event.type = GameEventType.tournamentPayout.name();
 			event.operator = operatorId+"";
 			
+			event.attributes.put(PokerAttributes.stake.name(), buyIn +"");
 			event.attributes.put(PokerAttributes.winAmount.name(), payout +"");
 			event.attributes.put(PokerAttributes.tournamentId.name(), tournamentId+"");
 			event.attributes.put(PokerAttributes.tournamentName.name(), tournamentName);

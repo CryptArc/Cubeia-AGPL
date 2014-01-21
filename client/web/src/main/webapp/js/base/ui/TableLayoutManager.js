@@ -72,7 +72,7 @@ Poker.TableLayoutManager = Class.extend({
         }
 
         new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
-            new Poker.TableRequestHandler(tableId).sendChatMessage(message);
+            new Poker.TableRequestHandler(tableId).sendChatMessage(message,!self.isSeated());
         });
 
         this.tableId = tableId;
@@ -184,6 +184,9 @@ Poker.TableLayoutManager = Class.extend({
             }
         }
         return false;
+    },
+    isSeated : function() {
+        return  this.myPlayerSeatId!=-1 && this.seats.get(this.myPlayerSeatId)!=null;
     },
     handleSitIn : function() {
         this.myActionsManager.onRequestToSitIn();

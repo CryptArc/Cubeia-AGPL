@@ -46,6 +46,12 @@
     -o-transition: @params;
     transition: @params;
 }
+.transitiontwo(@param1,@param2) {
+    -webkit-transition: @param1,@param2;
+    -moz-transition: @param1,@param2;
+    -o-transition: @param1,@param2;
+    transition: @param1,@param2;
+}
 .user-select(@params) {
     user-select: @params;
     -webkit-user-select: @params;

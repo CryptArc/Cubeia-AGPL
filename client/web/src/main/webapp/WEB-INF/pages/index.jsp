@@ -175,6 +175,8 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/ContextMenu.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Sharing.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/Pager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentList.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
@@ -599,7 +601,11 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
+                        <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe loading" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
+                        <div class="top-promo-loading-container">
+                           <div class="iframe-loading"></div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="row">
@@ -1332,6 +1338,9 @@
                                 <div>Remaining players: <span class="remaining-players"></span></div>
 
                             </div>
+                            <div>
+                                <input type="text" class="filter-input" placeholder="{{t "tournament-lobby.players.search" }}"/>
+                            </div>
                             <table class="table default-table player-list">
                                 <thead>
                                 <tr>
@@ -1346,6 +1355,9 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <div class="player-list-pager">
+
+                            </div>
                         </div>
                     </div>
                     <div class="row tables-row tournament-section" style="display:none;">
@@ -1581,10 +1593,13 @@
 
 <script type="text/mustache" id="tournamentPlayerListItem" style="display:none;">
     <tr>
-        <td>{{position}}</td>
-        <td>{{name}}</td>
+        <td class="position">{{position}}</td>
+        <td><div class="generic-avatar player-{{playerId}}"></div>{{name}}</td>
         <td>{{currency stackSize}}</td>
         <td>{{currency winnings}}</td>
+        <td>
+            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;">Table &raquo;</div>
+        </td>
     </tr>
 </script>
 <script type="text/mustache" id="tournamentTableListItem" style="display:none;">

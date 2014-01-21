@@ -27,12 +27,15 @@ Poker.TournamentLayoutManager = Class.extend({
     shareDone : false,
     chat : null,
 
+    playerList : null,
+
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
         this.tournamentId = tournamentId;
         this.viewContainer = viewContainer;
         this.name = name;
         this.templateManager = Poker.AppCtx.getTemplateManager();
+
         var viewHTML = this.templateManager.render("tournamentTemplate",{tournamentId : tournamentId, name : name});
 
         viewContainer.append(viewHTML);
@@ -41,6 +44,9 @@ Poker.TournamentLayoutManager = Class.extend({
         this.viewElement = $(viewId);
         this.playerListBody = this.viewElement.find(".player-list tbody");
         this.tableListBody = this.viewElement.find(".table-list tbody");
+        var playerListPager = this.viewElement.find(".player-list-pager");
+        var filterInput = this.viewElement.find(".filter-input");
+        this.playerList = new Poker.TournamentList(tournamentId,this.playerListBody,playerListPager,filterInput);
         this.initActions();
         if(registered==true) {
             this.setPlayerRegisteredState();
@@ -75,17 +81,10 @@ Poker.TournamentLayoutManager = Class.extend({
         this.chat.appendChatMessage({name : screenName },message);
     },
     updatePlayerList : function(players) {
-        var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");
-        this.playerListBody.empty();
-        var self = this;
-        $.each(players,function(i,p) {
-            self.playerListBody.append(template.render(p));
-        });
-        if(players.length==0) {
-            this.playerListBody.append("<td/>").attr("colspan","3").
-                append(i18n.t("tournament-lobby.players.no-players"));
-        }
+        this.playerList.setItems(players);
+
     },
+
     updateTableList : function(tables) {
         var template = this.templateManager.getRenderTemplate("tournamentTableListItem");
         this.tableListBody.empty();

@@ -80,5 +80,18 @@ public class HandTest {
         assertThat(hand.containsAllCardsRegardlessOfId(new Hand("6D 2C 5C").getCards()), is(false));
     }
 
+    @Test
+    public void testRemoveCardById() {
+        Hand hand = new Hand(Arrays.asList(
+                new Card(1, "5C"),
+                new Card(1, "3C"),
+                new Card(1, "6C"),
+                new Card(1, "2C"),
+                new Card(1, "4C")));
+        assertThat(hand.getCards().size(), is(5));
+        hand.removeCard(0);
+        assertThat(hand.getCards().size(), is(4));
+    }
+
 
 }
