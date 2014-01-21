@@ -111,7 +111,7 @@
         tr {
             cursor: pointer;
             td {
-                line-height: 1.4;
+                line-height: 1.2;
 
                 &.play-text {
                     vertical-align: middle;
@@ -120,6 +120,7 @@
         }
     }
     .list-item-name {
+        font-size: 120%;
         clear: both;
 
     }
@@ -131,8 +132,20 @@
     }
 }
 .status {
-    &.REGISTERING {
-        color: #a6d888;
+    .border-radius(2px);
+    color:#fff;
+
+    &.REGISTERING, &.CANCELLED, &.FINISHED, &.RUNNING, &.ANNOUNCED  {
+        background-color: #38830e;
+        color:#fff;
+        padding-right: 2px;
+        padding:1px 2px;
+    }
+    &.FINISHED, &.CANCELLED, &.ANNOUNCED {
+       background-color: #626262;
+    }
+    &.RUNNING{
+        background-color: #d99717;
     }
     font-size: 80%;
 }

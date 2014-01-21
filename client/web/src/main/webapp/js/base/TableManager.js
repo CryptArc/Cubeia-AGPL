@@ -60,7 +60,7 @@ Poker.TableManager = Class.extend({
                 name = "Table"; //TODO: fix
             }
             var tableViewContainer = $(".table-view-container");
-            var templateManager = new Poker.TemplateManager();
+            var templateManager = Poker.AppCtx.getTemplateManager();
             var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
             var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
             this.createTable(tableId, capacity, name , tableLayoutManager);

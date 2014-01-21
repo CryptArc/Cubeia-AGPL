@@ -10,7 +10,7 @@ Poker.AccountPageManager = Class.extend({
     editProfileView : null,
     currentBonus : null,
     init : function() {
-        this.templateManager = new Poker.TemplateManager();
+        this.templateManager = Poker.AppCtx.getTemplateManager();
         this.menuItemTemplate = "menuItemTemplate";
         this.userPanel = $(".user-panel");
         this.userOverlay = $(".user-overlay-container");

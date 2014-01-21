@@ -35,7 +35,7 @@ Poker.DevTools = Class.extend({
         var tableName = "Dev Table";
         this.tableManager = Poker.AppCtx.getTableManager();
         var tableViewContainer = $(".table-view-container");
-        var templateManager = new Poker.TemplateManager();
+        var templateManager = Poker.AppCtx.getTemplateManager();
 
 
         var beforeFunction = function() {

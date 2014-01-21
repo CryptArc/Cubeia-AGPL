@@ -866,7 +866,6 @@
                 <th class="table-name">{{t "lobby.list.name"}}</th>
                 <th class="buy-in buy-in-sort sorting">{{t "lobby.list.buy-in"}}</th>
                 <th class="seated capacity-sort sorting">{{t "lobby.list.players"}}</th>
-                <th class="status">{{t "lobby.list.status"}}</th>
             </tr>
         </thead>
         <tbody class="table-list-item-container">
@@ -913,10 +912,14 @@
 </script>
 <script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
     <tr class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
-        <td class="table-name">{{name}}</td>
-        <td class="buy-in">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</td>
-        <td class="seated">{{registered}}/{{capacity}}</td>
-        <td class="status {{status}}">{{status}}</td>
+        <td class="table-name" colspan="3">
+            <div class="list-item-name">{{name}}</div>
+            <div class="lobby-item-details">
+                <div class="list-item status {{status}}">{{status}}</div>
+                <div class="list-item buy-in">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
+                <div class="list-item seated">{{registered}}/{{capacity}}</div>
+            </div>
+        </td>
         <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
     </tr>
 </script>
@@ -924,10 +927,14 @@
     <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <td class="table-name">
             <div class="list-item-name">{{name}}</div>
-            <div class="list-item">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
-            <div class="list-item">{{registered}}/{{capacity}}</div>
             <div class="list-item">{{date startTime}}</div>
-            <div class="list-item status {{status}}">{{status}}</div>
+            <div class="lobby-item-details">
+                <div class="list-item status {{status}}">{{status}}</div>
+                <div class="list-item">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
+                <div class="list-item">{{registered}}/{{capacity}}</div>
+
+
+            </div>
         </td>
 
         <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
@@ -1291,7 +1298,7 @@
                 <a class="share-button">+Share</a>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <h3 class="tournament-name">
                         <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
                     </h3>
@@ -1303,7 +1310,7 @@
                     <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
                     <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div class="info-section tournament-info"></div>
                 </div>
             </div>
@@ -1403,17 +1410,11 @@
 
                  </div>
             </div>
-
-
-
-
         </div>
-
-
-
     </div>
 </script>
 <script type="text/mustache" id="tournamentInfoTemplate">
+    <h4 class="icon-header">Tournament info</h4>
     {{^sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
