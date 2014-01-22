@@ -288,7 +288,17 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     @Override
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
         BigDecimal pendingBalance = includePending ? player.getPendingBalanceSum() : BigDecimal.ZERO;
-        return player.getBalance().add(pendingBalance).compareTo(settings.getBigBlindAmount()) >= 0;
+        BigDecimal buyInAmount;
+        
+        if (settings.getBigBlindAmount().intValue() > 0) {
+            buyInAmount = settings.getBigBlindAmount();
+        } else if (settings.getAnteAmount().intValue() > 0) {
+            buyInAmount = settings.getAnteAmount();
+        } else {
+            buyInAmount = BigDecimal.ZERO;
+        }
+        
+        return player.getBalance().add(pendingBalance).compareTo(buyInAmount) >= 0;
     }
 
     public void setRevealOrderCalculator(RevealOrderCalculator revealOrderCalculator) {

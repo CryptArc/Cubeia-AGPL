@@ -25,6 +25,7 @@ import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
+import com.cubeia.poker.variant.turkish.Turkish;
 
 public class GameTypeFactory {
 
@@ -41,6 +42,9 @@ public class GameTypeFactory {
             case CRAZY_PINEAPPLE:
             	gameType = CrazyPineapple.createGame();
             	break;
+            case TURKISH:
+                gameType = Turkish.createGame();
+                break;
             default:
                 throw new UnsupportedOperationException("unsupported poker variant: " + variant);
         }

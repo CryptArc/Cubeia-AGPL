@@ -154,7 +154,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         crazyPineapple.setCurrency("EUR");
         
         TableConfigTemplate turkish = new TableConfigTemplate();
-        turkish.setId(6);
+        turkish.setId(8);
         turkish.setAnte(bd(100));
         turkish.setSmallBlind(bd(0));
         turkish.setBigBlind(bd(0));
