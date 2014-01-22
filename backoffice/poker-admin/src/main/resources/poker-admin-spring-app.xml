@@ -15,8 +15,15 @@
     <import resource="classpath:spring-admin-base.xml"/>
 
     <context:component-scan base-package="com.cubeia.games.poker.admin"/>
-    <context:property-placeholder location="classpath:/admin.properties"/>
-    <!--<util:properties id="adminProperties" location="classpath:/admin.properties"/>-->
+    <context:property-placeholder location="classpath:/admin.properties"
+                                  properties-ref="adminProperties"/> 
+
+  <!-- import_files sql is executed only when "auto" is set to "create" or "create-drop" -->
+  <util:properties id="adminProperties">
+       <prop key="hibernate.hbm2ddl.auto">update</prop>
+       <prop key="hibernate.hbm2ddl.import_files">/META-INF/sql/rakes.sql,/META-INF/sql/timings.sql,/META-INF/sql/payouts.sql,/META-INF/sql/blinds.sql,/META-INF/sql/tables.sql,/META-INF/sql/tournaments.sql</prop>
+       <prop key="db-type">jndi</prop>        
+  </util:properties>    
 
     <mongo:mongo host="${mongo.host}" port="${mongo.port}" />
     
@@ -67,6 +74,13 @@
                <property name="generateDdl" value="false" />
                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
            </bean>
+        </property>
+        
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.hbm2ddl.import_files">${hibernate.hbm2ddl.import_files}</prop>                
+            </props>
         </property>
     </bean>
 

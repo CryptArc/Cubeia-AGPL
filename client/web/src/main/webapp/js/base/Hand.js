@@ -6,17 +6,17 @@ var Poker = Poker || {};
  * @type {Poker.Hand}
  */
 Poker.Hand = {
-    UNKNOWN : { text: "Unknown", id : 0},
-    HIGH_CARD : { text: "High card", id : 1},
-    PAIR : { text: "Pair", id : 2},
-    TWO_PAIRS : { text :"Two Pairs", id : 3},
-    THREE_OF_A_KIND : { text : "Three of a kind",id : 4},
-    STRAIGHT : {text : "Straight",id : 5},
-    FLUSH : { text : "Flush",id : 6},
-    FULL_HOUSE : {text : "Full house",id : 7},
-    FOUR_OF_A_KIND : {text : "Four of a kind",id : 8},
-    STRAIGHT_FLUSH : { text : "Straight Flush",id : 9},
-    ROYAL_STRAIGHT_FLUSH : { text : "Royal straight flush",id : 10},
+    UNKNOWN : { text: "Unknown", id : 0, type : "short"},
+    HIGH_CARD : { text: "High card", id : 1, type : "short" },
+    PAIR : { text: "Pair", id : 2, type : "short"},
+    TWO_PAIRS : { text :"Two Pairs", id : 3, type : "short"},
+    THREE_OF_A_KIND : { text : "Three of a kind",id : 4, type : "long"},
+    STRAIGHT : {text : "Straight",id : 5, type : "short"},
+    FLUSH : { text : "Flush",id : 6, type : "short"},
+    FULL_HOUSE : {text : "Full house",id : 7, type : "short"},
+    FOUR_OF_A_KIND : {text : "Four of a kind",id : 8, type : "long"},
+    STRAIGHT_FLUSH : { text : "Straight Flush",id : 9, type : "long"},
+    ROYAL_STRAIGHT_FLUSH : { text : "Royal flush",id : 10, type : "long"},
 
     fromName : function(name) {
         for(var x in Poker.Hand) {

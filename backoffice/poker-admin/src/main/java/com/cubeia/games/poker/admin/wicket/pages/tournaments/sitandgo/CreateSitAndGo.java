@@ -17,37 +17,34 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.poker.timing.TimingProfile;
-import org.apache.log4j.Logger;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateSitAndGo extends BasePage {
 
-    private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
+    private static final transient Logger log = LoggerFactory.getLogger(CreateSitAndGo.class);
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
     
     private SitAndGoConfiguration tournament = new SitAndGoConfiguration();
 
-    public CreateSitAndGo(final PageParameters parameters) {
+    @SuppressWarnings("rawtypes")
+	public CreateSitAndGo(final PageParameters parameters) {
         super(parameters);
         resetFormData();
         
@@ -56,7 +53,7 @@ public class CreateSitAndGo extends BasePage {
             @Override
             protected void onSubmit() {
                 tournament.getConfiguration().setMaxPlayers(tournament.getConfiguration().getMinPlayers());
-                adminDAO.save(tournament);
+                adminDAO.merge(tournament);
                 log.debug("created tournament config with id = " + tournament);
                 setResponsePage(ListSitAndGoTournaments.class);
             }

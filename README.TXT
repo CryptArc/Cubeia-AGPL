@@ -25,6 +25,9 @@ DEVELOPMENT
 Information subjecting development is contained within the module folders. Some
 general info can be found in the folder doc.
 
+The project-structure is kept as much as possible "natural" and logical. There
+are however some limitations of maven, which can result in an unusual structure.
+
 
 COMMERCIAL SUPPORT
 ==================
@@ -40,6 +43,9 @@ You can find a running instance at:
 
 http://cubeiasocial.com
 http://cubeiapoker.com
+
+This Poker Network uses the open source Cubeia Poker, and a few non-open-source
+modules.
 
 
 LINKS

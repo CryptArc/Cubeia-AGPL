@@ -53,6 +53,9 @@ public class TimingProfile implements Serializable {
     @Column(nullable = false)
     private long genericTime = 3 * 15000;
 
+    @Column(nullable = false)
+    private long additionalAllInRoundDelayPerPlayer = 500;
+
     private boolean archived;
 
     public int getId() {
@@ -185,6 +188,26 @@ public class TimingProfile implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "TimingProfile{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", pocketCardsTime=" + pocketCardsTime +
+                ", flopTime=" + flopTime +
+                ", turnTime=" + turnTime +
+                ", riverTime=" + riverTime +
+                ", startNewHandTime=" + startNewHandTime +
+                ", actionTimeout=" + actionTimeout +
+                ", autoPostBlindDelay=" + autoPostBlindDelay +
+                ", latencyGracePeriod=" + latencyGracePeriod +
+                ", disconnectExtraTime=" + disconnectExtraTime +
+                ", genericTime=" + genericTime +
+                ", additionalAllInRoundDelayPerPlayer=" + additionalAllInRoundDelayPerPlayer +
+                ", archived=" + archived +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -192,6 +215,7 @@ public class TimingProfile implements Serializable {
         TimingProfile that = (TimingProfile) o;
 
         if (actionTimeout != that.actionTimeout) return false;
+        if (additionalAllInRoundDelayPerPlayer != that.additionalAllInRoundDelayPerPlayer) return false;
         if (archived != that.archived) return false;
         if (autoPostBlindDelay != that.autoPostBlindDelay) return false;
         if (disconnectExtraTime != that.disconnectExtraTime) return false;
@@ -222,26 +246,16 @@ public class TimingProfile implements Serializable {
         result = 31 * result + (int) (latencyGracePeriod ^ (latencyGracePeriod >>> 32));
         result = 31 * result + (int) (disconnectExtraTime ^ (disconnectExtraTime >>> 32));
         result = 31 * result + (int) (genericTime ^ (genericTime >>> 32));
+        result = 31 * result + (int) (additionalAllInRoundDelayPerPlayer ^ (additionalAllInRoundDelayPerPlayer >>> 32));
         result = 31 * result + (archived ? 1 : 0);
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "TimingProfile{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", pocketCardsTime=" + pocketCardsTime +
-                ", flopTime=" + flopTime +
-                ", turnTime=" + turnTime +
-                ", riverTime=" + riverTime +
-                ", startNewHandTime=" + startNewHandTime +
-                ", actionTimeout=" + actionTimeout +
-                ", autoPostBlindDelay=" + autoPostBlindDelay +
-                ", latencyGracePeriod=" + latencyGracePeriod +
-                ", disconnectExtraTime=" + disconnectExtraTime +
-                ", genericTime=" + genericTime +
-                ", archived=" + archived +
-                '}';
+    public long getAdditionalAllInRoundDelayPerPlayer() {
+        return additionalAllInRoundDelayPerPlayer;
+    }
+
+    public void setAdditionalAllInRoundDelayPerPlayer(long additionalAllInRoundDelayPerPlayer) {
+        this.additionalAllInRoundDelayPerPlayer = additionalAllInRoundDelayPerPlayer;
     }
 }

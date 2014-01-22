@@ -38,6 +38,13 @@ Poker.OperatorConfig = Class.extend({
 
         }
     },
+    isCurrencyEnabled : function(currencyCode) {
+        if(this.currencyMap.size()==0) {
+            return true;
+        } else {
+            return this.currencyMap.contains(currencyCode);
+        }
+    },
     populate : function(params) {
         for(var p in params) {
           this.configMap.put(p,params[p]);
@@ -55,11 +62,17 @@ Poker.OperatorConfig = Class.extend({
     getProfilePageUrl:function() {
         return this.getValue("PROFILE_PAGE_URL", "http://localhost:8083/player-api/html/profile.html");
     },
+    getLobbyRightPromotionUrl : function() {
+        return this.getValue("LOBBY_RIGHT_PROMOTION_URL",null);
+    },
+    getLobbyTopPromotionUrl : function() {
+        return this.getValue("LOBBY_TOP_PROMOTION_URL",null);
+    },
     getBuyCreditsUrl : function() {
         return this.getValue("BUY_CREDITS_URL", "http://localhost:8083/player-api/html/buy-credits.html");
     },
     getAccountInfoUrl : function() {
-        return this.getValue("ACCOUNT_INFO_URL", "http://localhost:8083/player-api/html/");
+        return this.getValue("ACCOUNT_INFO_URL", "internal");
     },
     getShareUrl : function() {
         return this.getValue("SHARE_URL", null);

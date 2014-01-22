@@ -257,7 +257,7 @@ public class PokerState implements Serializable, IPokerState {
       ------------------------------------------------*/
 
     public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
-        serverAdapter.notifyPotUpdates(pokerContext.getPotHolder().getPots(), potTransitions);
+        serverAdapter.notifyPotUpdates(pokerContext.getPotHolder().getPots(), potTransitions,pokerContext.getTotalPotSize());
 
         // notify all the new balances
         for (PokerPlayer player : pokerContext.getCurrentHandPlayerMap().values()) {

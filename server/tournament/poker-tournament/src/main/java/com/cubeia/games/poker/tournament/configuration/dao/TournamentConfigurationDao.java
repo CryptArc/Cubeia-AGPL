@@ -17,13 +17,14 @@
 
 package com.cubeia.games.poker.tournament.configuration.dao;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.google.inject.Inject;
-
-import javax.persistence.EntityManager;
-import java.util.Collection;
-import java.util.List;
 
 public class TournamentConfigurationDao {
 
@@ -39,13 +40,15 @@ public class TournamentConfigurationDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations() {
-        return entityManager.createQuery("from ScheduledTournamentConfiguration where configuration.archived is false").getResultList();
+    public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations(boolean includeArchived) {
+        String qlString = "from ScheduledTournamentConfiguration" + (includeArchived ? "" : " where configuration.archived is false");
+        return entityManager.createQuery(qlString).getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<SitAndGoConfiguration> getSitAndGoConfigurations() {
-        return entityManager.createQuery("from SitAndGoConfiguration where configuration.archived is false").getResultList();
+    public Collection<SitAndGoConfiguration> getSitAndGoConfigurations(boolean includeArchived) {
+        String qlString = "from SitAndGoConfiguration" + (includeArchived ? "" : " where configuration.archived is false");
+        return entityManager.createQuery(qlString).getResultList();
     }
 
     public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {

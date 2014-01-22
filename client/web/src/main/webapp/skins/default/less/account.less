@@ -12,7 +12,16 @@
     width:80%;
     height:75%;
 }
-
+.account-stn-button {
+    background-color: #555;
+    width:auto;
+    .border-radius(0.3em);
+    display: inline-block;
+    padding: 3%;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 90%;
+}
 .user-overlay-container {
     background-color: #444;
     .box-shadow(3px 2px 5px #333);
@@ -52,14 +61,7 @@
 
     }
     .account-button {
-        background-color: #555;
-        width:auto;
-        .border-radius(0.3em);
-        display: inline-block;
-        padding: 3%;
-        text-decoration: none;
-        cursor: pointer;
-        font-size: 90%;
+       .account-stn-button;
     }
     .logout-link {
         margin:3%;
@@ -119,5 +121,72 @@
         position: absolute;
         top:0;
         right:3%;
+    }
+}
+
+div.progress_container {
+    width: 98%;
+    display: block;
+    height: 15px;
+    padding: 2px;
+    box-sizing: content-box;
+    .border-radius(5px);
+    background-color: #222;
+    border: 1px solid #666;
+    margin-bottom: 4px;
+    margin-top: 4px;
+}
+.account-block {
+    h3 {
+        font-size:150%;
+        margin-bottom: 4px;
+    }
+}
+.refill-unavailable {
+    .account-stn-button;
+    background-color: #555;
+    color: #777;
+    font-size: 120%;
+    float: right;
+    clear: both;
+}
+.refill-available {
+    .account-stn-button;
+    background-color: #ae0000;
+    font-size: 120%;
+    float: right;
+    clear: both;
+}
+div.progress_container .progress_bar {
+    display: block;
+    width: 0%;
+    background-color: #e1cc00;
+    height: 99%;
+    .border-radius(3px);
+}
+.small-label {
+    margin-bottom: 2px;
+    color:#999;
+}
+#coolDownLabel {
+    color:#fff;
+}
+.refill-button-container {
+    height:30px;
+}
+
+#topUpCurrencies {
+    margin-bottom:5px;
+    div {
+        display: inline-block;
+        padding:10px;
+        font-size:130%;
+        .border-radius(3px);
+        background-color:#555;
+        cursor: pointer;
+        margin-right:2px;
+        &.active {
+            background-color: #ae0000;
+        }
     }
 }

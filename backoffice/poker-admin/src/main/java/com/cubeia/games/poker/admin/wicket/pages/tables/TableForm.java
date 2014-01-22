@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
-import com.cubeia.poker.variant.PokerVariant;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -28,6 +27,7 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.PokerVariant;
 
 
 public abstract class TableForm extends Panel {
@@ -42,7 +42,8 @@ public abstract class TableForm extends Panel {
 
     private static final Logger logger = LoggerFactory.getLogger(TableForm.class);
 
-    public TableForm(String id, TableConfigTemplate tableTemplate) {
+    @SuppressWarnings("serial")
+	public TableForm(String id, TableConfigTemplate tableTemplate) {
         super(id);
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm",
                 new CompoundPropertyModel<TableConfigTemplate>(tableTemplate)){
@@ -60,7 +61,7 @@ public abstract class TableForm extends Panel {
         final FormComponent<BigDecimal> maxBuyIn = new RequiredTextField<BigDecimal>("maxBuyIn").setRequired(true);
 
         tableForm.add(new RequiredTextField<String>("name"));
-        tableForm.add(new DropDownChoice("variant", Arrays.asList(PokerVariant.values())).setRequired(true));
+        tableForm.add(new DropDownChoice<PokerVariant>("variant", Arrays.asList(PokerVariant.values())).setRequired(true));
         tableForm.add(anteField);
         tableForm.add(smallBlindField);
         tableForm.add(bigBlindField);

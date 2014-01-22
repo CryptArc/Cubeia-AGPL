@@ -20,6 +20,9 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+
+
+
         //this
         var templateManager = new Poker.TemplateManager();
 
@@ -180,6 +183,10 @@ Poker.AppCtx = Class.extend({
         Handlebars.registerHelper('currency',function(amount){
             return Poker.Utils.formatCurrency(amount);
         });
+        Handlebars.registerHelper('validId', function(){
+            var id = arguments[0];
+            return id!=null && id>=0;
+        });
 
         Handlebars.registerHelper('t', function(i18n_key) {
             var result = i18n.t(i18n_key);
@@ -218,6 +225,14 @@ Poker.AppCtx = Class.extend({
          */
         this.getAchievementManager = function() {
             return achievementManager;
+        }
+
+        var pingManager = new Poker.PingManager();
+        /**
+         * @return {Poker.PingManager}
+         */
+        this.getPingManager = function() {
+            return pingManager;
         }
 
     }

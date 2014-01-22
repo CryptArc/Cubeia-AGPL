@@ -48,7 +48,8 @@ public class ListTimings extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public ListTimings(final PageParameters parameters) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public ListTimings(final PageParameters parameters) {
         super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn<TimingProfile,String>> columns = new ArrayList<AbstractColumn<TimingProfile,String>>();

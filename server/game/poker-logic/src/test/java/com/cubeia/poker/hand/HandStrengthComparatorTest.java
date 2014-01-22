@@ -17,18 +17,33 @@
 
 package com.cubeia.poker.hand;
 
-import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
-import junit.framework.Assert;
-import org.junit.Test;
+import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
+import static com.cubeia.poker.hand.HandType.HIGH_CARD;
+import static com.cubeia.poker.hand.HandType.PAIR;
+import static com.cubeia.poker.hand.HandType.STRAIGHT;
+import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
+import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
+import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
+import static com.cubeia.poker.hand.Rank.ACE;
+import static com.cubeia.poker.hand.Rank.EIGHT;
+import static com.cubeia.poker.hand.Rank.FOUR;
+import static com.cubeia.poker.hand.Rank.JACK;
+import static com.cubeia.poker.hand.Rank.KING;
+import static com.cubeia.poker.hand.Rank.QUEEN;
+import static com.cubeia.poker.hand.Rank.TEN;
+import static com.cubeia.poker.hand.Rank.TWO;
+import static java.util.Collections.sort;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.cubeia.poker.hand.HandType.*;
-import static com.cubeia.poker.hand.Rank.*;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
 
 public class HandStrengthComparatorTest {
@@ -237,7 +252,7 @@ public class HandStrengthComparatorTest {
         assertEquals(strength1, list.get(2));
     }
 
-
+    
     @Test
     public void testSameStrength() throws Exception {
         List<HandStrength> list = new ArrayList<HandStrength>();
@@ -275,8 +290,35 @@ public class HandStrengthComparatorTest {
         assertEquals(strength3, list.get(2));
     }
 
+    @SuppressWarnings("unused")
+	@Test
+    public void test_issue_POK48_HighCardQueenVsKing() {
+        TexasHoldemHandCalculator calculator = new TexasHoldemHandCalculator();
+        Hand hand1 = new Hand("QC TC 8C 7D 5S");
+        HandStrength handStrength1 = calculator.getHandStrength(hand1);
+        assertThat(handStrength1.getHandType(), is(HIGH_CARD));
+        assertThat(handStrength1.getHighestRank(), is(QUEEN));
 
-    @Test
+        Hand hand2 = new Hand("KC QC TC 8S 7D");
+        HandStrength handStrength2 = calculator.getHandStrength(hand2);
+        assertThat(handStrength2.getHandType(), is(HIGH_CARD));
+        assertThat(handStrength2.getHighestRank(), is(KING));
+
+        HandStrengthComparator hcp = new HandStrengthComparator();
+
+        List<HandStrength> hands = new ArrayList<HandStrength>();
+        hands.add(handStrength1);
+        hands.add(handStrength2);
+
+        sort(hands, new HandStrengthComparator());
+
+        assertEquals(handStrength2, hands.get(0));
+        assertEquals(handStrength1, hands.get(1));
+    }    
+    
+
+    @SuppressWarnings("unused")
+	@Test
     public void testStraightFlush() {
         TexasHoldemHandCalculator calculator = new TexasHoldemHandCalculator();
         Hand hand1 = new Hand("KC QC JC TC 9C");
@@ -295,9 +337,6 @@ public class HandStrengthComparatorTest {
 
         assertEquals(handStrength1, hands.get(0));
         assertEquals(handStrength2, hands.get(1));
-
-
-
     }
 
 }

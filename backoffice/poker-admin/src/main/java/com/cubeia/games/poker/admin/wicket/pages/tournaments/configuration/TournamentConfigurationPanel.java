@@ -17,6 +17,28 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
+import static java.util.Arrays.asList;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.RangeValidator;
+import org.apache.wicket.validation.validator.StringValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backoffice.operator.api.OperatorDTO;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.network.NetworkClient;
@@ -26,24 +48,12 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.log4j.Logger;
-import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.validation.IValidator;
-import org.apache.wicket.validation.validator.RangeValidator;
-import org.apache.wicket.validation.validator.StringValidator;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-
+@SuppressWarnings("serial")
 public class TournamentConfigurationPanel extends Panel {
 
-    private static final Logger log = Logger.getLogger(TournamentConfigurationPanel.class);
+    @SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(TournamentConfigurationPanel.class);
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
@@ -53,7 +63,8 @@ public class TournamentConfigurationPanel extends Panel {
 
     private PropertyModel<TournamentConfiguration> model;
 
-    public TournamentConfigurationPanel(String id, Form<?> form, PropertyModel<TournamentConfiguration> propertyModel, boolean sitAndGo) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public TournamentConfigurationPanel(String id, Form<?> form, PropertyModel<TournamentConfiguration> propertyModel, boolean sitAndGo) {
         super(id, propertyModel);
         this.model = propertyModel;
         add(new RequiredTextField<String>("name", new PropertyModel(model, "name")));
@@ -128,7 +139,8 @@ public class TournamentConfigurationPanel extends Panel {
 		return "n/a";
 	}
 
-    private PropertyModel model(String expression) {
+    @SuppressWarnings("rawtypes")
+	private PropertyModel model(String expression) {
         return new PropertyModel(model, expression);
     }
 

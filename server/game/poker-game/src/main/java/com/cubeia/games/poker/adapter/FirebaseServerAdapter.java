@@ -611,7 +611,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     private void sendHandEndPacket(HandResult handResult) {
         Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
         List<PotTransfer> transfers = new ArrayList<PotTransfer>();
-        PotTransfers potTransfers = new PotTransfers(false, transfers, null);
+        PotTransfers potTransfers = new PotTransfers(false, transfers, null,null);
 
         for (PotTransition pt : handResult.getPotTransitions()) {
             log.trace("--> sending winner pot transfer to client: {}", pt);
@@ -742,7 +742,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         table.getTournamentNotifier().sendToTournament(action);
     }
 
-    public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
+    public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots,
+                                 Collection<PotTransition> potTransitions, BigDecimal totalPotSize) {
         boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
         List<Pot> clientPots = new ArrayList<Pot>();
         List<PotTransfer> transfers = new ArrayList<PotTransfer>();
@@ -767,7 +768,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         }
 
         // notify bet stacks to pots
-        PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots);
+        PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots,totalPotSize.toPlainString());
         GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
         sendPublicPacket(action, -1);
 

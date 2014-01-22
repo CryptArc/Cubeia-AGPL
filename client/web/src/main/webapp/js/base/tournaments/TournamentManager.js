@@ -48,6 +48,7 @@ Poker.TournamentManager = Class.extend({
         this.registeredTournaments = new Poker.Map();
         this.dialogManager = Poker.AppCtx.getDialogManager();
         this.tableManager = Poker.AppCtx.getTableManager();
+
         var self = this;
         this.tournamentUpdater = new Poker.PeriodicalUpdater(function(){
             self.updateTournamentData();
@@ -63,40 +64,62 @@ Poker.TournamentManager = Class.extend({
 
             var layoutManager = new Poker.TournamentLayoutManager(id, name, this.isRegisteredForTournament(id),
                 viewContainer,function(){
+                        new Poker.TournamentRequestHandler(id).unsubscribeFromChat();
                         self.removeTournament(id);
                     }
             );
             viewManager.addTournamentView(layoutManager.getViewElementId(), name, layoutManager);
 
             this.tournaments.put(id,new Poker.Tournament(id, name, layoutManager));
-            new Poker.TournamentRequestHandler(id).requestTournamentInfo();
+            var trh = new Poker.TournamentRequestHandler(id);
+            trh.requestTournamentInfo();
+            trh.subscribeToChat();
             this.activateTournamentUpdates(id);
             this.tournamentUpdater.start();
         }
     },
-    onRemovedFromTournament : function(tableId, playerId) {
-        this.tableManager.updatePlayerStatus(tableId,playerId,
-            Poker.PlayerTableStatus.TOURNAMENT_OUT);
-        this.tableManager.removePlayer(tableId, playerId);
+    onRemovedFromTournament : function(tableId,keepWatching) {
+        console.log("On removed from tournament table " + tableId + " keep watching = " + keepWatching);
+
+        this.tableManager.updatePlayerStatus(tableId,Poker.MyPlayer.id,Poker.PlayerTableStatus.TOURNAMENT_OUT);
+        this.tableManager.removePlayer(tableId, Poker.MyPlayer.id);
+
+        if(keepWatching==false) {
+            this.tableManager.leaveTable(tableId,false);
+        }
+
+
     },
     setTournamentTable : function(tournamentId, tableId) {
-        this.tournamentTables.put(tournamentId,tableId);
+        if(this.tournamentTables.contains(tournamentId)) {
+            this.tournamentTables.get(tournamentId).push(tableId);
+        } else {
+            var tables = [];
+            tables.push(tableId);
+            this.tournamentTables.put(tournamentId,tables);
+        }
+    },
+    onChatMessage : function(tournamentId, screenName, message) {
+        var tournament = this.getTournamentById(tournamentId);
+        if(tournament!=null) {
+            tournament.tournamentLayoutManager.onChatMessage(screenName,Poker.Utils.filterMessage(message));
+        }
     },
     isTournamentTable : function(tableId) {
         var tables = this.tournamentTables.values();
-        for(var i = 0; i<tables;i++) {
-            if(tables[i]===tableId) {
-                return true;
+        for(var i = 0; i<tables.length;i++) {
+            for(var j = 0; j<tables[i].length; j++) {
+                if(tables[i][j]===tableId) {
+                    return true;
+                }
             }
         }
         return false;
     },
-    getTableByTournament : function(tournamentId) {
-        return this.tournamentTables.get(tournamentId);
-    },
     removeTournament : function(tournamentId) {
         var tournament = this.tournaments.remove(tournamentId);
         if (tournament!=null) {
+            new Poker.TournamentRequestHandler(tournamentId).unsubscribeFromChat();
             if (this.tournaments.size() == 0) {
                 console.log("Stopping updates of lobby for tournament: " + tournamentId);
                 this.tournamentUpdater.stop();
@@ -131,7 +154,6 @@ Poker.TournamentManager = Class.extend({
         this.handlePayoutInfo(tournament,tournamentData.payoutInfo);
         $.extend(tournamentData.tournamentInfo, { prizePool: tournamentData.payoutInfo.prizePool });
         this.handleTournamentInfo(tournament, tournamentData.tournamentInfo);
-        console.log("tournament data", tournamentData);
         if (this.isTournamentRunning(tournamentData.tournamentInfo.tournamentStatus)) {
             this.handleTournamentStatistics(tournament, tournamentData.tournamentStatistics);
         } else {
@@ -175,8 +197,6 @@ Poker.TournamentManager = Class.extend({
      * @param {com.cubeia.games.poker.io.protocol.TournamentInfo} info
      */
     handleTournamentInfo : function(tournament, info) {
-        console.log("registered tournaments " + this.registeredTournaments.contains(tournament.id));
-        console.log(this.registeredTournaments);
         var view = Poker.AppCtx.getViewManager().findViewByTournamentId(tournament.id);
         if(view!=null){
             view.updateName(info.tournamentName);
@@ -187,6 +207,7 @@ Poker.TournamentManager = Class.extend({
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(registered);
         } else if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(false);
+
         } else if (registered == true) {
             tournament.tournamentLayoutManager.setPlayerRegisteredState();
         } else {
@@ -278,9 +299,7 @@ Poker.TournamentManager = Class.extend({
         return status == running || status == onBreak || status == preparingForBreak;
     },
     onBuyInInfo : function(tournamentId, buyIn, fee, currency, balanceInWallet, sufficientFunds) {
-        console.log("on buy info " + tournamentId);
         var tournament = this.getTournamentById(tournamentId);
-        console.log(tournament);
         if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
         } else {
@@ -299,7 +318,6 @@ Poker.TournamentManager = Class.extend({
         }
     },
     openTournamentLobbyByName : function(name) {
-        console.log("open tournament with name",name);
         var request = new com.cubeia.games.poker.routing.service.io.protocol.TournamentIdRequest();
         request.name = name;
         var packet = new FB_PROTOCOL.ServiceTransportPacket();

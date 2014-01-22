@@ -16,7 +16,7 @@
         "disconnected" : "Disconnected, retrying (count %s)",
         "connecting" : "Connecting",
         "connected" : "Connected",
-        "login-failed" : "Connected (Login failed with status %s)"
+        "login-failed" : "Login failed with status %s"
     },
     "lobby" : {
         "menu" : {
@@ -137,6 +137,7 @@
         "unregister" : "Unregister",
         "go-to-table" : "Go to table",
         "please-wait" : "Please wait...",
+        "tournament-id" : "Tournament id:",
         "menu" : {
             "players" : "Players",
             "tables" : "Tables",
@@ -149,7 +150,8 @@
             "stack" : "Stack",
             "winnings" : "Winnings",
             "loading" : "Loading Players...",
-            "no-players" : "No players registered"
+            "no-players" : "No players",
+            "search" : "Search player"
         },
         "tables" : {
             "tables" : "tables",

@@ -38,11 +38,8 @@ import java.util.List;
 
 public class DiscardRound implements Round {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6746436704056656995L;
-	private static final Logger log = Logger.getLogger(DiscardRound.class);
+    private static final long serialVersionUID = -6746436704056656995L;
+    private static final Logger log = Logger.getLogger(DiscardRound.class);
     private final PokerContext context;
     private final ServerAdapterHolder serverAdapterHolder;
     private final int cardsToDiscard;
@@ -74,7 +71,7 @@ public class DiscardRound implements Round {
 
     private void requestDiscard(Collection<PokerPlayer> players) {
         // Check if we should request actions at all
-		Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>();
+        Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>();
          for (PokerPlayer player : players) {
              if (player.isSittingOut()) {
                  activePlayers.remove(player);
@@ -84,16 +81,15 @@ public class DiscardRound implements Round {
     }
 
     private void requestDiscardFromAllPlayersInHand(Collection<PokerPlayer> players) {
-    	ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
-    	 for (PokerPlayer player : context.getPlayersInHand()) {
+        ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
+         for (PokerPlayer player : context.getPlayersInHand()) {
              ActionRequest request = getActionRequest(player);
              requests.add(request);
          }
-    	 serverAdapterHolder.get().requestMultipleActions(requests);
+         serverAdapterHolder.get().requestMultipleActions(requests);
+    }
 
-	}
-
-	private ActionRequest getActionRequest(PokerPlayer player) {
+    private ActionRequest getActionRequest(PokerPlayer player) {
         playerToAct = player.getId();
         ActionRequest actionRequest = new ActionRequest();
         actionRequest.enable(new DiscardRequest(cardsToDiscard));
@@ -120,7 +116,7 @@ public class DiscardRound implements Round {
 
 
     private boolean isValidAction(PokerAction action, PokerPlayer player) {
-/*        if (!action.getPlayerId().equals(playerToAct)) {
+        /*  if (!action.getPlayerId().equals(playerToAct)) {
             log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
             return false;
         }
@@ -134,20 +130,23 @@ public class DiscardRound implements Round {
     
     @Override
     public void timeout() {
-    	for (PokerPlayer player : getAllSeatedPlayers()) {
+        log.debug("Timeout in discard round, discarding cards for players who haven't acted. Force: " + forceDiscard);
+        for (PokerPlayer player : getAllSeatedPlayers()) {
+            log.debug("Checking player " + player + " has acted: " + player.hasActed());
             if (!player.hasActed()) {
-            	if (forceDiscard) {
-            		List<Integer> forcedCardsToDiscard = Lists.newArrayList();
-            		for (int i = 0; i < this.cardsToDiscard; i++) {
-            			forcedCardsToDiscard.add(i);
-            		}
-            		player.setHasActed(true);
-            		player.discard(forcedCardsToDiscard);
-            		DiscardAction action = new DiscardAction(playerToAct, forcedCardsToDiscard);
-            		serverAdapterHolder.get().notifyDiscards(action, player);
-            	}
+                if (forceDiscard) {
+                    log.debug("Forcing player to discard " + cardsToDiscard + " cards.");
+                    List<Integer> forcedCardsToDiscard = Lists.newArrayList();
+                    for (int i = 0; i < this.cardsToDiscard; i++) {
+                        forcedCardsToDiscard.add(player.getPocketCards().getCardAt(i).getId());
+                    }
+                    player.setHasActed(true);
+                    player.discard(forcedCardsToDiscard);
+                    DiscardAction action = new DiscardAction(player.getId(), forcedCardsToDiscard);
+                    serverAdapterHolder.get().notifyDiscards(action, player);
+                }
             }
-    	}
+        }
     }
 
     @Override
@@ -168,5 +167,10 @@ public class DiscardRound implements Round {
     @Override
     public String getStateDescription() {
         return null;
+    }
+
+    @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return true;
     }
 }

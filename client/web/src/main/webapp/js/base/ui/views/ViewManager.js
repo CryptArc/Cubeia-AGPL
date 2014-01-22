@@ -36,9 +36,10 @@ Poker.ViewManager = Class.extend({
         this.lobbyView = this.addView(new Poker.ResponsiveTabView("#lobbyView",i18n.t("tabs.lobby"),"L"));
         this.cssAnimator = new Poker.CSSUtils();
         this.toolbar = $("#toolbar");
-        this.activateView(this.loginView);
+
 
         var timer = null;
+
         $(window).resize(function(){
             if(timer!=null) {
                 clearTimeout(timer);
@@ -253,7 +254,10 @@ Poker.ViewManager = Class.extend({
      * Removes a table view and activates the previous view
      * @param tableId - the id for the table who's view to close
      */
-    removeTableView : function(tableId) {
+    removeTableView : function(tableId,activatePrevious) {
+        if(typeof(activatePrevious)=="undefined") {
+            activatePrevious = true;
+        }
         if(this.multiTableView!=null) {
             this.multiTableView.removeTableView(tableId);
             if(this.multiTableView.isEmpty()) {
@@ -262,7 +266,9 @@ Poker.ViewManager = Class.extend({
                 $(".multi-view-switch").addClass("multi");
                 $(".table-view-container").hide();
                 this.activeView = null;
-                this.safeActivateView(pv);
+                if(activatePrevious == true) {
+                    this.safeActivateView(pv);
+                }
             }
         } else {
             for(var i = 0; i<this.views.length; i++) {
@@ -270,10 +276,14 @@ Poker.ViewManager = Class.extend({
                 if(typeof(v.getTableId)!="undefined" && v.getTableId()==tableId) {
                     var pv = this.getPreviousView();
                     v.close();
-                    $(".table-view-container").hide();
+                    if(activatePrevious==true) {
+                        $(".table-view-container").hide();
+                    }
                     this.views.splice(i,1);
-                    this.activeView = null;
-                    this.safeActivateView(pv);
+                    if(activatePrevious==true) {
+                        this.activeView = null;
+                        this.safeActivateView(pv);
+                    }
 
                 }
             }
@@ -515,5 +525,21 @@ Poker.ViewManager = Class.extend({
             }
         }
         return count;
+    },
+    externalPageView : null,
+    openExternalPage : function(url) {
+        var self = this;
+        if(this.externalPageView == null) {
+            this.externalPageView = new Poker.ExternalPageView("#externalPageView","Promotion","P",url,
+                function(){
+                    self.removeView(self.externalPageView);
+                    self.externalPageView = null;
+                });
+            this.externalPageView.fixedSizeView = true;
+            Poker.AppCtx.getViewManager().addView(self.externalPageView);
+        } else {
+            self.externalPageView.updateUrl(url);
+        }
+        Poker.AppCtx.getViewManager().activateView(self.externalPageView);
     }
 });

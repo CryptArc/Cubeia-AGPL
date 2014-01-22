@@ -3,7 +3,7 @@ var Poker = Poker || {};
 
 Poker.ConnectionManager = Class.extend({
 
-    MAX_RECONNECT_ATTEMPTS : 30,
+    MAX_RECONNECT_ATTEMPTS : 15,
 
     retryCount : 0,
 
@@ -28,11 +28,49 @@ Poker.ConnectionManager = Class.extend({
      * @type {Poker.DisconnectDialog}
      */
     disconnectDialog : null,
+
+    lastActivity : null,
+    activityCheckTimer : null,
+    maxInactivityTime : 1800000, //30 MIN
+
+    initialization : {
+        resources : false,
+        settings : false
+    },
+
     init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
+
+        this.startActivityCheck();
+
+    },
+    startActivityCheck : function() {
+        var self = this;
+        this.onUserActivity();
+        this.activityCheckTimer = setInterval(function(){
+            var now = new Date().getTime();
+            var inactiveTime = now - self.lastActivity
+            if(inactiveTime>self.maxInactivityTime) {
+                self.clearTimeouts();
+                var cm = Poker.AppCtx.getCommunicationManager();
+                cm.setIgnoreNextForceLogout();
+                cm.logoutAndDisconnect();
+                Poker.AppCtx.getDialogManager().displayGenericDialog(
+                    { header : "Logged out", message :"You've been logged out due to inactivity"},
+                    function(){
+                        document.location.reload();
+                    }
+                );
+                return;
+            } else {
+                console.log("User last activity = " + inactiveTime);
+            }
+        },60000);
+    },
+    onUserActivity : function() {
+        this.lastActivity = new Date().getTime();
     },
     onUserLoggedIn : function(playerId, name, token) {
-
         Poker.MyPlayer.onLogin(playerId,name, token);
         Poker.AppCtx.getNavigation().onLoginSuccess();
         Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
@@ -43,8 +81,10 @@ Poker.ConnectionManager = Class.extend({
         viewManager.onLogin();
         Poker.AppCtx.getTableManager().onPlayerLoggedIn();
         Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
-        Poker.Utils.storeUser(name,Poker.MyPlayer.password);
-        
+        if(token!=null) {
+            Poker.Utils.storeUser(name,Poker.MyPlayer.password);
+        }
+
         // check deposit return...
         var depositType = purl().fparam("deposit");
         if(depositType) {
@@ -59,10 +99,30 @@ Poker.ConnectionManager = Class.extend({
         this.disconnectDialog.close();
         this.showConnectStatus(i18n.t("login.connected"));
     },
+    onResourcesLoaded : function() {
+        this.initialization.resources = true;
+        this.onClientReady();
+    },
+    onSettingsLoaded : function() {
+        this.initialization.settings = true;
+        this.onClientReady();
+    },
     onClientReady : function() {
+
+        if(this.initialization.resources == false || this.initialization.settings==false) {
+            return;
+        }
+        $(".loading-progressbar .progress").width("100%");
+        var vm = Poker.AppCtx.getViewManager();
+
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
         } else {
+            var cont = $(".login-container").show();
+            setTimeout(function(){
+                cont.addClass("show");
+            },50);
+
             var loggedIn = this.handleLoginOnReconnect();
             if(!loggedIn) {
                 this.handlePersistedLogin();
@@ -77,6 +137,7 @@ Poker.ConnectionManager = Class.extend({
      * Tries to login with credentials stored in local storage
      */
     handlePersistedLogin : function() {
+
         var username = Poker.Utils.load("username");
         if(username!=null) {
             var password = Poker.Utils.load("password");
@@ -104,6 +165,7 @@ Poker.ConnectionManager = Class.extend({
         }
     },
     handleDisconnect : function() {
+        Poker.AppCtx.getPingManager().onDisconnect();
         console.log("DISCONNECTED");
         this.showConnectStatus(i18n.t("login.disconnected", {sprintf : [this.retryCount]}));
         this.clearTimeouts();
@@ -131,7 +193,6 @@ Poker.ConnectionManager = Class.extend({
         var self = this;
         this.disconnectCheckTimeout = setTimeout(function(){
             self.sendVersionPacket();
-            console.log("Starting reconnect grace timeout");
             self.startReconnectingGraceTimeout = setTimeout(function(){
                 console.log("version packet not received, handle disconnect");
                 self.handleDisconnect();
@@ -176,6 +237,7 @@ Poker.ConnectionManager = Class.extend({
         versionPacket.operatorid = 0;
         versionPacket.protocol = 8559;
         Poker.AppCtx.getCommunicationManager().getConnector().sendProtocolObject(versionPacket);
+        Poker.AppCtx.getPingManager().versionPacketSent();
     }
 });
 

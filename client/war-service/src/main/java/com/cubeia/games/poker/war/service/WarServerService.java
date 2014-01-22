@@ -40,7 +40,7 @@ public class WarServerService implements WarServerContract, Service {
 
     @Override
     public void start() {
-        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/");
+        JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/", "client");
         try {
             je.start();
         } catch (Exception ex) {

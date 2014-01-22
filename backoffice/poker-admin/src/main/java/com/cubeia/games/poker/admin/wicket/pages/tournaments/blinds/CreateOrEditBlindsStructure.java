@@ -17,13 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.blinds;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.games.poker.tournament.configuration.blinds.Level;
-import com.cubeia.network.shared.web.wicket.list.EditableListItem;
-import com.cubeia.network.shared.web.wicket.list.ListEditor;
-import com.cubeia.network.shared.web.wicket.list.RemoveButton;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.isEmpty;
+
+import java.math.BigDecimal;
+import java.util.Iterator;
 
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,11 +37,15 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
 
-import java.math.BigDecimal;
-import java.util.Iterator;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.network.shared.web.wicket.list.EditableListItem;
+import com.cubeia.network.shared.web.wicket.list.ListEditor;
+import com.cubeia.network.shared.web.wicket.list.RemoveButton;
 
-import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.isEmpty;
-
+@SuppressWarnings("serial")
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOrEditBlindsStructure extends BasePage {
 
@@ -59,7 +60,8 @@ public class CreateOrEditBlindsStructure extends BasePage {
         initPage();
     }
 
-    private void initPage() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private void initPage() {
         final Form<BlindsStructure> blindsStructureForm = new Form<BlindsStructure>("blindsStructureForm",
                 new CompoundPropertyModel<BlindsStructure>(structure)) {
 
@@ -67,7 +69,7 @@ public class CreateOrEditBlindsStructure extends BasePage {
             protected void onSubmit() {
                 removeInvalidLevels();
                 if (structure.getId() != 0) {
-                    adminDAO.save(structure);
+                    adminDAO.merge(structure);
                 } else {
                     adminDAO.persist(structure);
                 }
@@ -76,7 +78,7 @@ public class CreateOrEditBlindsStructure extends BasePage {
         };
 
         final ListEditor levelListView = new ListEditor<Level>("blindsLevels", new PropertyModel(this, "structure.blindsLevels")) {
-            @Override
+			@Override
             protected void onPopulateItem(EditableListItem<Level> item) {
                 item.setModel(new CompoundPropertyModel(item.getModel()));
                 item.add(new Label("level", new Model<Integer>(item.getIndex() + 1)));

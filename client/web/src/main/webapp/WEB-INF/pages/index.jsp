@@ -22,6 +22,7 @@
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
 
+
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -42,10 +43,12 @@
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/lib/org/cometd.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.19-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.10.0-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.10.0-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
@@ -69,6 +72,8 @@
     <script type="text/javascript" src="${cp}/js/base/ui/NotificationsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/AchievementManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/communication/achievement/AchievementPacketHandler.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/TimeStatistics.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/communication/PingManager.js"></script>
 
 
     <script src="${cp}/js/base/communication/poker-game/ActionUtils.js" type="text/javascript"></script>
@@ -170,6 +175,8 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/ContextMenu.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Sharing.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/Pager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentList.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
@@ -195,9 +202,7 @@
     <c:if test="${not empty token}">
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
-            $(document).ready(function(){
-                $(".login-container").hide();
-            });
+            Poker.MyPlayer.pureToken = ${pureToken};
         </script>
     </c:if>
 
@@ -206,7 +211,6 @@
         var contextPath = "${cp}";
 
         $(document).ready(function(){
-
 
             var browserSupported =  function() {
                 if(Modernizr && Modernizr.websockets && Modernizr.csstransitions) {
@@ -238,7 +242,17 @@
                 $("title").html(Poker.SkinConfiguration.title);
 
 
-                var onPreLoadComplete = function() {
+                var onResourcesLoaded = function() {
+                    Poker.AppCtx.getConnectionManager().onResourcesLoaded();
+                };
+                var onApplicationWired = function() {
+                    new Poker.ResourcePreloader('${cp}',onResourcesLoaded, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                };
+
+
+                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
+                    $("body").i18n();
+
                     <c:choose>
                     <c:when test="${not empty firebaseHost}">
                     var requestHost = "${firebaseHost}";
@@ -267,12 +281,7 @@
                         tournamentLobbyUpdateInterval : 10000,
                         playerApiBaseUrl : "${playerApiBaseUrl}"
                     });
-
-                };
-
-                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
-                    $("body").i18n();
-                    new Poker.ResourcePreloader('${cp}',onPreLoadComplete, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
+                    onApplicationWired();
                 });
             }
 
@@ -337,9 +346,21 @@
             <div class="item">
                 <fieldset class="toggle">
                     <input id="soundEnabled" type="checkbox">
-                    <label onclick="" for="soundEnabled">Toggle Sounds</label>
+                    <label onclick="" for="soundEnabled">
+                        Game Play Sounds
+                        <div class="setting-description">Cards and chips sounds</div>
+                    </label>
                     <span class="toggle-button"></span>
                 </fieldset>
+            </div>
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="soundAlertsEnabled" type="checkbox">
+                    <label onclick="" for="soundAlertsEnabled">
+                        Alert Sounds</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+                <div class="setting-description">Turn notifications etc.</div>
             </div>
         </div>
     </div>
@@ -529,27 +550,31 @@
             </div>
         </div>
 
-        <div id="loadingView" class="loading-view">
-            <div class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="loading-progressbar">
-                    <div class="progress"></div>
-                </div>
-            </div>
-        </div>
-        <div id="loginView" class="login-view" style="display:none;">
-            <div id="dialog1" class="login-dialog">
-                <div class="logo-container"></div>
-                <div class="login-container">
-                    <div class="login-input-container">
-                        <input name="user" class="describe" id="user" type="text" title="Username" value="" />
-                        <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+        <div id="loginView" class="loading-view">
+            <div class="loading-view-container">
+                <div class="login-dialog">
+                    <div class="logo-container"></div>
+                    <div class="loading-box">
+                        <div class="loading-progressbar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="login-container" style="display:none;">
+                            <div class="login-input-container">
+                                <input name="user" class="describe" id="user" type="text" title="Username" value="" />
+                                <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+                            </div>
+                            <div id="loginButton" class="login-button">
+                                <span data-i18n="login.login"></span>
+                            </div>
+                        </div>
+                        <div class="status-label" style="font-size:90%;">
+                            <span class="connect-status"></span>
+                        </div>
                     </div>
-                    <div id="loginButton" class="login-button">
-                        <span data-i18n="login.login"></span>
+                    <div class="powered-by">
+                        <img src="${cp}/skins/default/images/poweredby.png"/>
                     </div>
                 </div>
-                <div class="status-label"> <span data-i18n="login.status"></span> <span class="connect-status"></span></div>
             </div>
         </div>
 
@@ -569,7 +594,23 @@
                         </nav>
                         <div class="logo-container">
                         </div>
+                    </div>
+                    <div class="col-sm-4">
 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe loading" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
+                        <div class="top-promo-loading-container">
+                           <div class="iframe-loading"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-sm-8">
                         <nav class="navbar-inverse navbar-top" role="navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
@@ -582,13 +623,14 @@
                             </div>
                             <div class="navbar-collapse navbar-top-collapse collapse">
                                 <ul class="nav nav-pills">
+
+                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
+                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                     <li class="active" id="cashGameMenu">
                                         <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
                                             [Cash Games]
                                         </a>
                                     </li>
-                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
-                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                 </ul>
                             </div>
 
@@ -637,18 +679,10 @@
                             </label>
 
                         </div>
-
+                          <div id="tableListContainer"></div>
                     </div>
                     <div class="col-sm-4">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-8" id="tableListContainer">
-
-                    </div>
-                    <div class="col-sm-4">
-
+                        <iframe id="lobbyRightPromotionsIframe" class="lobby-right-promotions-iframe" marginheight="0" scrolling="no"  frameBorder="0"></iframe>
                     </div>
                 </div>
 
@@ -659,6 +693,44 @@
             <h1>Account</h1>
             <div class="account-button logout-link">
                 <span data-i18n="user.log-out"></span>
+            </div>
+            <div id="internalAccountContent">
+                <div class="account-block" id="account_details">
+                    <div class="account-row">
+                        Screen Name:
+                        <div id="user_name"></div>
+                    </div>
+              </div>
+              <div class="account-block" id="accountBalancesContainer">
+
+              </div>
+              <div class="account-block " id="bonusCollectContainer">
+                    <h3>Top up</h3>
+                    <div id="topUpCurrencies"></div>
+                    <div class="refill_field">
+
+                        <div class="top-up-progress">
+                            <div class="small-label">
+                                Time to next top up:  <span id="coolDownLabel"></span>
+                            </div>
+
+                            <div class="list_field">
+                                <div class="progress_container">
+                                    <div class="progress_bar" id="coolDownProgress"></div>
+                                </div>
+                            </div>
+                            <div class="refill-button-container">
+                                <div id="refillButton" class="account-button refill-unavailable">Top Up!</div>
+                            </div>
+                        </div>
+
+                        <div class="balance-too-high">
+                            You are able to top up once every <span id="bonusCoolDownTime"></span> hours when
+                            your balance is <span id="bonusBalanceLowerLimit"></span> or less.
+                        </div>
+                    </div>
+
+                </div>
             </div>
             <iframe id="accountIframe" class="account-iframe" scrolling="no"></iframe>
             <div class="account-buttons">
@@ -679,9 +751,25 @@
             <iframe class="external-view-iframe"></iframe>
             <a class="close-button">Close</a>
         </div>
+        <div class="buy-credits-view" id="externalPageView"  style="display: none;">
+            <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
+        </div>
     </div>
 
 </div>
+<script id="balanceTemplate" type="text/mustache">
+    {{#accounts}}
+    <div class="account-row">
+        <span class="balance-header">Balance:</span>
+        <div>
+            <span class="account-balance">{{balance}}</span>
+        </div>
+    </div>
+    {{/accounts}}
+
+</script>
+
 <div id="emptySeatTemplate" style="display: none;">
     <div class="avatar-base">
         <div class="open-seat">{{t "table.open"}}</div>
@@ -778,7 +866,6 @@
                 <th class="table-name">{{t "lobby.list.name"}}</th>
                 <th class="buy-in buy-in-sort sorting">{{t "lobby.list.buy-in"}}</th>
                 <th class="seated capacity-sort sorting">{{t "lobby.list.players"}}</th>
-                <th class="status">{{t "lobby.list.status"}}</th>
             </tr>
         </thead>
         <tbody class="table-list-item-container">
@@ -825,10 +912,14 @@
 </script>
 <script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
     <tr class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
-        <td class="table-name">{{name}}</td>
-        <td class="buy-in">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</td>
-        <td class="seated">{{registered}}/{{capacity}}</td>
-        <td class="status {{status}}">{{status}}</td>
+        <td class="table-name" colspan="3">
+            <div class="list-item-name">{{name}}</div>
+            <div class="lobby-item-details">
+                <div class="list-item status {{status}}">{{status}}</div>
+                <div class="list-item buy-in">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
+                <div class="list-item seated">{{registered}}/{{capacity}}</div>
+            </div>
+        </td>
         <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
     </tr>
 </script>
@@ -836,10 +927,14 @@
     <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <td class="table-name">
             <div class="list-item-name">{{name}}</div>
-            <div class="list-item">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
-            <div class="list-item">{{registered}}/{{capacity}}</div>
             <div class="list-item">{{date startTime}}</div>
-            <div class="list-item status {{status}}">{{status}}</div>
+            <div class="lobby-item-details">
+                <div class="list-item status {{status}}">{{status}}</div>
+                <div class="list-item">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
+                <div class="list-item">{{registered}}/{{capacity}}</div>
+
+
+            </div>
         </td>
 
         <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
@@ -925,7 +1020,10 @@
         <div class="bottom-bar">
             <ul class="table-log-tabs">
                 <li class="show-log-tab active"><a>Dealer</a></li>
-                <li class="show-chat-tab"><a>Chat</a></li>
+                <li class="show-chat-tab">
+                    <a>Chat <span class="new-chat-messages" style="display:none;">+1</span></a>
+
+                </li>
             </ul>
             <div class="table-log-container">
                 <div class="table-event-log-settings" style="display:none;"></div>
@@ -1200,7 +1298,7 @@
                 <a class="share-button">+Share</a>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <h3 class="tournament-name">
                         <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
                     </h3>
@@ -1212,7 +1310,7 @@
                     <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
                     <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div class="info-section tournament-info"></div>
                 </div>
             </div>
@@ -1240,64 +1338,87 @@
                     </nav>
                 </div>
             </div>
-            <div class="row players-row tournament-section">
-                <div class="col-sm-7">
-                    <table class="table default-table player-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
-                            <th>{{t "tournament-lobby.players.stack" }}</th>
-                            <th>{{t "tournament-lobby.players.winnings" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="row">
+                 <div class="col-sm-7">
+                     <div class="row players-row tournament-section">
+                        <div class="col-sm-12">
+                            <div class="tournament-statistics">
+                                <div>Remaining players: <span class="remaining-players"></span></div>
+
+                            </div>
+                            <div>
+                                <input type="text" class="filter-input" placeholder="{{t "tournament-lobby.players.search" }}"/>
+                            </div>
+                            <table class="table default-table player-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
+                                    <th>{{t "tournament-lobby.players.stack" }}</th>
+                                    <th>{{t "tournament-lobby.players.winnings" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="player-list-pager">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row tables-row tournament-section" style="display:none;">
+                        <div class="col-sm-12">
+                            <table class="table default-table table-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row payouts-row tournament-section" style="display:none;">
+                        <div class="col-sm-12 payout-structure">
+
+                        </div>
+                    </div>
+
+                    <div class="row blinds-row tournament-section"  style="display:none;">
+                        <div class="col-sm-12 blinds-structure">
+
+                        </div>
+                    </div>
+                 </div>
+                 <div class="col-sm-5">
+                     <div class="row chat-row">
+                        <div class="col-sm-12">
+                            <div class="table-chat-container">
+                                <div class="lobby-chat table-event-log">
+                                </div>
+                                <input type="text" class="chat-input describe" placeholder="{{t 'table.log.chat-input-desc'}}">
+                            </div>
+                        </div>
+                     </div>
+
+                 </div>
             </div>
-
-            <div class="row tables-row tournament-section" style="display:none;">
-                <div class="col-sm-7">
-                    <table class="table default-table table-list">
-                        <thead>
-                        <tr>
-                            <th colspan="2">{{t "tournament-lobby.tables.tables" }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="2">{{t "tournament-lobby.tables.no-tables" }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="row payouts-row tournament-section" style="display:none;">
-                <div class="col-sm-7 payout-structure">
-
-                </div>
-            </div>
-
-            <div class="row blinds-row tournament-section"  style="display:none;">
-                <div class="col-sm-7 blinds-structure">
-
-                </div>
-            </div>
-
         </div>
-
-
-
     </div>
 </script>
 <script type="text/mustache" id="tournamentInfoTemplate">
+    <h4 class="icon-header">Tournament info</h4>
     {{^sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.tournament-id"}} <span>{{tournamentId}}</span> </div>
     <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</span></div>
     <div class="stats-item">
@@ -1474,10 +1595,13 @@
 
 <script type="text/mustache" id="tournamentPlayerListItem" style="display:none;">
     <tr>
-        <td>{{position}}</td>
-        <td>{{name}}</td>
+        <td class="position">{{position}}</td>
+        <td><div class="generic-avatar player-{{playerId}}"></div>{{name}}</td>
         <td>{{currency stackSize}}</td>
         <td>{{currency winnings}}</td>
+        <td>
+            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;">Table &raquo;</div>
+        </td>
     </tr>
 </script>
 <script type="text/mustache" id="tournamentTableListItem" style="display:none;">
@@ -1593,7 +1717,6 @@
     };
 
 </script>
-
 
 </body>
 </html>

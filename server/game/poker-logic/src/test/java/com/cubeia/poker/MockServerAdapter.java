@@ -262,7 +262,7 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
+    public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions, BigDecimal totalPotSize) {
     }
 
     @Override

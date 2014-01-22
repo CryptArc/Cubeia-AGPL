@@ -25,12 +25,17 @@ Poker.TournamentLayoutManager = Class.extend({
     takeSeatButton : null,
     name : null,
     shareDone : false,
+    chat : null,
+
+    playerList : null,
+
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
         this.tournamentId = tournamentId;
         this.viewContainer = viewContainer;
         this.name = name;
         this.templateManager = Poker.AppCtx.getTemplateManager();
+
         var viewHTML = this.templateManager.render("tournamentTemplate",{tournamentId : tournamentId, name : name});
 
         viewContainer.append(viewHTML);
@@ -39,6 +44,9 @@ Poker.TournamentLayoutManager = Class.extend({
         this.viewElement = $(viewId);
         this.playerListBody = this.viewElement.find(".player-list tbody");
         this.tableListBody = this.viewElement.find(".table-list tbody");
+        var playerListPager = this.viewElement.find(".player-list-pager");
+        var filterInput = this.viewElement.find(".filter-input");
+        this.playerList = new Poker.TournamentList(tournamentId,this.playerListBody,playerListPager,filterInput);
         this.initActions();
         if(registered==true) {
             this.setPlayerRegisteredState();
@@ -63,20 +71,20 @@ Poker.TournamentLayoutManager = Class.extend({
             self.viewElement.find(".tables-row").show();
         });
         menu.activateItem(".players-link");
+        this.chat = new Poker.TableEventLog(this.viewElement.find(".table-chat-container"));
+        new Poker.ChatInput(this.viewElement.find(".chat-input"), function(msg){
+            new Poker.TournamentRequestHandler(tournamentId).sendChatMessage(Poker.Utils.filterMessage(msg));
+        });
 
     },
-    updatePlayerList : function(players) {
-        var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");
-        this.playerListBody.empty();
-        var self = this;
-        $.each(players,function(i,p) {
-            self.playerListBody.append(template.render(p));
-        });
-        if(players.length==0) {
-            this.playerListBody.append("<td/>").attr("colspan","3").
-                append(i18n.t("tournament-lobby.players.no-players"));
-        }
+    onChatMessage : function(screenName,message) {
+        this.chat.appendChatMessage({name : screenName },message);
     },
+    updatePlayerList : function(players) {
+        this.playerList.setItems(players);
+
+    },
+
     updateTableList : function(tables) {
         var template = this.templateManager.getRenderTemplate("tournamentTableListItem");
         this.tableListBody.empty();
@@ -85,7 +93,7 @@ Poker.TournamentLayoutManager = Class.extend({
         $.each(tables,function(i,t) {
             self.tableListBody.append(template.render({index : (i+1), id : t }));
             self.tableListBody.find("#tournamentTable"+t).click(function(e){
-                new Poker.TableRequestHandler(t).openTable(10);
+                new Poker.TableRequestHandler(t).openTournamentTable(self.tournamentId,10);
             });
         });
         if(tables.length==0) {
@@ -104,18 +112,15 @@ Poker.TournamentLayoutManager = Class.extend({
         if(info.maxPlayers == info.minPlayers) {
             sitAndGo = true;
         }
-        $.extend(info,{sitAndGo : sitAndGo});
+        $.extend(info,{sitAndGo : sitAndGo,tournamentId : this.tournamentId});
         var infoTemplate = this.templateManager.getRenderTemplate("tournamentInfoTemplate");
         this.viewElement.find(".tournament-info").html(infoTemplate.render(info));
 
         if(info.sitAndGo==false) {
-            console.log(this.viewElement);
-            console.log(this.viewElement.find(".tournament-start-date"));
             var m = moment(parseInt(info.startTime));
             this.viewElement.find(".tournament-start-date").html(m.format("lll") + " ("+ m.fromNow()+")");
         }
 
-        console.log("INFO", info);
         if(info.description!=null && info.description!=""){
             this.viewElement.find(".tournament-description").html(info.description);
         } else {
@@ -128,11 +133,16 @@ Poker.TournamentLayoutManager = Class.extend({
 
     },
     updateTournamentStatistics : function(statistics) {
-        var statsTemplate = this.templateManager.getRenderTemplate("tournamentStatsTemplate");
-        this.viewElement.find(".tournament-stats").show().html(statsTemplate.render(statistics));
+        if(statistics.playersLeft.remainingPlayers>0) {
+            this.viewElement.find(".tournament-statistics").show();
+            this.viewElement.find(".remaining-players").html(statistics.playersLeft.remainingPlayers);
+        } else {
+            this.hideTournamentStatistics();
+        }
+
     },
     hideTournamentStatistics : function()  {
-        this.viewElement.find(".tournament-stats").hide();
+        this.viewElement.find(".tournament-statistics").hide();
     },
     updatePayoutInfo : function(payoutInfo) {
         var payoutTemplate = this.templateManager.getRenderTemplate("tournamentPayoutStructureTemplate");

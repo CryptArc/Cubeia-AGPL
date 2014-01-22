@@ -1939,6 +1939,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
     this.fromPlayerToPot = {};
     this.transfers = [];
     this.pots = [];
+    this.totalPotSize = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeBoolean(this.fromPlayerToPot);
@@ -1951,6 +1952,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
         for (b = 0; b < this.pots.length; b++) {
             a.writeArray(this.pots[b].save())
         }
+        a.writeString(this.totalPotSize);
         return a
     };
     this.load = function (b) {
@@ -1972,6 +1974,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
             c.load(b);
             this.pots.push(c)
         }
+        this.totalPotSize = b.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1987,6 +1990,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
         for (b = 0; b < this.pots.length; b++) {
             a.details.pots.push(this.pots[b].getNormalizedObject())
         }
+        a.details.totalPotSize = this.totalPotSize;
         return a
     }
 };
@@ -2929,6 +2933,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
     this.position = {};
     this.winnings = {};
     this.tableId = {};
+    this.playerId = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.name);
@@ -2936,6 +2941,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         a.writeInt(this.position);
         a.writeString(this.winnings);
         a.writeInt(this.tableId);
+        a.writeInt(this.playerId);
         return a
     };
     this.load = function (a) {
@@ -2943,7 +2949,8 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         this.stackSize = a.readString();
         this.position = a.readInt();
         this.winnings = a.readString();
-        this.tableId = a.readInt()
+        this.tableId = a.readInt();
+        this.playerId = a.readInt()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2955,6 +2962,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         a.details.position = this.position;
         a.details.winnings = this.winnings;
         a.details.tableId = this.tableId;
+        a.details.playerId = this.playerId;
         return a
     }
 };
@@ -3184,12 +3192,15 @@ com.cubeia.games.poker.io.protocol.VariantEnum = function () {
 };
 com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM = 0;
 com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA = 1;
+com.cubeia.games.poker.io.protocol.VariantEnum.CRAZY_PINEAPPLE = 2;
 com.cubeia.games.poker.io.protocol.VariantEnum.makeVariantEnum = function (a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM;
         case 1:
-            return com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA
+            return com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA;
+        case 2:
+            return com.cubeia.games.poker.io.protocol.VariantEnum.CRAZY_PINEAPPLE
     }
     return -1
 };
@@ -3198,7 +3209,9 @@ com.cubeia.games.poker.io.protocol.VariantEnum.toString = function (a) {
         case 0:
             return"TEXAS_HOLDEM";
         case 1:
-            return"TELESINA"
+            return"TELESINA";
+        case 2:
+            return"CRAZY_PINEAPPLE"
     }
     return"INVALID_ENUM_VALUE"
 };

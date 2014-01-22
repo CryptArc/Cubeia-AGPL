@@ -58,7 +58,7 @@ public abstract class AbstractGameType implements GameType {
     }
 
     public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
-        getServerAdapter().notifyPotUpdates(context.getPotHolder().getPots(), potTransitions);
+        getServerAdapter().notifyPotUpdates(context.getPotHolder().getPots(), potTransitions, context.getTotalPotSize());
 
         // notify all the new balances
         for (PokerPlayer player : context.getPlayersInHand()) {

@@ -8,8 +8,9 @@ Poker.CanvasProgressbar = Class.extend({
     timer : null,
     settings : null,
     defaultSettings : { border : false },
-
-    init : function(canvas,settings) {
+    soundManager : null,
+    secondWarning : false,
+    init : function(canvas,settings,soundManager) {
         var self = this;
         this.settings = $.extend({},this.defaultSettings , settings);
         this.canvas = $(canvas);
@@ -17,6 +18,8 @@ Poker.CanvasProgressbar = Class.extend({
         setTimeout(function(){
             self.setSize();
         },500);
+
+        this.soundManager = soundManager;
 
         $(window).on("resizeEnd",function(){
             self.setSize();
@@ -51,6 +54,7 @@ Poker.CanvasProgressbar = Class.extend({
         return '#b3d800';
     },
     start : function(progressTime) {
+        this.secondWarning=false;
         this.setSize();
         this.canvas.parent().show();
         this.startTime = new Date().getTime();
@@ -107,10 +111,20 @@ Poker.CanvasProgressbar = Class.extend({
         ctx.fillStyle = this.getColor(progress);
         ctx.fill();
 
+        if(progress>=0.5 && this.secondWarning==false) {
+            this.playWarningSound(Poker.Sounds.TIME_WARNING);
+            this.secondWarning = true;
+        }
+
         if(progress>=1) {
             clearInterval(this.interval);
         }
 
+    },
+    playWarningSound : function(sound) {
+      if(typeof(this.soundManager)!="undefined") {
+          this.soundManager.handlePlaySound(sound);
+      }
     },
     getRadius : function() {
         return Math.floor(this.canvas.height()/2);

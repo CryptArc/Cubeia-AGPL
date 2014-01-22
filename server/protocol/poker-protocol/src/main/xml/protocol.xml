@@ -316,6 +316,7 @@
         <var name="fromPlayerToPot" type="bool"/>
         <list name="transfers" type="pot_transfer"/>
         <list name="pots" type="pot"/>
+        <var name="totalPotSize" type="string"/>
     </struct>
 
     <!-- Take back a bet that was in the betstack but was never called-->
@@ -438,6 +439,7 @@
         <!-- The amount that the player won, formatted, if the player is out. -->
         <var name="winnings" type="string" />
         <var name="table_id" type="int32" />
+        <var name="playerId" type="int32" />
     </struct>
 
     <struct name="request_blinds_structure" />

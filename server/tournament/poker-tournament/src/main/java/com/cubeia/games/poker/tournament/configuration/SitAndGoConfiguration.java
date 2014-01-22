@@ -17,21 +17,25 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
-import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.timing.TimingProfile;
-import org.apache.log4j.Logger;
+import java.io.Serializable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
+
+@SuppressWarnings("serial")
 @Entity
 public class SitAndGoConfiguration implements Serializable {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger(SitAndGoConfiguration.class);
 
     @Id

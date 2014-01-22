@@ -35,7 +35,10 @@ Poker.MyPlayer = {
 
     loginToken : null,
 
-
+    /**
+     * if set to true use "pure" token authentication: set token as data, user and password set to null
+     */
+    pureToken : false,
 
     onLogin : function(playerId, name, credentials) {
         if (!credentials) credentials = null;

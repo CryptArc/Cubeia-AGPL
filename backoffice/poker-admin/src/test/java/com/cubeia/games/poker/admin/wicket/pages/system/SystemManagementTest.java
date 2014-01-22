@@ -17,9 +17,8 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.system;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
-import com.cubeia.games.poker.admin.network.NetworkClient;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
@@ -28,8 +27,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
-import static org.mockito.MockitoAnnotations.initMocks;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
+import com.cubeia.games.poker.admin.network.NetworkClient;
 
 public class SystemManagementTest {
 

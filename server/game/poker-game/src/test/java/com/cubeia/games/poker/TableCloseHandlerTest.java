@@ -189,7 +189,7 @@ public class TableCloseHandlerTest {
         when(tableWatcherSet.getCountWatchers()).thenReturn(2);
 
 
-        tableCrashHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("shit happens"));
+        tableCrashHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("test crash handling"));
 
         verify(attributeAccessor).setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         verify(state).shutdown();

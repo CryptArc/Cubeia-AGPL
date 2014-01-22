@@ -20,7 +20,7 @@ Poker.BetSlider = Class.extend({
     minBet : 0,
     maxBet : 0,
     bigBlind : 0,
-    delta : 5,
+    delta : 12,
     markers : null,
     slider : null,
     valueOutputs : null,
@@ -125,10 +125,10 @@ Poker.BetSlider = Class.extend({
         $.each(this.markers,function(i,m){
             var value = m.value;
             var marker = m.name;
-            var percent = Math.round(100*(value/self.maxBet));
+            var percent = 100-Math.round(100*(value/self.maxBet))-2;
 
 
-            var div = $("<div/>").append(marker).addClass("marker").css("bottom", percent+"%");
+            var div = $("<div/>").append(marker).addClass("marker").css("top", percent+"%");
             container.append(div);
             div.touchSafeClick(function(e){
                 self.slider.slider("value",value);

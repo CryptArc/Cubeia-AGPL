@@ -109,6 +109,10 @@ public class BettingRoundFinishedTest {
     public void testFinishedWhenAllButOneFolded() {
         when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(1);
 
+        when(player1.getBalance()).thenReturn(BigDecimal.ZERO);
+        when(player2.getBalance()).thenReturn(BigDecimal.ZERO);
+        when(player3.getBalance()).thenReturn(BigDecimal.ZERO);
+
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
         assertThat(round.calculateIfRoundFinished(), is(true));
     }

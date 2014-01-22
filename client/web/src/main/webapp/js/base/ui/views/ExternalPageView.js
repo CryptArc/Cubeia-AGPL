@@ -17,6 +17,10 @@ Poker.ExternalPageView = Poker.TabView.extend({
         this._super();
         this.getViewElement().find("iframe").attr("src",this.url);
     },
+    updateUrl : function(url) {
+        this.url = url;
+        this.getViewElement().find("iframe").attr("src",this.url);
+    },
     deactivate : function() {
         this._super();
         this.getViewElement().find("iframe").attr("src","");

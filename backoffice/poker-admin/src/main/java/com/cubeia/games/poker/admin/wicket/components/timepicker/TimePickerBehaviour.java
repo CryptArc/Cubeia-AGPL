@@ -17,10 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.components.timepicker;
 
-import com.googlecode.wicket.jquery.ui.JQueryBehavior;
-import com.googlecode.wicket.jquery.ui.Options;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+
+import com.googlecode.wicket.jquery.ui.JQueryBehavior;
+import com.googlecode.wicket.jquery.ui.Options;
 
 public class TimePickerBehaviour extends JQueryBehavior {
 

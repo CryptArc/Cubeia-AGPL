@@ -529,7 +529,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(playersOut, balancesAtStartOfHand(playersOut), state.getRemainingPlayerCount());
         for (ConcretePayout payout : payouts) {
             MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(payout.getPlayerId(), state);
-            domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
+            Money buyIn = getPokerTournamentState().getBuyInAsMoney();
+            domainEventService.sendTournamentPayoutEvent(tournamentPlayer,buyIn.getAmount(), payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
             // Transfer the given amount of money from the tournament account to the player account.
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayout());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
@@ -633,7 +634,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
 
         MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(playerId, state);
-        domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout, pokerState.getCurrency().getCode(), 1, instance);
+        Money buyIn = pokerState.getBuyInAsMoney();
+        domainEventService.sendTournamentPayoutEvent(tournamentPlayer, buyIn.getAmount(), payout, pokerState.getCurrency().getCode(), 1, instance);
 
         transferMoneyAndCloseSession(playerSession, payout);
     }
@@ -907,13 +909,14 @@ public class PokerTournament implements TableNotifier, Serializable {
             // Transfer money back from tournament session to player session.
             PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
             resetPlayerSession(playerSession);
-            pokerState.removePlayerSession(playerId);
             historyPersister.playerUnregistered(playerId);
-            pokerState.invalidatePlayerMap();
-            pokerState.removeBuyInFromPrizePool();
-        } catch (CloseSessionFailedException e) {
+        } catch (Exception e) {
             log.error("Failed closing session for player " + playerId, e);
             historyPersister.playerFailedUnregistering(playerId, e.getMessage());
+        } finally {
+            pokerState.removePlayerSession(playerId);
+            pokerState.invalidatePlayerMap();
+            pokerState.removeBuyInFromPrizePool();
         }
     }
 
@@ -932,6 +935,9 @@ public class PokerTournament implements TableNotifier, Serializable {
 
         if(pokerState.getPlayerSession(request.getPlayer().getPlayerId())!=null) {
             return MttRegisterResponse.DENIED_ALREADY_REGISTERED;
+        }
+        if(pokerState.hasPendingRegistrations(request.getPlayer().getPlayerId())) {
+            return MttRegisterResponse.DENIED;
         }
         if (instance.getState().getCapacity() <= instance.getState().getRegisteredPlayersCount()) {
         	return MttRegisterResponse.DENIED; 

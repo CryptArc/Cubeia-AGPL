@@ -57,6 +57,8 @@ Poker.MyActionsManager  = Class.extend({
 
     userActionsContainer : null,
 
+    tournamentTable : false,
+
     /**
      * @constructor
      * @param view
@@ -67,13 +69,15 @@ Poker.MyActionsManager  = Class.extend({
         var self = this;
         this.actionCallback = actionCallback;
         this.tableId = tableId;
-        var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
-        this.tableButtons = new Poker.TableButtons(view,actionCallback,tournamentTable);
+        this.tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
+        this.tableButtons = new Poker.TableButtons(view,actionCallback,this.tournamentTable);
         this.currentActions = [];
         this.userActionsContainer = $(".user-actions",view);
         this.futureActions = new Poker.FutureActions($(".future-actions",view));
-        this.blindsActions = new Poker.BlindsActions(view,tableId,actionCallback);
+        this.blindsActions = new Poker.BlindsActions(view,tableId,actionCallback,this.tournamentTable);
         this.currency = { code : "", fractionalDigits : 0};
+
+
         var betCallback = function(minAmount,maxAmount,mainPot){
             self.onClickBetButton(minAmount,maxAmount,mainPot);
         };
@@ -99,7 +103,7 @@ Poker.MyActionsManager  = Class.extend({
                 requestHandler.sitIn();
             }
         });
-        if(tournamentTable==true) {
+        if(this.tournamentTable==true) {
             this.sitOutNextHand.hide();
         }
 
@@ -170,8 +174,14 @@ Poker.MyActionsManager  = Class.extend({
         this.slider.setMaxBet(maxAmount);
         this.slider.setBigBlind(this.bigBlind);
         this.slider.addMarker("Min", minAmount);
-        this.slider.addMarker("All in", maxAmount);
-        this.slider.addMarker("Pot",mainPot);
+
+        if(maxAmount == mainPot) {
+            this.slider.addMarker("Pot",mainPot);
+        } else {
+            this.slider.addMarker("All in", maxAmount);
+            this.slider.addMarker("Pot",mainPot);
+            this.slider.addMarker("2x Pot",mainPot*2);
+        }
         this.slider.draw();
     },
     showWaitForBigBlind : function() {
@@ -256,6 +266,7 @@ Poker.MyActionsManager  = Class.extend({
     setSitOutNextHand : function(sitOut) {
         console.log("setSitOutNextHand = " + sitOut);
         this.sitOutNextHand.setEnabled(sitOut);
+        this.tableButtons.show(Poker.ActionType.SIT_IN);
     },
     onSitOut : function() {
         console.log("ON SIT OUT");
@@ -273,7 +284,11 @@ Poker.MyActionsManager  = Class.extend({
         this.futureActions.hide();
         this.sitOutNextHand.hide();
         this.blindsActions.onWatchingTable();
-        this.display(Poker.ActionType.JOIN);
+
+        if(this.tournamentTable == false) {
+            this.display(Poker.ActionType.JOIN);
+        }
+
         this.display(Poker.ActionType.LEAVE);
     },
     clear : function() {

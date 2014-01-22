@@ -1,16 +1,21 @@
 "use strict";
 var Poker = Poker || {};
 
+
 Poker.DevTools = Class.extend({
     tableId : 999999,
     tableManager : null,
     cards : null,
     cardIdSeq : 0,
     mockEventManager : null,
+    variant : null,
+    TEXAS_HOLDEM : { numCards : 2, id : 0},
+    capacity : 10,
 
     init : function() {
         var self = this;
         this.initCards();
+        this.variant = this.TEXAS_HOLDEM;
     },
     initCards : function() {
        var suits = "hsdc ";
@@ -26,11 +31,11 @@ Poker.DevTools = Class.extend({
 
     createTable : function() {
         var self = this;
-        var capacity = 10;
+        var capacity = this.capacity;
         var tableName = "Dev Table";
         this.tableManager = Poker.AppCtx.getTableManager();
         var tableViewContainer = $(".table-view-container");
-        var templateManager = new Poker.TemplateManager();
+        var templateManager = Poker.AppCtx.getTemplateManager();
 
 
         var beforeFunction = function() {
@@ -39,8 +44,9 @@ Poker.DevTools = Class.extend({
 
             self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
-            new Poker.PositionEditor("#tableView-"+self.tableId);
-            tableLayoutManager.updateVariant(2);
+            //new Poker.PositionEditor("#tableView-"+self.tableId);
+            tableLayoutManager.updateVariant(self.variant.id);
+            self.cardIdSeq = 0;
         };
 
         var cleanUpFunction = function() {
@@ -59,7 +65,7 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Add players",function(){
                 for(var i = 0; i<capacity; i++) {
-                    self.addPlayer(i,i,"CoolPlayer"+i);
+                    self.addPlayer(i,i,"Cool_P2_layerLongName"+i);
                 }
             })
         );
@@ -69,9 +75,8 @@ Poker.DevTools = Class.extend({
                 bl.bigBlind = "1";
                 bl.smallBlind = "0.5";
                 bl.isBreak = false;
-                var bs =
-                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
-        }));
+                self.tableManager.notifyGameStateUpdate(self.tableId,10, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT,self.variant.id,null);
+            }));
         this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){
                 for(var i = 0; i<capacity; i++) {
@@ -131,23 +136,23 @@ Poker.DevTools = Class.extend({
         );
         this.mockEventManager.addEvent(
             mockEvent("All players call",function(){
-                //self.playerAction(6,Poker.ActionType.CALL);
-                //self.playerAction(7,Poker.ActionType.CALL);
-                //self.playerAction(8,Poker.ActionType.CALL);
-                //self.playerAction(9,Poker.ActionType.CALL);
+                self.playerAction(6,Poker.ActionType.CALL);
+                self.playerAction(7,Poker.ActionType.CALL);
+                self.playerAction(8,Poker.ActionType.CALL);
+                self.playerAction(9,Poker.ActionType.CALL);
                 self.playerAction(0,Poker.ActionType.CALL);
                 self.playerAction(1,Poker.ActionType.CALL);
                 self.playerAction(2,Poker.ActionType.CALL);
-                //self.playerAction(4,Poker.ActionType.CALL);
+                self.playerAction(4,Poker.ActionType.CALL);
             })
         );
 
         this.mockEventManager.addEvent(
             mockEvent("Deal flop", function(){
                 self.tableManager.dealCommunityCards(self.tableId,[
-                    { id : self.cardIdSeq++, cardString : "as" },
-                    { id : self.cardIdSeq++, cardString : "ad" },
-                    { id : self.cardIdSeq++, cardString : "ks" }
+                    { id : self.cardIdSeq++, cardString : self.getCardString(self.cardIdSeq) },
+                    { id : self.cardIdSeq++, cardString : self.getCardString(self.cardIdSeq) },
+                    { id : self.cardIdSeq++, cardString : self.getCardString(self.cardIdSeq) }
 
                 ]);
             })
@@ -157,12 +162,12 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Deal turn", function(){
                 self.tableManager.dealCommunityCards(self.tableId,
-                [{ id : self.cardIdSeq++, cardString : "qs" }]);
+                [{ id : self.cardIdSeq++, cardString : self.getCardString(self.cardIdSeq) }]);
             })
         );
         this.mockEventManager.addEvent(
             mockEvent("Deal river", function(){
-                self.tableManager.dealCommunityCards(self.tableId,[{ id : self.cardIdSeq++, cardString : "js" }]);
+                self.tableManager.dealCommunityCards(self.tableId,[{ id : self.cardIdSeq++, cardString : self.getCardString(self.cardIdSeq) }]);
             })
         );
         this.mockEventManager.addEvent(
@@ -189,6 +194,13 @@ Poker.DevTools = Class.extend({
                 self.playerAction(0,Poker.ActionType.BET);
             })
         );
+
+        this.mockEventManager.addEvent(
+            mockEvent("Expose private cards",function(){
+                self.tableManager.exposePrivateCards(self.tableId,self.getPlayerCards());
+            })
+        );
+
         this.mockEventManager.addEvent(mockEvent("Update pots", function(){
             self.tableManager.updatePots(self.tableId, [new Poker.Pot(0,Poker.PotType.MAIN,9000),
                 new Poker.Pot(1,Poker.PotType.SIDE,1000)] );
@@ -197,7 +209,7 @@ Poker.DevTools = Class.extend({
             var bestHands = [];
 
             var bh = new com.cubeia.games.poker.io.protocol.BestHand();
-            bh.handType =  com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD;
+            bh.handType =  com.cubeia.games.poker.io.protocol.HandTypeEnum.THREE_OF_A_KIND;
             bh.player = 1;
             bh.cards = [self.getCard(1,"s"),self.getCard(2,"d")];
             bestHands.push(bh);
@@ -210,6 +222,20 @@ Poker.DevTools = Class.extend({
 
             self.tableManager.endHand(self.tableId,bestHands,potTransfers);
         }));
+    },
+    getPlayerCards : function() {
+        var cards = [];
+
+        var count = 0;
+        for(var i = 0; i<11; i++) {
+            for(var j = 0; j<this.variant.numCards; j++) {
+                var card = this.getProtocolCard(count);
+                cards.push({player : i , card : { cardId : count, rank : card.rank, suit:card.suit}});
+                count++;
+            }
+       }
+        return cards;
+
     },
     getPotTransfer : function(potId,playerId,amount) {
         var pt = new com.cubeia.games.poker.io.protocol.PotTransfer();
@@ -231,18 +257,33 @@ Poker.DevTools = Class.extend({
         this.tableManager.updatePlayerBalance(this.tableId,playerId, 100000);
     },
     dealCards : function(seat,playerId) {
+        var numCards = this.variant.numCards;
         if(playerId == Poker.MyPlayer.id) {
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"as");
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"kd")
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"qd")
+            for(var i = 0; i<numCards; i++) {
+                this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq,this.getCardString(this.cardIdSeq));
+                this.cardIdSeq++;
+            }
         } else {
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+            for(var i = 0; i<numCards; i++) {
+                this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq,"  ");
+                this.cardIdSeq++;
+            }
         }
 
     },
+    getCardString : function(cardId) {
+
+        return Poker.Utils.getCardString(this.getProtocolCard(cardId));
+    },
+    getProtocolCard : function(cardId) {
+        var suit = cardId%4;
+        var rank = cardId%13;
+        return {suit:suit,rank:rank};
+    },
     playerAction : function(playerId,action,amount) {
+        if(playerId>=this.capacity) {
+            return;
+        }
         if(!amount) {
             amount = 10000
         }

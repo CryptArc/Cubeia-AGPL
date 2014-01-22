@@ -17,11 +17,11 @@
 
 package com.cubeia.games.poker.admin.service.history;
 
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-
 import java.util.Date;
 import java.util.List;
+
+import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
 public interface HistoryService {
 

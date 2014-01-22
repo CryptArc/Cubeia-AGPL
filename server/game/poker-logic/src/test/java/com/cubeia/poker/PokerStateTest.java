@@ -47,9 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -151,12 +149,17 @@ public class PokerStateTest {
     @Test
     public void testNotifyPotUpdated() {
         state.pokerContext.currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
+        when(state.pokerContext.settings.getCurrency()).thenReturn(new Currency("EUR",2));
+
         PokerPlayer player0 = mock(PokerPlayer.class);
         when(player0.getId()).thenReturn(1337);
+        when(player0.getBetStack()).thenReturn(BigDecimal.ZERO);
         PokerPlayer player1 = mock(PokerPlayer.class);
+        when(player1.getBetStack()).thenReturn(BigDecimal.ZERO);
         when(player1.getId()).thenReturn(1338);
         PokerPlayer player2 = mock(PokerPlayer.class);
         when(player2.getId()).thenReturn(1339);
+        when(player2.getBetStack()).thenReturn(BigDecimal.ZERO);
 
         state.pokerContext.getCurrentHandPlayerMap().put(player0.getId(), player0);
         state.pokerContext.getCurrentHandPlayerMap().put(player1.getId(), player1);
@@ -166,9 +169,9 @@ public class PokerStateTest {
 
         Collection<Pot> pots = new ArrayList<Pot>();
         when(state.pokerContext.getPotHolder().getPots()).thenReturn(pots);
-        BigDecimal totalPot = new BigDecimal(3434);
+        BigDecimal totalPot = new BigDecimal("3434.00");
         when(state.pokerContext.getPotHolder().getTotalPotSize()).thenReturn(totalPot);
-        BigDecimal totalRake = new BigDecimal("4444");
+        BigDecimal totalRake = new BigDecimal("4444.00");
 
         when(state.pokerContext.getPotHolder().calculateRake()).thenReturn(new RakeInfoContainer(totalPot, totalRake, null));
         RakeInfoContainer rakeInfoContainer = mock(RakeInfoContainer.class);
@@ -178,7 +181,7 @@ public class PokerStateTest {
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);
 
-        verify(serverAdapter).notifyPotUpdates(pots, potTransitions);
+        verify(serverAdapter).notifyPotUpdates(pots, potTransitions, totalPot);
         verify(serverAdapter).notifyPlayerBalance(player0);
         verify(serverAdapter).notifyPlayerBalance(player1);
         verify(serverAdapter).notifyPlayerBalance(player2);

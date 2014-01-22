@@ -17,22 +17,25 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.system;
 
-import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
-import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
-import com.cubeia.games.poker.admin.wicket.BasePage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
+import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+
+@SuppressWarnings("serial")
 public class BroadcastMessage extends BasePage {
 
     private transient StateClientRegistryMBean mbeanProxy;
 
     String message;
 
-    public BroadcastMessage(PageParameters p) {
+    @SuppressWarnings("rawtypes")
+	public BroadcastMessage(PageParameters p) {
         super(p);
         FirebaseJMXFactory jmxFactory = new FirebaseJMXFactory();
         mbeanProxy = jmxFactory.createClientRegistryProxy();

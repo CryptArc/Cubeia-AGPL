@@ -60,7 +60,8 @@ Poker.TournamentPacketHandler = Class.extend({
         if (tournamentPacket.tableId != -1) {
             console.log(tournamentPacket);
             //TODO: we need snapshot to get capacity
-            new Poker.TableRequestHandler(tournamentPacket.tableId).openTable(10);
+            console.log("Handle open tournament table  " + tournamentPacket.tableId);
+            new Poker.TableRequestHandler(tournamentPacket.tableId).openTournamentTable(this.tournamentId,10);
         } else {
             console.log("Unable to find table in tournament");
         }
@@ -87,15 +88,23 @@ Poker.TournamentPacketHandler = Class.extend({
     },
     handleRemovedFromTournamentTable: function (packet) {
         console.log("Removed from table " + packet.tableid + " in tournament " + packet.mttid + " keep watching? " + packet.keepWatching);
-        this.tournamentManager.onRemovedFromTournament(packet.tableid, Poker.MyPlayer.id);
+        this.tournamentManager.onRemovedFromTournament(packet.tableid, packet.keepWatching);
     },
     handleSeatedAtTournamentTable: function (seated) {
         console.log("I was seated in a tournament, opening table");
         console.log(seated);
-        this.tournamentManager.setTournamentTable(seated.mttid, seated.tableid);
+        var oldTable = this.tournamentManager.setTournamentTable(seated.mttid, seated.tableid);
         new Poker.TableRequestHandler(seated.tableid).joinTable();
-
         this.tableManager.handleOpenTableAccepted(seated.tableid, 10);
+
+
+    },
+    /**
+     *
+     * @param {FB_PROTOCOL.NotifyChannelChatPacket} chatPacket
+     */
+    handleChatMessage : function(chatPacket) {
+        this.tournamentManager.onChatMessage(chatPacket.channelid,chatPacket.nick,chatPacket.message);
     },
     handleRegistrationResponse: function (registrationResponse) {
         console.log("Registration response:");

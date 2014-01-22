@@ -150,7 +150,7 @@ public class FirebaseServerAdapterTest {
 
         GameDataAction potAction = mock(GameDataAction.class);
         when(adapter.protocolFactory.createGameAction(Mockito.any(PotTransfers.class), Mockito.anyInt(), eq(1337))).thenReturn(potAction);
-        adapter.notifyPotUpdates(pots, potTransitions);
+        adapter.notifyPotUpdates(pots, potTransitions, BigDecimal.ONE);
     }
 
     @Test

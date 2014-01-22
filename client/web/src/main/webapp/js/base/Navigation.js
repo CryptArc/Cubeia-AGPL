@@ -8,11 +8,32 @@ Poker.Navigation = Class.extend({
      */
     views : null,
     init : function() {
+        var self = this;
         this.views = new Poker.Map();
         this.mountHandler("tournament", this.handleTournament);
         this.mountHandler("table", this.handleTable);
         this.mountHandler("section", this.handleSection);
-        this.mountHandler("filter", this.handleFilter);
+        var receiver = function(e){
+            self.handleMessage(e);
+        };
+        window.addEventListener("message",receiver,false);
+    },
+    handleMessage : function(e) {
+
+        var msg = null;
+        try {
+            msg = JSON.parse(e.data);
+        } catch(e) {
+            return;
+        }
+        if(msg.action == "tournament") {
+            this.handleTournament(msg.value);
+        } else if(msg.action == "table") {
+            this.handleTable(msg.value);
+        } else if(msg.action == "url") {
+            Poker.AppCtx.getViewManager().openExternalPage(msg.value);
+        }
+
     },
     mountHandler : function(id,handler) {
         this.views.put(id,handler);
@@ -34,12 +55,15 @@ Poker.Navigation = Class.extend({
             if(viewName!=null) {
                 var handler = this.views.get(viewName);
                 if(handler!=null) {
+                    var removeHash = false;
                     if(arg != "undefined") {
-                        handler.apply(this, [arg]);
+                        removeHash = handler.apply(this, [arg]);
                     } else  {
-                        handler.call(this);
+                        removeHash = handler.call(this);
                     }
-                    document.location.hash="";
+                    if(removeHash==true) {
+                        document.location.hash="";
+                    }
                 }
             }
         }
@@ -62,17 +86,12 @@ Poker.Navigation = Class.extend({
     },
     handleSection : function(sectionName) {
         if(typeof(sectionName)=="undefined") {
-            return;
+            return true;
         }
         if (sectionName == "sitandgo") {
             setTimeout("$('#sitAndGoMenu').click()", 200);
         }
-    },
-    handleFilter : function(filter) {
-        if (filter == 'xoc') {
-            // Note, just doing this because I had problems with scoping the filter variable within the setTimeout call, feel free to improve.
-            setTimeout0("$('#filterButtonXOC').click()", 300);
-        }
+        return false;
     }
 
 });

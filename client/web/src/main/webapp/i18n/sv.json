@@ -16,7 +16,7 @@
         "disconnected" : "Frånkopplad, försöker igen (försök %s)",
         "connecting" : "Ansluter",
         "connected" : "Ansluten",
-        "login-failed" : "Ansluten (Inloggningen misslyckades med status %s)"
+        "login-failed" : "Inloggningen misslyckades med status %s"
     },
     "lobby" : {
         "menu" : {
@@ -136,6 +136,7 @@
         "unregister" : "Avregistrera",
         "go-to-table" : "Gå till bord",
         "please-wait" : "Var god vänta...",
+        "tournament-id" : "Tournament id:",
         "menu" : {
             "players" : "Spelare",
             "tables" : "Bord",
@@ -147,7 +148,9 @@
             "player" : "Spelare",
             "stack" : "Stack",
             "winnings" : "Vinst",
-            "loading" : "Laddar spelare..."
+            "loading" : "Laddar spelare...",
+            "no-players" : "Inga spelare",
+            "search" : "Sök spelare"
         },
         "tables" : {
             "tables" : "Bord",

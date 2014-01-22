@@ -9,11 +9,6 @@ var Poker = Poker || {};
 Poker.SoundRepository = Class.extend({
     sounds: null,
 
-    init:function () {
-        this.sounds = [];
-        this.loadSounds();
-    },
-
     loadSounds:function () {
         var codec = this.getCodec();
         var path = contextPath+"/sounds/" + codec + "/";
@@ -47,6 +42,11 @@ Poker.SoundRepository = Class.extend({
         $.ga._trackEvent("audio_config", audioModel);
     },
 
+    init:function () {
+        this.sounds = [];
+
+    },
+
     getSound:function (soundId, selection) {
         return this.sounds[soundId][selection];
     },
@@ -58,12 +58,6 @@ Poker.SoundRepository = Class.extend({
         }
 
         var checkAudio = new Audio();
-        if (checkAudio.canPlayType('audio/ogg; codecs="vorbis"')) {
-            return "ogg";
-        }
-        if (checkAudio.canPlayType('audio/mpeg;')) {
-            return "mp3";
-        }
         if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
             return "wav";
         }

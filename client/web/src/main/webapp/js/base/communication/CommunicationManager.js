@@ -71,6 +71,11 @@ Poker.CommunicationManager = Class.extend({
     setIgnoreNextForceLogout : function() {
         this.ignoreNextForceLogout = true;
     },
+    logoutAndDisconnect : function() {
+        this.getConnector().logout(true);
+        this.getConnector().close();
+        this.connected = false;
+    },
     forceLogout : function(packet) {
         console.log("Forcing log out");
         console.log(packet);
@@ -114,7 +119,11 @@ Poker.CommunicationManager = Class.extend({
         }
         var self = this;
         FIREBASE.ReconnectStrategy.MAX_ATTEMPTS = 0;
-        this.connector = new FIREBASE.Connector(
+
+
+
+
+        this.connector = new CustomConnector(
             function(po) {
                 Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.handlePacket(po);
@@ -130,8 +139,24 @@ Poker.CommunicationManager = Class.extend({
                 self.statusCallback(status);
             });
 
+
         console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
-        this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
+        
+        var useCometd = $.url().param("cometd") != undefined;
+        
+        if (useCometd) {
+        	console.log("Using cometd transport");
+            this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", false, function() {
+            	org.cometd.JSON.toJSON = JSON.stringify;
+            	org.cometd.JSON.fromJSON = JSON.parse;
+                var cometd = new org.cometd.Cometd();
+                cometd.registerTransport("long-polling", new LongPollingTransportImpl());
+                return cometd
+            });
+        } else {
+        	console.log("Using websocket transport");
+           this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
+        }
     },
 
     /**
@@ -141,8 +166,16 @@ Poker.CommunicationManager = Class.extend({
      */
     doLogin : function(username,password) {
         Poker.MyPlayer.password = password;
-        this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        
+        if (Poker.MyPlayer.pureToken) {
+        	console.log("pure token");
+        	var tokenArray = utf8.toByteArray(Poker.MyPlayer.loginToken);
+        	this.connector.login("", "", Poker.SkinConfiguration.operatorId, tokenArray);
+        } else {
+        	this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
+        }
     },
+    
 
     handlePacket : function (packet) {
         var tournamentId = -1;
@@ -157,6 +190,12 @@ Poker.CommunicationManager = Class.extend({
 
         var tablePacketHandler = new Poker.TablePacketHandler(tableId);
         switch (packet.classId) {
+            case FB_PROTOCOL.SystemMessagePacket.CLASSID:
+                Poker.AppCtx.getDialogManager().displayGenericDialog({
+                    header : "System Message",
+                    message : packet.message
+                });
+                break;
             case FB_PROTOCOL.TableChatPacket.CLASSID:
                 tablePacketHandler.handleChatMessage(packet);
                 break;
@@ -221,6 +260,14 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.ServiceTransportPacket.CLASSID:
                 this.handleServicePacket(packet);
                 break;
+            case FB_PROTOCOL.VersionPacket.CLASSID:
+                Poker.AppCtx.getPingManager().versionPacketReceived();
+                break;
+            case FB_PROTOCOL.NotifyChannelChatPacket.CLASSID:
+                tournamentPacketHandler.handleChatMessage(packet);
+                break;
+            case FB_PROTOCOL.JoinChatChannelResponsePacket.CLASSID:
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
@@ -234,7 +281,7 @@ Poker.CommunicationManager = Class.extend({
         var config = JSON.parse(message);
         Poker.OperatorConfig.populate(config);
         console.log(config);
-        Poker.AppCtx.getConnectionManager().onClientReady();
+        Poker.AppCtx.getConnectionManager().onSettingsLoaded();
     },
 
     handleServicePacket:function (servicePacket) {
@@ -262,7 +309,6 @@ Poker.CommunicationManager = Class.extend({
                 break;
         }
     },
-
     handleGameDataPacket:function (gameTransportPacket) {
         if(Poker.Settings.isEnabled(Poker.Settings.Param.FREEZE_COMMUNICATION,null)==true) {
             return;
@@ -285,7 +331,7 @@ Poker.CommunicationManager = Class.extend({
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.GameState.CLASSID:
                 console.log(protocolObject.capacity);
-                this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy, protocolObject.variant,protocolObject.currency);
+                this.tableManager.notifyGameStateUpdate(tableId,protocolObject.capacity, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy, protocolObject.variant,protocolObject.currency);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 this.tableManager.updateHandStrength(tableId,protocolObject,false);
@@ -442,6 +488,50 @@ Poker.CommunicationManager = Class.extend({
         }
     }
 });
+
+var CustomConnector = function(a,b,c,d) {
+    this.sup = FIREBASE.Connector;
+    this.sup(a,b,c,d);
+
+    var self = this;
+    var superSendProtocolObject = this.sendProtocolObject;
+    this.sendProtocolObject = function(po) {
+        if(po.classId() != FB_PROTOCOL.VersionPacket.CLASSID) {
+            Poker.AppCtx.getConnectionManager().onUserActivity();
+        }
+        superSendProtocolObject.call(self,po);
+    };
+};
+
+var LongPollingTransportImpl = function() {
+    var _super = new org.cometd.LongPollingTransport();
+    var that = org.cometd.Transport.derive(_super);
+    
+    var _setHeaders = function(xhr, headers) {
+        var headerName;
+        if (headers) {
+            for (headerName in headers) {
+                if (headerName.toLowerCase() === "content-type") {
+                    continue
+                }
+                xhr.setRequestHeader(headerName, headers[headerName])
+            }
+        }
+    };                
+    
+    that.xhrSend = function(packet) {
+        return $.ajax({url: packet.url, async: packet.sync !== true, type: "POST", contentType: "application/json;charset=UTF-8", data: packet.body,withCredentials: true, 
+        	beforeSend: function(xhr) {
+                _setHeaders(xhr, packet.headers);
+                return true
+            }, success: packet.onSuccess,error: function(xhr, reason, exception) {
+                packet.onError(reason, exception)
+            }
+          }
+        );
+    };
+    return that;
+};
 
 FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {
     var _socket = this.getSocket();

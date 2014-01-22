@@ -342,7 +342,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public BigDecimal takeChipsOrGoAllIn(BigDecimal amount) {
         if (amount.compareTo(balance) >= 0) {
-            log.debug("Balance {} >= amount {}, going all-in.", balance, amount);
+            log.debug("Amount {} >= balance {}, going all-in.", amount, balance);
             amount = balance;
         }
         takeChips(amount);

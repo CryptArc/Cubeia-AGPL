@@ -14,7 +14,7 @@
         <module>client</module>
         <module>tools</module>
         <module>server</module>
-        <module>uar</module>
+        <module>system</module>
 	</modules>
 
     <organization>
@@ -34,10 +34,10 @@
     </prerequisites>
 
     <properties>
-        <firebase.version>1.9.19</firebase.version>
+        <firebase.version>1.10.1-BETA2-SNAPSHOT</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cubeia.network.version>1.5.1-SNAPSHOT</cubeia.network.version>
-        <jetty-version>8.1.4.v20120524</jetty-version> 
+        <cubeia.network.version>1.5.2-SNAPSHOT</cubeia.network.version>
+        <jetty-version>9.1.0.RC0</jetty-version> 
     </properties>
 
     <dependencies>
@@ -128,13 +128,13 @@
             <dependency>
                 <groupId>com.cubeia.firebase</groupId>
                 <artifactId>styx</artifactId>
-                <version>1.6.0</version>
+                <version>1.7.0</version>
             </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots</artifactId>
-                <version>1.11-SNAPSHOT</version>
+                <version>1.14-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -573,7 +573,11 @@
                 <artifactId>jetty-jndi</artifactId>
                 <version>${jetty-version}</version>
             </dependency> 
-                    
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-util</artifactId> 
+                <version>${jetty-version}</version>             
+            </dependency>         
         </dependencies>           
     </dependencyManagement>
 

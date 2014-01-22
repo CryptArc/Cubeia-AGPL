@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.context;
 
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.model.BlindsInfo;
@@ -285,7 +286,8 @@ public class PokerContext implements Serializable {
         BigDecimal totalPot = potHolder.getTotalPotSize();
 
         for (PokerPlayer player : getCurrentHandPlayerMap().values()) {
-            totalPot = totalPot.add(player.getBetStack()).setScale(settings.getCurrency().getFractionalDigits(), RoundingMode.DOWN);
+            Currency currency = settings.getCurrency();
+            totalPot = totalPot.add(player.getBetStack()).setScale(currency.getFractionalDigits(), RoundingMode.DOWN);
         }
 
         return totalPot;
@@ -347,6 +349,7 @@ public class PokerContext implements Serializable {
     public boolean isAtLeastAllButOneAllIn() {
         return getNumberOfAllinPlayers() >= currentHandPlayerMap.size() - 1;
     }
+
 
     public BigDecimal getPlayersTotalContributionToPot(PokerPlayer player) {
         if (potHolder != null) {

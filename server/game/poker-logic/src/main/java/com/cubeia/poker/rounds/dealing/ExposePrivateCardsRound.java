@@ -90,6 +90,11 @@ public class ExposePrivateCardsRound implements Round {
     }
 
     @Override
+    public boolean flipCardsOnAllInShowdown() {
+        return true;
+    }
+
+    @Override
     public boolean isFinished() {
         return true;
     }

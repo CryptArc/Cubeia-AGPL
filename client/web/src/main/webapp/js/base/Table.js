@@ -24,11 +24,14 @@ Poker.Table = Class.extend({
 
     tournamentClosed : false, // True means that this table belongs to a tournament that is closed.
 
+    playersToBeRemoved : null,
+
     init : function(id,capacity,name) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.players = new Poker.Map();
+        this.playersToBeRemoved = [];
     },
     leave : function() {
         this.layoutManager.onLeaveTableSuccess();
@@ -94,5 +97,15 @@ Poker.Table = Class.extend({
      */
     getLayoutManager : function() {
         return this.layoutManager;
+    },
+    addPlayerToBeRemoved : function(playerId) {
+        this.playersToBeRemoved.push(playerId);
+    },
+    clearPlayersToBeRemoved : function() {
+        this.playersToBeRemoved = [];
+    },
+    getPlayersToBeRemoved : function() {
+        return this.playersToBeRemoved;
     }
+
 });

@@ -174,6 +174,7 @@ Poker.Seat = Class.extend({
    activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");
        this.progressbar.start(timeToAct);
+       return true;
     },
     rebuyRequested: function(rebuyCost, chipsForRebuy, timeToAct) {
         this.showTimer(timeToAct);
@@ -199,7 +200,8 @@ Poker.Seat = Class.extend({
         this.actionText.html("").hide();
         if (hand.id != Poker.Hand.UNKNOWN.id) {
             this.handStrength.visible = true;
-            this.handStrength.html(hand.text).show();
+            this.handStrength.removeClass("long").removeClass("short");
+            this.handStrength.addClass(hand.type).html(hand.text).show();
         }
 
     },

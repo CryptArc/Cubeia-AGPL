@@ -92,9 +92,31 @@ Poker.LobbyLayoutManager = Class.extend({
         this.sitAndGoSortingFunction = func;
     },
     onLogin : function() {
-      this.addCurrencyFilters();
-      this.topMenu.selectItem("#cashGameMenu");
+        this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
+        this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+        this.addCurrencyFilters();
+        this.topMenu.selectItem("#cashGameMenu");
 
+    },
+    updateIFrameUrl : function(iframe,url) {
+        var iframe = $(iframe);
+        var loadingContainer = $(".top-promo-loading-container");
+        if(url!=null && $.trim(url).length>0) {
+            iframe.show();
+            loadingContainer.show();
+            iframe.on("load",function(e){
+                console.log("loaded!!");
+                $(this).addClass("loaded");
+                loadingContainer.addClass("loaded");
+                setTimeout(function(){
+                    loadingContainer.hide();
+                },500);
+            });
+            iframe.attr("src",url);
+        } else {
+            loadingContainer.hide();
+            iframe.hide();
+        }
     },
     addCurrencyFilters : function() {
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();

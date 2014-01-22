@@ -97,6 +97,7 @@
 
                                 skins.each() {
                                     if(!it.contains(".")) {
+
                                         def file = new File(skinsBuildDir + "/${it}/preload-images.js");
                                         file.createNewFile();
                                         def imageDir = skinsDir + "/" + it + "/images";
@@ -169,9 +170,9 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
+                <version>8.1.4.v20120524</version>
                 <configuration>
-					<useTestClasspath>true</useTestClasspath>
+                    <useTestClasspath>true</useTestClasspath>
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
@@ -259,6 +260,8 @@
                         <source>${js.dir}/base/tournaments/TournamentManager.js</source>
                         <source>${js.dir}/base/ui/MyActionsManager.js</source>
                         <source>${js.dir}/base/data/LobbyData.js</source>
+                        <source>${js.dir}/base/TimeStatistics.js</source>
+                        <source>${js.dir}/base/ui/Pager.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

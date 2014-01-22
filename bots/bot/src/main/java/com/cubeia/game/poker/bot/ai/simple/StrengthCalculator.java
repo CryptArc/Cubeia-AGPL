@@ -21,7 +21,7 @@ public class StrengthCalculator {
 		Strategy strategy = Strategy.WEAK;
 		
 		if (handStrength.getHandType() == communityHandStrength.getHandType()) {
-			return Strategy.NEUTRAL;
+			return Strategy.WEAK;
 		}
 
 		if (state.getPhase() == HandPhaseHoldem.PREFLOP) {
@@ -30,7 +30,7 @@ public class StrengthCalculator {
 				strategy = Strategy.WEAK;
 				break;
 			case HIGH_CARD:
-				if (handStrength.getHighestRank().ordinal() < 6) {
+				if (handStrength.getHighestRank().ordinal() < 9) {
 					strategy = Strategy.WEAK;
 				} else {
 					strategy = Strategy.NEUTRAL;

@@ -18,9 +18,13 @@ Poker.TableManager = Class.extend({
      * table packets, not very pretty maybe...
      */
     tableNames : null,
+
+    tablesToBeRemoved : null,
+
     init : function() {
         this.tables = new Poker.Map();
         this.tableNames = new Poker.Map();
+        this.tablesToBeRemoved = [];
     },
     /**
      * Checks whether a table exist
@@ -56,12 +60,14 @@ Poker.TableManager = Class.extend({
                 name = "Table"; //TODO: fix
             }
             var tableViewContainer = $(".table-view-container");
-            var templateManager = new Poker.TemplateManager();
+            var templateManager = Poker.AppCtx.getTemplateManager();
             var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
             var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
             this.createTable(tableId, capacity, name , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
         }
+
+
     },
 
     onPlayerLoggedIn : function() {
@@ -143,6 +149,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         table.handCount++;
         table.handId = handId;
+        this.removeToBeRemovedPlayers(tableId);
         table.layoutManager.onStartHand(handId);
     },
     /**
@@ -197,6 +204,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         if (table.handCount == handCount) {
             console.log("No hand started clearing table");
+            this.removeToBeRemovedPlayers(tableId);
             table.layoutManager.onStartHand(this.dealerSeatId);
         } else {
             console.log("new hand started, skipping clear table")
@@ -242,6 +250,7 @@ Poker.TableManager = Class.extend({
      * @param {String} playerName
      */
     addPlayer : function(tableId,seat,playerId, playerName) {
+        this.removeToBeRemovedPlayers(tableId);
         var self = this;
         console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
@@ -282,8 +291,32 @@ Poker.TableManager = Class.extend({
      * @param {Number} playerId
      */
     removePlayer : function(tableId,playerId) {
-        console.log("removing player with playerId " + playerId);
+        if(this.isTournamentTable(tableId)) {
+            console.log("adding player to be removed later, playerId " + playerId);
+            var table = this.tables.get(tableId);
+            table.addPlayerToBeRemoved(playerId);
+        } else {
+            this.removePlayerNow(tableId,playerId);
+        }
+
+    },
+    removeToBeRemovedPlayers : function(tableId) {
         var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
+        var playerIds = table.getPlayersToBeRemoved();
+        for(var i = 0; i<playerIds.length; i++) {
+            this.removePlayerNow(tableId,playerIds[i]);
+        }
+        table.clearPlayersToBeRemoved();
+    },
+    removePlayerNow : function(tableId,playerId) {
+        console.log("removing player with playerId " + playerId)
+        var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
         table.removePlayer(playerId);
         if(playerId == Poker.MyPlayer.id) {
             table.myPlayerSeat = null;
@@ -327,6 +360,9 @@ Poker.TableManager = Class.extend({
      */
     updatePlayerStatus : function(tableId, playerId, status, away, sitOutNextHand) {
         var table = this.tables.get(tableId);
+        if(table==null) {
+            return;
+        }
         var p = table.getPlayerById(playerId);
         if(p==null) {
             throw "Player with id " + playerId + " not found";
@@ -344,7 +380,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
-        table.getLayoutManager().onRequestPlayerAction(player, allowedActions, timeToAct, this.totalPot, fixedLimit);
+        table.getLayoutManager().onRequestPlayerAction(player, allowedActions, timeToAct, table.totalPot, fixedLimit);
     },
     handleRebuyOffer : function(tableId, playerId, rebuyCost, chipsForRebuy, timeToAct) {
         var table = this.tables.get(tableId);
@@ -389,13 +425,11 @@ Poker.TableManager = Class.extend({
      *
      * @param {Number} tableId
      * @param {Poker.Pot[]} pots
+     * @param {String} totalPot
      */
-    updatePots : function(tableId,pots) {
+    updatePots : function(tableId,pots,totalPot) {
         var table = this.tables.get(tableId);
-        var totalPot = 0;
-        for(var i = 0; i<pots.length; i++) {
-            totalPot+=pots[i].amount;
-        }
+
         table.getLayoutManager().onTotalPotUpdate(totalPot);
         table.getLayoutManager().onPotUpdate(pots);
     },
@@ -431,11 +465,14 @@ Poker.TableManager = Class.extend({
      * @param variant
      * @param  currency
      */
-    notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
+    notifyGameStateUpdate : function(tableId, capacity, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
         console.log("Seconds to next level: " + secondsToNextLevel);
         console.log("notifyGameStateUpdate = " + betStrategy);
         var table = this.getTable(tableId);
         table.betStrategy = betStrategy;
+        if(table.capacity!=capacity) {
+            table.capacity = capacity;
+        }
         table.currency = currency;
         this.notifyBlindsUpdated(tableId, newBlinds, currency, secondsToNextLevel);
         this.notifyVariantUpdated(tableId,variant);
@@ -470,16 +507,22 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onBettingRoundComplete();
 
     },
-    leaveTable : function(tableId) {
+    leaveTable : function(tableId,activatePrevious) {
+        if(typeof(activatePrevious)=="undefined") {
+            activatePrevious = true;
+        }
         console.log("REMOVING TABLE = " + tableId);
         var table = this.tables.remove(tableId);
         if (table == null) {
             console.log("table not found when removing " + tableId);
         } else {
-            table.getLayoutManager().onLeaveTableSuccess();
             table.leave();
         }
-        Poker.AppCtx.getViewManager().removeTableView(tableId);
+        Poker.AppCtx.getViewManager().removeTableView(tableId,activatePrevious);
+    },
+
+    scheduleRemoveTable : function(tableId) {
+        this.tablesToBeRemoved.push(tableId);
     },
     /**
      *
@@ -530,13 +573,24 @@ Poker.TableManager = Class.extend({
         var table = this.getTable(tableId);
         if(table!=null) {
             var player = table.getPlayerById(playerId);
-            if(player!=null) {
-                message = Poker.Utils.filterMessage(message);
-                table.getLayoutManager().onChatMessage(player,message);
-            } else {
-                console.log("onChatMessage: player not found at table");
+            message = Poker.Utils.filterMessage(message);
+            if(player==null && message.indexOf("watcher::")==0) {
+                message = message.substring(9, message.length);
+
+                var index = message.indexOf("::");
+                var name = message.substring(0,index);
+                message = message.substring(index+2,message.length);
+
+                player = { name : name + " (Watcher)" };
             }
+            if(player!=null) {
+                table.getLayoutManager().onChatMessage(player,message);
+            }
+
         }
+    },
+    isTournamentTable : function(tableId) {
+        return Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
     }
 
 });

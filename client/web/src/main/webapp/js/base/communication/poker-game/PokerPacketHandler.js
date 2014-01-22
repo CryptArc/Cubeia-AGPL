@@ -111,7 +111,7 @@ Poker.PokerPacketHandler = Class.extend({
             pots.push(new Poker.Pot(p.id,type, p.amount));
         }
         if(pots.length>0) {
-            this.tableManager.updatePots(this.tableId,pots);
+            this.tableManager.updatePots(this.tableId,pots,packet.totalPotSize);
         }
     },
     handleFuturePlayerAction : function(packet) {

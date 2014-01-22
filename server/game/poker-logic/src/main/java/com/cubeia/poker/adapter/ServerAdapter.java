@@ -163,7 +163,7 @@ public interface ServerAdapter {
      * @param pots           updated post
      * @param potTransitions pot transitions
      */
-    void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions);
+    void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions, BigDecimal totalPot);
 
     void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand, boolean away,
                                    boolean sitOutNextHand);

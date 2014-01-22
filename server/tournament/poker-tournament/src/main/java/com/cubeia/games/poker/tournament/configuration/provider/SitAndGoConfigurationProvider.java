@@ -23,5 +23,5 @@ import java.util.Collection;
 
 public interface SitAndGoConfigurationProvider {
 
-    public Collection<SitAndGoConfiguration> getConfigurations();
+    public Collection<SitAndGoConfiguration> getConfigurations(boolean includeArchived);
 }
