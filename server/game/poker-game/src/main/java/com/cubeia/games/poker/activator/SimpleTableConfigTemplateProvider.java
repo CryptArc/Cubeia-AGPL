@@ -20,6 +20,7 @@ package com.cubeia.games.poker.activator;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Singleton;
 
 import java.math.BigDecimal;
@@ -30,6 +31,8 @@ import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;
+import static com.cubeia.poker.variant.PokerVariant.TURKISH;
+import static java.util.Arrays.asList;
 
 @Singleton
 public class SimpleTableConfigTemplateProvider implements TableConfigTemplateProvider {
@@ -150,17 +153,35 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         crazyPineapple.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         crazyPineapple.setCurrency("EUR");
         
+        TableConfigTemplate turkish = new TableConfigTemplate();
+        turkish.setId(6);
+        turkish.setAnte(bd(100));
+        turkish.setSmallBlind(bd(0));
+        turkish.setBigBlind(bd(0));
+        turkish.setMinBuyIn(bd(1000));
+        turkish.setMaxBuyIn(bd(10000));
+        turkish.setSeats(5);
+        turkish.setVariant(TURKISH);
+        turkish.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        turkish.setBetStrategy(BetStrategyType.NO_LIMIT);
+        turkish.setTTL(60000);
+        turkish.setMinEmptyTables(1);
+        turkish.setMinTables(1);
+        turkish.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        turkish.setCurrency("EUR");
+        
         // return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina,crazyPineapple);
         
-        return Arrays.asList(
-        		texasNoLimit, 
-        		//texasFixedLimit, 
-        		//texasNoLimit2Plrs,
-        		//texasNoLimit5Plrs,
-        		texasNoLimit6Plrs,
-        		//telesina,
-        		crazyPineapple
-        		);
+        return asList(
+    		texasNoLimit, 
+    		//texasFixedLimit, 
+    		//texasNoLimit2Plrs,
+    		//texasNoLimit5Plrs,
+    		texasNoLimit6Plrs,
+    		telesina,
+    		crazyPineapple,
+    		turkish
+    	);
         
     }
 
