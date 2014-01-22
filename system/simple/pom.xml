@@ -63,7 +63,7 @@
                 <!-- plugin setting are inherited from root pom -->                          
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>1.9.20-SNAPSHOT</version>
+                <version>${firebase.version}</version>
                 <configuration>
                     <!-- override the base resources location-->
                     <overlaySourceDirectory>${project.build.directory}/classes/firebase</overlaySourceDirectory>
