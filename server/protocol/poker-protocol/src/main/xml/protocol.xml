@@ -142,6 +142,7 @@
         <value>TEXAS_HOLDEM</value>
         <value>TELESINA</value>
         <value>CRAZY_PINEAPPLE</value>
+        <value>TURKISH</value>
     </enum>
 
     <enum name="bet_strategy">
