@@ -20,30 +20,19 @@ package com.cubeia.poker.hand;
 import com.cubeia.poker.handhistory.api.BestHandType;
 
 public enum HandType {
-    NOT_RANKED(0),
-    HIGH_CARD(1),
-    PAIR(2),
-    TWO_PAIRS(3),
-    THREE_OF_A_KIND(4),
-    STRAIGHT(5),
-    FLUSH(7),
-    FULL_HOUSE(6),
-    FOUR_OF_A_KIND(8),
-    STRAIGHT_FLUSH(9),
-    ROYAL_STRAIGHT_FLUSH(10);
-
-    public int specialHandTypeValue;
-
-    private HandType(int specialHandTypeValue) {
-        this.specialHandTypeValue = specialHandTypeValue;
-    }
+    NOT_RANKED,
+    HIGH_CARD,
+    PAIR,
+    TWO_PAIRS,
+    THREE_OF_A_KIND,
+    STRAIGHT,
+    FLUSH,
+    FULL_HOUSE,
+    FOUR_OF_A_KIND,
+    STRAIGHT_FLUSH,
+    ROYAL_STRAIGHT_FLUSH;
 
     public BestHandType translate() {
         return BestHandType.values()[ordinal()];
     }
-    
-    public void setSpecialHandTypeValue(int specialHandTypeValue) {
-        this.specialHandTypeValue = specialHandTypeValue;
-    }
-
 }

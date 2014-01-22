@@ -103,75 +103,75 @@ public class TurkishHandStrengthEvaluator implements HandTypeEvaluator, Serializ
         // ROYAL_STRAIGHT_FLUSH
         strength = checkRoyalStraightFlush(hand, 5);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.ROYAL_STRAIGHT_FLUSH.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.ROYAL_STRAIGHT_FLUSH.ordinal());
         	return strength;
         }
 
         // STRAIGHT_FLUSH
         strength = checkStraightFlush(hand, 5);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.STRAIGHT_FLUSH.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.STRAIGHT_FLUSH.ordinal());
         	return strength;
         }
 
         // FOUR_OF_A_KIND
         strength = typeCalculator.checkManyOfAKind(hand, 4);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.FOUR_OF_A_KIND.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.FOUR_OF_A_KIND.ordinal());
         	return strength;
         }
 
         // FLUSH
         strength = typeCalculator.checkFlush(hand, 5);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.FLUSH.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.FLUSH.ordinal());
         	return strength;
         }
 
         // FULL_HOUSE
         strength = typeCalculator.checkFullHouse(hand);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.FULL_HOUSE.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.FULL_HOUSE.ordinal());
         	return strength;
         }
 
         // THREE_OF_A_KIND
         strength = typeCalculator.checkManyOfAKind(hand, 3);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.THREE_OF_A_KIND.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.THREE_OF_A_KIND.ordinal());
         	return strength;
         }
         
         // STRAIGHT
         strength = checkStraight(hand, 5);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.STRAIGHT.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.STRAIGHT.ordinal());
         	return strength;
         }
        
         // TWO_PAIRS
         strength = typeCalculator.checkTwoPairs(hand);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.TWO_PAIRS.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.TWO_PAIRS.ordinal());
         	return strength;
         }
 
         // ONE_PAIR
         strength = typeCalculator.checkManyOfAKind(hand, 2);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.PAIR.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.PAIR.ordinal());
         	return strength;
         }
 
         // HIGH_CARD
         strength = typeCalculator.checkHighCard(hand);
         if (strength != null) {
-        	strength.getHandType().specialHandTypeValue = TurkishHandType.HIGH_CARD.ordinal();
+//        	strength.getHandType().setSpecialHandTypeValue(TurkishHandType.HIGH_CARD.ordinal());
         	return strength;
         }
 
         strength = new HandStrength(HandType.NOT_RANKED);
-        strength.getHandType().specialHandTypeValue = TurkishHandType.NOT_RANKED.ordinal();
+//        strength.getHandType().setSpecialHandTypeValue(TurkishHandType.NOT_RANKED.ordinal());
         
         return strength;
     }

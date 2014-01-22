@@ -19,6 +19,8 @@ package com.cubeia.poker.variant.turkish.hand;
 
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

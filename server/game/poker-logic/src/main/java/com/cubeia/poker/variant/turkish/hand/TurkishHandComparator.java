@@ -3,6 +3,7 @@ package com.cubeia.poker.variant.turkish.hand;
 import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -31,7 +32,24 @@ public class TurkishHandComparator implements Comparator<Hand>, Serializable {
     private TurkishHandComparator() {
         playersInPot = 0;
     }
-
+    
+    private final static List<TurkishHandType> turkishHandOrder = Collections.unmodifiableList(Arrays.asList(
+        TurkishHandType.NOT_RANKED,
+        TurkishHandType.HIGH_CARD,
+        TurkishHandType.PAIR,
+        TurkishHandType.TWO_PAIRS,
+        TurkishHandType.THREE_OF_A_KIND,
+        TurkishHandType.STRAIGHT,
+        TurkishHandType.FLUSH,
+        TurkishHandType.FULL_HOUSE,
+        TurkishHandType.FOUR_OF_A_KIND,
+        TurkishHandType.STRAIGHT_FLUSH,
+        TurkishHandType.ROYAL_STRAIGHT_FLUSH
+    ));
+    
+    private int getTurkishHandTypeValue(HandType handType) {
+        return turkishHandOrder.get(handType.ordinal()).ordinal();
+    }
 	
 	public TurkishHandComparator(TurkishHandStrengthEvaluator turkishHandStrengthEvaluator, int playersInPot) {
 		 this.evaluator = turkishHandStrengthEvaluator;
@@ -54,7 +72,7 @@ public class TurkishHandComparator implements Comparator<Hand>, Serializable {
 	        }
 
 	        if (c1Strength.getHandType() != c2Strength.getHandType()) {
-	            return c1Strength.getHandType().specialHandTypeValue - c2Strength.getHandType().specialHandTypeValue;
+                return getTurkishHandTypeValue(c1Strength.getHandType()) - getTurkishHandTypeValue(c2Strength.getHandType());
 	        }
 
 	        if (c1Strength.getHandType() == HandType.FLUSH) {

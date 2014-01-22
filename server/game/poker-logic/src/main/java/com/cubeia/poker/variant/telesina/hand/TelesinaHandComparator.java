@@ -19,6 +19,7 @@ package com.cubeia.poker.variant.telesina.hand;
 
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
+import com.cubeia.poker.variant.turkish.hand.TurkishHandType;
 
 import java.io.Serializable;
 import java.util.*;
@@ -58,6 +59,24 @@ public class TelesinaHandComparator implements Comparator<Hand>, Serializable {
         this.playersInPot = playersInPot;
     }
 
+    private final static List<HandType> telesinaHandOrder = Collections.unmodifiableList(Arrays.asList(
+        HandType.NOT_RANKED,
+        HandType.HIGH_CARD,
+        HandType.PAIR,
+        HandType.TWO_PAIRS,
+        HandType.THREE_OF_A_KIND,
+        HandType.STRAIGHT,
+        HandType.FULL_HOUSE,
+        HandType.FLUSH,
+        HandType.FOUR_OF_A_KIND,
+        HandType.STRAIGHT_FLUSH,
+        HandType.ROYAL_STRAIGHT_FLUSH
+    ));
+    
+    private int getTelesinaHandTypeValue(HandType handType) {
+        return telesinaHandOrder.get(handType.ordinal()).ordinal();
+    }    
+    
     public int compare(Hand h1, Hand h2) {
         HandStrength c1Strength = evaluator.getBestHandStrength(h1);
         HandStrength c2Strength = evaluator.getBestHandStrength(h2);
@@ -74,7 +93,7 @@ public class TelesinaHandComparator implements Comparator<Hand>, Serializable {
         }
 
         if (c1Strength.getHandType() != c2Strength.getHandType()) {
-            return c1Strength.getHandType().specialHandTypeValue - c2Strength.getHandType().specialHandTypeValue;
+            return getTelesinaHandTypeValue(c1Strength.getHandType()) - getTelesinaHandTypeValue(c2Strength.getHandType());
         }
 
         if (c1Strength.getHandType() == HandType.FLUSH) {
