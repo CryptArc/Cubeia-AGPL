@@ -142,15 +142,16 @@ public class Hand implements Serializable {
         return handCardsWithoutIds.containsAll(givenCardsWithoutIds);
     }
 
-    public void removeCardById(Integer cardId) {
+    public Card removeCardById(Integer cardId) {
         log.debug("Removing card with id " + cardId);
         for (Card card : cards) {
             if (card.getId().equals(cardId)) {
                 cards.remove(card);
-                return;
+                return card;
             }
         }
         log.warn("Did not remove card with id " + cardId + " as it was not in this hand.");
+        return null;
     }
 
 }

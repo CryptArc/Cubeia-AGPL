@@ -248,7 +248,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     private void discardCard(Integer cardId) {
-        discardedCards.add(pocketCards.removeCardByid(cardId));
+        discardedCards.add(pocketCards.removeCardById(cardId));
     }
     
     public int getNumberOfDiscardedCards() {
