@@ -1,0 +1,89 @@
+.default-btn {
+    .border-radius(0.4em);
+    background-color: @lobby-button-default-bg-color;
+    color:#fff;
+    text-shadow:1px 2px @lobby-button-text-shadow;
+    .box-shadow(0px 1px 3px @lobby-button-box-shadow);
+    border: 1px solid transparent;
+    &:hover,&:focus {
+        color:@lobby-button-text-color;
+        text-decoration: none;
+    }
+    .linear-gradient(top,#dc3b3b 0%, #a81010 100%);
+}
+.secondary-button {
+    .default-btn;
+    color:@action-button-color;
+    font-weight: bold;
+    text-shadow:1px 1px 2px @action-button-secondary-color;
+    .linear-gradient(top,@action-button-gradient-start 0%, @action-button-gradient-end 100%);
+}
+h4.icon-header {
+    color:#fff;
+    font-size:1.3em;
+    font-family: "PT Sans", Arial, san-serif;
+
+    .icon {
+        background-color: #3b3b3b;
+        .border-radius(4em);
+        width:25px;
+        height:25px;
+        display: inline-block;
+        margin-right: 4px;
+    }
+}
+
+.level {
+    .border-radius(40px);
+    width:17px;
+    height:17px;
+    text-align: center;
+    .linear-gradient(top, #8e8e8e 0%, #666666 100%);
+    line-height: 1.5;
+    font-weight: bold;
+    font-size: 70%;
+    margin-left:-24px;
+    margin-top: 4px;
+    display: inline-block;
+    text-shadow: 0.1em 0.1em 0.05em #333;
+
+    &.level-2 {
+        .linear-gradient(top, #0e9704 0%, #087000 100%);
+    }
+    &.level-3{
+        .linear-gradient(top, #0fc002 0%, #0a7c01 100%);
+    }
+    &.level-4{
+        .linear-gradient(top, #0766a9 0%, #034c80 100%);
+    }
+    &.level-5{
+        .linear-gradient(top, #097dd0 0%, #0567ac 100%);
+    }
+    &.level-6{
+        .linear-gradient(top, #00b3b1 0%, #019e9c 100%);
+    }
+    &.level-7{
+        .linear-gradient(top, #03b26e 0%, #008853 100%);
+    }
+    &.level-8{
+        .linear-gradient(top, #e4400d 0%, #cd3000 100%);
+    }
+    &.level-9{
+        .linear-gradient(top, #eacc03 0%, #c2a900 100%);
+    }
+    &.level-10{
+        .linear-gradient(top, #fc9706 0%, #d17b00 100%);
+    }
+}
+.user-panel-level,.account-level {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: bold;
+    font-size: 90%;
+    margin-left: 4px;
+    margin-top: 5px;
+    display: inline-block;
+    text-shadow: 0.1em 0.1em 0.05em #333
+}
