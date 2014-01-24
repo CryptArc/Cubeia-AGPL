@@ -30,17 +30,15 @@ Poker.NotificationsManager = Class.extend({
         var nid = $.gritter.add(notification);
 
         var container = $("#gritter-item-"+nid).find(".notification-actions");
-
-        $.each(notification.actions,function(i,a){
-            var act = $("<a/>").addClass("notification-action").append(a.text).click(function(){
-                a.callback();
-                $.gritter.removeAll();
+        if(notification.actions && notification.actions.length>0) {
+            $.each(notification.actions,function(i,a){
+                var act = $("<a/>").addClass("notification-action").append(a.text).click(function(){
+                    a.callback();
+                    $.gritter.removeAll();
+                });
+                container.append(act);
             });
-            container.append(act);
-        });
-        console.log("NIIIID = " + nid);
-
-        console.log(notification);
+        }
     }
 
 

@@ -66,6 +66,10 @@ Poker.Animation = Class.extend({
     next : function(el) {
 
     },
+    addNextAnimation : function(animation) {
+        this.nextAnimation = animation;
+        return this.nextAnimation;
+    },
     build : function() {
 
     },

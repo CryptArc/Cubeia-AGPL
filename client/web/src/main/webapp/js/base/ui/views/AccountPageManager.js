@@ -75,7 +75,7 @@ Poker.AccountPageManager = Class.extend({
                     var totalLevelXp = profile.nextLevelXp - profile.thisLevelXp;
                     var progress = 100*(profile.xp - profile.thisLevelXp)/totalLevelXp;
                     $("#nextLevel").html(1+profile.level);
-                    $("#userLevel").addClass("level-"+profile.level);
+                    $("#userLevel").attr("class","").addClass("level").addClass("level-"+profile.level);
                     $("#xpProgress").width(progress+"%");
                     $("#currentXp").html(profile.xp + " / " + profile.nextLevelXp);
                 } else {

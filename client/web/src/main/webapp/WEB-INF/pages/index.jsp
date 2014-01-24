@@ -757,6 +757,14 @@
                     Buy Credits
                 </div>
             </div>
+
+        </div>
+        <div class="xp-progress-notification" style="display:none;">
+
+            <div class="xp-progress-container">
+                <div class="bar" style="width:50%;"></div>
+            </div>
+
         </div>
 
         <div class="profile-view" id="editProfileView" style="display: none;">

@@ -285,6 +285,7 @@ Poker.CommunicationManager = Class.extend({
     },
 
     handleServicePacket:function (servicePacket) {
+        console.log("SERVICE PACKET = ", servicePacket);
         var valueArray =  FIREBASE.ByteArray.fromBase64String(servicePacket.servicedata);
         var serviceData = new FIREBASE.ByteArray(valueArray);
         var length = serviceData.readInt();
@@ -307,6 +308,10 @@ Poker.CommunicationManager = Class.extend({
             case com.cubeia.games.poker.routing.service.io.protocol.TournamentIdResponse.CLASSID:
                 Poker.AppCtx.getTournamentManager().handleTournamentId(protocolObject.id);
                 break;
+            case com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage.CLASSID:
+                console.log("SP = ", protocolObject);
+                this.handleGameData(-1,servicePacket.pid,protocolObject.packet,false);
+                break;
         }
     },
     handleGameDataPacket:function (gameTransportPacket) {
@@ -319,8 +324,19 @@ Poker.CommunicationManager = Class.extend({
         }
         var tableId = gameTransportPacket.tableid;
         var playerId = gameTransportPacket.pid;
-        var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
-        var gameData = new FIREBASE.ByteArray(valueArray);
+        this.handleGameData(playerId,tableId,gameTransportPacket.gamedata,true);
+
+    },
+    handleGameData : function(playerId,tableId, packet,base64Encoded) {
+        var gameData = null;
+        if(base64Encoded==true) {
+            var valueArray =  FIREBASE.ByteArray.fromBase64String(packet);
+            gameData = new FIREBASE.ByteArray(valueArray);
+        } else {
+            gameData = new FIREBASE.ByteArray(packet);
+        }
+
+
         var length = gameData.readInt();
         var classId = gameData.readUnsignedByte();
 

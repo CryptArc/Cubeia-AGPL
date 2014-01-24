@@ -6,6 +6,7 @@ var Poker = Poker || {};
  * @type {Poker.TableLayoutManager}
  */
 Poker.TableLayoutManager = Class.extend({
+
     tableViewContainer : null,
     capacity : 10,
     seatTemplate : null,
@@ -41,6 +42,7 @@ Poker.TableLayoutManager = Class.extend({
 
     tournamentTable : false,
     active : true,
+    profileUpdateHandler : null,
 
     /**
      *
@@ -132,6 +134,10 @@ Poker.TableLayoutManager = Class.extend({
 
         $(".future-action").show();
         this.updateVariant(com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM);
+        this.profileUpdateHandler = function(profile){
+            self.updateLevel(Poker.MyPlayer.id,profile.level);
+        };
+        Poker.AppCtx.getProfileManager().addProfileChangeListener(this.profileUpdateHandler);
     },
     updateVariant : function(variant) {
         console.log("UPDATING VARIANT",variant);
@@ -552,6 +558,7 @@ Poker.TableLayoutManager = Class.extend({
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
+        Poker.AppCtx.getProfileManager().removeProfileChangeListener(this.profileUpdateHandler);
     },
     _hideSeatActionText : function() {
         var seats = this.seats.values();

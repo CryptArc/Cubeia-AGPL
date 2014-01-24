@@ -68,7 +68,7 @@ Poker.Seat = Class.extend({
      */
     updateLevel : function(level) {
         if(level && level>0) {
-            this.levelElement.addClass("level-"+level);
+            this.levelElement.attr("class","player-level level").addClass("level-"+level);
         } else {
             this.levelElement.hide();
         }

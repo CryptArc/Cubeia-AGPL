@@ -228,6 +228,10 @@
                         <source>${js.dir}/base/ui/Log.js</source>
                         <source>${js.dir}/base/ui/TableEventLog.js</source>
                         <source>${js.dir}/base/ui/TableLayoutManager.js</source>
+                        <source>${js.dir}/base/communication/player-api/PlayerApi.js</source>
+                        <source>${js.dir}/base/ui/profile/Profile.js</source>
+                        <source>${js.dir}/base/ui/profile/MyProfile.js</source>
+                        <source>${js.dir}/base/ui/profile/ProfileManager.js</source>
                         <source>${js.dir}/base/Table.js</source>
                         <source>${js.dir}/base/Player.js</source>
                         <source>${js.dir}/base/PlayerTableStatus.js</source>

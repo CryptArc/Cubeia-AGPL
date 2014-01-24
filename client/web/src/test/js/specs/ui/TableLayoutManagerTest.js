@@ -4,7 +4,9 @@ describe("Poker.TableLayoutManager Test", function(){
 
     //Mock classes
     Poker.AppCtx = {
-        getSoundRepository : function(){ return new Poker.SoundRepository(); }
+        getSoundRepository : function(){ return new Poker.SoundRepository(); },
+        getProfileManager : function() { return new Poker.ProfileManager(); },
+        getPlayerApi : function() { return new Poker.PlayerApi(""); }
     };
     var MockBuyInDialog = Class.extend({});
     var MockMyActionsManager = Class.extend({});

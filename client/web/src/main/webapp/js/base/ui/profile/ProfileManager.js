@@ -16,6 +16,10 @@ Poker.ProfileManager = Class.extend({
     addProfileChangeListener : function(listener){
         this.listeners.push(listener);
     },
+    removeProfileChangeListener : function(listener) {
+        var index = this.listeners.indexOf(listener);
+        this.listeners.splice(index,1);
+    },
     notifyListeners : function() {
         for(var i =0; i<this.listeners.length; i++) {
             this.listeners[i](this.myPlayerProfile);
@@ -32,9 +36,54 @@ Poker.ProfileManager = Class.extend({
             }
         );
     },
-    updateLevel : function(level) {
+    updateXp : function(xp,level) {
+        console.log("UPDATE LEVEL ===== "+xp +"=" + level);
+        var before = this.calculateProgress();
+        this.myPlayerProfile.xp = xp;
+        if(this.myPlayerProfile.level != level) {
+            return;
+        }
+        var after = this.calculateProgress();
+
+        if(after-before>5) {
+            var am = new Poker.AnimationManager();
+            var container = $(".xp-progress-notification");
+            var bar = container.find(".bar");
+            bar.width(before+"%");
+            container.show();
+            var hideXp  = new Poker.CSSClassAnimation(container)
+                .addClass("hide-xp").addCallback(function(){
+                    setTimeout(function(){
+                        container.hide().removeClass("hide-xp").removeClass("show-xp");
+                    },1000);
+                });
+
+
+            var progressXp =  new Poker.CSSAttributeAnimation(bar)
+                .addAttribute("width",after+"%")
+                .addCallback(function(){
+                    hideXp.start(am);
+                });
+
+            var showXp = new Poker.CSSClassAnimation(container)
+                .addClass("show-xp")
+                .addCallback(function(){
+                    progressXp.start(am);
+                });
+            showXp.start(am);
+        }
+
+    },
+    updateLevel : function(level,xp) {
         this.myPlayerProfile.level = level;
+        this.myPlayerProfile.xp = xp;
         this.notifyListeners();
+    },
+    calculateProgress : function() {
+        var profile = this.myPlayerProfile;
+        var totalLevelXp = profile.nextLevelXp - profile.thisLevelXp;
+        var progress = 100*(profile.xp - profile.thisLevelXp)/totalLevelXp;
+        return progress;
     },
     loadMyPlayerProfile : function() {
         var self = this;
