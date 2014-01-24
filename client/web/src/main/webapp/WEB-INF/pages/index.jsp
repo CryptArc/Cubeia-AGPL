@@ -239,7 +239,7 @@
                     Poker.SkinConfiguration.onLoad();
                 }
 
-                //less.watch(); //development only
+                // less.watch(); //development only
                 $(".describe").describe();
 
                 $("title").html(Poker.SkinConfiguration.title);
