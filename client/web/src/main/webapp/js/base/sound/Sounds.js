@@ -20,6 +20,6 @@ Poker.Sounds = {
     "action-big-blind"           :{id:"BIG_BLIND"         ,  delay:250,   soundList:[{file:"raise_bet"  ,gain:0.3}]    },
     "dead-small-blind"           :{id:"DEAD_SMALL_BLIND"  ,  delay:0,     soundList:[{file:"raise_bet"      ,gain:1}]    },
     "big-blind-plus-dead-small-blind":{id:"BIG_BLIND_PLUS_DEAD_SMALL_BLIND", delay:0, soundList:[{file:"chippile_1" ,gain:1}] },
-    PROGRESSION_LEVEL_UP:        {id: "PROGRESSION_LEVEL_UP",       delay: 0,   soundList: [{file:"level_up_1"     ,gain: 0.2}]},
+    PROGRESSION_LEVEL_UP:        {id: "PROGRESSION_LEVEL_UP",       delay: 0,   soundList: [{file:"level_up_1"     ,gain: 0.1}]},
     PROGRESSION_ACHIEVEMENT:     {id: "PROGRESSION_ACHIEVEMENT",       delay: 0,   soundList: [{file:"achievement_1"     ,gain: 0.2}]}
 }
