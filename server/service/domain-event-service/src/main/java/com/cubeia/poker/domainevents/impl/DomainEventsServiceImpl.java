@@ -1,5 +1,13 @@
 package com.cubeia.poker.domainevents.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.events.client.EventClient;
@@ -9,6 +17,7 @@ import com.cubeia.events.event.GameEventType;
 import com.cubeia.events.event.achievement.BonusEvent;
 import com.cubeia.events.event.poker.PokerAttributes;
 import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.action.service.ClientServiceAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.server.SystemException;
@@ -16,16 +25,14 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
+import com.cubeia.games.poker.io.protocol.AchievementNotificationPacket;
+import com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage;
 import com.cubeia.poker.domainevents.api.BonusEventWrapper;
 import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.google.inject.Singleton;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 @Singleton
 public class DomainEventsServiceImpl implements Service, DomainEventsService, EventListener {
@@ -44,6 +51,9 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
     CashGamesBackendService cashGameBackend;
 	
 	ObjectMapper mapper = new ObjectMapper();
+	
+	/** We only need writing to so injected factory is needed */
+	private StyxSerializer serializer = new StyxSerializer(null);
 	
     public void init(ServiceContext con) throws SystemException {
     }
@@ -77,42 +87,44 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		log.info("On Bonus Event ("+event.hashCode()+"): "+event);
 		try {
 			int playerId = Integer.parseInt(event.player);
+			String json = mapper.writeValueAsString(event);
+			BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
+			wrapper.broadcast = event.broadcast;
 			
-			Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
-			for (int tableId : seatedTables.keySet()) {
-				String json = mapper.writeValueAsString(event);
-				BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
-				wrapper.broadcast = event.broadcast;
-				
-				log.debug("Bonus Event send JSON: "+json);
-				
-				GameObjectAction action = new GameObjectAction(tableId);
-				action.setAttachment(wrapper);
-				router.getRouter().dispatchToGame(tableId, action );
+			if (event.broadcast) {
+				log.info("Send bonus event through table: "+event);
+				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
+				for (int tableId : seatedTables.keySet()) {
+					GameObjectAction action = new GameObjectAction(tableId);
+					action.setAttachment(wrapper);
+					router.getRouter().dispatchToGame(tableId, action );
+				}
+			} else {
+				sendToPlayer(wrapper);
 			}
-			
-			
-//			if (event.broadcast) {
-//				Send through table 
-//			} else {
-//				// Send directly to player only  TODO: It does not seem to work to send GameObjectAction to players directly =/
-//				We need to send a ServiceAction instead of GameAction
-//				GameObjectAction action = createBonusAction(event, playerId, json, -1);
-//				router.getRouter().dispatchToPlayer(playerId, action);
-//			}
 			
 		} catch (Exception e) {
 			log.error("Failed to handle bonus event["+event+"]", e);
 		}
 	}
-
-//	private GameObjectAction createBonusAction(BonusEvent event, int playerId, String json, int tableId) {
-//		BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
-//		wrapper.broadcast = event.broadcast;
-//		GameObjectAction action = new GameObjectAction(tableId);
-//		action.setAttachment(wrapper);
-//		return action;
-//	}
+	
+	
+	private void sendToPlayer(BonusEventWrapper wrapper) throws IOException {
+		int playerId = wrapper.playerId;
+		
+		AchievementNotificationPacket notification = new AchievementNotificationPacket();
+		notification.playerId = playerId;
+		notification.message = wrapper.event;
+		
+		ByteBuffer notificationData = serializer.pack(notification);
+		PokerProtocolMessage msg = new PokerProtocolMessage(notificationData.array());
+		ByteBuffer msgData = serializer.pack(msg);
+		
+		ClientServiceAction action = new ClientServiceAction(playerId, 0, msgData.array());
+		log.info("Send bonus event as client action: "+action);
+		router.getRouter().dispatchToPlayer(playerId, action);
+	}
+	
 
 	@Override
 	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance) {

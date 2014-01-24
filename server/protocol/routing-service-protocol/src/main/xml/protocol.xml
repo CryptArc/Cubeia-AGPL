@@ -57,5 +57,9 @@
     <struct name="tournament_id_response">
         <var name="id" type="int32"/>
     </struct>
+    
+    <struct name="poker_protocol_message">
+        <list name="packet" type="uint8"/>       
+    </struct>
 
 </protocol>

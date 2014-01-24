@@ -149,6 +149,12 @@
                 <artifactId>poker-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>com.cubeia.games</groupId>
+                <artifactId>routing-service-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.cubeia.games.common</groupId>

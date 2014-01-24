@@ -39,7 +39,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
-
+        
+        <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>routing-service-protocol</artifactId>
+        </dependency>
+        
     </dependencies>
 
 
