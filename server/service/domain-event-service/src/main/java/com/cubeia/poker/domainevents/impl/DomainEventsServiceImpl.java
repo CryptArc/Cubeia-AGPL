@@ -88,7 +88,16 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 				
 				GameObjectAction action = new GameObjectAction(tableId);
 				action.setAttachment(wrapper);
-				router.getRouter().dispatchToGame(tableId, action );
+				
+				if (event.broadcast) {
+					// Send through table
+					router.getRouter().dispatchToGame(tableId, action );
+				} else {
+					// Send directly to player only
+					router.getRouter().dispatchToPlayer(playerId, action);
+				}
+				
+				
 			}
 			
 		} catch (Exception e) {
