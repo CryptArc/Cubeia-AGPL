@@ -79,7 +79,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			int playerId = Integer.parseInt(event.player);
 			String json = mapper.writeValueAsString(event);
 			
-			if (event.broadcast) {
+			//  if (event.broadcast) {
 				// Send through table
 				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
 				for (int tableId : seatedTables.keySet()) {
@@ -87,11 +87,11 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 					router.getRouter().dispatchToGame(tableId, action );
 				}
 			
-			} else {
-				// Send directly to player only
-				GameObjectAction action = createBonusAction(event, playerId, json, -1);
-				router.getRouter().dispatchToPlayer(playerId, action);
-			}
+//			} else {
+//				// Send directly to player only  TODO: It does not seem to work to send GameObjectAction to players directly =/
+//				GameObjectAction action = createBonusAction(event, playerId, json, -1);
+//				router.getRouter().dispatchToPlayer(playerId, action);
+//			}
 			
 		} catch (Exception e) {
 			log.error("Failed to handle bonus event["+event+"]", e);
