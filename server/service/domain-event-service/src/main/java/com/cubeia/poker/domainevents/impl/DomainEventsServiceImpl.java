@@ -77,18 +77,26 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		log.info("On Bonus Event ("+event.hashCode()+"): "+event);
 		try {
 			int playerId = Integer.parseInt(event.player);
-			String json = mapper.writeValueAsString(event);
 			
-			//  if (event.broadcast) {
-				// Send through table
-				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
-				for (int tableId : seatedTables.keySet()) {
-					GameObjectAction action = createBonusAction(event, playerId, json, tableId);
-					router.getRouter().dispatchToGame(tableId, action );
-				}
+			Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
+			for (int tableId : seatedTables.keySet()) {
+				String json = mapper.writeValueAsString(event);
+				BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
+				wrapper.broadcast = event.broadcast;
+				
+				log.debug("Bonus Event send JSON: "+json);
+				
+				GameObjectAction action = new GameObjectAction(tableId);
+				action.setAttachment(wrapper);
+				router.getRouter().dispatchToGame(tableId, action );
+			}
 			
+			
+//			if (event.broadcast) {
+//				Send through table 
 //			} else {
 //				// Send directly to player only  TODO: It does not seem to work to send GameObjectAction to players directly =/
+//				We need to send a ServiceAction instead of GameAction
 //				GameObjectAction action = createBonusAction(event, playerId, json, -1);
 //				router.getRouter().dispatchToPlayer(playerId, action);
 //			}
@@ -98,13 +106,13 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		}
 	}
 
-	private GameObjectAction createBonusAction(BonusEvent event, int playerId, String json, int tableId) {
-		BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
-		wrapper.broadcast = event.broadcast;
-		GameObjectAction action = new GameObjectAction(tableId);
-		action.setAttachment(wrapper);
-		return action;
-	}
+//	private GameObjectAction createBonusAction(BonusEvent event, int playerId, String json, int tableId) {
+//		BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
+//		wrapper.broadcast = event.broadcast;
+//		GameObjectAction action = new GameObjectAction(tableId);
+//		action.setAttachment(wrapper);
+//		return action;
+//	}
 
 	@Override
 	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
