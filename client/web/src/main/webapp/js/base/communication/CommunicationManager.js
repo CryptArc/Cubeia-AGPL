@@ -479,6 +479,7 @@ Poker.CommunicationManager = Class.extend({
                 this.tableManager.notifyTournamentDestroyed(tableId);
                 break;
             case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:
+                console.log(protocolObject);
                 new Poker.AchievementPacketHandler(tableId).handleAchievementNotification(protocolObject.playerId, protocolObject.message);
                 break;
             default:

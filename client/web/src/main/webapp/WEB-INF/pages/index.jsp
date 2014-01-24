@@ -101,6 +101,9 @@
     <script src="${cp}/js/base/communication/CommunicationManager.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="${cp}/js/base/communication/player-api/PlayerApi.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/profile/Profile.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/profile/MyProfile.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/profile/ProfileManager.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/Settings.js"></script>
 
@@ -322,7 +325,6 @@
         <div class="user-panel">
             <div class="user-panel-name username"></div>
             <div class="user-panel-avatar"></div>
-            <div class="level user-panel-level" style="display:none;"></div>
         </div>
     </div>
 
@@ -696,22 +698,31 @@
                 <span data-i18n="user.log-out"></span>
             </div>
             <div id="internalAccountContent">
-                <div class="account-block" id="account_details">
-                    <div class="account-row">
-                        Screen Name:
-                        <div id="user_name"></div>
+                <div class="account-block details" id="account_details">
+                    <div class="left">
+                        <div id="accountAvatar" class="player-avatar"></div>
+                        <div id="userLevel" class="level"></div>
                     </div>
-                    <div class="account-row">
-                        Level:
-                        <div id="user_level"></div>
+                    <div class="right">
+                        <div id="user_name" class="name"></div>
+
+                        <div id="xpContainer" class="xp">
+                            <div class="xp-progress-container">
+                                <div id="xpProgress" class="bar"></div>
+                            </div>
+                            <div class="xp-info">
+                                <div class="next-level-container">Next level: <span id="nextLevel"></span></div>
+                                <div class="current-xp" id="currentXp"></div>
+                            </div>
+                        </div>
                     </div>
               </div>
               <div class="account-block" id="accountBalancesContainer">
 
               </div>
               <div class="account-block " id="bonusCollectContainer">
-                    <div id="topUpCurrencies"></div>
                     <h3>Top up</h3>
+                    <div id="topUpCurrencies"></div>
                     <div class="refill_field">
 
                         <div class="top-up-progress">
@@ -768,7 +779,7 @@
     <div class="account-row">
         <span class="balance-header">Balance:</span>
         <div>
-            <span class="account-balance">{{balance}}</span>
+            <span class="account-balance">{{formattedBalance}}</span>
         </div>
     </div>
     {{/accounts}}

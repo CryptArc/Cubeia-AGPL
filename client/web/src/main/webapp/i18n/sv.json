@@ -1,4 +1,8 @@
 {
+    "level-up" : {
+        "title" : "Level up!",
+        "message" : "You have reached level "
+    },
     "tabs" : {
         "lobby" : "Lobby"
     },

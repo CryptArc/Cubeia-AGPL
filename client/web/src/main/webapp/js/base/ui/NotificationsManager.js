@@ -74,6 +74,11 @@ Poker.TextNotifcation = Poker.Notification.extend({
         return { text : this.text, title : this.title, image : this.imageUrl };
     }
 });
+Poker.LevelUpNotification = Poker.TextNotifcation.extend({
+    init : function(level) {
+        this._super(i18n.t("level-up.title"), i18n.t("level-up.message") + level, contextPath + "/skins/default/images/levels/level-"+level+".png");
+    }
+});
 
 Poker.NotificationAction = Class.extend({
     text : null,

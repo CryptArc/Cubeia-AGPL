@@ -71,15 +71,7 @@ Poker.AppCtx = Class.extend({
             return mainMenuManager;
         };
 
-        var accountPageManager = new Poker.AccountPageManager();
 
-        /**
-         *
-         * @return {Poker.AccountPageManager}
-         */
-        this.getAccountPageManager = function() {
-            return accountPageManager;
-        };
 
 
         var lobbyLayoutManager = new Poker.LobbyLayoutManager();
@@ -211,6 +203,7 @@ Poker.AppCtx = Class.extend({
             return playerApi;
         };
 
+
         var notificationsManager = new Poker.NotificationsManager();
         /**
          * @return {Poker.NotificationsManager}
@@ -227,6 +220,23 @@ Poker.AppCtx = Class.extend({
             return achievementManager;
         }
 
+        var profileManager = new Poker.ProfileManager();
+        /**
+         * @return {Poker.ProfileManager}
+         */
+        this.getProfileManager = function() {
+            return profileManager;
+        };
+
+        var accountPageManager = new Poker.AccountPageManager();
+
+        /**
+         *
+         * @return {Poker.AccountPageManager}
+         */
+        this.getAccountPageManager = function() {
+            return accountPageManager;
+        };
         var pingManager = new Poker.PingManager();
         /**
          * @return {Poker.PingManager}

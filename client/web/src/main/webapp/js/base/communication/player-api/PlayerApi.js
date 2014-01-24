@@ -32,6 +32,10 @@ Poker.PlayerApi = Class.extend({
 
         });
     },
+    requestExperienceInfo : function(sessionToken,callback,errorCallback) {
+        var url = this.baseUrl + "/player/experience/poker";
+        this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
+    },
     requestBonusInfo : function(sessionToken,callback,errorCallback) {
         var url = this.baseUrl + "/player/bonus";
         this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
