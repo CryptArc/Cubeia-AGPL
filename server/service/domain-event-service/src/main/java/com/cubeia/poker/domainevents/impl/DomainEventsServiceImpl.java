@@ -77,32 +77,33 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		log.info("On Bonus Event ("+event.hashCode()+"): "+event);
 		try {
 			int playerId = Integer.parseInt(event.player);
+			String json = mapper.writeValueAsString(event);
 			
-			Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
-			for (int tableId : seatedTables.keySet()) {
-				String json = mapper.writeValueAsString(event);
-				BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
-				wrapper.broadcast = event.broadcast;
-				
-				log.debug("Bonus Event send JSON: "+json);
-				
-				GameObjectAction action = new GameObjectAction(tableId);
-				action.setAttachment(wrapper);
-				
-				if (event.broadcast) {
-					// Send through table
+			if (event.broadcast) {
+				// Send through table
+				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
+				for (int tableId : seatedTables.keySet()) {
+					GameObjectAction action = createBonusAction(event, playerId, json, tableId);
 					router.getRouter().dispatchToGame(tableId, action );
-				} else {
-					// Send directly to player only
-					router.getRouter().dispatchToPlayer(playerId, action);
 				}
-				
-				
+			
+			} else {
+				// Send directly to player only
+				GameObjectAction action = createBonusAction(event, playerId, json, -1);
+				router.getRouter().dispatchToPlayer(playerId, action);
 			}
 			
 		} catch (Exception e) {
 			log.error("Failed to handle bonus event["+event+"]", e);
 		}
+	}
+
+	private GameObjectAction createBonusAction(BonusEvent event, int playerId, String json, int tableId) {
+		BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
+		wrapper.broadcast = event.broadcast;
+		GameObjectAction action = new GameObjectAction(tableId);
+		action.setAttachment(wrapper);
+		return action;
 	}
 
 	@Override
