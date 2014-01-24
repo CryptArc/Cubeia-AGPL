@@ -7,6 +7,7 @@ Poker.ProfileManager = Class.extend({
      * @type {Poker.MyProfile}
      */
     myPlayerProfile : null,
+
     listeners : null,
     init : function() {
         this.playerApi = Poker.AppCtx.getPlayerApi();
