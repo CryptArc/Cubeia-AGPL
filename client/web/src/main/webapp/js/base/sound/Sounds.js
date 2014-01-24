@@ -13,12 +13,13 @@ Poker.Sounds = {
     TIME_WARNING:                 {id: "TIME_WARNING",       delay: 0,   soundList: [{file:"warning"     ,gain: 0.5}], alert : true},
     TIME_WARNING_FIRST:           {id: "TIME_WARNING",       delay: 0,   soundList: [{file:"warning"     ,gain: 0.1}], alert : true},
     "action-call"                :{id:"CALL"              ,  delay:0,     soundList:[{file:"raise_bet"  ,gain:0.5},{file:"raise_bet"  ,gain:0.3},{file:"raise_bet"  ,gain:0.1}]    },
-    "action-check"               :{id:"CHECK"             ,  delay:0,     soundList:[{file:"knockcheck_1",gain:0.1},{file:"knockcheck_1",gain:0.2}]    },
+    "action-check"               :{id:"CHECK"             ,  delay:0,     soundList:[{file:"knockcheck_1",gain:0.2},{file:"knockcheck_1",gain:0.2}]    },
     "action-bet"                 :{id:"BET"               ,  delay:0,   soundList:[{file:"raise_more"  ,gain:0.2},{file:"raise_more"  ,gain:0.1}]    },
     "action-raise"               :{id:"RAISE"             ,  delay:0,   soundList:[{file:"raise_more"  ,gain:0.3},{file:"raise_more"  ,gain:0.2},{file:"raise_more"  ,gain:0.1}]    },
     "action-small-blind"         :{id:"SMALL_BLIND"       ,  delay:100,   soundList:[{file:"raise_bet"  ,gain:0.1}]    },
     "action-big-blind"           :{id:"BIG_BLIND"         ,  delay:250,   soundList:[{file:"raise_bet"  ,gain:0.2}]    },
     "dead-small-blind"           :{id:"DEAD_SMALL_BLIND"  ,  delay:0,     soundList:[{file:"raise_bet"      ,gain:1}]    },
-    "big-blind-plus-dead-small-blind":{id:"BIG_BLIND_PLUS_DEAD_SMALL_BLIND", delay:0, soundList:[{file:"chippile_1" ,gain:1}] }
-
+    "big-blind-plus-dead-small-blind":{id:"BIG_BLIND_PLUS_DEAD_SMALL_BLIND", delay:0, soundList:[{file:"chippile_1" ,gain:1}] },
+    PROGRESSION_LEVEL_UP:        {id: "PROGRESSION_LEVEL_UP",       delay: 0,   soundList: [{file:"level_up"     ,gain: 0.5}]},
+    PROGRESSION_ACHIEVEMENT:     {id: "PROGRESSION_ACHIEVEMENT",       delay: 0,   soundList: [{file:"achievement"     ,gain: 0.5}]}
 }
