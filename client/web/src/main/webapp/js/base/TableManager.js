@@ -283,6 +283,9 @@ Poker.TableManager = Class.extend({
         if(profile!=null) {
             table.getLayoutManager().updateAvatar(playerId, profile.externalAvatarUrl);
             table.getLayoutManager().updateLevel(playerId,profile.level);
+            if (profile.equippedItems && profile.equippedItems.length > 0) {
+                table.getLayoutManager().updatePlayerItem(playerId, profile.equippedItems[0].imageUrl);
+            }
         } else {
             table.getLayoutManager().updateAvatar(playerId, null);
             table.getLayoutManager().updateLevel(playerId,-1);

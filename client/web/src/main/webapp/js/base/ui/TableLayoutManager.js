@@ -185,6 +185,9 @@ Poker.TableLayoutManager = Class.extend({
     updateLevel : function(playerId,level) {
         this.getSeatByPlayerId(playerId).updateLevel(level);
     },
+    updatePlayerItem : function(playerId,itemImageUrl) {
+        this.getSeatByPlayerId(playerId).updatePlayerItem(itemImageUrl);
+    },
     isConfirmLeave : function() {
         if(this.myPlayerSeatId!=-1) {
             var seat = this.seats.get(this.myPlayerSeatId);

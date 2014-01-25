@@ -25,6 +25,7 @@ Poker.Seat = Class.extend({
     currentProgressBarAnimation: null,
     dealerButtonTarget : null,
     levelElement : null,
+    itemElement : null,
     hand : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
@@ -51,6 +52,7 @@ Poker.Seat = Class.extend({
         this.seatBase = this.seatElement.find(".avatar-base");
         this.dealerButtonTarget = this.seatElement.find(".dealer-button-target");
         this.levelElement = this.seatElement.find(".player-level");
+        this.itemElement = this.seatElement.find(".player-item");
 
         this.reset();
     },
@@ -62,6 +64,17 @@ Poker.Seat = Class.extend({
             this.avatarElement.addClass("avatar" + (this.player.id % 9));
         }
     },
+
+    updatePlayerItem : function(url) {
+        if(url!=null) {
+            this.itemElement.css("backgroundImage","url('"+url+"')");
+            this.itemElement.show();
+            // this.itemElement.addClass("show-player-item");
+        } else {
+            this.itemElement.hide();
+        }
+    },
+
     /**
      * Updates the players level or hides it if < 0
      * @param level
