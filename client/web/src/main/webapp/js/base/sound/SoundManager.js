@@ -34,7 +34,6 @@ Poker.SoundManager = Class.extend({
         if ((playSounds || playAlerts) && this.ready == true) {
             var soundPlayer = this.soundPlayer;
             setTimeout(function() {
-                console.log("PLAY MY AWESOME SOUND: ", sound);
                 soundPlayer.play(sound, selection);
             }, sound.delay);
         }
