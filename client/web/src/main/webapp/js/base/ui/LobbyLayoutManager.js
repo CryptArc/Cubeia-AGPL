@@ -335,11 +335,12 @@ Poker.LobbyLayoutManager = Class.extend({
         $('#lobby').show();
 
         var container = $("#tableListContainer");
-        container.empty();
+        var height = container.height();
+        container.height(height+"px").empty();
 
         var template = this.templateManager.getRenderTemplate(settings.listTemplateId);
 
-        $("#tableListContainer").html(template.render({}));
+        container.html(template.render({}));
 
         var listContainer =  container.find(".table-list-item-container");
 
@@ -363,6 +364,7 @@ Poker.LobbyLayoutManager = Class.extend({
         if (count == 0) {
             listContainer.append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
+        container.height("");
     },
     getTableItemHtml : function (templateId, data) {
         var item = this.templateManager.render(templateId, data);

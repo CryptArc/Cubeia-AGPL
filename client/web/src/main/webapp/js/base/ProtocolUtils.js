@@ -62,7 +62,6 @@ Poker.ProtocolUtils = Class.extend({
         return data;
     },
     parseLevel : function(rule) {
-        console.log("RULE = ", rule);
         if(rule!=null) {
             var regex = /\{level\} * > *([0-9]+)/g;
             var level = 0;

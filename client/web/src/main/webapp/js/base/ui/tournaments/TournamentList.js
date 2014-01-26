@@ -27,7 +27,8 @@ Poker.TournamentList = Poker.Pager.extend({
     },
     displayItems : function(players) {
         var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("tournamentPlayerListItem");
-        this.container.empty();
+        var height = this.container.height();
+        this.container.height(height+"px").empty();
         var self = this;
         $.each(players,function(i,p) {
             self.container.append(template.render(p));
@@ -60,6 +61,7 @@ Poker.TournamentList = Poker.Pager.extend({
         }
         this.pagerContainer.find(".active").removeClass("active");
         this.pagerContainer.find(".page-"+this.activePage).addClass("active");
+        this.container.height("");
     },
     setItems : function(items) {
         this._super(items);

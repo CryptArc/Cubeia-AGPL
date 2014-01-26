@@ -60,9 +60,11 @@ Poker.LobbyData = Class.extend({
             var current = this.items.get(item.id);
             if(current!=null) {
                 current = this._update(current,item);
+                current.update = true;
                 this.items.put(item.id,current);
             } else {
                 current = item;
+                current.update = false;
                 this.items.put(item.id,current);
             }
             if(this.validator.validate(current)) {
@@ -72,6 +74,7 @@ Poker.LobbyData = Class.extend({
 
     },
     _update : function(current,update) {
+
         for(var x in current) {
             if(typeof(update[x])!="undefined" && update[x]!=null) {
                 current[x] = update[x];
