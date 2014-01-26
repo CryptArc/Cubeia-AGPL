@@ -837,6 +837,9 @@
     <div class="player-item">
 
     </div>
+    <div class="player-award">
+
+    </div>
     <div class="seat-progressbar">
         <canvas width="20" height="20"></canvas>
     </div>

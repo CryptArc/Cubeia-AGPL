@@ -279,12 +279,14 @@ Poker.TableManager = Class.extend({
         }
     },
     updatePlayerProfile : function(playerId,table,profile) {
-        console.log("PROFILE====",profile);
         if(profile!=null) {
             table.getLayoutManager().updateAvatar(playerId, profile.externalAvatarUrl);
             table.getLayoutManager().updateLevel(playerId,profile.level);
-            if (profile.equippedItems && profile.equippedItems.length > 0) {
-                table.getLayoutManager().updatePlayerItem(playerId, profile.equippedItems[0].imageUrl);
+            if (profile.items && profile.items.award) {
+                table.getLayoutManager().updatePlayerAward(playerId, profile.items.award.imageUrl, profile.items.award.description);
+            }
+            if (profile.items && profile.items.inventory) {
+                table.getLayoutManager().updatePlayerItem(playerId, profile.items.inventory.imageUrl, profile.items.inventory.description);
             }
         } else {
             table.getLayoutManager().updateAvatar(playerId, null);

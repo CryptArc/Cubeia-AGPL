@@ -33,7 +33,7 @@ Poker.SoundRepository = Class.extend({
                 var file = path+Poker.Sounds[sound].soundList[i].file+"."+codec;
                 var audio = new Poker.SoundSource(file, audioModel, context);
                 audio.setGain(Poker.Sounds[sound].soundList[i].gain);
-                console.log("Loading to " + audioModel + " from file " + file);
+                // console.log("Loading to " + audioModel + " from file " + file);
                 soundSources[i] = audio;
             }
             this.sounds[Poker.Sounds[sound].id] = soundSources;

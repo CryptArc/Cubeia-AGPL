@@ -25,6 +25,7 @@ Poker.Seat = Class.extend({
     currentProgressBarAnimation: null,
     dealerButtonTarget : null,
     levelElement : null,
+    awardElement : null,
     itemElement : null,
     hand : null,
     init: function(elementId, seatId, player, animationManager) {
@@ -52,6 +53,7 @@ Poker.Seat = Class.extend({
         this.seatBase = this.seatElement.find(".avatar-base");
         this.dealerButtonTarget = this.seatElement.find(".dealer-button-target");
         this.levelElement = this.seatElement.find(".player-level");
+        this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
 
         this.reset();
@@ -65,11 +67,21 @@ Poker.Seat = Class.extend({
         }
     },
 
-    updatePlayerItem : function(url) {
+    updatePlayerAward : function(url, description) {
+        if(url!=null) {
+            this.awardElement.css("backgroundImage","url('"+url+"')");
+            this.awardElement.attr('alt', description);
+            this.awardElement.show();
+        } else {
+            this.awardElement.hide();
+        }
+    },
+
+    updatePlayerItem : function(url, description) {
         if(url!=null) {
             this.itemElement.css("backgroundImage","url('"+url+"')");
+            this.itemElement.attr('alt', description);
             this.itemElement.show();
-            // this.itemElement.addClass("show-player-item");
         } else {
             this.itemElement.hide();
         }
