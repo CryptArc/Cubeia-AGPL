@@ -157,6 +157,7 @@ Poker.LobbyManager = Class.extend({
     clearLobby : function () {
         this.cashGamesLobbyData.clear();
         this.tournamentLobbyData.clear();
+        this.sitAndGoLobbyData.clear();
         $("#tableListContainer").empty();
     },
 
