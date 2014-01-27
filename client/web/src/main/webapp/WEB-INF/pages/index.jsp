@@ -21,7 +21,7 @@
     <c:if test="${not empty cssOverride}">
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
-
+    <link id="overrideSkinCss" rel="stylesheet" type="text/css" href="http://quarterpoker.com/css/style.css?v=2" />
 
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
@@ -585,7 +585,9 @@
             <div class="container">
 
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
+                        <div class="logo-container">
+                        </div>
                         <nav class="navbar-inverse currencies">
                             <div class="filter-group currencies">
                                 <ul id="currencyMenu" class="nav nav-pills">
@@ -595,8 +597,6 @@
                                 </ul>
                             </div>
                         </nav>
-                        <div class="logo-container">
-                        </div>
                     </div>
                     <div class="col-sm-4">
 
