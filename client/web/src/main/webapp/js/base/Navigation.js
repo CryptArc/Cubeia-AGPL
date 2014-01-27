@@ -23,7 +23,7 @@ Poker.Navigation = Class.extend({
         var msg = null;
         try {
             msg = JSON.parse(e.data);
-        } catch(e) {
+        } catch(ex) {
             return;
         }
         if(msg.action == "tournament") {
