@@ -47,13 +47,13 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.10.0-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.10.0-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/i18next-1.6.0.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/jquery.gritter.js" type="text/javascript"></script>
+    <script type="text/javascript" src="${cp}/js/lib/cubeia/firebase-js-api-1.10.0-javascript.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/cubeia/firebase-protocol-1.10.0-javascript.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/quo.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/i18next-1.6.0.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/jquery.gritter.js"></script>
 
 
     <script type="text/javascript" src="${cp}/js/lib/PxLoader-0.1.js"></script>
@@ -1403,7 +1403,7 @@
 
                             </div>
                             <div>
-                                <input type="text" class="filter-input" placeholder="{{t "tournament-lobby.players.search" }}"/>
+                                <input type="text" class="filter-input" placeholder="{{t 'tournament-lobby.players.search' }}"/>
                             </div>
                             <table class="table default-table player-list">
                                 <thead>
