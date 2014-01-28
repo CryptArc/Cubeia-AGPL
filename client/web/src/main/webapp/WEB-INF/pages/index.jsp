@@ -892,6 +892,10 @@
     <div class="hand-strength">
 
     </div>
+    <div class="discard-description" style="display: none;">
+        {{t "discard.description" }}
+        <div class="discard-arrow"></div>
+    </div>
 </div>
 
 

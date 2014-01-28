@@ -338,11 +338,22 @@
 .my-player-seat .action-amount.placed {
     .transform(translate3d(0,0,0));
 }
-.cards-container {
-  &.discard-enable {
-    .player-card-container:hover img {
-        .transition-transform(0.3s ease-out);
-        .transform(translate3d(0,-25%,0));
-      }
-  }
+.variant-crazy-pineapple {
+    .my-player-seat {
+        .cards-container {
+            &.discard-enable {
+                .player-card-container:hover img {
+                    .transition-transform(0.3s ease-out);
+                    .transform(translate3d(0,-25%,0));
+                }
+            }
+
+            .player-card-container.discarded img {
+                .transform(translate3d(0,-25%,0));
+                opacity:0.8;
+            }
+
+        }
+    }
 }
+

@@ -45,11 +45,18 @@ Poker.PlayerHand = Class.extend({
     },
 
     toggleDiscardedCard : function(cardId) {
+        var card = this.cards.get(cardId);
         if (this.discards.contains(cardId)) {
-            var card = this.discards.remove(cardId);
+            this.discards.remove(cardId);
+            card.getJQElement().removeClass("discarded");
         } else {
             if ( this.discards.size() < this.maxDiscards ) {
                 this.discards.put(cardId, cardId);
+                card.getJQElement().addClass("discarded");
+            } else if(this.discards.size()>0) {
+                this.toggleDiscardedCard(this.discards.values()[0]);
+                this.discards.put(cardId, cardId);
+                card.getJQElement().addClass("discarded");
             }
         }
     },

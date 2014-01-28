@@ -1,4 +1,7 @@
 {
+    "discard" : {
+        "description" : "Choose card to discard"
+    },
     "level-up" : {
         "title" : "Level up!",
         "message" : "You have reached level "
@@ -76,7 +79,8 @@
             "sit-in" : "Sit-in",
             "rebuy" : "Rebuy",
             "decline" : "Decline",
-            "add-on" : "Add-on"
+            "add-on" : "Add-on",
+            "discard": "Discard card"
 
         },
         "future" : {
