@@ -18,6 +18,7 @@
 package com.cubeia.poker.variant;
 
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
@@ -26,6 +27,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.SitoutCalculator;
@@ -125,4 +127,21 @@ public abstract class AbstractGameType implements GameType {
             listener.handFinished(handResult, status);
         }
     }
+
+    @Override
+    public boolean act(PokerAction action) {
+        Round currentRound = getCurrentRound();
+        boolean handled = currentRound.act(action);
+        if(handled) {
+            getServerAdapter().removeTimeout(action.getPlayerId());
+        }
+        if (currentRound.isFinished()) {
+            handleFinishedRound();
+        }
+        return handled;
+    }
+
+    protected abstract Round getCurrentRound();
+
+    protected abstract void handleFinishedRound();
 }

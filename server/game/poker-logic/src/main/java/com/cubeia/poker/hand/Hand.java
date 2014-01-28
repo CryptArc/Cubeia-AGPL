@@ -153,4 +153,21 @@ public class Hand implements Serializable {
         log.warn("Did not remove card with id " + cardId + " as it was not in this hand.");
     }
 
+    public boolean containsCards(List<Integer> cardIds) {
+       for(Integer cardId : cardIds) {
+            if(!containsCard(cardId)) {
+                return false;
+            }
+       }
+       return true;
+    }
+
+    public boolean containsCard(Integer cardId) {
+        for(Card card : cards) {
+            if(card.getId().equals(cardId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

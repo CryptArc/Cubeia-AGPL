@@ -845,6 +845,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
         timeoutCache.addTimeout(table.getId(), pid, actionId);
     }
 
+    public void removeTimeout(int playerId){
+        timeoutCache.removeTimeout(table.getId(),playerId,table.getScheduler());
+    }
     /**
      * Remove all players in state LEAVING or DISCONNECTED
      */

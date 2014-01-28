@@ -176,6 +176,7 @@ Poker.TableLayoutManager = Class.extend({
         } else if (actionType.id == Poker.ActionType.DISCARD.id) {
             var discards = this.seats.get(this.myPlayerSeatId).hand.getDiscards();
             new Poker.PokerRequestHandler(this.tableId).sendDiscards(discards);
+            return;
         }
         new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
     },
@@ -513,6 +514,7 @@ Poker.TableLayoutManager = Class.extend({
         }
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot,fixedLimit){
+
         var seats = this.seats.values();
         for (var s = 0; s<seats.length; s++) {
             seats[s].inactivateSeat();

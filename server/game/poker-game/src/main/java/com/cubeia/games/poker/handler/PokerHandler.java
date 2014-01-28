@@ -95,11 +95,7 @@ public class PokerHandler extends DefaultPokerHandler {
             ThreadLocalProfiler.start();
             try {
                 PokerAction action = actionTransformer.transform(playerId, packet, state.getSettings().getCurrency());
-
-                boolean handled = state.act(action);
-                if (handled) {
-                    timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
-                }
+                state.act(action);
             } finally {
                 // Report profiling if slow
                 long elapsed = System.currentTimeMillis() - start;

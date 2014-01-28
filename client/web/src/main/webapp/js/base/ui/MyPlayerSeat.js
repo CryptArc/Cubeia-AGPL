@@ -62,6 +62,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
         console.log("REQUESTED ACTION MAIN POT = " + mainPot);
+        console.log("REQUEST PLAYER ACTION = " + allowedActions)
         var self = this;
         var auto = this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
             var time = timeToAct;

@@ -109,9 +109,9 @@ public class CrazyPineappleTest {
         act(p[0], CHECK);
 
         // Discard round
-        discard(p[1], 0);
+        discard(p[1], 3);
         discard(p[2], 6);
-        discard(p[0], 11);
+        discard(p[0], 0);
 
         // Turn
         timeout();

@@ -18,7 +18,6 @@
 package com.cubeia.poker.variant;
 
 import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.DeckProvider;
 import com.cubeia.poker.hand.Hand;
@@ -47,11 +46,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
@@ -104,29 +99,26 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
         currentRound = rounds.next().create(context, serverAdapterHolder);
     }
 
+
     @Override
-    public boolean act(PokerAction action) {
-        boolean handled = currentRound.act(action);
-        checkFinishedRound();
-        return handled;
+    protected Round getCurrentRound() {
+        return currentRound;
     }
 
-    private void checkFinishedRound() {
-        if (currentRound.isFinished()) {
-            handleFinishedRound();
-        }
-    }
-
+    @Override
     public void handleFinishedRound() {
-        currentRound.visit(this);
-        if (isHandFinished()) {
-            handleFinishedHand();
-        } else if (allInShowdown()) {
-            currentRound = new ExposePrivateCardsRound(context, serverAdapterHolder, revealOrderCalculator);
-            scheduleRoundTimeout();
-        } else {
-            currentRound = rounds.next().create(context, serverAdapterHolder);
+        if (currentRound.isFinished()) {
+            currentRound.visit(this);
+            if (isHandFinished()) {
+                handleFinishedHand();
+            } else if (allInShowdown()) {
+                currentRound = new ExposePrivateCardsRound(context, serverAdapterHolder, revealOrderCalculator);
+                scheduleRoundTimeout();
+            } else {
+                currentRound = rounds.next().create(context, serverAdapterHolder);
+            }
         }
+
     }
 
     private void reportPotUpdate() {
@@ -181,7 +173,7 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     public void timeout() {
         log.debug("Timeout");
         currentRound.timeout();
-        checkFinishedRound();
+        handleFinishedRound();
     }
 
     @Override

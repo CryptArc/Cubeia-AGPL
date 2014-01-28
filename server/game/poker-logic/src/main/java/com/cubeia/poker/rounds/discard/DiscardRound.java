@@ -74,22 +74,29 @@ public class DiscardRound implements Round {
 
         Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>();
          for (PokerPlayer player : players) {
-             if (player.hasFolded()) {
-                 activePlayers.remove(player);
-             } else if(player.isAway() || player.isSittingOut()){
-                //we could wait til all non sitting out/away players have acted but
-                //for now it's their loss, fold them at beginning of round
-                activePlayers.remove(player);
-                autoDiscardCards(player);
-
+             if(!player.hasFolded()) {
+                 if( player.isAway() || player.isSittingOut() ) {
+                     //we could wait til all non sitting out/away players have acted but
+                     //for now it's their loss, fold them at beginning of round
+                     autoDiscardCards(player);
+                 } else  {
+                     activePlayers.add(player);
+                 }
              }
+
          }
-         requestDiscardFromAllPlayersInHand(activePlayers);
+         if(activePlayers.size()>0) {
+            requestDiscardFromAllPlayersInHand(activePlayers);
+         } else {
+             log.debug("No players sitting in (folded,away or sitting out). Scheduling 0s timeout");
+             serverAdapterHolder.get().scheduleTimeout(0);
+         }
+
     }
 
     private void requestDiscardFromAllPlayersInHand(Collection<PokerPlayer> players) {
         ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
-         for (PokerPlayer player : context.getPlayersInHand()) {
+         for (PokerPlayer player : players) {
              ActionRequest request = getActionRequest(player);
              requests.add(request);
          }
@@ -123,12 +130,24 @@ public class DiscardRound implements Round {
 
 
     private boolean isValidAction(PokerAction action, PokerPlayer player) {
-        /*  if (!action.getPlayerId().equals(playerToAct)) {
-            log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
-            return false;
+        if(action instanceof DiscardAction) {
+            DiscardAction discard  = (DiscardAction) action;
+            if(player.hasActed() || player.hasFolded()) {
+                return false;
+            } else {
+                List<Integer> cards = discard.getCardsToDiscard();
+                if( cards == null ) {
+                    return false;
+                } else if( cards.size() < cardsToDiscard || cards.size() > cardsToDiscard ) {
+                    return false;
+                } else if(!player.getPocketCards().containsCards(cards)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         }
-       */
-        return true;
+        return false;
     }
 
     private Collection<PokerPlayer> getAllSeatedPlayers() {

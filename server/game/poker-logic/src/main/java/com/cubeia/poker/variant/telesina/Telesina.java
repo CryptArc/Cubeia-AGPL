@@ -17,7 +17,6 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
@@ -124,26 +123,13 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
         resetBettingRoundId();
     }
 
+
+
     @Override
-    public boolean act(PokerAction action) {
-        ThreadLocalProfiler.add("Telesina.act.start");
-        boolean handled = getCurrentRound().act(action);
-        checkFinishedRound();
-        ThreadLocalProfiler.add("Telesina.act.stop");
-        return handled;
-    }
-
-    private void checkFinishedRound() {
-        if (getCurrentRound().isFinished()) {
-            ThreadLocalProfiler.add("Telesina.checkFinishedRound");
-            handleFinishedRound();
-        }
-    }
-
     public void handleFinishedRound() {
-        ThreadLocalProfiler.add("Telesina.handleFinishedRound");
-        log.debug("handle finished round: {}", getCurrentRound());
-        getCurrentRound().visit(this);
+        if(currentRound.isFinished()) {
+            getCurrentRound().visit(this);
+        }
     }
 
     private void reportPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
@@ -209,7 +195,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
     public void timeout() {
         log.debug("Timeout");
         getCurrentRound().timeout();
-        checkFinishedRound();
+        handleFinishedRound();
     }
 
     @Override

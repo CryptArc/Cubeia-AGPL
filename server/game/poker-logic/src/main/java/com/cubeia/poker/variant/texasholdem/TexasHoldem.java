@@ -18,15 +18,9 @@
 package com.cubeia.poker.variant.texasholdem;
 
 import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.blinds.BlindsCalculator;
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Hand;
-import com.cubeia.poker.hand.HandInfo;
-import com.cubeia.poker.hand.IndexCardIdGenerator;
-import com.cubeia.poker.hand.Shuffler;
-import com.cubeia.poker.hand.StandardDeck;
+import com.cubeia.poker.hand.*;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
@@ -35,18 +29,9 @@ import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.betting.ActionRequestFactory;
-import com.cubeia.poker.rounds.betting.BetStrategy;
-import com.cubeia.poker.rounds.betting.BetStrategyFactory;
-import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.betting.BettingRoundName;
-import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
+import com.cubeia.poker.rounds.betting.*;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
-import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
-import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.Dealer;
-import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
@@ -61,9 +46,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.cubeia.poker.rounds.betting.BettingRoundName.NOTHING;
-import static com.cubeia.poker.rounds.betting.BettingRoundName.PRE_FLOP;
-import static com.cubeia.poker.rounds.betting.BettingRoundName.RIVER;
+import static com.cubeia.poker.rounds.betting.BettingRoundName.*;
 
 public class TexasHoldem extends AbstractGameType implements RoundVisitor, Dealer {
 
@@ -103,19 +86,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         roundName = NOTHING;
     }
 
-    @Override
-    public boolean act(PokerAction action) {
-        boolean handled = currentRound.act(action);
-        checkFinishedRound();
-        return handled;
-    }
-
-    private void checkFinishedRound() {
-        if (currentRound.isFinished()) {
-            handleFinishedRound();
-        }
-    }
-
     private void dealPocketCards(PokerPlayer p, int n) {
         log.debug("Dealing cards to " + p.getId());
         for (int i = 0; i < n; i++) {
@@ -124,8 +94,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         getServerAdapter().notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
     }
 
+    @Override
     public void handleFinishedRound() {
-        currentRound.visit(this);
+        if(currentRound.isFinished()) {
+            currentRound.visit(this);
+        }
     }
 
     private void reportPotUpdate() {
@@ -195,6 +168,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     @Override
+    protected Round getCurrentRound() {
+        return currentRound;
+    }
+
+    @Override
     public void scheduleRoundTimeout() {
         long time = context.getTimingProfile().getTime(Periods.RIVER);
         int nonFoldedPlayers = context.countNonFoldedPlayers();
@@ -216,7 +194,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     public void timeout() {
         log.debug("Timeout");
         currentRound.timeout();
-        checkFinishedRound();
+        handleFinishedRound();
     }
 
     @Override

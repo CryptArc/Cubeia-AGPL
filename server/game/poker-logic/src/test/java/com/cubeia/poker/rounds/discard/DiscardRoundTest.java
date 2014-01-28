@@ -1,6 +1,8 @@
 package com.cubeia.poker.rounds.discard;
 
 import com.cubeia.poker.action.DiscardAction;
+import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -23,8 +25,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -195,5 +196,128 @@ public class DiscardRoundTest {
         verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
         assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(2));
         assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(1));
+    }
+
+
+    @Test
+    public void testAutoDiscard() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+
+        p1.setHasActed(false);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        when(context.getPlayerInCurrentHand(1)).thenReturn(p1);
+        when(context.getPlayerInCurrentHand(2)).thenReturn(p2);
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        Assert.assertFalse(p2.hasActed());
+        assertThat(p2.getPocketCards().getCards().size(), is(3));
+        Assert.assertFalse(p1.hasActed());
+        assertThat(p1.getPocketCards().getCards().size(), is(3));
+        round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{7})));
+        assertTrue(p1.hasActed());
+        round.timeout();
+        assertTrue(p2.hasActed());
+        assertThat(p2.getPocketCards().getCards().size(), is(2));
+
+        // Verify that players now have only have 1 card left (catches bug where we didn't use the cardId).
+        assertThat(p1.getPocketCards().getCards().size(), is(2));
+        Assert.assertTrue(p1.hasActed());
+        // Verify that the correct playerIds are used (catches bug where the playerToAct id was used).
+        verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
+        assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(1));
+        assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(2));
+    }
+
+
+    @Test
+    public void testMultipleActsFromSameUser() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+
+        p1.setHasActed(false);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        when(context.getPlayerInCurrentHand(1)).thenReturn(p1);
+        when(context.getPlayerInCurrentHand(2)).thenReturn(p2);
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        boolean res = round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{7})));
+        boolean res2 = round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{7})));
+
+        assertTrue(res);
+        assertFalse(res2);
+
+    }
+
+
+
+    @Test
+    public void testInvalidActions() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+
+        p1.setHasActed(false);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        when(context.getPlayerInCurrentHand(1)).thenReturn(p1);
+        when(context.getPlayerInCurrentHand(2)).thenReturn(p2);
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+        players.put(1, p1);
+        players.put(2, p2);
+
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        //non exsisting
+        boolean res1 = round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{99999})));
+        //too few
+        boolean res2 = round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{})));
+
+        //wrong action
+        boolean res3 = round.act(new PokerAction(p1.getId(), PokerActionType.CHECK));
+        //to many cards
+        boolean res4 = round.act(new DiscardAction(p1.getId(),Arrays.asList(new Integer[]{7,4})));
+
+        assertFalse(res1);
+        assertFalse(res2);
+        assertFalse(res3);
+        assertFalse(res4);
+
+        assertFalse(p1.hasActed());
+        assertFalse(p2.hasActed());
+
     }
 }

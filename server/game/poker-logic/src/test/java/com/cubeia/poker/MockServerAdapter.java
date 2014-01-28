@@ -190,6 +190,11 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyPrivateCards(int playerId, List<Card> cards) {
     }
 
+    @Override
+    public void removeTimeout(int playerId) {
+
+    }
+
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
     }
 
