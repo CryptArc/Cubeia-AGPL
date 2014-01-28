@@ -7,23 +7,30 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
+import com.cubeia.poker.timing.TimingProfile;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
+import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
 
 public class DiscardRoundTest {
 
@@ -45,6 +52,7 @@ public class DiscardRoundTest {
         initMocks(this);
         when(adapterHolder.get()).thenReturn(adapter);
         round = new DiscardRound(context, adapterHolder, calculator, 2, true);
+        when(context.getTimingProfile()).thenReturn(new TimingProfile());
     }
 
     @Test
@@ -74,5 +82,118 @@ public class DiscardRoundTest {
         verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
         assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(1));
         assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(2));
+    }
+
+    @Test
+    public void testAutoDiscardWhenAwayBeforeDiscardRoundStarts() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+        p1.setAway(true);
+        p1.setHasActed(false);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        assertTrue(p1.hasActed());
+        assertThat(p1.getPocketCards().getCards().size(), is(2));
+        Assert.assertFalse(p2.hasActed());
+        assertThat(p2.getPocketCards().getCards().size(), is(3));
+        round.timeout();
+
+        // Verify that players now have only have 1 card left (catches bug where we didn't use the cardId).
+        assertThat(p2.getPocketCards().getCards().size(), is(2));
+        Assert.assertTrue(p2.hasActed());
+        // Verify that the correct playerIds are used (catches bug where the playerToAct id was used).
+        verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
+        assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(1));
+        assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(2));
+    }
+
+    @Test
+    public void testAutoDiscardWhenAllIsAwayBeforeDiscardRoundStarts() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+        p1.setAway(true);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.setAway(true);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        assertTrue(p1.hasActed());
+        assertThat(p1.getPocketCards().getCards().size(), is(2));
+        assertTrue(p2.hasActed());
+        assertThat(p2.getPocketCards().getCards().size(), is(2));
+        assertTrue(round.isFinished());
+        round.timeout();
+
+        // Verify that players now have only have 1 card left (catches bug where we didn't use the cardId).
+        assertThat(p2.getPocketCards().getCards().size(), is(2));
+        assertTrue(p2.hasActed());
+        // Verify that the correct playerIds are used (catches bug where the playerToAct id was used).
+        verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
+        assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(1));
+        assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(2));
+    }
+
+    @Test
+    public void testAutoDiscardWhenSittingOutBeforeDiscardRoundStarts() {
+        DefaultPokerPlayer p1 = new DefaultPokerPlayer(1);
+
+        p1.setHasActed(false);
+        p1.addPocketCard(new Card(7, "5C"), false);
+        p1.addPocketCard(new Card(4, "6C"), false);
+        p1.addPocketCard(new Card(9, "7C"), false);
+
+        DefaultPokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.setHasActed(false);
+        p2.setSitOutStatus(SitOutStatus.SITTING_OUT);
+        p2.addPocketCard(new Card(1, "5D"), false);
+        p2.addPocketCard(new Card(9, "6d"), false);
+        p2.addPocketCard(new Card(12, "7D"), false);
+
+        when(context.getPlayersInHand()).thenReturn(Arrays.asList(new PokerPlayer[]{p1,p2}));
+        //round folds players when it's created
+        round = new DiscardRound(context, adapterHolder, calculator, 1, true);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        when(context.getCurrentHandSeatingMap()).thenReturn(players);
+        assertTrue(p2.hasActed());
+        assertThat(p2.getPocketCards().getCards().size(), is(2));
+        Assert.assertFalse(p1.hasActed());
+        assertThat(p1.getPocketCards().getCards().size(), is(3));
+        round.timeout();
+
+        // Verify that players now have only have 1 card left (catches bug where we didn't use the cardId).
+        assertThat(p1.getPocketCards().getCards().size(), is(2));
+        Assert.assertTrue(p1.hasActed());
+        // Verify that the correct playerIds are used (catches bug where the playerToAct id was used).
+        verify(adapter, times(2)).notifyDiscards(discardActionCaptor.capture(), isA(PokerPlayer.class));
+        assertThat(discardActionCaptor.getAllValues().get(0).getPlayerId(), is(2));
+        assertThat(discardActionCaptor.getAllValues().get(1).getPlayerId(), is(1));
     }
 }

@@ -21,7 +21,6 @@
     <c:if test="${not empty cssOverride}">
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
-    <link id="overrideSkinCss" rel="stylesheet" type="text/css" href="http://quarterpoker.com/css/style.css?v=2" />
 
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
@@ -892,6 +891,10 @@
     </div>
     <div class="hand-strength">
 
+    </div>
+    <div class="discard-description" style="display: none;">
+        {{t "discard.description" }}
+        <div class="discard-arrow"></div>
     </div>
 </div>
 

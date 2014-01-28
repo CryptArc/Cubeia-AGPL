@@ -71,10 +71,17 @@ public class DiscardRound implements Round {
 
     private void requestDiscard(Collection<PokerPlayer> players) {
         // Check if we should request actions at all
+
         Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>();
          for (PokerPlayer player : players) {
-             if (player.isSittingOut()) {
+             if (player.hasFolded()) {
                  activePlayers.remove(player);
+             } else if(player.isAway() || player.isSittingOut()){
+                //we could wait til all non sitting out/away players have acted but
+                //for now it's their loss, fold them at beginning of round
+                activePlayers.remove(player);
+                autoDiscardCards(player);
+
              }
          }
          requestDiscardFromAllPlayersInHand(activePlayers);
@@ -135,18 +142,22 @@ public class DiscardRound implements Round {
             log.debug("Checking player " + player + " has acted: " + player.hasActed());
             if (!player.hasActed()) {
                 if (forceDiscard) {
-                    log.debug("Forcing player to discard " + cardsToDiscard + " cards.");
-                    List<Integer> forcedCardsToDiscard = Lists.newArrayList();
-                    for (int i = 0; i < this.cardsToDiscard; i++) {
-                        forcedCardsToDiscard.add(player.getPocketCards().getCardAt(i).getId());
-                    }
-                    player.setHasActed(true);
-                    player.discard(forcedCardsToDiscard);
-                    DiscardAction action = new DiscardAction(player.getId(), forcedCardsToDiscard);
-                    serverAdapterHolder.get().notifyDiscards(action, player);
+                    autoDiscardCards(player);
                 }
             }
         }
+    }
+
+    private void autoDiscardCards(PokerPlayer player) {
+        log.debug("Forcing player to discard " + cardsToDiscard + " cards.");
+        List<Integer> forcedCardsToDiscard = Lists.newArrayList();
+        for (int i = 0; i < this.cardsToDiscard; i++) {
+            forcedCardsToDiscard.add(player.getPocketCards().getCardAt(i).getId());
+        }
+        player.setHasActed(true);
+        player.discard(forcedCardsToDiscard);
+        DiscardAction action = new DiscardAction(player.getId(), forcedCardsToDiscard);
+        serverAdapterHolder.get().notifyDiscards(action, player);
     }
 
     @Override
