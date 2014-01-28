@@ -41,6 +41,7 @@ import com.cubeia.poker.variant.HandFinishedListener;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -109,9 +110,9 @@ public class CrazyPineappleTest {
         act(p[0], CHECK);
 
         // Discard round
-        discard(p[1], 3);
-        discard(p[2], 6);
-        discard(p[0], 0);
+        Assert.assertTrue(discard(p[1], 3));
+        Assert.assertTrue(discard(p[2], 6));
+        Assert.assertTrue(discard(p[0], 0));
 
         // Turn
         timeout();
@@ -125,19 +126,26 @@ public class CrazyPineappleTest {
         act(p[2], CHECK);
         act(p[0], CHECK);
 
+        Assert.assertEquals(2,p[0].getPrivatePocketCards().size());
+        Assert.assertEquals(2,p[1].getPrivatePocketCards().size());
+        Assert.assertEquals(2,p[2].getPrivatePocketCards().size());
+
         verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
     }
+
+
+
 
     private void timeout() {
         crazyPineapple.timeout();
     }
 
-    private void act(MockPlayer player, PokerActionType actionType) {
-        crazyPineapple.act(new PokerAction(player.getId(), actionType));
+    private boolean act(MockPlayer player, PokerActionType actionType) {
+        return crazyPineapple.act(new PokerAction(player.getId(), actionType));
     }
 
-    private void discard(MockPlayer player, int card) {
-        crazyPineapple.act(new DiscardAction(player.getId(), singletonList(card)));
+    private boolean discard(MockPlayer player, int card) {
+        return crazyPineapple.act(new DiscardAction(player.getId(), singletonList(card)));
     }
     private void act(PokerActionType actionType, int value) {
         act(actionType,new BigDecimal(value));
