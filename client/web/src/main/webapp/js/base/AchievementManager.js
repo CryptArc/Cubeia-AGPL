@@ -33,6 +33,14 @@ Poker.AchievementManager = Class.extend({
                 var level = message.attributes.level;
                 var totalXp = message.attributes.totalXp;
                 Poker.AppCtx.getProfileManager().updateXp(parseInt(totalXp),parseInt(level));
+
+            } else if(message.type == "item")  {
+                var n = new Poker.TextNotifcation(
+                    i18n.t("item.awarded")+' '+message.item.name,
+                    message.item.description,
+                    message.item.imageUrl);
+                Poker.AppCtx.getNotificationsManager().notify(n, {time:15000});
+                this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
             }
         }
 
