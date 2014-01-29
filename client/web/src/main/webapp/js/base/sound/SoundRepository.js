@@ -57,9 +57,14 @@ Poker.SoundRepository = Class.extend({
             return "no_codec";
         }
 
-        var checkAudio = new Audio();
-        if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
-            return "wav";
+        try {
+            var checkAudio = new Audio();
+            if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
+                return "wav";
+            }
+        } catch (e) {
+            console.log("Error creating Audio player, will turn off sound. ", e);
+            return "no_codec";
         }
     }
 });

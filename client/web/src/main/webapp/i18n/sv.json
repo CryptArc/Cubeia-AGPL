@@ -1,6 +1,6 @@
 {
     "discard" : {
-        "description" : "Välj kort att kasta
+        "description" : "Välj kort att kasta"
     },
     "level-up" : {
         "title" : "Level up!",
@@ -11,6 +11,9 @@
     },
     "achievement" : {
         "completed" : "Avklarad!"
+    },
+    "item" : {
+        "awarded" : "Nytt föremål: "
     },
     "account" : {
         "logout" : "Logga ut",
