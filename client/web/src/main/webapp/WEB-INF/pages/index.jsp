@@ -187,7 +187,7 @@
     <script type="text/javascript" src="${cp}/js/base/ResourcePreLoader.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/communication/lobby/Unsubscribe.js"></script>
-    <
+
 
     <script type="text/javascript" src="${cp}/js/base/dev/MockEventManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/PositionEditor.js"></script>

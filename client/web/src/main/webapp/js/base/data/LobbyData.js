@@ -48,7 +48,6 @@ Poker.LobbyData = Class.extend({
         if(requiresRedraw==true) {
           this.onCreate(this.getFilteredItems());
         } else if(this.notifyUpdate==true) {
-            this.notifyUpdate==false;
             this.onUpdate(this.getFilteredItems());
         }
     },
