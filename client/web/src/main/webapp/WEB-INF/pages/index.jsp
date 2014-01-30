@@ -194,7 +194,7 @@
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
 
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=${addThisPubId}"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/cs-leaderboard.js"></script>
 
 
     <c:if test="${not empty operatorId}">
@@ -283,14 +283,15 @@
                         webSocketUrl : webSocketUrl,
                         webSocketPort : webSocketPort,
                         tournamentLobbyUpdateInterval : 10000,
-                        playerApiBaseUrl : "${playerApiBaseUrl}"
+                        playerApiBaseUrl : "${playerApiBaseUrl}",
+                        operatorApiBaseUrl : "${operatorApiBaseUrl}"
                     });
                     onApplicationWired();
                 });
             }
-
-
         });
+
+
 
     </script>
 
@@ -687,6 +688,11 @@
                     </div>
                     <div class="col-sm-4">
                         <iframe id="lobbyRightPromotionsIframe" class="lobby-right-promotions-iframe" marginheight="0" scrolling="no"  frameBorder="0"></iframe>
+                        <div class="icon-title">
+                            <div class="icon leaderboard"></div>
+                            <div class="text">Current Top Winners</div>
+                        </div>
+                        <div id="leaderboard" data-leaderboard-id="top_winnings_trm" data-nr-of-items="5" class="leaderboard"></div>
                     </div>
                 </div>
 

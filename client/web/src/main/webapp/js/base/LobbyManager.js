@@ -85,7 +85,12 @@ Poker.LobbyManager = Class.extend({
 
         this.lobbyLayoutManager.setSitAndGoSortingFunction(function(attribute,asc){
             self.sitAndGoLobbyData.setSortBy(attribute,asc);
-        })
+        });
+
+        $("#leaderboard").cs_leaderboard({
+            global : true
+        });
+
     },
 
     handleTableSnapshotList : function (tableSnapshotList) {

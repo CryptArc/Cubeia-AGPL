@@ -21,7 +21,10 @@ Poker.AppCtx = Class.extend({
     wire : function(settings) {
 
 
-
+        var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl, settings.operatorApiBaseUrl);
+        this.getPlayerApi = function() {
+            return playerApi;
+        };
 
         //this
         var templateManager = new Poker.TemplateManager();
@@ -161,10 +164,7 @@ Poker.AppCtx = Class.extend({
         };
 
 
-        var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl);
-        this.getPlayerApi = function() {
-            return playerApi;
-        };
+
 
 
         var notificationsManager = new Poker.NotificationsManager();
