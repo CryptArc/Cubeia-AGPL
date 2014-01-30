@@ -43,6 +43,8 @@ Poker.AchievementManager = Class.extend({
                 this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
             } else if (message.type == "payment") {
             	
+            	var n;
+            	
             	if (message.subType == "confirmed") {
             		var amount = message.attributes["CONVERTED_AMOUNT"];
             		var currency = message.attributes["CONVERTED_CURRENCY"];
@@ -55,8 +57,19 @@ Poker.AchievementManager = Class.extend({
         				contextPath + "/skins/default/images/Bitcoin-64.png"
             		);
             		
-                    Poker.AppCtx.getNotificationsManager().notify(n, {time:2000});
-                    this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
+            	} else if (message.subType == "error") {
+            		var errorCode = message.attributes["ERROR_CODE"];
+            		
+            		var n = new Poker.TextNotifcation(
+        				i18n.t("payment.notifications.error.title"),
+        				i18n.t("payment.notifications.error." + errorCode, { sprintf : [ formattedAmount] }),
+        				contextPath + "/skins/default/images/Bitcoin-64.png"
+            		);
+            	}
+            	
+            	if (n) {
+	            	Poker.AppCtx.getNotificationsManager().notify(n, {time:30000});
+	            	this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
             	}
             }
         }

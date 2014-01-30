@@ -308,6 +308,11 @@
 	    	"deposit-confirmed" : {
 	    		"title" : "Funds Received",
 	    		"text" : "You received %s"
+	    	},
+	    	"error" : {
+	    		"title" : "Payment Error",
+	    		"error-below-limit" : "Your payment was below the minimum amount.",
+	    		"error-general" : "Processing your payment failed, please contact support."
 	    	}
     	}
     }
