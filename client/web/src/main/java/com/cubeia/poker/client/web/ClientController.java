@@ -35,6 +35,9 @@ public class ClientController {
     @Value("${uservoice.id}")
     private String userVoiceId;
 
+    @Value("${operator-api.service.url}")
+    private String operatorApiBaseUrl;
+
     @Value("${player-api.service.url}")
     private String playerApiBaseUrl;
 
@@ -108,6 +111,9 @@ public class ClientController {
         }
         if(playerApiBaseUrl !=null) {
             modelMap.addAttribute("playerApiBaseUrl",playerApiBaseUrl);
+        }
+        if(operatorApiBaseUrl!=null) {
+            modelMap.addAttribute("operatorApiBaseUrl",operatorApiBaseUrl);
         }
         if(addThisPubId!=null) {
             modelMap.addAttribute("addThisPubId",addThisPubId);
