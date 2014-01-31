@@ -127,6 +127,46 @@ public class CrazyPineappleTest {
         verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
     }
 
+    @Test
+    public void testBugHand() {
+        startHand(prepareContext(6));
+
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+
+        timeout();
+        Assert.assertTrue(act(p[3], CALL));
+        Assert.assertTrue(act(p[4], FOLD));
+        Assert.assertTrue(act(p[5], RAISE,null, new BigDecimal(600)));
+        Assert.assertTrue(act(p[0], FOLD));
+        Assert.assertTrue(act(p[1], FOLD));
+        Assert.assertTrue(act(p[2], CALL));
+        Assert.assertTrue(act(p[3], FOLD));
+
+        // Flop
+        timeout();
+
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], BET, null,new BigDecimal(300)));
+        Assert.assertTrue(act(p[2], CALL));
+
+        Assert.assertTrue(discard(p[2],8));
+        Assert.assertTrue(discard(p[5],15));
+
+        // Turn
+        timeout();
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], CHECK));
+
+        // River
+        timeout();
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], CHECK));
+
+
+        verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
+    }
+
 
 
 
@@ -136,6 +176,16 @@ public class CrazyPineappleTest {
 
     private boolean act(MockPlayer player, PokerActionType actionType) {
         return crazyPineapple.act(new PokerAction(player.getId(), actionType));
+    }
+    private boolean act(MockPlayer player, PokerActionType actionType, BigDecimal raise, BigDecimal bet) {
+        PokerAction action = new PokerAction(player.getId(), actionType);
+        if(raise!=null) {
+            action.setRaiseAmount(raise);
+        }
+        if(bet!=null) {
+            action.setBetAmount(bet);
+        }
+        return crazyPineapple.act(action);
     }
 
     private boolean discard(MockPlayer player, int card) {
