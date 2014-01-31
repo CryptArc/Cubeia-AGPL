@@ -140,7 +140,6 @@ Poker.TournamentLayoutManager = Class.extend({
             this.viewElement.find(".tournament-description").hide();
         }
         if(this.shareDone==false) {
-            Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],info.tournamentName);
             this.shareDone=true;
         }
 
