@@ -776,15 +776,15 @@
 
         <div class="profile-view" id="editProfileView" style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button  default-btn">Close</a>
         </div>
         <div class="buy-credits-view" id="buyCreditsView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button default-btn">Close</a>
         </div>
         <div class="buy-credits-view" id="externalPageView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button default-btn">Close</a>
         </div>
     </div>
 
@@ -1522,7 +1522,7 @@
 <script type="text/mustache" id="handHistoryViewTemplate">
 
     <div id="handHistoryView{{id}}" class="hand-history-container" style="display:none;">
-        <h1>{{t "hand-history.title"}}<a class="close-button">{{t "hand-history.close"}}</a></h1>
+        <h1>{{t "hand-history.title"}}<a class="close-button default-btn">{{t "hand-history.close"}}</a></h1>
 
         <div class="hand-ids-container">
             <div class="hand-ids-header">
