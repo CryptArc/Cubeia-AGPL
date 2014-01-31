@@ -758,7 +758,7 @@
             <iframe id="accountIframe" class="account-iframe" scrolling="no"></iframe>
             <div class="account-buttons">
                 <div class="account-button" id="editProfileButton">
-                    Edit Profile
+                    Profile
                 </div>
                 <div class="account-button" id="buyCreditsButton">
                     Buy Credits
