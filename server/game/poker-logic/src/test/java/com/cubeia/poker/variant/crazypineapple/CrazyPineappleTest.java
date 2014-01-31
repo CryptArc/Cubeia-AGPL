@@ -19,6 +19,7 @@ package com.cubeia.poker.variant.crazypineapple;
 
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.DiscardAction;
@@ -36,9 +37,7 @@ import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.HandFinishedListener;
-import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.junit.Assert;
@@ -51,15 +50,10 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.Random;
 
-import static com.cubeia.poker.action.PokerActionType.BIG_BLIND;
-import static com.cubeia.poker.action.PokerActionType.CALL;
-import static com.cubeia.poker.action.PokerActionType.CHECK;
-import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
+import static com.cubeia.poker.action.PokerActionType.*;
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CrazyPineappleTest {

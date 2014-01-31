@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.messages;
 
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
 
@@ -30,9 +31,12 @@ public class TournamentTableSettings implements Serializable {
 
     private final BetStrategyType betStrategyType;
 
-    public TournamentTableSettings(TimingProfile timingProfile, BetStrategyType betStrategyType) {
+    private final PokerVariant variant;
+
+    public TournamentTableSettings(TimingProfile timingProfile, BetStrategyType betStrategyType, PokerVariant variant) {
         this.timingProfile = timingProfile;
         this.betStrategyType = betStrategyType;
+        this.variant = variant;
     }
 
     public BetStrategyType getBetStrategyType() {
@@ -43,4 +47,7 @@ public class TournamentTableSettings implements Serializable {
         return timingProfile;
     }
 
+    public PokerVariant getVariant() {
+        return variant;
+    }
 }

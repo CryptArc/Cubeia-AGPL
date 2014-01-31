@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import com.cubeia.poker.PokerVariant;
 import org.joda.time.DateTime;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
@@ -59,6 +60,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setStartingChips(new BigDecimal(100000));
         configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
         configuration.setId(1);
+        configuration.setVariant(PokerVariant.TEXAS_HOLDEM);
         configuration.setDescription("This is MTT tournament that starts every five minutes");
         // configuration.getOperatorIds().add(666L);
         tournamentConfigurations.add(everyFiveMinutes);
@@ -76,7 +78,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setStartingChips(new BigDecimal(100000));
         speedCfg.setId(2);
         speedCfg.setDescription("This is a massive speed tournament!");
-        
+        speedCfg.setVariant(PokerVariant.TEXAS_HOLDEM);
         tournamentConfigurations.add(massiveQuickTourny);
         
         

@@ -24,6 +24,7 @@ import com.cubeia.games.poker.admin.wicket.components.TournamentPlayersValidator
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.markup.html.form.*;
@@ -77,6 +78,10 @@ public class TournamentConfigurationPanel extends Panel {
         DropDownChoice<BetStrategyType> strategy = new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name"));
         strategy.setRequired(true);
         add(strategy);
+
+        DropDownChoice<PokerVariant> variant = new DropDownChoice<PokerVariant>("variant", new PropertyModel(model, "variant"), asList(PokerVariant.values()), renderer("name"));
+        variant.setRequired(true);
+        add(variant);
         form.add(new TournamentPlayersValidator(minPlayers,maxPlayers));
 
         final List<OperatorDTO> operators = networkClient.getOperators();

@@ -23,7 +23,6 @@ import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
@@ -35,8 +34,8 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
 
 import static com.cubeia.poker.TestUtils.createOnePercentRakeSettings;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.PokerVariant.TELESINA;
+import static com.cubeia.poker.PokerVariant.TEXAS_HOLDEM;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

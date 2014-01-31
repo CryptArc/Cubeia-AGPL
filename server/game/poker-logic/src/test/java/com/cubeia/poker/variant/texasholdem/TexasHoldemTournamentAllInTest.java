@@ -20,6 +20,7 @@ package com.cubeia.poker.variant.texasholdem;
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNG;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;

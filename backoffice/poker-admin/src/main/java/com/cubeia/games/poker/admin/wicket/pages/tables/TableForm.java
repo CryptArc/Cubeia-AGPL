@@ -27,7 +27,7 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.PokerVariant;
 
 
 public abstract class TableForm extends Panel {
