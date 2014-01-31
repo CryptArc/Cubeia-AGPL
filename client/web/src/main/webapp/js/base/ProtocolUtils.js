@@ -55,7 +55,7 @@ Poker.ProtocolUtils = Class.extend({
             operatorIds : param("OPERATOR_IDS"),
             buyInCurrencyCode : param("BUY_IN_CURRENCY_CODE"),
             type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),
-            level : level,
+            level : level+1,
             requiresLevel : level > 0
         };
 
