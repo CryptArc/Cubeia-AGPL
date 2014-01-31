@@ -109,7 +109,7 @@ Poker.TournamentLayoutManager = Class.extend({
     updateTournamentInfo : function(info) {
         this.viewElement.find(".tournament-name-title").html(info.tournamentName);
         if(info.userRuleExpression!=null) {
-            var level = Poker.ProtocolUtils.parseLevel(info.userRuleExpression);
+            var level = Poker.ProtocolUtils.parseLevel(info.userRuleExpression) + 1;
 
             if(level>0) {
                 this.viewElement.find(".requires-level").show();

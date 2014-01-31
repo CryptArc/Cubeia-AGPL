@@ -26,7 +26,8 @@ Poker.ExternalPageView = Poker.TabView.extend({
         this.getViewElement().find("iframe").attr("src","");
     },
     calculateSize : function(maxWidth,maxHeight, aspectRatio) {
-        this.getViewElement().width(maxWidth).height(maxHeight);
+        //this.getViewElement().width(maxWidth).height(maxHeight);
+        this.getViewElement().width("100%").height("100%");
     },
     calculateFontSize : function() {
 

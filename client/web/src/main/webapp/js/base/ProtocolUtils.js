@@ -7,6 +7,16 @@ var Poker = Poker || {};
 Poker.ProtocolUtils = Class.extend({
     init : function(){},
 
+    paramExist : function(key,params) {
+        for (var i = 0; i < params.length; i++) {
+            var object = params[i];
+
+            if (object.key == key) {
+                return true;
+            }
+        }
+        return false;
+    },
     readParam : function(key,params) {
         for (var i = 0; i < params.length; i++) {
             var object = params[i];
@@ -35,7 +45,10 @@ Poker.ProtocolUtils = Class.extend({
             }
             return val;
         };
-        var level = this.parseLevel(param("USER_RULE_EXPRESSION"));
+        var level = null;
+        if(this.paramExist("USER_RULE_EXPRESSION",params)) {
+            level = this.parseLevel(param("USER_RULE_EXPRESSION"));
+        }
         var data = {
             id : snapshot.mttid,
             name : param("NAME"),
@@ -55,8 +68,8 @@ Poker.ProtocolUtils = Class.extend({
             operatorIds : param("OPERATOR_IDS"),
             buyInCurrencyCode : param("BUY_IN_CURRENCY_CODE"),
             type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),
-            level : level+1,
-            requiresLevel : level > 0
+            level : level!=null ? level+1 : null,
+            requiresLevel : level!=null ? (level > 0) : null
         };
 
         return data;
@@ -70,7 +83,7 @@ Poker.ProtocolUtils = Class.extend({
                 return parseInt(levelMatch[1]);
             }
         }
-        return 0;
+        return null;
 
     },
     extractTableData : function(snapshot) {
