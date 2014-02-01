@@ -1426,7 +1426,7 @@
                                 <tr>
                                     <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
                                     <th>{{t "tournament-lobby.players.stack" }}</th>
-                                    <th>{{t "tournament-lobby.players.winnings" }}</th>
+                                    <th class="winnings">{{t "tournament-lobby.players.winnings" }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -1670,9 +1670,9 @@
         <td class="position">{{position}}</td>
         <td class="player-{{playerId}}"><div class="generic-avatar"></div><div class="level" style="display:none;"></div>{{name}}</td>
         <td>{{currency stackSize}}</td>
-        <td>{{currency winnings}}</td>
+        <td class="winnings">{{currency winnings}}</td>
         <td>
-            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;">Table &raquo;</div>
+            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;"><span class="go-to-table-label">Table</span> &raquo;</div>
         </td>
     </tr>
 </script>
