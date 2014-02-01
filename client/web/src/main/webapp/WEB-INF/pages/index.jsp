@@ -1049,7 +1049,6 @@
             <div class="action-button action-leave" style="display: none;">
                 <span>{{t "table.buttons.leave"}}</span>
             </div>
-            <a class="share-button">+Share</a>
             <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
             </div>
@@ -1361,7 +1360,6 @@
         <div class="container">
             <div class="row">
                 <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
-                <a class="share-button">+Share</a>
             </div>
             <div class="row">
                 <div class="col-sm-7">
