@@ -142,6 +142,7 @@
 
     },
     "tournament-lobby" : {
+        "tournament-full" : "Turneringen är full",
         "close" : "Stäng",
         "register" : "Registrera",
         "unregister" : "Avregistrera",

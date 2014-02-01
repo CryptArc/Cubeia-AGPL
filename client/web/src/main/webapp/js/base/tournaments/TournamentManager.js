@@ -37,6 +37,8 @@ Poker.TournamentManager = Class.extend({
      */
     tableManager : null,
 
+
+
     /**
      *
      * @param {Number} tournamentLobbyUpdateInterval

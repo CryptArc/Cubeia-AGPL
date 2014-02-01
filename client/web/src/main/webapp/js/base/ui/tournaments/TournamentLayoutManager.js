@@ -26,8 +26,11 @@ Poker.TournamentLayoutManager = Class.extend({
     name : null,
     shareDone : false,
     chat : null,
-
+    tournamentIsFull : null,
     playerList : null,
+
+    registeredPlayers : null,
+    maxPlayers : null,
 
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
@@ -82,9 +85,23 @@ Poker.TournamentLayoutManager = Class.extend({
     },
     updatePlayerList : function(players) {
         this.playerList.setItems(players);
-
+        this.registeredPlayers = players.length;
+        this.updateFullInfo();
     },
-
+    updateFullInfo : function() {
+        if(this.registeredPlayers!=null && this.maxPlayers!=null) {
+            if(this.registeredPlayers>=this.maxPlayers) {
+                this.tournamentIsFull.show();
+                this.registerButton.addClass("full");
+            } else {
+                this.registerButton.removeClass("full");
+                this.tournamentIsFull.hide();
+            }
+        } else {
+            this.registerButton.removeClass("full");
+            this.tournamentIsFull.hide();
+        }
+    },
     updateTableList : function(tables) {
         var template = this.templateManager.getRenderTemplate("tournamentTableListItem");
         this.tableListBody.empty();
@@ -111,7 +128,7 @@ Poker.TournamentLayoutManager = Class.extend({
         if(info.userRuleExpression!=null) {
             var level = Poker.ProtocolUtils.parseLevel(info.userRuleExpression) + 1;
 
-            if(level>0) {
+            if(level>1) {
                 this.viewElement.find(".requires-level").show();
                 this.viewElement.find(".requires-level .level").attr("class","").addClass("level").addClass("level-"+level).show();
                 if(level>Poker.AppCtx.getProfileManager().myPlayerProfile.level) {
@@ -124,6 +141,8 @@ Poker.TournamentLayoutManager = Class.extend({
         var sitAndGo = false;
         if(info.maxPlayers == info.minPlayers) {
             sitAndGo = true;
+        } else {
+            this.maxPlayers = info.maxPlayers;
         }
         $.extend(info,{sitAndGo : sitAndGo,tournamentId : this.tournamentId});
         var infoTemplate = this.templateManager.getRenderTemplate("tournamentInfoTemplate");
@@ -142,7 +161,7 @@ Poker.TournamentLayoutManager = Class.extend({
         if(this.shareDone==false) {
             this.shareDone=true;
         }
-
+        this.updateFullInfo();
     },
     updateTournamentStatistics : function(statistics) {
         if(statistics.playersLeft.remainingPlayers>0) {
@@ -166,6 +185,7 @@ Poker.TournamentLayoutManager = Class.extend({
         this.unregisterButton = this.viewElement.find(".unregister-action");
         this.loadingButton =  this.viewElement.find(".loading-action").hide();
         this.takeSeatButton =  this.viewElement.find(".take-seat-action").hide();
+        this.tournamentIsFull = this.viewElement.find(".tournament-full");
         var tournamentRequestHandler = new Poker.TournamentRequestHandler(this.tournamentId);
         var self = this;
         this.leaveButton.touchSafeClick(function(e){
@@ -200,6 +220,7 @@ Poker.TournamentLayoutManager = Class.extend({
         this.loadingButton.hide();
         this.registerButton.hide();
         this.unregisterButton.hide();
+        this.tournamentIsFull.hide();
     },
     setPlayerRegisteredState : function() {
         this.loadingButton.hide();

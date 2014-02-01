@@ -1382,6 +1382,7 @@
                     <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
                     <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
                     <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
+                    <span class="tournament-full">{{t "tournament-lobby.tournament-full"}}</span>
                 </div>
                 <div class="col-sm-5">
                     <div class="info-section tournament-info"></div>
