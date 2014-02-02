@@ -92,7 +92,13 @@ Poker.LobbyManager = Class.extend({
         });
 
     },
+    onLogin : function(reconnecting) {
+        if(reconnecting) {
+            Poker.Subscribe();
+        }
+        this.lobbyLayoutManager.onLogin(reconnecting);
 
+    },
     handleTableSnapshotList : function (tableSnapshotList) {
         var items = [];
         for (var i = 0; i < tableSnapshotList.length; i++) {

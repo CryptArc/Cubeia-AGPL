@@ -186,21 +186,24 @@ Poker.TournamentLayoutManager = Class.extend({
         this.loadingButton =  this.viewElement.find(".loading-action").hide();
         this.takeSeatButton =  this.viewElement.find(".take-seat-action").hide();
         this.tournamentIsFull = this.viewElement.find(".tournament-full");
-        var tournamentRequestHandler = new Poker.TournamentRequestHandler(this.tournamentId);
+
         var self = this;
         this.leaveButton.touchSafeClick(function(e){
             self.leaveLobby();
         });
         this.registerButton.touchSafeClick(function(e){
+            var tournamentRequestHandler = new Poker.TournamentRequestHandler(self.tournamentId);
             tournamentRequestHandler.requestBuyInInfo();
         });
         this.unregisterButton.hide().touchSafeClick(function(e){
+            var tournamentRequestHandler = new Poker.TournamentRequestHandler(self.tournamentId);
             $(this).hide();
             self.loadingButton.show();
             tournamentRequestHandler.unregisterFromTournament();
 
         });
         this.takeSeatButton.touchSafeClick(function(e){
+            var tournamentRequestHandler = new Poker.TournamentRequestHandler(self.tournamentId);
             tournamentRequestHandler.takeSeat();
         });
     },

@@ -38,8 +38,10 @@ Poker.Navigation = Class.extend({
     mountHandler : function(id,handler) {
         this.views.put(id,handler);
     },
-    onLoginSuccess : function() {
-        this.navigate();
+    onLoginSuccess : function(reconnecting) {
+        if(!reconnecting) {
+            this.navigate();
+        }
     },
     navigate : function() {
         var segments = purl().fsegment();

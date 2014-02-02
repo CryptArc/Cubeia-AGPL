@@ -46,10 +46,13 @@ Poker.TableRequestHandler = Class.extend({
          Poker.AppCtx.getTournamentManager().setTournamentTable(tournamentId,this.tableId);
          this.openTable(capacity);
     },
-    openTable : function (capacity) {
+    openTable : function (capacity,reconnecting) {
         var t = this.tableManager.getTable(this.tableId);
         if(t!=null) {
             Poker.AppCtx.getViewManager().activateViewByTableId(this.tableId);
+            if(reconnecting){
+                this.connector.watchTable(this.tableId);
+            }
         } else {
             this.tableManager.handleOpenTableAccepted(this.tableId,capacity);
             this.connector.watchTable(this.tableId);

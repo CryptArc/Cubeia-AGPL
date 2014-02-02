@@ -93,11 +93,16 @@ Poker.LobbyLayoutManager = Class.extend({
     setSitAndGoSortingFunction : function(func) {
         this.sitAndGoSortingFunction = func;
     },
-    onLogin : function() {
-        this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
-        this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+    onLogin : function(reconnecting) {
+        if(!reconnecting) {
+            this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
+            this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+        }
+
         this.addCurrencyFilters();
-        this.topMenu.selectItem("#cashGameMenu");
+        if(!reconnecting) {
+            this.topMenu.selectItem("#cashGameMenu");
+        }
 
     },
     updateIFrameUrl : function(iframe,url) {
