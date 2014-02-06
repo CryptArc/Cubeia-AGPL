@@ -67,6 +67,11 @@
         <appender-ref ref="LOG"/>
     </category>
         
+    <category name="httpclient.wire" additivity="false">
+        <priority value="info"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOG"/>
+    </category>
     
     <root>
         <priority value="debug"/>
