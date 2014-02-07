@@ -514,16 +514,26 @@ Poker.TableLayoutManager = Class.extend({
         }
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot,fixedLimit){
-
         var seats = this.seats.values();
-        for (var s = 0; s<seats.length; s++) {
-            seats[s].inactivateSeat();
+        if(this.isDiscardRound(allowedActions)) {
+            for (var s = 0; s<seats.length; s++) {
+                seats[s].inactivateSeat();
+            }
         }
         var seat = this.getSeatByPlayerId(player.id);
         var autoHandled = seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
         if(autoHandled==false && player.id == Poker.MyPlayer.id && !this.active) {
             this.playSound(Poker.Sounds.TIME_WARNING_FIRST,true);
         }
+    },
+    isDiscardRound : function(allowedActions) {
+        for(var i = 0; i<allowedActions.length; i++) {
+            var act = allowedActions[i];
+            if(act.type.id == Poker.ActionType.DISCARD)  {
+                return true;
+            }
+        }
+        return false;
     },
     onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
 //        var seats = this.seats.values();
