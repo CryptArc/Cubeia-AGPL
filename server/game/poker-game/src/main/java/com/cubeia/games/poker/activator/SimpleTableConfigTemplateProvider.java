@@ -38,10 +38,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
     public List<TableConfigTemplate> getTemplates() {
         TableConfigTemplate texasNoLimit = new TableConfigTemplate();
         texasNoLimit.setId(0);
-        texasNoLimit.setSmallBlind(bd(0.5));
-        texasNoLimit.setBigBlind(bd(1));
-        texasNoLimit.setMinBuyIn(bd(10));
-        texasNoLimit.setMaxBuyIn(bd(100));
+        texasNoLimit.setSmallBlind(bd("0.05"));
+        texasNoLimit.setBigBlind(bd("0.1"));
+        texasNoLimit.setMinBuyIn(bd("1"));
+        texasNoLimit.setMaxBuyIn(bd("5"));
         texasNoLimit.setSeats(10);
         texasNoLimit.setVariant(TEXAS_HOLDEM);
         texasNoLimit.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -51,13 +51,29 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         texasNoLimit.setMinTables(10);
         texasNoLimit.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         texasNoLimit.setCurrency("EUR");
+        
+        TableConfigTemplate texasNoLimitXcc = new TableConfigTemplate();
+        texasNoLimitXcc.setId(0);
+        texasNoLimitXcc.setSmallBlind(bd("0.05"));
+        texasNoLimitXcc.setBigBlind(bd("0.1"));
+        texasNoLimitXcc.setMinBuyIn(bd("1"));
+        texasNoLimitXcc.setMaxBuyIn(bd("5"));
+        texasNoLimitXcc.setSeats(10);
+        texasNoLimitXcc.setVariant(TEXAS_HOLDEM);
+        texasNoLimitXcc.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasNoLimitXcc.setBetStrategy(BetStrategyType.NO_LIMIT);
+        texasNoLimitXcc.setTTL(60000);
+        texasNoLimitXcc.setMinEmptyTables(5);
+        texasNoLimitXcc.setMinTables(10);
+        texasNoLimitXcc.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasNoLimitXcc.setCurrency("XCC");
 
         TableConfigTemplate texasNoLimit2Plrs = new TableConfigTemplate();
         texasNoLimit2Plrs.setId(2);
-        texasNoLimit2Plrs.setSmallBlind(bd(50));
-        texasNoLimit2Plrs.setBigBlind(bd(100));
-        texasNoLimit2Plrs.setMinBuyIn(bd(1000));
-        texasNoLimit2Plrs.setMaxBuyIn(bd(10000));
+        texasNoLimit2Plrs.setSmallBlind(bd("0.1"));
+        texasNoLimit2Plrs.setBigBlind(bd("0.2"));
+        texasNoLimit2Plrs.setMinBuyIn(bd("2"));
+        texasNoLimit2Plrs.setMaxBuyIn(bd("10"));
         texasNoLimit2Plrs.setSeats(2);
         texasNoLimit2Plrs.setVariant(TEXAS_HOLDEM);
         texasNoLimit2Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -70,10 +86,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
 
         TableConfigTemplate texasNoLimit6Plrs = new TableConfigTemplate();
         texasNoLimit6Plrs.setId(3);
-        texasNoLimit6Plrs.setSmallBlind(bd(50));
-        texasNoLimit6Plrs.setBigBlind(bd(100));
-        texasNoLimit6Plrs.setMinBuyIn(bd(1000));
-        texasNoLimit6Plrs.setMaxBuyIn(bd(10000));
+        texasNoLimit6Plrs.setSmallBlind(bd("0.5"));
+        texasNoLimit6Plrs.setBigBlind(bd("1"));
+        texasNoLimit6Plrs.setMinBuyIn(bd("10"));
+        texasNoLimit6Plrs.setMaxBuyIn(bd("50"));
         texasNoLimit6Plrs.setSeats(6);
         texasNoLimit6Plrs.setVariant(TEXAS_HOLDEM);
         texasNoLimit6Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -86,10 +102,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
 
         TableConfigTemplate texasNoLimit5Plrs = new TableConfigTemplate();
         texasNoLimit5Plrs.setId(4);
-        texasNoLimit5Plrs.setSmallBlind(bd(50));
-        texasNoLimit5Plrs.setBigBlind(bd(100));
-        texasNoLimit5Plrs.setMinBuyIn(bd(1000));
-        texasNoLimit5Plrs.setMaxBuyIn(bd(10000));
+        texasNoLimit5Plrs.setSmallBlind(bd("1"));
+        texasNoLimit5Plrs.setBigBlind(bd("2"));
+        texasNoLimit5Plrs.setMinBuyIn(bd("20"));
+        texasNoLimit5Plrs.setMaxBuyIn(bd("100"));
         texasNoLimit5Plrs.setSeats(5);
         texasNoLimit5Plrs.setVariant(TEXAS_HOLDEM);
         texasNoLimit5Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -103,10 +119,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
 
         TableConfigTemplate texasFixedLimit = new TableConfigTemplate();
         texasFixedLimit.setId(5);
-        texasFixedLimit.setSmallBlind(bd(50));
-        texasFixedLimit.setBigBlind(bd(100));
-        texasFixedLimit.setMinBuyIn(bd(1000));
-        texasFixedLimit.setMaxBuyIn(bd(10000));
+        texasNoLimit.setSmallBlind(bd("0.05"));
+        texasNoLimit.setBigBlind(bd("0.1"));
+        texasNoLimit.setMinBuyIn(bd("1"));
+        texasNoLimit.setMaxBuyIn(bd("5"));
         texasFixedLimit.setSeats(10);
         texasFixedLimit.setVariant(TEXAS_HOLDEM);
         texasFixedLimit.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -119,11 +135,11 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
 
         TableConfigTemplate telesina = new TableConfigTemplate();
         telesina.setId(6);
-        telesina.setAnte(bd(100));
-        telesina.setSmallBlind(bd(0));
-        telesina.setBigBlind(bd(0));
-        telesina.setMinBuyIn(bd(1000));
-        telesina.setMaxBuyIn(bd(10000));
+        telesina.setAnte(bd("0.05"));
+        telesina.setSmallBlind(bd("0"));
+        telesina.setBigBlind(bd("0"));
+        telesina.setMinBuyIn(bd("1"));
+        telesina.setMaxBuyIn(bd("5"));
         telesina.setSeats(6);
         telesina.setVariant(TELESINA);
         telesina.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -136,10 +152,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
 
         TableConfigTemplate crazyPineapple = new TableConfigTemplate();
         crazyPineapple.setId(7);
-        crazyPineapple.setSmallBlind(bd(0.5));
-        crazyPineapple.setBigBlind(bd(1));
-        crazyPineapple.setMinBuyIn(bd(10));
-        crazyPineapple.setMaxBuyIn(bd(100));
+        crazyPineapple.setSmallBlind(bd("0.05"));
+        crazyPineapple.setBigBlind(bd("0.1"));
+        crazyPineapple.setMinBuyIn(bd("1"));
+        crazyPineapple.setMaxBuyIn(bd("10"));
         crazyPineapple.setSeats(10);
         crazyPineapple.setVariant(CRAZY_PINEAPPLE);
         crazyPineapple.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
@@ -154,6 +170,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         
         return Arrays.asList(
         		texasNoLimit, 
+        		texasNoLimitXcc,
         		//texasFixedLimit, 
         		//texasNoLimit2Plrs,
         		//texasNoLimit5Plrs,
@@ -165,11 +182,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
     }
 
 
-    private BigDecimal bd(double i) {
-        return new BigDecimal(i);
-    }
-
-    private BigDecimal bd(int i) {
+    private BigDecimal bd(String i) {
         return new BigDecimal(i);
     }
 }
