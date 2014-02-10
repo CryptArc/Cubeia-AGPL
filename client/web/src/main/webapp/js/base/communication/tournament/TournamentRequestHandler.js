@@ -79,7 +79,6 @@ Poker.TournamentRequestHandler = Class.extend({
         var mtt = this.createMttPacket();
         var byteArray = new FIREBASE.ByteArray(); //not using  playerListRequest.save() because of a styx bug
         mtt.mttdata  = FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(packet.classId()));
-        console.log(mtt);
         this.connector.sendProtocolObject(mtt);
     }
 });

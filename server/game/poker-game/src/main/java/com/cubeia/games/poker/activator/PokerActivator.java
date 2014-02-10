@@ -32,7 +32,7 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.util.threads.SafeRunnable;
 import com.google.inject.Guice;
 import com.google.inject.Inject;

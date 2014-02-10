@@ -143,6 +143,7 @@
 
     },
     "tournament-lobby" : {
+        "tournament-full" : "The tournament is full",
         "close" : "Close",
         "register" : "Register",
         "unregister" : "Unregister",

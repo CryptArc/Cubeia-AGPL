@@ -182,7 +182,7 @@ public class DiscardRound implements Round {
     @Override
     public boolean isFinished() {
         for (PokerPlayer player : context.getPlayersInHand()) {
-            if (!player.hasActed()) {
+            if (!player.hasFolded() && !player.hasActed()) {
                 return false;
             }
         }

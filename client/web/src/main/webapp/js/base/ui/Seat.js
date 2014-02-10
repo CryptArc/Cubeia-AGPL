@@ -70,7 +70,7 @@ Poker.Seat = Class.extend({
     updatePlayerAward : function(url, description) {
         if(url!=null) {
             this.awardElement.css("backgroundImage","url('"+url+"')");
-            this.awardElement.attr('alt', description);
+            this.awardElement.attr('title', description);
             this.awardElement.show();
         } else {
             this.awardElement.hide();
@@ -80,7 +80,7 @@ Poker.Seat = Class.extend({
     updatePlayerItem : function(url, description) {
         if(url!=null) {
             this.itemElement.css("backgroundImage","url('"+url+"')");
-            this.itemElement.attr('alt', description);
+            this.itemElement.attr('title', description);
             this.itemElement.show();
         } else {
             this.itemElement.hide();

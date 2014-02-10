@@ -50,7 +50,7 @@ import static com.cubeia.games.poker.activator.TableModifierActionType.CREATE;
 import static com.cubeia.games.poker.activator.TableModifierActionType.DESTROY;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.PokerVariant.TELESINA;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 

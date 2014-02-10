@@ -13,6 +13,7 @@ Poker.LobbyLayoutManager = Class.extend({
     filtersEnabled : true,
     state : null,
     topMenu : null,
+    currencyFilter : null,
 
     cashGameSortingFunction : null,
     sitAndGoSortingFunction : null,
@@ -92,11 +93,16 @@ Poker.LobbyLayoutManager = Class.extend({
     setSitAndGoSortingFunction : function(func) {
         this.sitAndGoSortingFunction = func;
     },
-    onLogin : function() {
-        this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
-        this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+    onLogin : function(reconnecting) {
+        if(!reconnecting) {
+            this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
+            this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+        }
+
         this.addCurrencyFilters();
-        this.topMenu.selectItem("#cashGameMenu");
+        if(!reconnecting) {
+            this.topMenu.selectItem("#cashGameMenu");
+        }
 
     },
     updateIFrameUrl : function(iframe,url) {
@@ -120,6 +126,12 @@ Poker.LobbyLayoutManager = Class.extend({
         }
     },
     addCurrencyFilters : function() {
+        if(this.currencyFilter!=null) {
+            var index = this.requiredFilters.indexOf(this.currencyFilter);
+            if(index!=-1){
+                this.requiredFilters.splice(index,1);
+            }
+        }
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
         if(currencies.length>1) {
             $("#currencyMenu .currency").remove();
@@ -128,8 +140,8 @@ Poker.LobbyLayoutManager = Class.extend({
             for(var i = 0; i<currencies.length; i++) {
                 $("#currencyMenu").append(t.render(currencies[i]));
             }
-            var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
-            this.requiredFilters.push(currencyFilter);
+            this.currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
+            this.requiredFilters.push(this.currencyFilter);
         } else {
             $(".filter-group.currencies").hide();
         }

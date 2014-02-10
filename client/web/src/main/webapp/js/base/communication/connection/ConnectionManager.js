@@ -37,6 +37,7 @@ Poker.ConnectionManager = Class.extend({
         resources : false,
         settings : false
     },
+    reconnecting : false,
 
     init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
@@ -71,16 +72,22 @@ Poker.ConnectionManager = Class.extend({
         this.lastActivity = new Date().getTime();
     },
     onUserLoggedIn : function(playerId, name, token) {
+        console.log("onUserLoggedIn reconnecting = " + this.reconnecting);
         Poker.MyPlayer.onLogin(playerId,name, token);
-        Poker.AppCtx.getNavigation().onLoginSuccess();
+        Poker.AppCtx.getNavigation().onLoginSuccess(this.reconnecting);
         Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
-        $('#loginView').hide();
-        $("#lobbyView").show();
-        Poker.AppCtx.getLobbyLayoutManager().onLogin();
-        var viewManager = Poker.AppCtx.getViewManager();
-        viewManager.onLogin();
-        Poker.AppCtx.getTableManager().onPlayerLoggedIn();
-        Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
+        if(this.reconnecting==false) {
+            $('#loginView').hide();
+            $("#lobbyView").show();
+        }
+        Poker.AppCtx.getLobbyManager().onLogin(this.reconnecting)
+        if(!this.reconnecting) {
+            var viewManager = Poker.AppCtx.getViewManager();
+            viewManager.onLogin();
+        }
+        Poker.AppCtx.getTableManager().onPlayerLoggedIn(this.reconnecting);
+        Poker.AppCtx.getTournamentManager().onPlayerLoggedIn(this.reconnecting);
+        this.reconnecting = false;
         if(token!=null) {
             Poker.Utils.storeUser(name,Poker.MyPlayer.password);
         }
@@ -169,6 +176,7 @@ Poker.ConnectionManager = Class.extend({
         console.log("DISCONNECTED");
         this.showConnectStatus(i18n.t("login.disconnected", {sprintf : [this.retryCount]}));
         this.clearTimeouts();
+        this.reconnecting = true;
         this.reconnect();
     },
     onUserConnecting : function() {

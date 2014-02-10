@@ -20,7 +20,6 @@ package com.cubeia.games.poker.admin.wicket.pages.history;
 import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toDateOrNull;
 import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toIntOrNull;
 import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toStringOrNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,10 +72,22 @@ public class HandHistory extends BasePage {
 
     private final HandHistory.HandProvider handProvider;
 
+    private AjaxFallbackDefaultDataTable<HistoricHand, String> handsTable;
+
     public HandHistory(PageParameters parameters) {
         super(parameters);
         log.debug("Params: " + parameters);
-        handProvider = new HandProvider(parameters);
+        handProvider = new HandProvider();
+        HandHistorySearch search = new HandHistorySearch();
+        search.playerId = toIntOrNull(parameters.get("playerId"));
+        search.tableId = toStringOrNull(parameters.get("tableId"));
+        search.fromDate = toDateOrNull(parameters.get("startDate"));
+        search.toDate = toDateOrNull(parameters.get("toDate"));
+        if (search.isEmpty()) {
+            search.resetDates();
+        }
+        handProvider.setSearch(search);
+        
         addForms();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
@@ -84,7 +95,8 @@ public class HandHistory extends BasePage {
 
     private void addResultsTable() {
         List<IColumn<HistoricHand,String>> columns = createColumns();
-        add(new AjaxFallbackDefaultDataTable<HistoricHand,String>("hands", columns, handProvider, 8));
+        handsTable = new AjaxFallbackDefaultDataTable<HistoricHand,String>("hands", columns, handProvider, 8);
+        add(handsTable);
     }
 
     private List<IColumn<HistoricHand,String>> createColumns() {
@@ -154,7 +166,8 @@ public class HandHistory extends BasePage {
                 if(hs.isEmpty()) {
                 	error("Please provide at least one field to search on.");
                 } else {
-                	handProvider.search(hs);
+                	handProvider.setSearch(hs);
+                	handsTable.setCurrentPage(0);
                 }
             }
         };
@@ -189,42 +202,30 @@ public class HandHistory extends BasePage {
 
     @SuppressWarnings("serial")
 	private class HandProvider extends SortableDataProvider<HistoricHand,String> {
+        private HandHistorySearch search = new HandHistorySearch();
+        private int count = 0;
 
-        private List<HistoricHand> hands;
-
-        private HandProvider(PageParameters parameters) {
-            if (parameters.isEmpty()) {
-                hands = newArrayList();
-            } else {
-                HandHistorySearch search = new HandHistorySearch();
-                search.playerId = toIntOrNull(parameters.get("playerId"));
-                search.tableId = toStringOrNull(parameters.get("tableId"));
-                search.fromDate = toDateOrNull(parameters.get("startDate"));
-                search.toDate = toDateOrNull(parameters.get("toDate"));
-                if(search.isEmpty()) {
-                	search.resetDates();
-                }
-                search(search);
-            }
+        public void setSearch(HandHistorySearch search) {
+            this.search = search;
+            this.count = historyService.countHandHistory(search.playerId, search.tableId, search.fromDate, search.toDate);
         }
 
         @Override
         public Iterator<? extends HistoricHand> iterator(long first, long count) {
-            return hands.subList((int)first, (int)(first + count)).iterator();
+            log.debug("getting hand history by: {}, first = {}, count = {}", new Object[] {search, first, count});
+            List<HistoricHand> hands = historyService.findHandHistory(search.playerId, search.tableId, search.fromDate, search.toDate, (int) first, (int) count);
+            log.debug("done getting hand history");
+            return hands.iterator();
         }
 
         @Override
         public long size() {
-            return hands.size();
+            return count;
         }
 
         @Override
         public IModel<HistoricHand> model(HistoricHand historicHand) {
             return Model.of(historicHand);
-        }
-
-        public void search(HandHistorySearch params) {
-            hands = historyService.findHandHistory(params.playerId, params.tableId, params.fromDate, params.toDate);
         }
     }
 

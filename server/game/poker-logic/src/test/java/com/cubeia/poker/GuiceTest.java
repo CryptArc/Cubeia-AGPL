@@ -24,7 +24,6 @@ import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.GameTypes;
-import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;

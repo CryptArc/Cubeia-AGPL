@@ -25,7 +25,7 @@ Poker.AccountPageManager = Class.extend({
             if(self.editProfileView==null) {
                 var url = Poker.OperatorConfig.getProfilePageUrl();
                 self.editProfileView = new Poker.ExternalPageView(
-                    "editProfileView","Edit Profile","C",self.addToken(url),function(){
+                    "editProfileView","Profile","C",self.addToken(url),function(){
                         vm.removeView(self.editProfileView);
                         self.editProfileView = null;
                     });

@@ -17,9 +17,9 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;
+import static com.cubeia.poker.PokerVariant.TELESINA;
+import static com.cubeia.poker.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.PokerVariant.CRAZY_PINEAPPLE;
 
 import junit.framework.Assert;
 

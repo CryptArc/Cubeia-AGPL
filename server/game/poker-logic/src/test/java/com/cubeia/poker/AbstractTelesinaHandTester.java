@@ -26,7 +26,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;

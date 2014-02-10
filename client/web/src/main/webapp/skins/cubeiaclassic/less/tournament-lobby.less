@@ -4,6 +4,11 @@
 
     .register-button {
         .default-btn;
+        &.full {
+            text-shadow: none;
+            color:#777;
+            .linear-gradient(top,@leave-lobby-gradient-start 0%, @leave-lobby-gradient-end 100%);
+        }
     }
     .leave-action {
         background: none;
@@ -11,10 +16,6 @@
         .linear-gradient(top,@leave-lobby-gradient-start 0%, @leave-lobby-gradient-end 100%);
         text-shadow:1px 2px @leave-lobby-text-shadow;
     }
-    .share-button {
-        .default-btn;
-        text-shadow:1px 2px @share-button-text-shadow;
-        .linear-gradient(top,@share-button-gradient-start 0%, @share-button-gradient-end 100%);
-    }
+
 
 }

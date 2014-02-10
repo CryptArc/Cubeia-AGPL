@@ -33,6 +33,7 @@ import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeC
 import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -111,6 +112,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setGuaranteedPrizePool(config.getGuaranteedPrizePool());
         pokerState.getAllowedOperators().addAll(config.getOperatorIds());
         pokerState.setUserRuleExpression(config.getUserRuleExpression());
+        pokerState.setVariant(config.getVariant());
         pokerState.setDescription(config.getDescription());
 
         PokerTournament tournament = new PokerTournament(pokerState);
@@ -123,6 +125,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         acc.setStringAttribute(OPERATOR_IDS.name(), opString);
         String rule = config.getUserRuleExpression();
         acc.setStringAttribute(USER_RULE_EXPRESSION.name(), rule!=null ? rule : "");
+        acc.setStringAttribute(VARIANT.name(), PokerVariant.TEXAS_HOLDEM.name());
         createHistoricTournament(stateSupport, pokerState);
         tournamentCreated(stateSupport, pokerState, acc);
     }
@@ -191,6 +194,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         lobbyAttributeAccessor.setStringAttribute(FEE.name(), format(config.getFee()));
         lobbyAttributeAccessor.setStringAttribute(SIT_AND_GO.name(), isSitAndGo() ? "true" : "false");
         lobbyAttributeAccessor.setStringAttribute(BUY_IN_CURRENCY_CODE.name(), config.getCurrency());
+        lobbyAttributeAccessor.setStringAttribute(VARIANT.name(),config.getVariant().name());
     }
 
     protected abstract int getConfigurationTemplateId();

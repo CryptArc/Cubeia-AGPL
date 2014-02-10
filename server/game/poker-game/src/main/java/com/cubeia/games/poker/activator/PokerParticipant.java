@@ -46,7 +46,7 @@ import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
 

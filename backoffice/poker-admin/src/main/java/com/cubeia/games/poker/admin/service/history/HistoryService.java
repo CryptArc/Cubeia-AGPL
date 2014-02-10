@@ -25,11 +25,33 @@ import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
 public interface HistoryService {
 
-    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate);
+    /**
+     * Search hand history by the given criteria.
+     * @param playerId 
+     * @param tableId
+     * @param fromDate
+     * @param toDate
+     * @param first result set offset
+     * @param count max rows to return
+     * @return
+     */
+    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate, int first, int count);
 
+    /**
+     * Count the number of rows matching the given search criteria. See {@link #findHandHistory(Integer, String, Date, Date, int, int)}.
+     * @param playerId
+     * @param tableId
+     * @param fromDate
+     * @param toDate
+     * @return total number of matching rows
+     */
+    public int countHandHistory(Integer playerId, String tableId,
+        Date fromDate, Date toDate);
+    
     public HistoricHand findHandById(String handId);
 
     public List<HistoricTournament> findTournaments(Date fromDate, Date toDate);
 
     public HistoricTournament findTournamentByHistoricId(String id);
+
 }

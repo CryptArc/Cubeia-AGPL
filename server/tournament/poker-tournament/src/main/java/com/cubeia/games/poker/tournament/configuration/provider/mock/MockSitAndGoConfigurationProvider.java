@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 
+import com.cubeia.poker.PokerVariant;
 import org.apache.log4j.Logger;
 
 import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
@@ -63,26 +64,29 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
         headsUp.getConfiguration().setRebuyConfiguration(new RebuyConfiguration(1000, true, 1, BigDecimal.valueOf(100), new BigDecimal(200000), BigDecimal.valueOf(100), new BigDecimal(200000)));
         headsUp.getConfiguration().getBlindsStructure().insertLevel(1, new Level(new BigDecimal(20), new BigDecimal(40), new BigDecimal(0), 2, true));
         requestedTournaments.put("Heads up", headsUp);
-
-        requestedTournaments.put("5 Players", createSitAndGoConfiguration("5 Players", 5, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
-        requestedTournaments.put("10 Players", createSitAndGoConfiguration("10 Players", 10, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
+        requestedTournaments.put("Heads up Crazy", createSitAndGoConfiguration("Heads up Crazy", 2, getRegistry().getTimingProfile("DEFAULT"), payouts,PokerVariant.CRAZY_PINEAPPLE));
+        requestedTournaments.put("Express 5 Players", createSitAndGoConfiguration("Express 5 Players", 5, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
+        requestedTournaments.put("Super expr 10 Players", createSitAndGoConfiguration("Super expr 10 Players", 10, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("20 Players", createSitAndGoConfiguration("20 Players", 20, getRegistry().getTimingProfile("DEFAULT"), payouts));
+        requestedTournaments.put("Crazy 20 Players", createSitAndGoConfiguration("Crazy 20 Players", 20, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.CRAZY_PINEAPPLE));
         requestedTournaments.put("100 Players", createSitAndGoConfiguration("100 Players", 100, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("1000 Players", createSitAndGoConfiguration("1000 Players", 1000, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
-        requestedTournaments.put("2000 Players", createSitAndGoConfiguration("2000 Players", 2000, getRegistry().getTimingProfile("DEFAULT"), payouts));
-        requestedTournaments.put("5000 Players", createSitAndGoConfiguration("5000 Players", 5000, getRegistry().getTimingProfile("EXPRESS"), payouts));
-        requestedTournaments.put("10000 Players", createSitAndGoConfiguration("10000 Players", 10000, getRegistry().getTimingProfile("EXPRESS"), payouts));
     }
 
-    private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings, PayoutStructure payoutStructure) {
+    private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings, PayoutStructure payoutStructure,PokerVariant variant) {
         SitAndGoConfiguration configuration = new SitAndGoConfiguration(name, capacity, timings);
         configuration.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
         configuration.getConfiguration().setFee(BigDecimal.valueOf(1));
         configuration.getConfiguration().setPayoutStructure(payoutStructure);
         configuration.getConfiguration().setCurrency("EUR");
         configuration.getConfiguration().setStartingChips(new BigDecimal(100000));
+        configuration.getConfiguration().setVariant(variant);
 
         return configuration;
+    }
+
+    private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings, PayoutStructure payoutStructure) {
+        return createSitAndGoConfiguration(name, capacity, timings, payoutStructure,PokerVariant.TEXAS_HOLDEM);
     }
 
     public Collection<SitAndGoConfiguration> getConfigurations(boolean includeArchived) {

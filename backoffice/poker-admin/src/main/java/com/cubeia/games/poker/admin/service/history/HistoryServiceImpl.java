@@ -44,9 +44,24 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
+    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate, int first, int count) {
         log.info("Finding hand histories by query: playerId = " + playerId + " tableId = " + tableId + " from: " + fromDate + " to: " + toDate);
-        Query query = mongoStorage.createQuery(HistoricHand.class);
+        Query<HistoricHand> query = createHandHistoryQuery(playerId, tableId,
+            fromDate, toDate, first, count);
+        
+        return query.asList();
+    }
+
+    @Override
+    public int countHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
+        log.info("Counting hand histories by query: playerId = " + playerId + " tableId = " + tableId + " from: " + fromDate + " to: " + toDate);
+        Query<HistoricHand> query = createHandHistoryQuery(playerId, tableId, fromDate, toDate, 0, 0);
+        return (int) query.countAll();
+    }
+    
+    private Query<HistoricHand> createHandHistoryQuery(Integer playerId,
+        String tableId, Date fromDate, Date toDate, int first, int count) {
+        Query<HistoricHand> query = mongoStorage.createQuery(HistoricHand.class);
         if (tableId != null) query.field("table.tableIntegrationId").equal(tableId);
         /*
          * Note, we are searching based on when the hand started, so it's not a bug that startTime is used for both from and to.
@@ -55,20 +70,24 @@ public class HistoryServiceImpl implements HistoryService {
         if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
         if (toDate != null) query.field("startTime").lessThanOrEq(toDate.getTime());
         if (playerId != null) query.filter("seats elem", new BasicDBObject("playerId", playerId));
-        return query.order("-startTime").asList();
+        
+        query.offset(first);
+        query.limit(count);
+        query.order("-startTime");
+        return query;
     }
 
     @Override
     public HistoricHand findHandById(String handId) {
-        Query query = mongoStorage.createQuery(HistoricHand.class);
+        Query<HistoricHand> query = mongoStorage.createQuery(HistoricHand.class);
         query.field("_id").equal(handId);
-        return (HistoricHand)query.get();
+        return query.get();
     }
 
     @Override
     public List<HistoricTournament> findTournaments(Date fromDate, Date toDate) {
         log.info("Finding tournaments by query: from: " + fromDate + " to: " + toDate);
-        Query query = mongoStorage.createQuery(HistoricTournament.class);
+        Query<HistoricTournament> query = mongoStorage.createQuery(HistoricTournament.class);
         if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
         if (toDate != null) query.field("startTime").lessThanOrEq(toDate.getTime());
         return query.order("-startTime").asList();
@@ -76,9 +95,9 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public HistoricTournament findTournamentByHistoricId(String id) {
-        Query query = mongoStorage.createQuery(HistoricTournament.class);
+        Query<HistoricTournament> query = mongoStorage.createQuery(HistoricTournament.class);
         query.field("id").equal(new ObjectId(id));
-        return (HistoricTournament)query.get();
+        return query.get();
     }
 
     @Override

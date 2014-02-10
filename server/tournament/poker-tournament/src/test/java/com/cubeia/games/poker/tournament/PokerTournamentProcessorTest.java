@@ -54,6 +54,7 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -187,6 +188,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(configuration.getBuyIn()).thenReturn(BigDecimal.valueOf(10));
         when(configuration.getPayoutStructure()).thenReturn(PayoutStructureParserTest.createTestStructure());
         when(configuration.getCurrency()).thenReturn("EUR");
+        when(configuration.getVariant()).thenReturn(PokerVariant.TEXAS_HOLDEM);
         when(senderFactory.create(Mockito.<MttNotifier>any(), Mockito.<MttInstance>any())).thenReturn(sender);
         when(cashGamesBackendService.getCurrency(anyString())).thenReturn(new Currency("EUR",2));
 
@@ -201,6 +203,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
         config.getConfiguration().setStartingChips(new BigDecimal(2000));
         config.getConfiguration().setCurrency("EUR");
+        config.getConfiguration().setVariant(PokerVariant.TEXAS_HOLDEM);
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime, cashGamesBackendService);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 

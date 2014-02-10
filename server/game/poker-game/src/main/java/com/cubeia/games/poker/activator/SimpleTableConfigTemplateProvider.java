@@ -27,9 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-import static com.cubeia.poker.variant.PokerVariant.CRAZY_PINEAPPLE;
+import static com.cubeia.poker.PokerVariant.TELESINA;
+import static com.cubeia.poker.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.PokerVariant.CRAZY_PINEAPPLE;
 
 @Singleton
 public class SimpleTableConfigTemplateProvider implements TableConfigTemplateProvider {

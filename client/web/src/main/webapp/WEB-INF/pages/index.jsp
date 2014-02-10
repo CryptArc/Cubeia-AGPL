@@ -194,7 +194,7 @@
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
 
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=${addThisPubId}"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/cs-leaderboard.js"></script>
 
 
     <c:if test="${not empty operatorId}">
@@ -283,14 +283,15 @@
                         webSocketUrl : webSocketUrl,
                         webSocketPort : webSocketPort,
                         tournamentLobbyUpdateInterval : 10000,
-                        playerApiBaseUrl : "${playerApiBaseUrl}"
+                        playerApiBaseUrl : "${playerApiBaseUrl}",
+                        operatorApiBaseUrl : "${operatorApiBaseUrl}"
                     });
                     onApplicationWired();
                 });
             }
-
-
         });
+
+
 
     </script>
 
@@ -687,6 +688,11 @@
                     </div>
                     <div class="col-sm-4">
                         <iframe id="lobbyRightPromotionsIframe" class="lobby-right-promotions-iframe" marginheight="0" scrolling="no"  frameBorder="0"></iframe>
+                        <div class="icon-title">
+                            <div class="icon leaderboard"></div>
+                            <div class="text">Current Top Winners</div>
+                        </div>
+                        <div id="leaderboard" data-leaderboard-id="top_winnings_trm" data-nr-of-items="5" class="leaderboard"></div>
                     </div>
                 </div>
 
@@ -752,7 +758,7 @@
             <iframe id="accountIframe" class="account-iframe" scrolling="no"></iframe>
             <div class="account-buttons">
                 <div class="account-button" id="editProfileButton">
-                    Edit Profile
+                    Profile
                 </div>
                 <div class="account-button" id="buyCreditsButton">
                     Buy Credits
@@ -770,15 +776,15 @@
 
         <div class="profile-view" id="editProfileView" style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button  default-btn">Close</a>
         </div>
         <div class="buy-credits-view" id="buyCreditsView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button default-btn">Close</a>
         </div>
         <div class="buy-credits-view" id="externalPageView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
-            <a class="close-button">Close</a>
+            <a class="close-button default-btn">Close</a>
         </div>
     </div>
 
@@ -892,6 +898,12 @@
 
     </div>
     <div class="hand-strength">
+
+    </div>
+    <div class="player-item">
+
+    </div>
+    <div class="player-award">
 
     </div>
     <div class="discard-description" style="display: none;">
@@ -1037,7 +1049,6 @@
             <div class="action-button action-leave" style="display: none;">
                 <span>{{t "table.buttons.leave"}}</span>
             </div>
-            <a class="share-button">+Share</a>
             <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
             </div>
@@ -1349,7 +1360,6 @@
         <div class="container">
             <div class="row">
                 <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
-                <a class="share-button">+Share</a>
             </div>
             <div class="row">
                 <div class="col-sm-7">
@@ -1370,6 +1380,7 @@
                     <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
                     <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
                     <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
+                    <span class="tournament-full">{{t "tournament-lobby.tournament-full"}}</span>
                 </div>
                 <div class="col-sm-5">
                     <div class="info-section tournament-info"></div>
@@ -1415,7 +1426,7 @@
                                 <tr>
                                     <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
                                     <th>{{t "tournament-lobby.players.stack" }}</th>
-                                    <th>{{t "tournament-lobby.players.winnings" }}</th>
+                                    <th class="winnings">{{t "tournament-lobby.players.winnings" }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -1516,7 +1527,7 @@
 <script type="text/mustache" id="handHistoryViewTemplate">
 
     <div id="handHistoryView{{id}}" class="hand-history-container" style="display:none;">
-        <h1>{{t "hand-history.title"}}<a class="close-button">{{t "hand-history.close"}}</a></h1>
+        <h1>{{t "hand-history.title"}}<a class="close-button default-btn">{{t "hand-history.close"}}</a></h1>
 
         <div class="hand-ids-container">
             <div class="hand-ids-header">
@@ -1659,9 +1670,9 @@
         <td class="position">{{position}}</td>
         <td class="player-{{playerId}}"><div class="generic-avatar"></div><div class="level" style="display:none;"></div>{{name}}</td>
         <td>{{currency stackSize}}</td>
-        <td>{{currency winnings}}</td>
+        <td class="winnings">{{currency winnings}}</td>
         <td>
-            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;">Table &raquo;</div>
+            <div class="go-to-table-{{playerId}} btn-lobby" style="display:none;"><span class="go-to-table-label">Table</span> &raquo;</div>
         </td>
     </tr>
 </script>

@@ -56,13 +56,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handStrength = this.seatElement.find(".hand-strength");
         this.avatarElement = this.seatElement.find(".avatar");
         this.levelElement = this.seatElement.find(".player-level");
+        this.awardElement = this.seatElement.find(".player-award");
+        this.itemElement = this.seatElement.find(".player-item");
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
-        console.log("REQUESTED ACTION MAIN POT = " + mainPot);
-        console.log("REQUEST PLAYER ACTION = " + allowedActions)
         var self = this;
         var auto = this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
             var time = timeToAct;

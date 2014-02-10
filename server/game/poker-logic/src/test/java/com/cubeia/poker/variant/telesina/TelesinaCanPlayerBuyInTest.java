@@ -17,11 +17,11 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.variant.PokerVariant;
 import org.junit.Test;
 
 import java.math.BigDecimal;

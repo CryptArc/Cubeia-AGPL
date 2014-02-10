@@ -23,9 +23,15 @@ Poker.LobbyRequestHandler = Class.extend({
         }
     },
     subscribeToCashGames : function(variant) {
+        var self = this;
         this.unsubscribe();
 
-        this.connector.lobbySubscribe(1, "/"+variant);
+        Poker.Subscribe = function(){
+            self.connector.lobbySubscribe(1, "/"+variant);
+        };
+        Poker.Subscribe();
+
+
         Poker.AppCtx.getLobbyManager().clearLobby();
         Poker.Unsubscribe  = function() {
             console.log("Unsubscribing from cash games.");
@@ -38,13 +44,22 @@ Poker.LobbyRequestHandler = Class.extend({
     },
 
     subscribeToSitAndGos : function() {
+        var self = this;
         Poker.AppCtx.getLobbyManager().clearLobby();
-        this.subscribeToTournamentsWithPath("/sitandgo")
+        Poker.Subscribe = function(){
+            self.subscribeToTournamentsWithPath("/sitandgo")
+        };
+        Poker.Subscribe();
+
     },
 
     subscribeToTournaments : function() {
+        var self = this;
         Poker.AppCtx.getLobbyManager().clearLobby();
-        this.subscribeToTournamentsWithPath("/scheduled");
+        Poker.Subscribe = function(){
+            self.subscribeToTournamentsWithPath("/scheduled");
+        };
+        Poker.Subscribe();
     },
 
     subscribeToTournamentsWithPath : function(path) {

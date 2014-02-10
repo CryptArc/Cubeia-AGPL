@@ -17,19 +17,14 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import com.cubeia.poker.*;
+import com.cubeia.poker.action.PokerActionType;
 import org.junit.Test;
 
-import com.cubeia.poker.AbstractTexasHandTester;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNG;
-import com.cubeia.poker.TestUtils;
-import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.variant.PokerVariant;
-
 import java.math.BigDecimal;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 

@@ -70,13 +70,15 @@ Poker.TableManager = Class.extend({
 
     },
 
-    onPlayerLoggedIn : function() {
+    onPlayerLoggedIn : function(reconnecting) {
        console.log("Checking if there are open tables to reconnect to");
        var tables =  this.tables.values();
         for(var i = 0; i<tables.length; i++) {
-            this.leaveTable(tables[i].id);
+            if(!reconnecting) {
+                this.leaveTable(tables[i].id);
+            }
             //TODO: we need snapshot to get capacity
-            new Poker.TableRequestHandler(tables[i].id).openTable(10);
+            new Poker.TableRequestHandler(tables[i].id).openTable(10,reconnecting);
         }
     },
     /**

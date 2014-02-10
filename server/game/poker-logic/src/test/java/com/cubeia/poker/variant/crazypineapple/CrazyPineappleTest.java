@@ -19,6 +19,7 @@ package com.cubeia.poker.variant.crazypineapple;
 
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.DiscardAction;
@@ -36,9 +37,7 @@ import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.HandFinishedListener;
-import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.junit.Assert;
@@ -51,15 +50,10 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.Random;
 
-import static com.cubeia.poker.action.PokerActionType.BIG_BLIND;
-import static com.cubeia.poker.action.PokerActionType.CALL;
-import static com.cubeia.poker.action.PokerActionType.CHECK;
-import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
+import static com.cubeia.poker.action.PokerActionType.*;
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CrazyPineappleTest {
@@ -133,6 +127,46 @@ public class CrazyPineappleTest {
         verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
     }
 
+    @Test
+    public void testBugHand() {
+        startHand(prepareContext(6));
+
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+
+        timeout();
+        Assert.assertTrue(act(p[3], CALL));
+        Assert.assertTrue(act(p[4], FOLD));
+        Assert.assertTrue(act(p[5], RAISE,null, new BigDecimal(600)));
+        Assert.assertTrue(act(p[0], FOLD));
+        Assert.assertTrue(act(p[1], FOLD));
+        Assert.assertTrue(act(p[2], CALL));
+        Assert.assertTrue(act(p[3], FOLD));
+
+        // Flop
+        timeout();
+
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], BET, null,new BigDecimal(300)));
+        Assert.assertTrue(act(p[2], CALL));
+
+        Assert.assertTrue(discard(p[2],8));
+        Assert.assertTrue(discard(p[5],15));
+
+        // Turn
+        timeout();
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], CHECK));
+
+        // River
+        timeout();
+        Assert.assertTrue(act(p[2], CHECK));
+        Assert.assertTrue(act(p[5], CHECK));
+
+
+        verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
+    }
+
 
 
 
@@ -142,6 +176,16 @@ public class CrazyPineappleTest {
 
     private boolean act(MockPlayer player, PokerActionType actionType) {
         return crazyPineapple.act(new PokerAction(player.getId(), actionType));
+    }
+    private boolean act(MockPlayer player, PokerActionType actionType, BigDecimal raise, BigDecimal bet) {
+        PokerAction action = new PokerAction(player.getId(), actionType);
+        if(raise!=null) {
+            action.setRaiseAmount(raise);
+        }
+        if(bet!=null) {
+            action.setBetAmount(bet);
+        }
+        return crazyPineapple.act(action);
     }
 
     private boolean discard(MockPlayer player, int card) {

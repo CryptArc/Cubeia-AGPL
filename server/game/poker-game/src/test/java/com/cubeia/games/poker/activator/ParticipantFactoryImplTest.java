@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.PokerVariant.TELESINA;
 
 public class ParticipantFactoryImplTest {
 

@@ -115,7 +115,7 @@ public class EmbeddedMongoHistoryServiceImplTest {
         datastore.save(hand);
 
         // When we look for that hand, given the playerId, tableId and time range.
-        List<HistoricHand> hands = service.findHandHistory(101, tableIntegrationId, handStartDate.minusSeconds(10).toDate(), handStartDate.plusSeconds(10).toDate());
+        List<HistoricHand> hands = service.findHandHistory(101, tableIntegrationId, handStartDate.minusSeconds(10).toDate(), handStartDate.plusSeconds(10).toDate(), 0, 10000);
 
         // We should find it.
         assertThat(hands.isEmpty(), is(false));
