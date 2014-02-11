@@ -72,7 +72,7 @@ Poker.Leaderboard = Class.extend({
 
     fetchLeaderboard : function() {
         var self = this;
-        if(!this.playerApi.isLeaderboardEnabled()) {
+        if(this.playerApi.isLeaderboardEnabled()==false ) {
             $("#leaderboardContainer").hide();
             return;
         }
