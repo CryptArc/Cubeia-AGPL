@@ -19,6 +19,7 @@ package com.cubeia.poker.variant.texasholdem;
 
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
@@ -46,7 +47,6 @@ import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.GenericPokerGame;
 import com.cubeia.poker.variant.HandFinishedListener;
-import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;

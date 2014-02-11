@@ -33,7 +33,7 @@ Poker.SoundRepository = Class.extend({
                 var file = path+Poker.Sounds[sound].soundList[i].file+"."+codec;
                 var audio = new Poker.SoundSource(file, audioModel, context);
                 audio.setGain(Poker.Sounds[sound].soundList[i].gain);
-                console.log("Loading to " + audioModel + " from file " + file);
+                // console.log("Loading to " + audioModel + " from file " + file);
                 soundSources[i] = audio;
             }
             this.sounds[Poker.Sounds[sound].id] = soundSources;
@@ -57,9 +57,14 @@ Poker.SoundRepository = Class.extend({
             return "no_codec";
         }
 
-        var checkAudio = new Audio();
-        if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
-            return "wav";
+        try {
+            var checkAudio = new Audio();
+            if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
+                return "wav";
+            }
+        } catch (e) {
+            console.log("Error creating Audio player, will turn off sound. ", e);
+            return "no_codec";
         }
     }
 });

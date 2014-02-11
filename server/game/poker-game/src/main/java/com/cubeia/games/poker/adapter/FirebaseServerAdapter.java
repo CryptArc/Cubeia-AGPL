@@ -81,7 +81,7 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.PokerVariant;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
@@ -845,6 +845,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
         timeoutCache.addTimeout(table.getId(), pid, actionId);
     }
 
+    public void removeTimeout(int playerId){
+        timeoutCache.removeTimeout(table.getId(),playerId,table.getScheduler());
+    }
     /**
      * Remove all players in state LEAVING or DISCONNECTED
      */

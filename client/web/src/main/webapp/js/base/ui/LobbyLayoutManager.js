@@ -13,6 +13,7 @@ Poker.LobbyLayoutManager = Class.extend({
     filtersEnabled : true,
     state : null,
     topMenu : null,
+    currencyFilter : null,
 
     cashGameSortingFunction : null,
     sitAndGoSortingFunction : null,
@@ -83,6 +84,7 @@ Poker.LobbyLayoutManager = Class.extend({
             $(".table-filter").toggleClass("hidden");
         });
 
+
         this.initFilters();
     },
     setCashGameSortingFunction : function(func) {
@@ -91,23 +93,45 @@ Poker.LobbyLayoutManager = Class.extend({
     setSitAndGoSortingFunction : function(func) {
         this.sitAndGoSortingFunction = func;
     },
-    onLogin : function() {
-        this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
-        this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+    onLogin : function(reconnecting) {
+        if(!reconnecting) {
+            this.updateIFrameUrl("#lobbyRightPromotionsIframe",Poker.OperatorConfig.getLobbyRightPromotionUrl());
+            this.updateIFrameUrl("#lobbyTopPromotionsIframe",Poker.OperatorConfig.getLobbyTopPromotionUrl());
+        }
+
         this.addCurrencyFilters();
-        this.topMenu.selectItem("#cashGameMenu");
+        if(!reconnecting) {
+            this.topMenu.selectItem("#cashGameMenu");
+        }
 
     },
     updateIFrameUrl : function(iframe,url) {
         var iframe = $(iframe);
+        var loadingContainer = $(".top-promo-loading-container");
         if(url!=null && $.trim(url).length>0) {
             iframe.show();
+            loadingContainer.show();
+            iframe.on("load",function(e){
+                console.log("loaded!!");
+                $(this).addClass("loaded");
+                loadingContainer.addClass("loaded");
+                setTimeout(function(){
+                    loadingContainer.hide();
+                },500);
+            });
             iframe.attr("src",url);
         } else {
+            loadingContainer.hide();
             iframe.hide();
         }
     },
     addCurrencyFilters : function() {
+        if(this.currencyFilter!=null) {
+            var index = this.requiredFilters.indexOf(this.currencyFilter);
+            if(index!=-1){
+                this.requiredFilters.splice(index,1);
+            }
+        }
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
         if(currencies.length>1) {
             $("#currencyMenu .currency").remove();
@@ -116,8 +140,8 @@ Poker.LobbyLayoutManager = Class.extend({
             for(var i = 0; i<currencies.length; i++) {
                 $("#currencyMenu").append(t.render(currencies[i]));
             }
-            var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
-            this.requiredFilters.push(currencyFilter);
+            this.currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
+            this.requiredFilters.push(this.currencyFilter);
         } else {
             $(".filter-group.currencies").hide();
         }
@@ -291,14 +315,11 @@ Poker.LobbyLayoutManager = Class.extend({
     },
     removeListItem : function(prefix,id) {
         console.log("REMOVING LIST ITEM WITH ID " + id);
-        $("#" + prefix + id).remove();
+        $("#" + prefix + id).off().remove();
     },
     updateListItem : function(settings, listItem, callbackFunction) {
         var self = this;
         var item = $("#" + settings.prefix + listItem.id);
-        console.log(item);
-        console.log("UPDATING ITEM : ");
-        console.log(listItem);
         if (item.length > 0) {
 
             item.unbind().replaceWith(this.getTableItemHtml(settings.listItemTemplateId,listItem));
@@ -309,10 +330,24 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         console.log("update complete");
     },
+    updateTableItems : function(items) {
+        for(var i = 0; i<items.length; i++) {
+            this.updateTableItem(items[i]);
+        }
+    },
     updateTableItem : function(listItem) {
         this.updateListItem(this.tableListSettings,listItem,this.getTableItemCallback());
     },
-
+    updateTournamentItems : function(items) {
+        for(var i = 0; i<items.length; i++) {
+            this.updateTournamentItem(items[i]);
+        }
+    },
+    updateSitAndGoItems : function(items) {
+        for(var i = 0; i<items.length; i++) {
+            this.updateSitAndGoItem(items[i]);
+        }
+    },
     updateTournamentItem : function(listItem) {
         this.updateListItem(this.tournamentListSettings,listItem,this.getTournamentItemCallback());
     },
@@ -323,11 +358,12 @@ Poker.LobbyLayoutManager = Class.extend({
         $('#lobby').show();
 
         var container = $("#tableListContainer");
-        container.empty();
+        var height = container.height();
+        container.height(height+"px").empty();
 
         var template = this.templateManager.getRenderTemplate(settings.listTemplateId);
 
-        $("#tableListContainer").html(template.render({}));
+        container.html(template.render({}));
 
         var listContainer =  container.find(".table-list-item-container");
 
@@ -351,6 +387,7 @@ Poker.LobbyLayoutManager = Class.extend({
         if (count == 0) {
             listContainer.append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
+        container.height("");
     },
     getTableItemHtml : function (templateId, data) {
         var item = this.templateManager.render(templateId, data);

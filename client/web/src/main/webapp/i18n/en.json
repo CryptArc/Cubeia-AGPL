@@ -1,9 +1,19 @@
 {
+    "discard" : {
+        "description" : "Choose card to discard"
+    },
+    "level-up" : {
+        "title" : "Level up!",
+        "message" : "You have reached level "
+    },
     "tabs" : {
         "lobby" : "Lobby"
     },
     "achievement" : {
         "completed" : "Completed!"
+    },
+    "item" : {
+        "awarded" : "New item: "
     },
     "account" : {
         "logout" : "Log out",
@@ -72,7 +82,8 @@
             "sit-in" : "Sit-in",
             "rebuy" : "Rebuy",
             "decline" : "Decline",
-            "add-on" : "Add-on"
+            "add-on" : "Add-on",
+            "discard": "Discard card"
 
         },
         "future" : {
@@ -132,6 +143,7 @@
 
     },
     "tournament-lobby" : {
+        "tournament-full" : "The tournament is full",
         "close" : "Close",
         "register" : "Register",
         "unregister" : "Unregister",
@@ -150,7 +162,8 @@
             "stack" : "Stack",
             "winnings" : "Winnings",
             "loading" : "Loading Players...",
-            "no-players" : "No players registered"
+            "no-players" : "No players",
+            "search" : "Search player"
         },
         "tables" : {
             "tables" : "tables",
@@ -290,6 +303,19 @@
         "has" : "has",
         "wins" : "wins",
         "hand-started" : "Hand started:"
+    },
+    "payment" : {
+    	"notifications" : {
+	    	"deposit-confirmed" : {
+	    		"title" : "Funds Received",
+	    		"text" : "You received %s"
+	    	},
+	    	"error" : {
+	    		"title" : "Payment Error",
+	    		"error-below-limit" : "Your payment was below the minimum amount.",
+	    		"error-general" : "Processing your payment failed, please contact support."
+	    	}
+    	}
     }
 
 }

@@ -17,24 +17,23 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.PokerVariant;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.timing.TimingProfile;
+import org.apache.log4j.Logger;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
-
-import org.apache.log4j.Logger;
-
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.poker.betting.BetStrategyType;
-import com.cubeia.poker.timing.TimingProfile;
+import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 
 /**
  * This class represents the configuration of a tournament.
@@ -82,6 +81,8 @@ public class TournamentConfiguration implements Serializable {
     @ElementCollection(fetch=EAGER)
     private Set<Long> operatorIds = new HashSet<Long>(); // > 0 for private tournaments
 
+    private String userRuleExpression;
+
     @ManyToOne(cascade = ALL)
     private RebuyConfiguration rebuyConfiguration = new RebuyConfiguration();
 
@@ -93,6 +94,10 @@ public class TournamentConfiguration implements Serializable {
 
     @Column(length = 1000, nullable = true)
     private String description;
+
+    @Column(nullable = false)
+    private PokerVariant variant;
+
 
     public TournamentConfiguration() {
     }
@@ -247,5 +252,21 @@ public class TournamentConfiguration implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUserRuleExpression() {
+        return userRuleExpression;
+    }
+
+    public void setUserRuleExpression(String userRuleExpression) {
+        this.userRuleExpression = userRuleExpression;
+    }
+
+    public PokerVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(PokerVariant variant) {
+        this.variant = variant;
     }
 }

@@ -1,9 +1,19 @@
 {
+    "discard" : {
+        "description" : "Välj kort att kasta"
+    },
+    "level-up" : {
+        "title" : "Level up!",
+        "message" : "You have reached level "
+    },
     "tabs" : {
         "lobby" : "Lobby"
     },
     "achievement" : {
         "completed" : "Avklarad!"
+    },
+    "item" : {
+        "awarded" : "Nytt föremål: "
     },
     "account" : {
         "logout" : "Logga ut",
@@ -72,7 +82,8 @@
             "sit-in" : "Sit-in",
             "rebuy" : "Rebuy",
             "decline" : "Decline",
-            "add-on" : "Add-on"
+            "add-on" : "Add-on",
+            "discard" : "Kasta kort",
 
         },
         "future" : {
@@ -131,6 +142,7 @@
 
     },
     "tournament-lobby" : {
+        "tournament-full" : "Turneringen är full",
         "close" : "Stäng",
         "register" : "Registrera",
         "unregister" : "Avregistrera",
@@ -148,7 +160,9 @@
             "player" : "Spelare",
             "stack" : "Stack",
             "winnings" : "Vinst",
-            "loading" : "Laddar spelare..."
+            "loading" : "Laddar spelare...",
+            "no-players" : "Inga spelare",
+            "search" : "Sök spelare"
         },
         "tables" : {
             "tables" : "Bord",

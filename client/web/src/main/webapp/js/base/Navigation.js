@@ -23,7 +23,7 @@ Poker.Navigation = Class.extend({
         var msg = null;
         try {
             msg = JSON.parse(e.data);
-        } catch(e) {
+        } catch(ex) {
             return;
         }
         if(msg.action == "tournament") {
@@ -38,8 +38,10 @@ Poker.Navigation = Class.extend({
     mountHandler : function(id,handler) {
         this.views.put(id,handler);
     },
-    onLoginSuccess : function() {
-        this.navigate();
+    onLoginSuccess : function(reconnecting) {
+        if(!reconnecting) {
+            this.navigate();
+        }
     },
     navigate : function() {
         var segments = purl().fsegment();

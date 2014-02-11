@@ -40,7 +40,7 @@ public class SimpleAI implements PokerAI {
     private StrengthCalculator strengthCalculator = new StrengthCalculator();
 
     /** Percent chance that the bot will bluff or act out of hand strength */
-    private int bluffProbability = 10;
+    private int bluffProbability = 5;
     
     /** How aggressive the bot will bet/raise on a scale of 1->X. */
     private int aggression = 1;
@@ -55,9 +55,9 @@ public class SimpleAI implements PokerAI {
     }
 
     public SimpleAI() {
-        bluffProbability = bluffProbability + rng.nextInt(20);
+        bluffProbability = bluffProbability + rng.nextInt(15);
         //aggression = aggression + rng.nextInt(10);
-        aggression = aggression + NonLinearRng.nextInt(20);
+        aggression = aggression + NonLinearRng.nextInt(15);
     }
 
     @Override
@@ -328,7 +328,7 @@ public class SimpleAI implements PokerAI {
     private boolean doBluff() {
     	int probability = bluffProbability;
     	if (bluffedPrevious) {
-    		probability += 25;
+    		probability += 15;
     	}
         return rng.nextInt(100) < probability;
     }

@@ -22,9 +22,7 @@ import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.Result;
@@ -39,8 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.math.BigDecimal.ROUND_DOWN;
-import static java.math.BigDecimal.ZERO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

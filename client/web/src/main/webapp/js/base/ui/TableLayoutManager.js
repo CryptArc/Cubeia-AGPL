@@ -6,6 +6,7 @@ var Poker = Poker || {};
  * @type {Poker.TableLayoutManager}
  */
 Poker.TableLayoutManager = Class.extend({
+
     tableViewContainer : null,
     capacity : 10,
     seatTemplate : null,
@@ -41,6 +42,7 @@ Poker.TableLayoutManager = Class.extend({
 
     tournamentTable : false,
     active : true,
+    profileUpdateHandler : null,
 
     /**
      *
@@ -72,7 +74,7 @@ Poker.TableLayoutManager = Class.extend({
         }
 
         new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
-            new Poker.TableRequestHandler(tableId).sendChatMessage(message);
+            new Poker.TableRequestHandler(tableId).sendChatMessage(message,!self.isSeated());
         });
 
         this.tableId = tableId;
@@ -132,6 +134,10 @@ Poker.TableLayoutManager = Class.extend({
 
         $(".future-action").show();
         this.updateVariant(com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM);
+        this.profileUpdateHandler = function(profile){
+            self.updateLevel(Poker.MyPlayer.id,profile.level);
+        };
+        Poker.AppCtx.getProfileManager().addProfileChangeListener(this.profileUpdateHandler);
     },
     updateVariant : function(variant) {
         console.log("UPDATING VARIANT",variant);
@@ -170,11 +176,21 @@ Poker.TableLayoutManager = Class.extend({
         } else if (actionType.id == Poker.ActionType.DISCARD.id) {
             var discards = this.seats.get(this.myPlayerSeatId).hand.getDiscards();
             new Poker.PokerRequestHandler(this.tableId).sendDiscards(discards);
+            return;
         }
         new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
     },
     updateAvatar : function(playerId,avatarUrl) {
         this.getSeatByPlayerId(playerId).updateAvatar(avatarUrl);
+    },
+    updateLevel : function(playerId,level) {
+        this.getSeatByPlayerId(playerId).updateLevel(level);
+    },
+    updatePlayerAward : function(playerId,itemImageUrl,description) {
+        this.getSeatByPlayerId(playerId).updatePlayerAward(itemImageUrl,description);
+    },
+    updatePlayerItem : function(playerId,itemImageUrl,description) {
+        this.getSeatByPlayerId(playerId).updatePlayerItem(itemImageUrl,description);
     },
     isConfirmLeave : function() {
         if(this.myPlayerSeatId!=-1) {
@@ -184,6 +200,9 @@ Poker.TableLayoutManager = Class.extend({
             }
         }
         return false;
+    },
+    isSeated : function() {
+        return  this.myPlayerSeatId!=-1 && this.seats.get(this.myPlayerSeatId)!=null;
     },
     handleSitIn : function() {
         this.myActionsManager.onRequestToSitIn();
@@ -321,7 +340,7 @@ Poker.TableLayoutManager = Class.extend({
         this.currentDealer = -1;
         this.dealerButton.move(0,0);
         this.dealerButton.hide();
-        Poker.Sharing.bindShareTable(this.tableView.find(".share-button")[0],table.id,table.name);
+
     },
     /**
      *
@@ -496,14 +515,25 @@ Poker.TableLayoutManager = Class.extend({
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot,fixedLimit){
         var seats = this.seats.values();
-        for (var s = 0; s<seats.length; s++) {
-            seats[s].inactivateSeat();
+        if(this.isDiscardRound(allowedActions)) {
+            for (var s = 0; s<seats.length; s++) {
+                seats[s].inactivateSeat();
+            }
         }
         var seat = this.getSeatByPlayerId(player.id);
         var autoHandled = seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
         if(autoHandled==false && player.id == Poker.MyPlayer.id && !this.active) {
             this.playSound(Poker.Sounds.TIME_WARNING_FIRST,true);
         }
+    },
+    isDiscardRound : function(allowedActions) {
+        for(var i = 0; i<allowedActions.length; i++) {
+            var act = allowedActions[i];
+            if(act.type.id == Poker.ActionType.DISCARD)  {
+                return true;
+            }
+        }
+        return false;
     },
     onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
 //        var seats = this.seats.values();
@@ -546,6 +576,7 @@ Poker.TableLayoutManager = Class.extend({
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
+        Poker.AppCtx.getProfileManager().removeProfileChangeListener(this.profileUpdateHandler);
     },
     _hideSeatActionText : function() {
         var seats = this.seats.values();

@@ -35,6 +35,10 @@
             <artifactId>backoffice-shared-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.network.events</groupId>
+            <artifactId>rules</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.network.users</groupId>
             <artifactId>user-client</artifactId>
         </dependency>

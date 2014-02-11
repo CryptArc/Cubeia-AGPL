@@ -21,7 +21,7 @@ describe("Poker.TableManager Test", function(){
     });
 
     it("test add player", function(){
-        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated','onPlayerAdded','updateAvatar']);
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated','onPlayerAdded','updateAvatar','updateLevel']);
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
 
         tableManager.addPlayer(1,1,1,"name1");
@@ -67,7 +67,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Update player status", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar','updateLevel']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -86,7 +86,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Update player balance", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar','updateLevel']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -105,7 +105,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Deal cards", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard','onPlayerStatusUpdated','updateAvatar']);
+            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard','onPlayerStatusUpdated','updateAvatar','updateLevel']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");

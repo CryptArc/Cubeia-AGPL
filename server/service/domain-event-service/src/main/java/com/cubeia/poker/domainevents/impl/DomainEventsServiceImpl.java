@@ -1,5 +1,14 @@
 package com.cubeia.poker.domainevents.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
+import com.cubeia.network.users.firebase.api.UserServiceContract;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.events.client.EventClient;
@@ -9,6 +18,7 @@ import com.cubeia.events.event.GameEventType;
 import com.cubeia.events.event.achievement.BonusEvent;
 import com.cubeia.events.event.poker.PokerAttributes;
 import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.action.service.ClientServiceAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.server.SystemException;
@@ -16,16 +26,14 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
+import com.cubeia.games.poker.io.protocol.AchievementNotificationPacket;
+import com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage;
 import com.cubeia.poker.domainevents.api.BonusEventWrapper;
 import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.google.inject.Singleton;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 @Singleton
 public class DomainEventsServiceImpl implements Service, DomainEventsService, EventListener {
@@ -42,9 +50,16 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	
 	@com.cubeia.firebase.guice.inject.Service
     CashGamesBackendService cashGameBackend;
+
+    @com.cubeia.firebase.guice.inject.Service
+    UserServiceContract userService;
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
+	/** We only need writing to so injected factory is needed */
+	private StyxSerializer serializer = new StyxSerializer(null);
+    private static final String LEVEL_ATTRIBUTE = "level";
+
     public void init(ServiceContext con) throws SystemException {
     }
 
@@ -77,27 +92,67 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		log.info("On Bonus Event ("+event.hashCode()+"): "+event);
 		try {
 			int playerId = Integer.parseInt(event.player);
+			String json = mapper.writeValueAsString(event);
+			BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
+			wrapper.broadcast = event.broadcast;
 			
-			Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
-			for (int tableId : seatedTables.keySet()) {
-				String json = mapper.writeValueAsString(event);
-				BonusEventWrapper wrapper = new BonusEventWrapper(playerId, json);
-				wrapper.broadcast = event.broadcast;
-				
-				log.debug("Bonus Event send JSON: "+json);
-				
-				GameObjectAction action = new GameObjectAction(tableId);
-				action.setAttachment(wrapper);
-				router.getRouter().dispatchToGame(tableId, action );
+			if (event.broadcast) {
+				log.info("Send bonus event through table: "+event);
+				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
+				for (int tableId : seatedTables.keySet()) {
+					GameObjectAction action = new GameObjectAction(tableId);
+					action.setAttachment(wrapper);
+					router.getRouter().dispatchToGame(tableId, action );
+				}
+			} else {
+				sendToPlayer(wrapper);
 			}
+
+            if("xp".equals(event.type) && "levelUp".equals(event.subType)) {
+                updatePlayerLevel(event, playerId);
+            }
 			
 		} catch (Exception e) {
 			log.error("Failed to handle bonus event["+event+"]", e);
 		}
 	}
 
+    private void updatePlayerLevel(BonusEvent event, int playerId) {
+        try {
+            String level = event.attributes.get(LEVEL_ATTRIBUTE);
+            if(level!=null) {
+                userService.updateUserAttribute(playerId, LEVEL_ATTRIBUTE, level);
+            } else {
+                log.debug("level is not set in bonus event");
+            }
+        } catch (Exception e) {
+            log.info("Unable to update player level for player " + playerId);
+            log.debug("Level exception",e);
+        }
+
+    }
+
+
+    private void sendToPlayer(BonusEventWrapper wrapper) throws IOException {
+		int playerId = wrapper.playerId;
+		
+		AchievementNotificationPacket notification = new AchievementNotificationPacket();
+		notification.playerId = playerId;
+		notification.message = wrapper.event;
+		
+		ByteBuffer notificationData = serializer.pack(notification);
+		PokerProtocolMessage msg = new PokerProtocolMessage(notificationData.array());
+		ByteBuffer msgData = serializer.pack(msg);
+		
+		ClientServiceAction action = new ClientServiceAction(playerId, 0, msgData.array());
+		log.info("Send bonus event as client action: "+action);
+		router.getRouter().dispatchToPlayer(playerId, action);
+
+	}
+	
+
 	@Override
-	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
+	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
 		try {
 			int tournamentId = instance.getState().getId();
 			String tournamentName = instance.getState().getName();
@@ -134,7 +189,9 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			event.type = GameEventType.tournamentPayout.name();
 			event.operator = operatorId+"";
 			
+			event.attributes.put(PokerAttributes.stake.name(), buyIn +"");
 			event.attributes.put(PokerAttributes.winAmount.name(), payout +"");
+			event.attributes.put(PokerAttributes.netResult.name(), payout.subtract(buyIn) +"");
 			event.attributes.put(PokerAttributes.tournamentId.name(), tournamentId+"");
 			event.attributes.put(PokerAttributes.tournamentName.name(), tournamentName);
 			event.attributes.put(PokerAttributes.tournamentPosition.name(), position+"");

@@ -166,7 +166,7 @@ public class TournamentLobby {
 
             int position = player.getStatus() == OUT ? player.getPosition() : runningPosition;
 
-            players.add(new TournamentPlayer(player.getScreenname(), format(stackSize), position, format(getWinningsFor(playerId)), getTableFor(playerId)));
+            players.add(new TournamentPlayer(player.getScreenname(), format(stackSize), position, format(getWinningsFor(playerId)), getTableFor(playerId), playerId));
             lastChipStack = stackSize;
         }
 
@@ -277,6 +277,8 @@ public class TournamentLobby {
         tournamentInfo.tournamentStatus = convertTournamentStatus(pokerState.getStatus());
         tournamentInfo.buyInCurrencyCode = pokerState.getCurrency().getCode();
         tournamentInfo.description = pokerState.getDescription();
+        tournamentInfo.userRuleExpression = pokerState.getUserRuleExpression();
+
 
         return tournamentInfo;
     }

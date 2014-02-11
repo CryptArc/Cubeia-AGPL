@@ -12,6 +12,7 @@ Poker.LobbyData = Class.extend({
     validator : null,
     notifyUpdate : false,
     onUpdate : null,
+    onCreate : null,
     onItemRemoved : null,
     sorters : null,
     /**
@@ -21,57 +22,77 @@ Poker.LobbyData = Class.extend({
      * @param {Function} onItemRemoved
      * @constructor
      */
-    init : function(validator,onUpdate,onItemRemoved){
+    init : function(validator,onCreate,onUpdate,onItemRemoved){
         this.items = new Poker.Map();
         this.validator = validator;
         this.onUpdate = onUpdate;
+        this.onCreate = onCreate;
         this.onItemRemoved = onItemRemoved;
         this.sorters = [];
     },
-    addOrUpdateItems : function(items) {
+    updateItems : function(items) {
+        var requiresRedraw = false;
         for(var i = 0; i<items.length; i++) {
-            this.addOrUpdateItem(items[i]);
+            var item = items[i];
+            var current = this.items.get(item.id);
+            if(current!=null) {
+                current = this._update(current,item);
+                this.items.put(item.id,current);
+                if(this.validator.shouldRemoveItem(current)) {
+                    this.onItemRemoved(item.id);
+                } else if(requiresRedraw==false) {
+                    requiresRedraw = this._requiresRedraw(item);
+                }
+            }
         }
-        if(this.notifyUpdate==true) {
-            this.notifyUpdate==false;
+        if(requiresRedraw==true) {
+          this.onCreate(this.getFilteredItems());
+        } else if(this.notifyUpdate==true) {
             this.onUpdate(this.getFilteredItems());
         }
     },
+    addItems : function(items) {
+        for(var i = 0; i<items.length; i++) {
+            this.addItem(items[i]);
+        }
+        if(this.notifyUpdate==true) {
+            this.notifyUpdate==false;
+            this.onCreate(this.getFilteredItems());
+        }
+    },
     remove : function(id) {
-        this.items.remove(id);
+        var removed = this.items.remove(id);
         this.onItemRemoved(id);
     },
     clear : function() {
         this.items = new Poker.Map();
         this.notifyUpdate = false;
     },
+    _requiresRedraw : function(item) {
+        if(item.registered!=null || item.seated!=null || item.status!=null) {
+           return true;
+        }
+        return false;
+    },
     /**
      * @param item.id
      * @param [item.showInLobby]
      */
-    addOrUpdateItem : function(item) {
+    addItem : function(item) {
         if(typeof(item.id)=="undefined") {
             console.log("No id in item, don't know what to do");
             return;
         }
-        if(this.validator.shouldRemoveItem(item)) {
-            this.remove(item.id);
-        } else {
-            var current = this.items.get(item.id);
-            if(current!=null) {
-                current = this._update(current,item);
-                this.items.put(item.id,current);
-            } else {
-                current = item;
-                this.items.put(item.id,current);
-            }
-            if(this.validator.validate(current)) {
-                this.notifyUpdate = true;
-            }
+        var current = item;
+        this.items.put(item.id,current);
+
+        if(this.validator.validate(current)) {
+            this.notifyUpdate = true;
         }
 
     },
     _update : function(current,update) {
+
         for(var x in current) {
             if(typeof(update[x])!="undefined" && update[x]!=null) {
                 current[x] = update[x];
@@ -89,7 +110,7 @@ Poker.LobbyData = Class.extend({
         var items = this.items.values();
         var filtered = [];
         for(var i = 0; i<items.length; i++) {
-            if(this.validator.validate(items[i])==true) {
+            if(!this.validator.shouldRemoveItem(items[i]) && this.validator.validate(items[i])==true) {
                 filtered.push(items[i]);
             }
         }
@@ -127,7 +148,7 @@ Poker.LobbyData = Class.extend({
             }
         }
 
-        this.onUpdate(this.getFilteredItems());
+        this.onCreate(this.getFilteredItems());
 
     },
     getItem : function(id) {

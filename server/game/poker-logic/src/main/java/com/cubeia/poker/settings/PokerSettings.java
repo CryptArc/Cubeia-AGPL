@@ -18,11 +18,10 @@
 package com.cubeia.poker.settings;
 
 import com.cubeia.games.poker.common.money.Currency;
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.PokerVariant;
-
 
 import java.io.Serializable;
 import java.math.BigDecimal;

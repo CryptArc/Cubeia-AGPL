@@ -4,7 +4,7 @@ Poker.MainMenuManager = Class.extend({
     templateManager : null,
     menuItemTemplate : null,
     init : function(viewManager) {
-        this.templateManager = new Poker.TemplateManager();
+        this.templateManager = Poker.AppCtx.getTemplateManager();
         this.menuItemTemplate = "menuItemTemplate";
         var self = this;
         $(".main-menu-button").touchSafeClick(function(e){

@@ -17,8 +17,8 @@
 
 package com.cubeia.poker.variant.factory;
 
+import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.crazypineapple.CrazyPineapple;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;

@@ -28,7 +28,7 @@ describe("Poker.LobbyData Test", function(){
 
 
         ];
-        lobbyData.addOrUpdateItems(items);
+        lobbyData.addItems(items);
     });
 
     it("test sorting", function(){

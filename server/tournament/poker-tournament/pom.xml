@@ -61,6 +61,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.network.events</groupId>
+            <artifactId>rules</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.games.poker</groupId>
 			<artifactId>domain-event-service</artifactId>
             <scope>provided</scope>

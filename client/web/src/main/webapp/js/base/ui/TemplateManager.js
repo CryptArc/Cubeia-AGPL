@@ -1,10 +1,13 @@
 "use strict";
 var Poker = Poker || {};
+var globalTemplates = null;
 
 Poker.TemplateManager = Class.extend({
-    templates : null,
+    globalTemplates : null,
     init : function(preCacheTemplates) {
-        this.templates = new Poker.Map();
+        if(globalTemplates==null) {
+            globalTemplates = new Poker.Map();
+        }
 
         if(preCacheTemplates && preCacheTemplates.length>0) {
             for(var i = 0; i<preCacheTemplates.length; i++) {
@@ -14,20 +17,21 @@ Poker.TemplateManager = Class.extend({
 
     },
     getTemplate : function(id) {
-        if(this.templates.get(id)!=null) {
-            return this.templates.get(id);
+        if(globalTemplates.get(id)!=null) {
+            return globalTemplates.get(id);
         } else {
             var el = $("#"+id);
             if(el.length==0) {
                throw "Template " + id + " not found";
             }
             var html = el.html();
+            el.remove();
             if(html=="") {
                 html =" ";
             }
             var template = Handlebars.compile(html);
 
-            this.templates.put(id,template);
+            globalTemplates.put(id,template);
             return template;
 
         }

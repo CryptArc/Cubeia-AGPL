@@ -17,18 +17,11 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.AbstractTexasHandTester;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNG;
-import com.cubeia.poker.TestUtils;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.*;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 
-import static com.cubeia.poker.action.PokerActionType.ANTE;
-import static com.cubeia.poker.action.PokerActionType.BET;
-import static com.cubeia.poker.action.PokerActionType.CALL;
-import static com.cubeia.poker.action.PokerActionType.CHECK;
+import static com.cubeia.poker.action.PokerActionType.*;
 
 public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 

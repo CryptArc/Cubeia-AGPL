@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.PokerVariant;
 
 import java.math.BigDecimal;
 

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import com.cubeia.poker.PokerVariant;
 import org.joda.time.DateTime;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
@@ -59,9 +60,29 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setStartingChips(new BigDecimal(100000));
         configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
         configuration.setId(1);
+        configuration.setVariant(PokerVariant.TEXAS_HOLDEM);
         configuration.setDescription("This is MTT tournament that starts every five minutes");
         // configuration.getOperatorIds().add(666L);
         tournamentConfigurations.add(everyFiveMinutes);
+
+
+
+        ScheduledTournamentConfiguration everyThirty = everyThirty();
+        TournamentConfiguration thirtyConfig = everyThirty.getConfiguration();
+        thirtyConfig.setMinPlayers(2);
+        thirtyConfig.setMaxPlayers(20);
+        thirtyConfig.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        thirtyConfig.setBuyIn(BigDecimal.valueOf(10));
+        thirtyConfig.setFee(BigDecimal.valueOf(1));
+        thirtyConfig.setPayoutStructure(payouts);
+        thirtyConfig.setCurrency("EUR");
+        thirtyConfig.setStartingChips(new BigDecimal(100000));
+        thirtyConfig.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.DEFAULT.name()));
+        thirtyConfig.setId(1);
+        thirtyConfig.setVariant(PokerVariant.CRAZY_PINEAPPLE);
+        thirtyConfig.setDescription("This is MTT tournament that starts every five minutes");
+        // configuration.getOperatorIds().add(666L);
+        tournamentConfigurations.add(everyThirty);
         
         ScheduledTournamentConfiguration massiveQuickTourny = massiveSpeedTourny();
         TournamentConfiguration speedCfg = massiveQuickTourny.getConfiguration();
@@ -76,7 +97,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setStartingChips(new BigDecimal(100000));
         speedCfg.setId(2);
         speedCfg.setDescription("This is a massive speed tournament!");
-        
+        speedCfg.setVariant(PokerVariant.TEXAS_HOLDEM);
         tournamentConfigurations.add(massiveQuickTourny);
         
         
@@ -103,5 +124,11 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
                 "0 */10 * * * ?", 1, 6, 5);
         return new ScheduledTournamentConfiguration(tournamentSchedule, "Massive Speed Tourny", 1);
+    }
+
+    private ScheduledTournamentConfiguration everyThirty() {
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
+                "0 */30 * * * ?", 1, 30, 30);
+        return new ScheduledTournamentConfiguration(tournamentSchedule, "Every thirty min", 1);
     }
 }

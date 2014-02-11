@@ -5,6 +5,7 @@
     <invocation-handler>com.cubeia.poker.domainevents.impl.GuiceHandler</invocation-handler>
     <dependencies>
         <contract>com.cubeia.backend.firebase.CashGamesBackendService</contract>
+        <contract>com.cubeia.network.users.firebase.api.UserServiceContract</contract>
     </dependencies>
     <description />
     <exported>

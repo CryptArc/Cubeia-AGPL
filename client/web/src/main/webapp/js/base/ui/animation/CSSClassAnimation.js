@@ -26,3 +26,31 @@ Poker.CSSClassAnimation = Poker.Animation.extend({
         return this.nextAnimation;
     }
 });
+
+/**
+ * A simple Poker.Animation based on css classes
+ * @type {Poker.CSSClassAnimation}
+ */
+Poker.CSSAttributeAnimation = Poker.Animation.extend({
+    attributes : null,
+    init : function(element) {
+        this._super(element);
+        this.attributes = new Poker.Map();
+    },
+    addAttribute : function(attr,val) {
+        this.attributes.put(attr,val);
+        return this;
+    },
+    animate : function() {
+        var el =  $(this.element);
+        var pairs = this.attributes.keyValuePairs();
+        for(var i = 0; i<pairs.length; i++) {
+            el.css(pairs[i].key,pairs[i].value);
+        }
+    },
+    next : function(el) {
+        this.nextAnimation = new Poker.CSSAttributeAnimation(el || this.element);
+        return this.nextAnimation;
+    }
+
+});

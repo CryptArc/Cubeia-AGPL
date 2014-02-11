@@ -24,6 +24,9 @@ Poker.Seat = Class.extend({
     animationManager: null,
     currentProgressBarAnimation: null,
     dealerButtonTarget : null,
+    levelElement : null,
+    awardElement : null,
+    itemElement : null,
     hand : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
@@ -49,6 +52,9 @@ Poker.Seat = Class.extend({
         this.handStrength = this.seatElement.find(".hand-strength");
         this.seatBase = this.seatElement.find(".avatar-base");
         this.dealerButtonTarget = this.seatElement.find(".dealer-button-target");
+        this.levelElement = this.seatElement.find(".player-level");
+        this.awardElement = this.seatElement.find(".player-award");
+        this.itemElement = this.seatElement.find(".player-item");
 
         this.reset();
     },
@@ -59,8 +65,38 @@ Poker.Seat = Class.extend({
         } else {
             this.avatarElement.addClass("avatar" + (this.player.id % 9));
         }
+    },
 
+    updatePlayerAward : function(url, description) {
+        if(url!=null) {
+            this.awardElement.css("backgroundImage","url('"+url+"')");
+            this.awardElement.attr('title', description);
+            this.awardElement.show();
+        } else {
+            this.awardElement.hide();
+        }
+    },
 
+    updatePlayerItem : function(url, description) {
+        if(url!=null) {
+            this.itemElement.css("backgroundImage","url('"+url+"')");
+            this.itemElement.attr('title', description);
+            this.itemElement.show();
+        } else {
+            this.itemElement.hide();
+        }
+    },
+
+    /**
+     * Updates the players level or hides it if < 0
+     * @param level
+     */
+    updateLevel : function(level) {
+        if(level && level>0) {
+            this.levelElement.attr("class","player-level level").addClass("level-"+level);
+        } else {
+            this.levelElement.hide();
+        }
     },
     getDealerButtonOffsetElement: function() {
         return this.seatBase;

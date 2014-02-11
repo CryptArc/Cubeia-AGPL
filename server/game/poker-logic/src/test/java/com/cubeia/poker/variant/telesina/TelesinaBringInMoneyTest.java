@@ -17,12 +17,8 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.AbstractTexasHandTester;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNG;
-import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.*;
 import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.variant.PokerVariant;
 import junit.framework.Assert;
 import org.junit.Test;
 

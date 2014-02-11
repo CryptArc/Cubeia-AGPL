@@ -21,7 +21,10 @@ Poker.AppCtx = Class.extend({
     wire : function(settings) {
 
 
-
+        var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl, settings.operatorApiBaseUrl);
+        this.getPlayerApi = function() {
+            return playerApi;
+        };
 
         //this
         var templateManager = new Poker.TemplateManager();
@@ -71,15 +74,7 @@ Poker.AppCtx = Class.extend({
             return mainMenuManager;
         };
 
-        var accountPageManager = new Poker.AccountPageManager();
 
-        /**
-         *
-         * @return {Poker.AccountPageManager}
-         */
-        this.getAccountPageManager = function() {
-            return accountPageManager;
-        };
 
 
         var lobbyLayoutManager = new Poker.LobbyLayoutManager();
@@ -168,6 +163,50 @@ Poker.AppCtx = Class.extend({
             return navigation;
         };
 
+
+
+
+
+        var notificationsManager = new Poker.NotificationsManager();
+        /**
+         * @return {Poker.NotificationsManager}
+         */
+        this.getNotificationsManager = function() {
+            return notificationsManager;
+        };
+
+        var achievementManager = new Poker.AchievementManager();
+        /**
+         * @return {Poker.AchievementManager}
+         */
+        this.getAchievementManager = function() {
+            return achievementManager;
+        }
+
+        var profileManager = new Poker.ProfileManager();
+        /**
+         * @return {Poker.ProfileManager}
+         */
+        this.getProfileManager = function() {
+            return profileManager;
+        };
+
+        var accountPageManager = new Poker.AccountPageManager();
+
+        /**
+         *
+         * @return {Poker.AccountPageManager}
+         */
+        this.getAccountPageManager = function() {
+            return accountPageManager;
+        };
+        var pingManager = new Poker.PingManager();
+        /**
+         * @return {Poker.PingManager}
+         */
+        this.getPingManager = function() {
+            return pingManager;
+        }
         Handlebars.registerHelper('translateCurrencyCode',function(currencyCode){
             return Poker.Utils.translateCurrencyCode(currencyCode);
         });
@@ -182,6 +221,20 @@ Poker.AppCtx = Class.extend({
         });
         Handlebars.registerHelper('currency',function(amount){
             return Poker.Utils.formatCurrency(amount);
+        });
+        Handlebars.registerHelper('validId', function(){
+            var id = arguments[0];
+            return id!=null && id>=0;
+        });
+        Handlebars.registerHelper('renderLock',function(level){
+            var myLevel = profileManager.myPlayerProfile.level
+            console.log("level = " + level);
+            console.log("myLevel = " + myLevel);
+            if(level!=0 && myLevel<level) {
+                return new Handlebars.SafeString('<div class="lock"></div>');
+            } else {
+                return "";
+            }
         });
 
         Handlebars.registerHelper('t', function(i18n_key) {
@@ -201,35 +254,6 @@ Poker.AppCtx = Class.extend({
             var res = '<span class="card-str">' + cardStr.charAt(0).toUpperCase()  + '</span><span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
             return new Handlebars.SafeString(res);
         });
-
-        var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl);
-        this.getPlayerApi = function() {
-            return playerApi;
-        };
-
-        var notificationsManager = new Poker.NotificationsManager();
-        /**
-         * @return {Poker.NotificationsManager}
-         */
-        this.getNotificationsManager = function() {
-            return notificationsManager;
-        };
-
-        var achievementManager = new Poker.AchievementManager();
-        /**
-         * @return {Poker.AchievementManager}
-         */
-        this.getAchievementManager = function() {
-            return achievementManager;
-        }
-
-        var pingManager = new Poker.PingManager();
-        /**
-         * @return {Poker.PingManager}
-         */
-        this.getPingManager = function() {
-            return pingManager;
-        }
 
     }
 });

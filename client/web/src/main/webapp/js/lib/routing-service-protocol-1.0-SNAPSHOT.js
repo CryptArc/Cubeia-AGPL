@@ -271,6 +271,34 @@ com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHa
     }
 };
 com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHands.CLASSID = 6;
+com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage = function () {
+    this.classId = function () {
+        return com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage.CLASSID
+    };
+    this.packet = [];
+    this.save = function () {
+        var a = new FIREBASE.ByteArray();
+        a.writeInt(this.packet.length);
+        a.writeArray(this.packet);
+        return a
+    };
+    this.load = function (b) {
+        var a = b.readInt();
+        this.packet = b.readArray(a)
+    };
+    this.getNormalizedObject = function () {
+        var a = {};
+        var b;
+        a.summary = "com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage";
+        a.details = {};
+        a.details.packet = [];
+        for (b = 0; b < this.packet.length; b++) {
+            a.details.packet.push(this.packet[b].getNormalizedObject())
+        }
+        return a
+    }
+};
+com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage.CLASSID = 13;
 com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory = {};
 com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory.create = function (c, a) {
     var b;
@@ -321,6 +349,10 @@ com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory.create 
             return b;
         case com.cubeia.games.poker.routing.service.io.protocol.TournamentIdResponse.CLASSID:
             b = new com.cubeia.games.poker.routing.service.io.protocol.TournamentIdResponse();
+            b.load(a);
+            return b;
+        case com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage.CLASSID:
+            b = new com.cubeia.games.poker.routing.service.io.protocol.PokerProtocolMessage();
             b.load(a);
             return b
     }

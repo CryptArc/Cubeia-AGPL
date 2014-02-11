@@ -439,6 +439,7 @@
         <!-- The amount that the player won, formatted, if the player is out. -->
         <var name="winnings" type="string" />
         <var name="table_id" type="int32" />
+        <var name="playerId" type="int32" />
     </struct>
 
     <struct name="request_blinds_structure" />
@@ -498,6 +499,7 @@
         <var name="tournament_status" type="tournament_status" />
         <var name="buy_in_currency_code" type="string"/>
         <var name="description" type="string"/>
+        <var name="user_rule_expression" type="string"/>
     </struct>
 
     <!-- Used for requesting all tournament lobby data at once. -->

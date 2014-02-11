@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.cubeia.games.poker.common.money.Currency;
+import com.cubeia.poker.PokerVariant;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -155,6 +156,10 @@ public class PokerTournamentState implements Serializable {
     private Currency currency;
 
     private String description;
+
+    private String userRuleExpression;
+
+    private PokerVariant variant;
 
     /**
      * @return True if this tournament is limited to one or more operators
@@ -668,5 +673,25 @@ public class PokerTournamentState implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setUserRuleExpression(String userRuleExpression) {
+        this.userRuleExpression = userRuleExpression;
+    }
+
+    public String getUserRuleExpression() {
+        return this.userRuleExpression;
+    }
+
+    public boolean hasUserRule() {
+        return getUserRuleExpression()!=null && getUserRuleExpression().length() >0;
+    }
+
+    public PokerVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(PokerVariant variant) {
+        this.variant = variant;
     }
 }

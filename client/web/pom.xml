@@ -153,12 +153,12 @@
                             <value>lcss/$1\.css</value>
                         </replacement>
                         <replacement>
-                            <token>js/base/([a-zA-Z0-9_\-/]*)\.js\"</token>
-                            <value>js/base/$1\.js?v=${maven.build.timestamp}"</value>
+                            <token>js/base/([a-zA-Z0-9_\-/\.]*)js\"</token>
+                            <value>js/base/$1\js?v=${maven.build.timestamp}"</value>
                         </replacement>
                         <replacement>
-                            <token>js/lib/([a-zA-Z0-9_\-/]*)\.js\"</token>
-                            <value>js/lib/$1\.js?v=${maven.build.timestamp}"</value>
+                            <token>js/lib/([a-zA-Z0-9_\-/\.]*)js\"</token>
+                            <value>js/lib/$1\js?v=${maven.build.timestamp}"</value>
                         </replacement>
                         <replacement>
                             <token>lcss/([a-zA-Z0-9_\-/]*)\.css\"</token>
@@ -228,6 +228,10 @@
                         <source>${js.dir}/base/ui/Log.js</source>
                         <source>${js.dir}/base/ui/TableEventLog.js</source>
                         <source>${js.dir}/base/ui/TableLayoutManager.js</source>
+                        <source>${js.dir}/base/communication/player-api/PlayerApi.js</source>
+                        <source>${js.dir}/base/ui/profile/Profile.js</source>
+                        <source>${js.dir}/base/ui/profile/MyProfile.js</source>
+                        <source>${js.dir}/base/ui/profile/ProfileManager.js</source>
                         <source>${js.dir}/base/Table.js</source>
                         <source>${js.dir}/base/Player.js</source>
                         <source>${js.dir}/base/PlayerTableStatus.js</source>
@@ -261,6 +265,8 @@
                         <source>${js.dir}/base/ui/MyActionsManager.js</source>
                         <source>${js.dir}/base/data/LobbyData.js</source>
                         <source>${js.dir}/base/TimeStatistics.js</source>
+                        <source>${js.dir}/base/ui/Pager.js</source>
+                        <source>${js.dir}/base/cs-leaderboard.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

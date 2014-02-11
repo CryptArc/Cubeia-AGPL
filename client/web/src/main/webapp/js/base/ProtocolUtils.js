@@ -7,6 +7,16 @@ var Poker = Poker || {};
 Poker.ProtocolUtils = Class.extend({
     init : function(){},
 
+    paramExist : function(key,params) {
+        for (var i = 0; i < params.length; i++) {
+            var object = params[i];
+
+            if (object.key == key) {
+                return true;
+            }
+        }
+        return false;
+    },
     readParam : function(key,params) {
         for (var i = 0; i < params.length; i++) {
             var object = params[i];
@@ -35,7 +45,10 @@ Poker.ProtocolUtils = Class.extend({
             }
             return val;
         };
-
+        var level = null;
+        if(this.paramExist("USER_RULE_EXPRESSION",params)) {
+            level = this.parseLevel(param("USER_RULE_EXPRESSION"));
+        }
         var data = {
             id : snapshot.mttid,
             name : param("NAME"),
@@ -54,10 +67,24 @@ Poker.ProtocolUtils = Class.extend({
             identifier : param("IDENTIFIER"),
             operatorIds : param("OPERATOR_IDS"),
             buyInCurrencyCode : param("BUY_IN_CURRENCY_CODE"),
-            type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL"))
+            type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),
+            level : level!=null ? level+1 : null,
+            requiresLevel : level!=null ? (level > 0) : null
         };
 
         return data;
+    },
+    parseLevel : function(rule) {
+        if(rule!=null) {
+            var regex = /\{level\} * > *([0-9]+)/g;
+            var level = 0;
+            var levelMatch =  regex.exec(rule);
+            if(levelMatch && levelMatch.length==2) {
+                return parseInt(levelMatch[1]);
+            }
+        }
+        return null;
+
     },
     extractTableData : function(snapshot) {
         var params = snapshot.params;

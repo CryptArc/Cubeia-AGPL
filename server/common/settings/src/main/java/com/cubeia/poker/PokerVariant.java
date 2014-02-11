@@ -19,5 +19,6 @@ package com.cubeia.poker;
 
 public enum PokerVariant {
     TEXAS_HOLDEM,
-    TELESINA;
+    TELESINA,
+    CRAZY_PINEAPPLE;
 }

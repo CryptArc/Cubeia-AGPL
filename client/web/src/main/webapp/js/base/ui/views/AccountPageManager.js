@@ -8,8 +8,9 @@ Poker.AccountPageManager = Class.extend({
     userOverlay : null,
     buyCreditsView : null,
     editProfileView : null,
+    currentBonus : null,
     init : function() {
-        this.templateManager = new Poker.TemplateManager();
+        this.templateManager = Poker.AppCtx.getTemplateManager();
         this.menuItemTemplate = "menuItemTemplate";
         this.userPanel = $(".user-panel");
         this.userOverlay = $(".user-overlay-container");
@@ -24,7 +25,7 @@ Poker.AccountPageManager = Class.extend({
             if(self.editProfileView==null) {
                 var url = Poker.OperatorConfig.getProfilePageUrl();
                 self.editProfileView = new Poker.ExternalPageView(
-                    "editProfileView","Edit Profile","C",self.addToken(url),function(){
+                    "editProfileView","Profile","C",self.addToken(url),function(){
                         vm.removeView(self.editProfileView);
                         self.editProfileView = null;
                     });
@@ -57,28 +58,42 @@ Poker.AccountPageManager = Class.extend({
             self.logout();
         });
 
+        Poker.AppCtx.getProfileManager().addProfileChangeListener(
+            /**
+             * @param {Poker.MyProfile} profile
+             */
+            function(profile){
+                $("#user_name").html(profile.name);
+                if( profile.avatarUrl != null) {
+                    $(".user-panel-avatar").addClass("user-panel-custom-avatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
+                    $("#accountAvatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
+                }
+                if(profile.bonuses.length>0) {
+                    self.onBonusInfo(profile);
+                }
+                if(profile && profile.level>0)  {
+                    var totalLevelXp = profile.nextLevelXp - profile.thisLevelXp;
+                    var progress = 100*(profile.xp - profile.thisLevelXp)/totalLevelXp;
+                    $("#nextLevel").html(1+profile.level);
+                    $("#userLevel").attr("class","").addClass("level").addClass("level-"+profile.level);
+                    if(profile.nextLevelXp) {
+                        $("#xpProgress").width(progress+"%");
+                        $("#currentXp").html(profile.xp + " / " + profile.nextLevelXp);
+                    }
+
+                } else {
+                    $("#xpContainer").hide();
+                }
+
+            });
+
     },
     onLogin : function(playerId,name) {
         var self = this;
         $(".username").html(name);
         $(".user-id").html(playerId);
-        if(Poker.MyPlayer.sessionToken!=null) {
-            Poker.AppCtx.getPlayerApi().requestPlayerProfile(playerId,Poker.MyPlayer.sessionToken,
-                function(profile){
-                    console.log("PROFILE");
-                    console.log(profile);
-                    if (profile !=null && profile.externalAvatarUrl != null) {
-                        $(".user-panel-avatar").addClass("user-panel-custom-avatar").css("backgroundImage","url('"+profile.externalAvatarUrl+"')");
-                    } else {
-                        self.displayDefaultAvatar(playerId);
-                    }
-                },
-                function(){
-                    self.displayDefaultAvatar(playerId);
-                })
-        } else {
-            this.displayDefaultAvatar(playerId);
-        }
+        Poker.AppCtx.getProfileManager().loadMyPlayerProfile();
+
     },
     displayDefaultAvatar : function(playerId){
         $(".user-panel-avatar").addClass("avatar" + (playerId % 9));
@@ -148,7 +163,7 @@ Poker.AccountPageManager = Class.extend({
         $.ga._trackEvent("user_navigation", "open_account_frame");
 
         var url = Poker.OperatorConfig.getAccountInfoUrl();
-        if(url!=null && url=="internal") {
+        if(url!=null && (url=="" || url=="internal")) {
            this.displayInternalAccountPage();
         } else {
             $("#internalAccountContent").hide();
@@ -163,77 +178,84 @@ Poker.AccountPageManager = Class.extend({
     displayInternalAccountPage : function() {
         $("#internalAccountContent").show();
         $("#accountIframe").hide();
-        var self = this;
-        Poker.AppCtx.getPlayerApi().requestAccountInfo(Poker.MyPlayer.sessionToken,
-            function(data){
-                var name = "";
-                if(typeof(data.screenname)!="undefined") {
-                    name = data.screenname;
-                } else if(typeof(data.externalUsername)!="undefined") {
-                    name = data.externalUsername;
-                } else if(typeof(data.username)!="undefined") {
-                    name = data.username;
-                }
-                $("#user_name").html(name);
-
-            },
-            function(){
-                console.log("Error fetching account info");
-            }
-        );
-        Poker.AppCtx.getPlayerApi().requestBonusInfo(Poker.MyPlayer.sessionToken,
-            function(data){
-              self.onBonusInfo(data);
-            },
-            function(){}
-        );
+        Poker.AppCtx.getProfileManager().loadMyPlayerProfile();
     },
-    onBonusInfo : function(data) {
-        console.log(data);
-        var accounts = [];
-        $.each(data.accounts,function(i,a){
-            if(Poker.OperatorConfig.isCurrencyEnabled(a.currency)) {
-                var formattedBalance = Poker.Utils.formatWithSymbol(a.balance, a.currency);
-                accounts.push({ balance : formattedBalance});
-            }
-        });
+    /**
+     * @param {Poker.MyProfile} profile
+     */
+    onBonusInfo : function(profile) {
+        var self = this;
         var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("balanceTemplate");
+        $("#accountBalancesContainer").html(template.render({accounts : profile.accounts }));
 
-        $("#accountBalancesContainer").html(template.render({accounts : accounts}));
+        $("#topUpCurrencies").empty();
 
-        if(data.bonus.timeToNextCollect>0) {
+        $.each(profile.bonuses,function(i,bonus){
+            var currencyName = Poker.Utils.translateCurrencyCode(bonus.currencyCode);
+            $("#topUpCurrencies").append($("<div/>").attr("id","topUp"+bonus.currencyCode).html(currencyName).click(function(e){
+                self.displayTopUpInfo(bonus);
+            }));
+        });
+        var currentBonus = this.getCurrentBonus(profile.bonuses);
+
+        this.displayTopUpInfo(currentBonus);
+        if(profile.bonuses && profile.bonuses.length<2) {
+            $("#topUpCurrencies").hide();
+        } else {
+            $("#topUpCurrencies").show();
+        }
+    },
+    getCurrentBonus : function(bonuses) {
+        var name = this.getCurrentBonusName();
+        if(name==null) {
+            return bonuses[0];
+        } else {
+            for(var i = 0; i<bonuses.length; i++) {
+                var b = bonuses[i];
+                if(b.name == name) {
+                    return b;
+                }
+            }
+            return bonuses[0];
+        }
+
+    },
+    getCurrentBonusName : function(){
+        if(this.currentBonus == null) {
+            return null;
+        }
+        return this.currentBonus.name;
+    },
+    displayTopUpInfo : function(bonus) {
+
+        this.currentBonus = bonus;
+        $("#topUpCurrencies .active").removeClass("active");
+        $("#topUp"+bonus.currencyCode).addClass("active");
+        if(bonus.timeToNextCollect>0) {
             $("#coolDownProgress").show();
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
-            var fractionRemaining = 100 * data.bonus.timeToNextCollect / data.bonus.coolDown;
+            var fractionRemaining = 100-(100 * bonus.timeToNextCollect / bonus.coolDown);
             $("#coolDownProgress").width(fractionRemaining+"%");
             $("#refillButton").attr("class","").addClass("refill-unavailable");
-            var time = new Date().getTime()+data.bonus.timeToNextCollect;
+            var time = new Date().getTime()+bonus.timeToNextCollect;
             $("#coolDownLabel").html(moment(time).fromNow());
-        } else if(data.bonus.canCollect == true) {
+        } else if(bonus.canCollect == true) {
             $("#bonusCollectContainer .top-up-progress").show();
             $("#bonusCollectContainer .balance-too-high").hide();
-            $("#coolDownProgress").hide();
+            $("#coolDownProgress").width("100%");
             $("#refillButton").attr("class","").addClass("refill-available");
             $("#coolDownLabel").html("Top up is available!");
         } else {
             $("#bonusCollectContainer .balance-too-high").show();
             $("#bonusCollectContainer .top-up-progress").hide();
-            $("#bonusCoolDownTime").html((data.bonus.coolDown/3600000));
-            $("#bonusBalanceLowerLimit").html(data.bonus.bonusBalanceLowerLimit);
+            $("#bonusCoolDownTime").html((bonus.coolDown/3600000));
+            $("#bonusBalanceLowerLimit").html(bonus.bonusBalanceLowerLimit);
         }
-
     },
     requestTopUp : function() {
         var self = this;
-        Poker.AppCtx.getPlayerApi().requestTopUp(Poker.MyPlayer.sessionToken,
-            function(data){
-                self.onBonusInfo(data);
-            },
-            function(){
-
-            }
-        );
+        Poker.AppCtx.getProfileManager().requestTopUp(this.currentBonus.name);
     }
 });
 

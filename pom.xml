@@ -37,7 +37,7 @@
         <firebase.version>1.10.1-BETA2-SNAPSHOT</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.5.2-SNAPSHOT</cubeia.network.version>
-        <jetty-version>9.1.0.RC0</jetty-version> 
+        <jetty-version>9.1.1.v20140108</jetty-version> 
     </properties>
 
     <dependencies>
@@ -147,6 +147,12 @@
             <dependency>
                 <groupId>com.cubeia.games</groupId>
                 <artifactId>poker-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.cubeia.games</groupId>
+                <artifactId>routing-service-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -367,7 +373,11 @@
                 <artifactId>events-client</artifactId>
                 <version>${cubeia.network.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.cubeia.network.events</groupId>
+                <artifactId>rules</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.cubeia.network.events</groupId>
                 <artifactId>events-api</artifactId>

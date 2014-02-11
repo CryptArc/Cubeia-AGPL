@@ -17,6 +17,9 @@
 
 package com.cubeia.poker.hand;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -35,7 +38,7 @@ public class Hand implements Serializable {
 
     private List<Card> cards = new ArrayList<Card>();
 
-    //private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
+    private static final Logger log = LoggerFactory.getLogger(Hand.class);
 
     public Hand() {
     }
@@ -139,14 +142,33 @@ public class Hand implements Serializable {
         return handCardsWithoutIds.containsAll(givenCardsWithoutIds);
     }
 
-	
-	public void removeCardByid(Integer cardId) {
-		for (Card card : cards) {
-			if ( card.getId().equals(cardId) ) {
-				cards.remove(card);
-				return;
-			}
+    public Card removeCardById(Integer cardId) {
+        log.debug("Removing card with id " + cardId);
+        for (Card card : cards) {
+            if (card.getId().equals(cardId)) {
+                cards.remove(card);
+                return card;
+            }
         }
-	}
+        log.warn("Did not remove card with id " + cardId + " as it was not in this hand.");
+        return null;
+    }
 
+    public boolean containsCards(List<Integer> cardIds) {
+       for(Integer cardId : cardIds) {
+            if(!containsCard(cardId)) {
+                return false;
+            }
+       }
+       return true;
+    }
+
+    public boolean containsCard(Integer cardId) {
+        for(Card card : cards) {
+            if(card.getId().equals(cardId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

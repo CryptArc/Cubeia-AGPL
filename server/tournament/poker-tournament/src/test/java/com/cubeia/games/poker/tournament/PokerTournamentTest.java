@@ -66,9 +66,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
 import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
@@ -267,6 +265,47 @@ public class PokerTournamentTest {
     	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
     	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
     	Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+    }
+
+    @Test
+    public void allowPlayerOnRuleSetToTournament() {
+        prepareTournamentWithLifecycle();
+        pokerState.setUserRuleExpression("{level} > 2");
+        User user = mock(User.class);
+        Map<String,String> attrs = new HashMap<>();
+        attrs.put("level","4");
+        when(user.getAttributes()).thenReturn(attrs);
+        when(userService.getUserById(anyInt())).thenReturn(user);
+        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+        MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1),null));
+        Assert.assertEquals(MttRegisterResponse.ALLOWED,resp);
+    }
+
+    @Test
+    public void denyPlayerOnRuleSetToTournament() {
+        prepareTournamentWithLifecycle();
+        pokerState.setUserRuleExpression("{level} > 2");
+        User user = mock(User.class);
+        Map<String,String> attrs = new HashMap<>();
+        attrs.put("level","1");
+        when(user.getAttributes()).thenReturn(attrs);
+        when(userService.getUserById(anyInt())).thenReturn(user);
+        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+        MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1),null));
+        Assert.assertEquals(MttRegisterResponse.DENIED,resp);
+    }
+
+    @Test
+    public void denyPlayerOnRuleSetToTournamentWhenNoAttribute() {
+        prepareTournamentWithLifecycle();
+        pokerState.setUserRuleExpression("{level} > 2");
+        User user = mock(User.class);
+        Map<String,String> attrs = new HashMap<>();
+        when(user.getAttributes()).thenReturn(attrs);
+        when(userService.getUserById(anyInt())).thenReturn(user);
+        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+        MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1),null));
+        Assert.assertEquals(MttRegisterResponse.DENIED,resp);
     }
     
     @Test

@@ -76,6 +76,13 @@ public interface ServerAdapter {
      */
     void notifyPrivateCards(int playerId, List<Card> cards);
 
+
+    /**
+     * Removes handled time out for the provided player
+     * @param playerId
+     */
+    public void removeTimeout(int playerId);
+
     /**
      * Notify the user of his best possible hand using both pocket (hidden and exposed) and community cards.
      *

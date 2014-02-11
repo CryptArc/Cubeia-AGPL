@@ -24,6 +24,7 @@ import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.backoffice.users.api.dto.User;
+import com.cubeia.events.rules.RuleCalculator;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
@@ -529,7 +530,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(playersOut, balancesAtStartOfHand(playersOut), state.getRemainingPlayerCount());
         for (ConcretePayout payout : payouts) {
             MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(payout.getPlayerId(), state);
-            domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
+            Money buyIn = getPokerTournamentState().getBuyInAsMoney();
+            domainEventService.sendTournamentPayoutEvent(tournamentPlayer,buyIn.getAmount(), payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
             // Transfer the given amount of money from the tournament account to the player account.
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayout());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
@@ -633,7 +635,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
 
         MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(playerId, state);
-        domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout, pokerState.getCurrency().getCode(), 1, instance);
+        Money buyIn = pokerState.getBuyInAsMoney();
+        domainEventService.sendTournamentPayoutEvent(tournamentPlayer, buyIn.getAmount(), payout, pokerState.getCurrency().getCode(), 1, instance);
 
         transferMoneyAndCloseSession(playerSession, payout);
     }
@@ -881,7 +884,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private TournamentTableSettings getTableSettings() {
-        return new TournamentTableSettings(pokerState.getTiming(), pokerState.getBetStrategy());
+        return new TournamentTableSettings(pokerState.getTiming(), pokerState.getBetStrategy(), pokerState.getVariant());
     }
 
     public void playerRegistered(MttRegistrationRequest request) {
@@ -931,6 +934,10 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.info("Checking if " + request + " is allowed to register.");
 
 
+        if (isReRegistration(request)) {
+            return MttRegisterResponse.ALLOWED;
+        }
+
         if(pokerState.getPlayerSession(request.getPlayer().getPlayerId())!=null) {
             return MttRegisterResponse.DENIED_ALREADY_REGISTERED;
         }
@@ -941,11 +948,9 @@ public class PokerTournament implements TableNotifier, Serializable {
         	return MttRegisterResponse.DENIED; 
         }
         
-        if (isReRegistration(request)) {
-            return MttRegisterResponse.ALLOWED;
-        }
+
         
-        if (isPrivateAndDisallowed(request)) {
+        if (isUserDisallowed(request)) {
         	return MttRegisterResponse.DENIED;
         }
 
@@ -959,18 +964,29 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     /**
-     * Check if this is a private tournament for one or more operators, and 
+     * Check if this is a private tournament for one or more operators, and
+     * checks the tournaments user rule expression to see if the user is allowed and
      * return true if we should block this player.
      */
-    private boolean isPrivateAndDisallowed(MttRegistrationRequest request) {
-        if(pokerState.isPrivate()) {
+    private boolean isUserDisallowed(MttRegistrationRequest request) {
+
+        if(pokerState.isPrivate() || pokerState.hasUserRule())  {
             MttPlayer player = request.getPlayer();
-            // TODO Remove this remote call?
             User user = userService.getUserById(player.getPlayerId());
-            return !pokerState.isOperatorAllowed(user.getOperatorId());
-        } else {
-            return false;
+
+            if(pokerState.isPrivate() && !pokerState.isOperatorAllowed(user.getOperatorId())) {
+                return true;
+            }
+
+            if(pokerState.hasUserRule()) {
+                RuleCalculator ruleCalculator = new RuleCalculator();
+                if(!ruleCalculator.matches(pokerState.getUserRuleExpression(),user.getAttributes())) {
+                    return true;
+                }
+            }
+
         }
+        return false;
     }
 
     private boolean isReRegistration(MttRegistrationRequest request) {

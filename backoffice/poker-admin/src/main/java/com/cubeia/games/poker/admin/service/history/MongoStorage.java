@@ -32,14 +32,13 @@ public class MongoStorage {
         return datastore;
     }
 
-    public void map(Class classType) {
+    public void map(Class<?> classType) {
         if (morphia != null && datastore != null) {
             morphia.map(classType);
         }
     }
 
-    public Query createQuery(Class classType)
-    {
+    public <T> Query<T> createQuery(Class<T> classType) {
         return datastore.createQuery(classType);
     }
 

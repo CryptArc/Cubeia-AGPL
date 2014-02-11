@@ -1,13 +1,6 @@
 .table-view-container {
     .share-button {
-        position: absolute;
-        right: 2.5%;
-        top:9%;
-        .border-radius(0.2em);
-        padding:0.4em 0.7em;
-        font-size: 110%;
-        z-index: 9999999;
-        color:#fff;
+        display: none;
     }
 }
 
@@ -58,6 +51,38 @@
         left: @avatar-base-left + 43;
         top: @avatar-base-top + 21;
     }
+    .player-level {
+        position: absolute;;
+        left:@avatar-base-left+18;
+        top:@avatar-base-top+21;
+        z-index: 9999999999;
+        width: 6%;
+        height: 13%;
+    }
+
+  .player-item {
+       position: absolute;;
+       left:@avatar-base-left+42;
+       top:@avatar-base-top+16;
+       z-index: 9999999999;
+       width: 16%;
+       height: 26%;
+       background-size: 100% auto;
+       background-repeat: no-repeat;
+       background-position: center;
+     }
+
+  .player-award {
+    position: absolute;;
+    left:@avatar-base-left+1;
+    top:@avatar-base-top+23;
+    z-index: 9999999999;
+    width: 6%;
+    height: 14%;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }
 
 .table-logo {

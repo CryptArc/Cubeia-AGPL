@@ -60,7 +60,7 @@ Poker.TableManager = Class.extend({
                 name = "Table"; //TODO: fix
             }
             var tableViewContainer = $(".table-view-container");
-            var templateManager = new Poker.TemplateManager();
+            var templateManager = Poker.AppCtx.getTemplateManager();
             var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
             var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
             this.createTable(tableId, capacity, name , tableLayoutManager);
@@ -70,13 +70,15 @@ Poker.TableManager = Class.extend({
 
     },
 
-    onPlayerLoggedIn : function() {
+    onPlayerLoggedIn : function(reconnecting) {
        console.log("Checking if there are open tables to reconnect to");
        var tables =  this.tables.values();
         for(var i = 0; i<tables.length; i++) {
-            this.leaveTable(tables[i].id);
+            if(!reconnecting) {
+                this.leaveTable(tables[i].id);
+            }
             //TODO: we need snapshot to get capacity
-            new Poker.TableRequestHandler(tables[i].id).openTable(10);
+            new Poker.TableRequestHandler(tables[i].id).openTable(10,reconnecting);
         }
     },
     /**
@@ -264,25 +266,33 @@ Poker.TableManager = Class.extend({
             table.myPlayerSeat = seat;
         }
         table.getLayoutManager().onPlayerAdded(seat,p);
-        if(Poker.MyPlayer.loginToken!=null) {
-            Poker.AppCtx.getPlayerApi().requestPlayerProfile(playerId,Poker.MyPlayer.loginToken,
+        if(Poker.MyPlayer.sessionToken!=null) {
+            Poker.AppCtx.getPlayerApi().requestPlayerProfile(playerId,Poker.MyPlayer.sessionToken,
                 function(profile) {
-                    self.updatePlayerAvatar(playerId,table,profile);
+                    self.updatePlayerProfile(playerId,table,profile);
                 },
                 function() {
-                    self.updatePlayerAvatar(playerId,table,null);
+                    self.updatePlayerProfile(playerId,table,null);
                 }
             );
         } else {
-            self.updatePlayerAvatar(playerId,table,null);
+            self.updatePlayerProfile(playerId,table,null);
             console.log("No loginToken available to request player info from player api");
         }
     },
-    updatePlayerAvatar : function(playerId,table,profile) {
+    updatePlayerProfile : function(playerId,table,profile) {
         if(profile!=null) {
             table.getLayoutManager().updateAvatar(playerId, profile.externalAvatarUrl);
+            table.getLayoutManager().updateLevel(playerId,profile.level);
+            if (profile.items && profile.items.award) {
+                table.getLayoutManager().updatePlayerAward(playerId, profile.items.award.imageUrl, profile.items.award.description);
+            }
+            if (profile.items && profile.items.inventory) {
+                table.getLayoutManager().updatePlayerItem(playerId, profile.items.inventory.imageUrl, profile.items.inventory.description);
+            }
         } else {
             table.getLayoutManager().updateAvatar(playerId, null);
+            table.getLayoutManager().updateLevel(playerId,-1);
         }
     },
     /**
@@ -573,12 +583,20 @@ Poker.TableManager = Class.extend({
         var table = this.getTable(tableId);
         if(table!=null) {
             var player = table.getPlayerById(playerId);
-            if(player!=null) {
-                message = Poker.Utils.filterMessage(message);
-                table.getLayoutManager().onChatMessage(player,message);
-            } else {
-                console.log("onChatMessage: player not found at table");
+            message = Poker.Utils.filterMessage(message);
+            if(player==null && message.indexOf("watcher::")==0) {
+                message = message.substring(9, message.length);
+
+                var index = message.indexOf("::");
+                var name = message.substring(0,index);
+                message = message.substring(index+2,message.length);
+
+                player = { name : name + " (Watcher)" };
             }
+            if(player!=null) {
+                table.getLayoutManager().onChatMessage(player,message);
+            }
+
         }
     },
     isTournamentTable : function(tableId) {

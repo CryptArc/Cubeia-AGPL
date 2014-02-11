@@ -17,8 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
+import static org.mockito.Mockito.verify;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Date;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -27,14 +31,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.Date;
-
-import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createMockHand;
-import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
 
 public class HandHistoryTest {
 
@@ -51,15 +48,14 @@ public class HandHistoryTest {
 
     @Test
     public void testHandSearch() {
-        HistoricHand hand = createMockHand();
-        when(historyService.findHandHistory(1, null, null, null)).thenReturn(Collections.singletonList(hand));
         PageParameters pageParameters = new PageParameters();
         tester.startPage(new HandHistory(pageParameters));
         tester.assertRenderedPage(HandHistory.class);
         FormTester form = tester.newFormTester("form");
         form.setValue("playerId", "1");
         form.submit();
-        verify(historyService).findHandHistory(Mockito.eq(1), Mockito.anyString(), Mockito.any(Date.class), Mockito.any(Date.class));
+        
+        verify(historyService).countHandHistory(Mockito.eq(1), Mockito.anyString(), Mockito.any(Date.class), Mockito.any(Date.class));
     }
 
 }

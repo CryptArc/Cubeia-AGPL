@@ -240,7 +240,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     private void discardCard(Integer cardId) {
-        pocketCards.removeCardByid(cardId);
+        Card removedCard = pocketCards.removeCardById(cardId);
+        if( removedCard != null ) {
+            boolean wasRemoved = privatePocketCards.remove(removedCard);
+
+            if(!wasRemoved) {
+                publicPocketCards.remove(removedCard);
+            }
+        }
     }
 
     @Override

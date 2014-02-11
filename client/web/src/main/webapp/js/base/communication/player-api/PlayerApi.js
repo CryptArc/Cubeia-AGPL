@@ -3,10 +3,12 @@
 var Poker = Poker || {};
 
 Poker.PlayerApi = Class.extend({
-    baseUrl : null,
+    playerApiBaseUrl : null,
+    operatorBaseUrl : null,
 
-    init : function(baseUrl) {
-        this.baseUrl = baseUrl;
+    init : function(playerApiBaseUrl,operatorApiBaseUrl) {
+        this.playerApiBaseUrl = playerApiBaseUrl;
+        this.operatorApiBaseUrl = operatorApiBaseUrl;
     },
     /**
      * Retrieves the player profile for a specific player
@@ -16,7 +18,7 @@ Poker.PlayerApi = Class.extend({
      * @param {Function} errorCallback error callback
      */
     requestPlayerProfile : function(playerId,sessionToken,callback,errorCallback) {
-        var url = this.baseUrl + "/public/player/"+playerId+"/profile?session="+sessionToken;
+        var url = this.playerApiBaseUrl + "/public/player/"+playerId+"/profile?session="+sessionToken;
         $.ajax(url, {
             method : "GET",
             contentType : "application/json",
@@ -32,21 +34,32 @@ Poker.PlayerApi = Class.extend({
 
         });
     },
+    isLeaderboardEnabled : function() {
+        var enabled = this.operatorApiBaseUrl!=null && this.operatorApiBaseUrl!="";
+        return enabled;
+    },
+    requestExperienceInfo : function(sessionToken,callback,errorCallback) {
+        var url = this.playerApiBaseUrl + "/player/experience/poker";
+        this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
+    },
     requestBonusInfo : function(sessionToken,callback,errorCallback) {
-        var url = this.baseUrl + "/player/bonus";
+        var url = this.playerApiBaseUrl + "/player/bonus";
         this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
     },
 
     requestAccountInfo : function(sessionToken,callback,errorCallback) {
-        var url = this.baseUrl + "/player/profile";
+        var url = this.playerApiBaseUrl + "/player/profile";
         this.requestInfo(url,sessionToken,"GET",callback,errorCallback);
 
     },
-    requestTopUp : function(sessionToken,callback,errorCallback) {
-        var url = this.baseUrl + "/player/bonus";
+    requestTopUp : function(bonusName,sessionToken,callback,errorCallback) {
+        var url = this.playerApiBaseUrl + "/player/bonus/"+bonusName;
         this.requestInfo(url,sessionToken,"POST",callback,errorCallback);
     },
     requestInfo : function(url,sessionToken,method,callback,errorCallback) {
+        if(this.playerApiBaseUrl==null || this.playerApiBaseUrl=="") {
+            return;
+        }
         $.ajax(url + "?r="+Math.random()+"&session="+sessionToken, {
             type : method,
             contentType : "application/json",
@@ -60,6 +73,22 @@ Poker.PlayerApi = Class.extend({
                 }
             }
 
+        });
+    },
+    requestLeaderboard : function(leaderboardId,global, callback,errorCallback){
+        if(this.operatorApiBaseUrl==null || this.operatorBaseUrl=="") {
+            return;
+        }
+        var globalPath = global ? "/global" : "";
+        $.ajax(this.operatorApiBaseUrl + '/public/leaderboard/'+Poker.SkinConfiguration.operatorId+'/' + leaderboardId + globalPath + "?r="+Math.random(),{
+            method : "GET",
+            contentType : "application/json",
+            success : function(data) {
+                callback(data);
+            },
+            error : function(e) {
+               errorCallback(e);
+            }
         });
     }
 

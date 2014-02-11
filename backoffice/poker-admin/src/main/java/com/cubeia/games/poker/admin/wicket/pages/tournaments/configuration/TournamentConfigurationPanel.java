@@ -17,20 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
-import static java.util.Arrays.asList;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
+import com.cubeia.backoffice.operator.api.OperatorDTO;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.network.NetworkClient;
+import com.cubeia.games.poker.admin.wicket.components.TournamentPlayersValidator;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.PokerVariant;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.timing.TimingProfile;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -39,15 +36,11 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backoffice.operator.api.OperatorDTO;
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.network.NetworkClient;
-import com.cubeia.games.poker.admin.wicket.components.TournamentPlayersValidator;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.poker.betting.BetStrategyType;
-import com.cubeia.poker.timing.TimingProfile;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("serial")
 public class TournamentConfigurationPanel extends Panel {
@@ -85,6 +78,10 @@ public class TournamentConfigurationPanel extends Panel {
         DropDownChoice<BetStrategyType> strategy = new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name"));
         strategy.setRequired(true);
         add(strategy);
+
+        DropDownChoice<PokerVariant> variant = new DropDownChoice<PokerVariant>("variant", new PropertyModel(model, "variant"), asList(PokerVariant.values()), renderer("name"));
+        variant.setRequired(true);
+        add(variant);
         form.add(new TournamentPlayersValidator(minPlayers,maxPlayers));
 
         final List<OperatorDTO> operators = networkClient.getOperators();
@@ -102,6 +99,9 @@ public class TournamentConfigurationPanel extends Panel {
                 return object.toString();
             }
         }));
+        TextField<String> userRule = new TextField<String>("userRuleExpression", new PropertyModel(model, "userRuleExpression"));
+        add(userRule);
+
         
         DropDownChoice<String> currency = new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>());
         currency.setRequired(true);

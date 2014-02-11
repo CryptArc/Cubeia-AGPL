@@ -37,6 +37,10 @@ Poker.TournamentManager = Class.extend({
      */
     tableManager : null,
 
+    hasBeenOpen : false,
+
+
+
     /**
      *
      * @param {Number} tournamentLobbyUpdateInterval
@@ -55,6 +59,7 @@ Poker.TournamentManager = Class.extend({
         },tournamentLobbyUpdateInterval);
     },
     createTournament : function(id, name) {
+        this.hasBeenOpen = true;
         var viewManager = Poker.AppCtx.getViewManager();
         if(this.getTournamentById(id)!=null) {
             viewManager.activateViewByTournamentId(id);
@@ -126,14 +131,15 @@ Poker.TournamentManager = Class.extend({
             }
         }
     },
-    onPlayerLoggedIn : function() {
-        var tournaments = this.tournaments.values();
-        for(var i = 0; i<tournaments.length; i++){
-            var t = tournaments[i];
-            new Poker.TournamentRequestHandler(t.id).leaveTournamentLobby();
-            this.createTournament(t.id,t.name);
+    onPlayerLoggedIn : function(reconnecting) {
+        if(reconnecting==false) {
+            var tournaments = this.tournaments.values();
+            for(var i = 0; i<tournaments.length; i++){
+                var t = tournaments[i];
+                new Poker.TournamentRequestHandler(t.id).leaveTournamentLobby();
+                this.createTournament(t.id,t.name);
+            }
         }
-
     },
     /**
      * @param id
@@ -271,10 +277,32 @@ Poker.TournamentManager = Class.extend({
         }
     },
     openTournamentLobbies : function(tournamentIds) {
+        if(this.registeredTournaments.size()>0){
+            var tourneys = this.registeredTournaments.keys();
+            for(var i = 0; i<tourneys.length; i++){
+                var t = tourneys[i];
+                if(tournamentIds.indexOf(parseInt(t))==-1){
+                    this.registeredTournaments.remove(t);
+                    var t  = this.tournaments.get(t);
+                    if(t!=null){
+                        t.tournamentLayoutManager.setPlayerRegisteredState();
+                        t.tournamentLayoutManager.setPlayerUnregisteredState();
+                        var trh = new Poker.TournamentRequestHandler(t.id);
+                        trh.requestTournamentInfo();
+                        trh.subscribeToChat();
+                    }
+                }
+            }
+        }
+        var isReconnect = this.hasBeenOpen;
         //TODO: the name of the tournament needs to be fetched from somewhere!
         for (var i = 0; i < tournamentIds.length; i++) {
-            this.registeredTournaments.put(tournamentIds[i],true);
-            this.createTournament(tournamentIds[i],"Tourney");
+            if(!this.registeredTournaments.contains(tournamentIds[i])) {
+                if(isReconnect==false || this.tournaments.contains(tournamentIds[i])){
+                    this.registeredTournaments.put(tournamentIds[i],true);
+                    this.createTournament(tournamentIds[i],"Tourney");
+                }
+            }
         }
     },
     tournamentFinished : function(tournamentId) {

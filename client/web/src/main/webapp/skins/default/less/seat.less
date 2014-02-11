@@ -260,6 +260,44 @@ div.seat-inactive {
     display:none;
 }
 
+.discard-description {
+    font-size: 120%;
+    font-weight: bold;
+    color: #F5D46C;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:10%;
+    text-align: center;
+    text-shadow: 0px 1px #002200;
+}
+.discard-arrow {
+    background-image: url("../images/discard-card-arrow.png");
+    background-size: 70%;
+    width: 10%;
+    height: 100%;
+    display: block;
+    background-position: center 10%;
+    animation: arrow-position 1.3s infinite;
+    -webkit-animation: arrow-position 1.3s infinite;
+    margin: 0 auto;
+    background-repeat: no-repeat;
+}
+
+@keyframes arrow-position
+           {
+               0% {background-position:center 10%;}
+               50% {background-position: center 100%;}
+               100 {background-position:center 10%;}
+           }
+
+@-webkit-keyframes arrow-position /* Safari and Chrome */
+{
+                   0% {background-position:center 10%;}
+                   50% {background-position: center 100%;}
+                   100 {background-position:center 10%;}
+                   }
 
 
 

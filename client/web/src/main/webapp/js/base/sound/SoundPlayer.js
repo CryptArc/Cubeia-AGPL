@@ -23,7 +23,7 @@ Poker.SoundPlayer = Class.extend({
         if (sound) {
             sound.play();
         } else {
-            console.log("No sound found.");
+            console.log("No sound found ", soundData);
         }
     }
 });
