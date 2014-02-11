@@ -21,7 +21,7 @@
     <c:if test="${not empty cssOverride}">
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
-
+    <link id="overrideSkinCss" rel="stylesheet" type="text/css" href="http://www.thrillpoker.com/poker-client.css" />
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -628,14 +628,13 @@
                             </div>
                             <div class="navbar-collapse navbar-top-collapse collapse">
                                 <ul class="nav nav-pills">
-
-                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
-                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                     <li class="active" id="cashGameMenu">
                                         <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
                                             [Cash Games]
                                         </a>
                                     </li>
+                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
+                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                                 </ul>
                             </div>
 
