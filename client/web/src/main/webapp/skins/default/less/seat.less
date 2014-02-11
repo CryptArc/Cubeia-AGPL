@@ -42,8 +42,12 @@
         z-index: 2;
     }
     .cards-container {
-        width:30%;
+        width:20%;
         z-index: 1;
+    }
+    .cards-container-player  {
+        .transform(scale3d(0.5,0.5,1));
+        .transition-transform(1s ease-out);
     }
     .player-status, .action-text,  .hand-strength {
         top:74%;
@@ -102,7 +106,12 @@
     top:0;
 }
 
-
+.seat {
+    .cards-container.cards-container-player {
+        width:40%;
+        border: 1px solid;
+    }
+}
 
 .cards-container {
     position: absolute;

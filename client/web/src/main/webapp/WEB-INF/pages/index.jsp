@@ -131,7 +131,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/ChatInput.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/cards/PlayerHand.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/cards/DynamicHand.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/MyPlayerSeat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/cards/Card.js"></script>
@@ -856,9 +856,7 @@
     <li class="filter-button currency" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
-    <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
-        <img class="card-image" src="{{backgroundImage}}" id="playerCardImage-{{domId}}" style=""/>
-    </div>
+    <img class="card-image" src="{{backgroundImage}}" id="{{domId}}" style=""/>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">

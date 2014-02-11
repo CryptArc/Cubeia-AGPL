@@ -6,20 +6,29 @@
         .seat-defaults(45%,65%);
         .cards-container-pos(35%,40%);
         .action-amount-pos(9%,10%,center);
+        .cards-container-player {
+            .transform-origin(100% 0);
+        }
     }
     .seat-pos-8 {
         top:50%;
         right:0;
         .seat-defaults(35%,30%);
-        .cards-container-pos(40%,15%);
+        .cards-container-pos(40%,-10%);
         .action-amount-pos(12%,10%,left);
+        .cards-container-player {
+            .transform-origin(100% 0);
+        }
     }
     .seat-pos-7 {
         top:20%;
         right:0;
         .seat-defaults(35%,30%);
-        .cards-container-pos(40%,15%);
+        .cards-container-pos(40%,-10%);
         .action-amount-pos(69%,10%,left);
+        .cards-container-player {
+            .transform-origin(100% 0);
+        }
     }
 
     .seat-pos-6 {
@@ -28,6 +37,9 @@
         .seat-defaults(45%,0%);
         .cards-container-pos(48%,50%);
         .action-amount-pos(83%,10%,center);
+        .cards-container-player {
+            .transform-origin(100% 0);
+        }
     }
 
     .seat-pos-5 {
@@ -90,6 +102,9 @@
         height: 10%;
         z-index: 100000;
         position: absolute;
+        .cards-container-player {
+            .transform-origin(50% 0);
+        }
 
     }
 }

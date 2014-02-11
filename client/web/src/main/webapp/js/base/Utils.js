@@ -42,6 +42,9 @@ Poker.Utils = {
 
         //remove trailing zeros
         var decimals = split[1];
+        if(!decimals) {
+            decimals="";
+        }
         for (var i = decimals.length - 1; i >= 0; i--) {
             if (decimals.charAt(i) != '0') {
                 result = Poker.Utils.formatWholePart(split[0]) + "." + decimals.substr(0, i + 1);

@@ -13,6 +13,7 @@ Poker.Card = Class.extend({
     cardImage : null,
     cardElement : null,
     type : null,
+    domId : null,
 
     init:function (id, tableId, cardString, templateManager) {
         this.templateManager = templateManager;
@@ -32,8 +33,9 @@ Poker.Card = Class.extend({
      */
     render : function (cardNum) {
         var t = this.getTemplate();
+        this.domId = this.id + "-" + this.tableId;
         var backfaceImageUrl = contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+"."+this.type;
-        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl, cardNum : cardNum});
+        var output = this.templateManager.render(t, {domId:this.domId, backgroundImage:backfaceImageUrl, cardNum : cardNum});
         return output;
     },
     /**
@@ -51,12 +53,11 @@ Poker.Card = Class.extend({
      * Sets the backgroundImage attribute on card image div.
      * @param imageUrl
      */
-
     setCardImage : function(imageUrl) {
-        if (!this.cardImage) this.getJQElement();
-        $(this.cardImage).attr("src",imageUrl);
+        var element = this.getContainerElement();
+        element.attr("src",imageUrl).hide();
+        setTimeout(function(){element.show();},50);
     },
-
 
     /**
      * Returns the JQuery card element
@@ -68,6 +69,9 @@ Poker.Card = Class.extend({
             this.cardImage = document.getElementById(this.getCardDivId()).children[0];
         }
         return $("#" + this.getCardDivId());
+    },
+    getContainerElement : function(){
+       return $("#" + this.domId);
     },
     getDOMElement : function() {
       return this.getJQElement().get(0);
