@@ -21,7 +21,7 @@
     <c:if test="${not empty cssOverride}">
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
-    <link id="overrideSkinCss" rel="stylesheet" type="text/css" href="http://www.thrillpoker.com/poker-client.css" />
+
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
