@@ -34,6 +34,9 @@ Poker.PlayerApi = Class.extend({
 
         });
     },
+    isLeaderboardEnabled : function() {
+        return this.operatorBaseUrl!=null && this.operatorBaseUrl!="";
+    },
     requestExperienceInfo : function(sessionToken,callback,errorCallback) {
         var url = this.playerApiBaseUrl + "/player/experience/poker";
         this.requestInfo(url,sessionToken,"GET",callback,errorCallback);

@@ -688,11 +688,13 @@
                     </div>
                     <div class="col-sm-4">
                         <iframe id="lobbyRightPromotionsIframe" class="lobby-right-promotions-iframe" marginheight="0" scrolling="no"  frameBorder="0"></iframe>
-                        <div class="icon-title">
-                            <div class="icon leaderboard"></div>
-                            <div class="text">Current Top Winners</div>
+                        <div id="leaderboardContainer" style="display:none;">
+                            <div class="icon-title">
+                                <div class="icon leaderboard"></div>
+                                <div class="text">Current Top Winners</div>
+                            </div>
+                            <div id="leaderboard" data-leaderboard-id="top_winnings_trm" data-nr-of-items="5" class="leaderboard"></div>
                         </div>
-                        <div id="leaderboard" data-leaderboard-id="top_winnings_trm" data-nr-of-items="5" class="leaderboard"></div>
                     </div>
                 </div>
 
