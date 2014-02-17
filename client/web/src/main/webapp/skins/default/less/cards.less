@@ -16,13 +16,12 @@
     .my-player-seat {
         .cards-container {
             &.discard-enable {
-                .player-card-container:hover img {
-                    .transition-transform(0.3s ease-out);
+                img:hover {
                     .transform(translate3d(0,-25%,0));
                 }
             }
 
-            .player-card-container.discarded img {
+            img.discarded {
                 .transform(translate3d(0,-25%,0));
                 opacity:0.8;
             }
@@ -31,3 +30,12 @@
     }
 }
 
+.variant-telesina {
+    .my-player-seat {
+        .cards-container {
+            .number-1 {
+                opacity: 0.8;
+            }
+        }
+    }
+}

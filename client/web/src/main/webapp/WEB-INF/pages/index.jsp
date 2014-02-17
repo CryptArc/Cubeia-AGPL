@@ -811,7 +811,9 @@
     <div class="avatar-base">
 
     </div>
+    <div class="avatar-base-border">
 
+    </div>
     <div class="player-name">
         {{name}}
     </div>
@@ -856,7 +858,7 @@
     <li class="filter-button currency" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
-    <img class="card-image" src="{{backgroundImage}}" id="{{domId}}" style=""/>
+    <img class="card-image number-{{cardNum}}" src="{{backgroundImage}}" id="{{domId}}" style=""/>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
@@ -877,6 +879,9 @@
 
     </div>
     <div class="avatar-base">
+
+    </div>
+    <div class="avatar-base-border">
 
     </div>
     <div class="avatar">

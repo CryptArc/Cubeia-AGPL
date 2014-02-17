@@ -112,16 +112,24 @@ Poker.CSSUtils = Class.extend({
             throw "Poker.CSSUtils: Illegal argument, element and transforms must be set";
         }
         el = this.getElement(el);
+        this.addTransformOrigin(el,origin);
         for(var i = 0; i<this.prefix.length; i++) {
+
             var property = this.getProperty(this.prefix[i],"Transform");
             if(typeof(el.style[property])!="undefined") {
                 el.style[property]=transform;
             }
-            property = this.getProperty(this.prefix[i],"TransformOrigin");
+        }
+    },
+    addTransformOrigin : function(el,origin) {
+        el = this.getElement(el);
+        for(var i = 0; i<this.prefix.length; i++) {
+            var property = this.getProperty(this.prefix[i],"TransformOrigin");
             if(origin!=null && typeof(el.style[property])!="undefined") {
                 el.style[property]=origin;
             }
         }
+
     },
     getElement : function(el) {
         if(typeof(el.length)!="undefined") {

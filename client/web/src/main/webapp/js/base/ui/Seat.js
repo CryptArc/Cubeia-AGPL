@@ -37,8 +37,8 @@ Poker.Seat = Class.extend({
         this.seatElement = $("#" + elementId);
         this.renderSeat();
     },
-    setCardsAlignment : function(align) {
-        this.hand.setAlignment(align);
+    setCardsAlignment : function(pos,capacity) {
+        this.hand.setAlignment(pos,capacity);
     },
     setSeatPos: function(previousPos, position) {
         this.seatElement.removeClass("seat-empty").removeClass("seat-pos-" + previousPos).removeClass("seat-inactive").addClass("seat-pos-" + position);
@@ -187,6 +187,7 @@ Poker.Seat = Class.extend({
         new Poker.CSSClassAnimation(this.actionAmount).addClass("placed").start(this.animationManager);
     },
     fold: function() {
+        this.hand.fold();
         this.seatElement.addClass("seat-folded");
         this.seatElement.removeClass("active-seat");
         this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/back.png");

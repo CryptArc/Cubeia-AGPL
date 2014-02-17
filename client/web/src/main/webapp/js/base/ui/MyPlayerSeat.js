@@ -76,7 +76,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             var act = allowedActions[a];
             if (act.type.id == Poker.ActionType.DISCARD.id) {
                 this.seatElement.find(".discard-description").show();
-                this.cardsContainer.addClass("discard-enable");
                 this.hand.enableDiscards(act.minAmount, act.maxAmount);
             }
         }
@@ -113,6 +112,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
         } else if(actionType == Poker.ActionType.DISCARD) {
             this.discardCards(cardsToDiscard);
+            this.hand.disableDiscards();
         }
         this.seatElement.find(".discard-description").hide();
         this.cardsContainer.removeClass("discard-enable");

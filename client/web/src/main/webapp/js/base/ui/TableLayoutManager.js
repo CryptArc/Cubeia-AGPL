@@ -280,10 +280,7 @@ Poker.TableLayoutManager = Class.extend({
             elementId = "seat"+seatId+"-"+this.tableId;
             seat = new Poker.Seat(elementId, seatId, player, this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
-            setTimeout(function(){
-                console.log("getting cards alignment for " + self._getNormalizedSeatPosition(seatId));
-                seat.setCardsAlignment(self.getCardsAlignment($("#"+elementId)));
-            },50);
+            seat.setCardsAlignment(self._getNormalizedSeatPosition(seatId),self.capacity);
             this.seats.put(seatId,seat);
         }
 
@@ -619,7 +616,9 @@ Poker.TableLayoutManager = Class.extend({
         console.log("seat length on calculate = " + this.seats.size());
         var seats = this.seats.values();
         for(var s in seats){
-            seats[s].setSeatPos(seats[s].seatId,this._getNormalizedSeatPosition(seats[s].seatId));
+            var pos = this._getNormalizedSeatPosition(seats[s].seatId);
+            seats[s].setSeatPos(seats[s].seatId,pos);
+            seats[s].setCardsAlignment(pos,this.capacity);
         }
         //do empty seats, question is if we want them or not, looked a bit empty without them
         for(var i = 0; i<this.capacity; i++){
