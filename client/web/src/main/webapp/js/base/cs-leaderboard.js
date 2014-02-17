@@ -72,7 +72,11 @@ Poker.Leaderboard = Class.extend({
 
     fetchLeaderboard : function() {
         var self = this;
-        console.log("fetching leaderboard " + self.opts.url);
+        if(this.playerApi.isLeaderboardEnabled()==false ) {
+            $("#leaderboardContainer").hide();
+            return;
+        }
+        $("#leaderboardContainer").show();
         this.playerApi.requestLeaderboard(self.id,self.opts.global,function(data){
             if(data.length == 0 ) {
                 console.log("leaderboard was reset, keeping list as is");
@@ -213,7 +217,6 @@ Poker.Leaderboard = Class.extend({
     },
     start : function() {
         var self = this;
-        console.log("Start");
         if(self.timer==null) {
             self.template = Handlebars.compile(self.getItemTemplate());
             self.timer = setInterval(function(){
