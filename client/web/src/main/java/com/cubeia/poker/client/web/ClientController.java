@@ -88,21 +88,6 @@ public class ClientController {
         return "index";
     }
 
-    @RequestMapping(value = {"/{skin}/test"})
-    public String handleTest(HttpServletRequest request, ModelMap modelMap,
-                              @PathVariable("skin") String skin) {
-
-        modelMap.addAttribute("cp",request.getContextPath());
-
-        if(skin == null) {
-            skin = defaultSkin;
-        } else if(!skin.matches(SAFE_PATTER)) {
-            modelMap.addAttribute("skin","");
-        }
-        checkSetFirebaseAttributes(modelMap);
-        return "hand-test";
-    }
-
     @RequestMapping(value = {"/{operatorId}/{skin}"})
     public String handleStartWithOperator(HttpServletRequest request, ModelMap modelMap,
                               @PathVariable("operatorId") Long operatorId, @PathVariable("skin") String skin ) {
