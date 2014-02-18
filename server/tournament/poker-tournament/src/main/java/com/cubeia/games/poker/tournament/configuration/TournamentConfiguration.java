@@ -45,6 +45,7 @@ public class TournamentConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Transient
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Id @GeneratedValue
