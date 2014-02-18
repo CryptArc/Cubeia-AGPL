@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
 import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.network.shared.web.wicket.AdminConfig;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -35,6 +36,8 @@ public class ShowTournamentTest {
 
     @Mock
     private HistoryService historyService;
+    @Mock
+    private AdminConfig adminConfig;
     private ApplicationContextMock context = new ApplicationContextMock();
 
     @Before
@@ -42,6 +45,7 @@ public class ShowTournamentTest {
         initMocks(this);
         context = new ApplicationContextMock();
         context.putBean("historyService", historyService);
+        context.putBean("adminConfig",adminConfig);
     }
 
     @Test
