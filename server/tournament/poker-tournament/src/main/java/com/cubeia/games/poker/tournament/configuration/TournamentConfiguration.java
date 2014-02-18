@@ -23,8 +23,7 @@ import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,7 +45,7 @@ public class TournamentConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Transient
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     @Id @GeneratedValue
     private int id;
