@@ -97,10 +97,13 @@ public class Payouts implements Serializable {
     }
 
     private void calculatePayouts(BigDecimal buyIn) {
+        BigDecimal totalPayouts = null;
         // First try rounding to closest buy-in
-        BigDecimal totalPayouts = calculatePayoutsRoundingToClosestBuyIn(buyIn);
+        if(buyIn.compareTo(BigDecimal.ZERO) > 0) {
+            totalPayouts = calculatePayoutsRoundingToClosestBuyIn(buyIn);
+        }
         // If that doesn't add up, fall back to normal rounding.
-        if (totalPayouts.compareTo(prizePool) != 0) {
+        if (totalPayouts==null || totalPayouts.compareTo(prizePool) != 0) {
             log.debug("Total payouts " + totalPayouts + " didn't equal the prize pool " + prizePool + ", falling back to normal rounding.");
             positionsToPayouts.clear();
             calculatePayoutsWithNormalRounding(buyIn);
