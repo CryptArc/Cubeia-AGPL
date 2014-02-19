@@ -1,12 +1,7 @@
-This module contains complete Poker Systems, arranged in different ways. 
+Several modules which create a Simple Standalone Poker System
 
-simple - Unified Archive, which contains all subsystems, used as quick-start
+site - A very basic website with user-registration
 
 jetty-embed - a class which simplifies embedding jetty instances.
 
-DEV:
-
-uar-tomcat
-TODO: add a semi-production bundle with tomcat, similar to the Network bundle.
-
-(possibly the demo could be placed here)
+simple - The complete Standalone Poker System (firebase uar)
