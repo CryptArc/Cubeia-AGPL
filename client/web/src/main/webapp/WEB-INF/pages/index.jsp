@@ -203,6 +203,11 @@
             Poker.SkinConfiguration.operatorId = ${operatorId};
         </script>
     </c:if>
+    <c:if test="${not empty clientTitle}">
+        <script type="text/javascript">
+            Poker.SkinConfiguration.title = "${clientTitle}";
+        </script>
+    </c:if>
     <c:if test="${not empty token}">
         <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
