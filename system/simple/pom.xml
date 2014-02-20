@@ -232,6 +232,24 @@
                 
             </dependencies>
         </profile>  
+        
+        <profile>
+            <id>site</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>site</name>
+                </property>
+            </activation>
+            <dependencies>             
+                <dependency>
+                    <groupId>com.cubeia.games</groupId>
+                    <artifactId>game-site-sar</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>         
+            </dependencies>
+        </profile>        
     </profiles>
 
 </project>

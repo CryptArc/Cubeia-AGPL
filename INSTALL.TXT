@@ -18,10 +18,9 @@ Please follow this sequence *strictly*, otherwise you will run into a cascade of
 problems. If you ask for support on the forum, please mention which steps
 succeeded so far, and with which step you got the problem.
 
-You will need half an hour for the first steps, but some hours (or days) to
-complete until the integration of Cubeia Network.
+Ideally, you'll have a running system within an hour.
 
-Finally: don't forget that Cubeia Poker is under development. This alone makes
+Please don't forget that Cubeia Poker is under development. This alone makes
 things sometimes very difficult, especially when updating to newer versions.
 
 
@@ -54,13 +53,13 @@ There is no user registration at this point. Use any name, and the password
 should be an integer > 1000 (e.g.: test/1001).
 
 Join a table. Use a 2nd browser to sit with a 2nd player to make a quick test.
+Use another integer as a password, as it becomes the user-id.
 
 
 http://localhost:8081 - BOTS (to get some more opponents)
 
-The default values will create 10 bots, just press OK button. You should see
-within the lobby that tables are getting players. Join one or more tables
-and check the game.
+Set 10 or 50 bots and press the OK button. You should see within the lobby that
+the tables are getting players. Join one or more tables and check the game.
 
 After this, you can start tournament bots, asking them to leave one seat open,
 so you can join a tournament.
@@ -109,29 +108,23 @@ any existing data.
 
 Within the Poker Admin (http://localhost:8088) create an Operator 1 (e.g. 'Main')
 
-CREATE USERS & BOTS
-===================
 
-Create some users. Username, password and Operator ID (1) is enough data.
-
-You can use the user-creator tool, which will add an account with some cash for 
-the created user. The following will create 10 users:
+BOT REGISTRATION
+================
+ 
+BOTS: are like other users, so if you want to use the bots in an integrated 
+system, you have to create accounts for them, too. 200 bots Bot_1 ... Bot_200:
 
   cd tools/user-creator/target
-  java -jar user-creator.jar -d -u Test -p 1 -o 1 -r 10 
-
-You can now login with the user credentials created.
-
-BOTS: are like other users, so if you want to use the bots in an integrated 
-system, you have to create accounts for them, too.
-
-  java -jar user-creator.jar -d -u Bot -p 1 -o 0 -r 120
+  java -jar user-creator.jar -d -u Bot -p 1 -o 0 -r 200
 
 For more info on the user-creator tool, see the README.TXT.
 
 
 OPERATE THE GAME
 ================
+
+http://localhost:8089 - A very basic user-registration
 
 http://localhost:8181 - CLIENT
 
@@ -147,8 +140,12 @@ Now you can create a simple Sit&Go, which should show up in the lobby.
 Last, create a Scheduled Tournament template.
 
 
-FULL REBUILD
-============
+================================================================================
+ADVANCED STEPS
+================================================================================
+
+UPDATE AND REBUILD
+==================
 
 After source code updates via
 
@@ -162,15 +159,12 @@ The "-U" flag ensures that dependencies are updated (important when sources are
 under development).
 
 
-
-ADVANCED STEPS
-================================================================================
-
 FIREBASE
 ========
 
-Firebase was fetched during the build. You can start the poker-server directly
-by starting firebase from within
+Firebase (Cubeia's Game Application Server which drives Cubeia Poker) was
+fetched during the build. You can start the poker-server directly by starting 
+firebase from within
 
 ./system/simple/target/firebase-run/firebase-<version>-CE
 
@@ -190,7 +184,8 @@ DATABASES
 ================================================================================
 
 The simple system uses an embedded H2 database, enabling this way a simplified
-setup. You may want to change to a mysql database.
+setup and simplified updates. You may want to change to a mysql database,
+especially if you want to keep the data once you start using the poker-system.
 
 MYSQL DB
 ========
@@ -211,12 +206,8 @@ You have to change the deployed datasources within:
 
 
 
-USER REGISTRATION
-================= 
-
-At this point, there is not user registration available. This is because Cubeia 
-has decided to not provide any public-facing websites / code (e.g.
-where users can register themselves).
+WEBSITE INTEGRATION
+=================== 
 
 The typical use-case is to integrate Cubeia Poker with an existing website.
 
@@ -227,7 +218,3 @@ There are several supporting modules available, like e.g. a simple jdbc login
 to an existent database (of your website, e.g. wordpress based):
 
 www.cubeia.org/wiki/index.php/Tutorials/howto_jdbc_login
-
-An alternative way would be, to implement a module which works against the 
-cubeia network user API, using this way the included user database.
-

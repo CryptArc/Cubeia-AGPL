@@ -19,6 +19,7 @@
     <modules>
         <module>jetty-embed</module>
         <module>network</module>
+        <module>site</module>
         <module>simple</module>
     </modules>    
 
@@ -102,7 +103,12 @@
             <artifactId>player-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
-
+        <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>poker-user-creator</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
