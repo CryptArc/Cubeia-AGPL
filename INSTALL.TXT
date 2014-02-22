@@ -47,7 +47,7 @@ mvn clean install
 cd  system/simple
 mvn firebase:run
 
-http://localhost:8181 - CLIENT
+http://localhost:8181/game - CLIENT
 
 There is no user registration at this point. Use any name, and the password
 should be an integer > 1000 (e.g.: test/1001).
@@ -118,15 +118,15 @@ system, you have to create accounts for them, too. 200 bots Bot_1 ... Bot_200:
   cd tools/user-creator/target
   java -jar user-creator.jar -d -u Bot -p 1 -o 0 -r 200
 
-For more info on the user-creator tool, see the README.TXT.
+For more info on the user-creator tool, see the tools/user-creator/README.TXT.
 
 
 OPERATE THE GAME
 ================
 
-http://localhost:8089 - A very basic user-registration
+http://localhost:8181 - A very basic website with user-registration
 
-http://localhost:8181 - CLIENT
+http://localhost:8181/game - CLIENT
 
 http://localhost:8081 - BOTS (to get some more opponents)
 
@@ -206,14 +206,15 @@ You have to change the deployed datasources within:
 
 
 
-WEBSITE INTEGRATION
-=================== 
+FURTHER WEBSITE INTEGRATION
+=========================== 
 
 The typical use-case is to integrate Cubeia Poker with an existing website.
 
-Edit the OPERATOR 1 to setup links to the website (e.g. wordpress site) you 
-want to integrate).
+Edit the OPERATOR 1 to setup further integrations links, e.g. edit profile or
+add credits.
 
+If you want to integrate an existent website with user-registration:
 There are several supporting modules available, like e.g. a simple jdbc login
 to an existent database (of your website, e.g. wordpress based):
 

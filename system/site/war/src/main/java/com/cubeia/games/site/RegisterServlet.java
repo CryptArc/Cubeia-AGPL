@@ -43,26 +43,27 @@ public class RegisterServlet extends HttpServlet
         CreateUser creator = new CreateUser();
         String[] args = {"-d", "-u", name, "-p", password};       
         
-		try {
-			Args.parse(creator, args);
-			creator.execute();
+        try {
+            Args.parse(creator, args);
+            creator.execute();
             
             out.println("<html>");
             out.println("<body>");
             out.println("You can play now <br/>");
-            out.println("After login, click top-right to see your account</br>");         
+            out.println("After login, click top-right to see your account</br>");
+            out.println("<a href=\"game\">Enter the Game</a>");
             out.println("</body>");
             out.println("</html>");            
-		}
+        }
         catch(IllegalArgumentException e) {
-			Args.usage(creator);
+            Args.usage(creator);
         }
         catch(Exception e) {
-			out.println("!!! User Registration Failed !!!");
+            out.println("!!! User Registration Failed !!!");
             out.println("Please go back and try again.");
-			out.println(e);
+            out.println(e);
             e.printStackTrace(out);
-		}
+        }
 
     }    
 }

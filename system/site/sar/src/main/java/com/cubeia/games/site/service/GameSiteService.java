@@ -26,7 +26,7 @@ import com.cubeia.firebase.api.service.Contract;
 
 public class GameSiteService implements Contract, Service {
 
-    public static final int WAR_PORT = 8089;
+    public static final int WAR_PORT = 8181;
     public static final String WAR_FILE = "game-site*.war";
     
     private static final Logger log = Logger.getLogger(GameSiteService.class);  
@@ -42,6 +42,11 @@ public class GameSiteService implements Contract, Service {
     @Override
     public void start() {
         JettyEmbed je = new JettyEmbed(this, WAR_PORT, WAR_FILE, "/", "site");
+        je.createWebAppContext("poker-client*.war", "/game");
+
+        //JettyEmbed je = new JettyEmbed(this, WAR_PORT, "poker-client*.war", "/game", "client");
+        //je.createWebAppContext(WAR_FILE, "/");
+        
         try {
             je.start();
         } catch (Exception ex) {
