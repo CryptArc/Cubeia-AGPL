@@ -41,7 +41,7 @@ public class RegisterServlet extends HttpServlet
         String password = req.getParameter("password");   
         
         CreateUser creator = new CreateUser();
-        String[] args = {"-d", "-u", name, "-p", password};       
+        String[] args = {"-d", "-u", name, "-p", password, "-o", "1"};       
         
         try {
             Args.parse(creator, args);
