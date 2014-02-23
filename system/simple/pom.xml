@@ -14,24 +14,7 @@
     </parent>
 
      <build>
-         
-		<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*.props</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>false</filtering>
-				<excludes>
-					<exclude>**/*.props</exclude>
-				</excludes>
-			</resource>
-		</resources>
-                       
+                     
         <plugins>     
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,21 +37,10 @@
                             </artifactItems>
                             <outputDirectory>${project.build.directory}/classes/firebase/lib/common</outputDirectory>
                         </configuration>
-                    </execution>
-                                                   
+                    </execution>                                               
                 </executions>
             </plugin>
                         
-            <plugin>
-                <!-- plugin setting are inherited from root pom -->                          
-                <groupId>com.cubeia.tools</groupId>
-                <artifactId>firebase-maven-plugin</artifactId>
-                <version>${firebase.version}</version>
-                <configuration>
-                    <!-- override the base resources location-->
-                    <overlaySourceDirectory>${project.build.directory}/classes/firebase</overlaySourceDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

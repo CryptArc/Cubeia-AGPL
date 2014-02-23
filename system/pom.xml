@@ -171,11 +171,7 @@
                     <name>use-integrations</name>
                 </property>
             </activation>
-            
-            <properties>
-            	<use-mock-integrations>false</use-mock-integrations>
-            </properties>
-                        
+                                   
             <dependencies>
                 <dependency>
                     <groupId>com.cubeia.network.users</groupId>
@@ -212,11 +208,7 @@
                     <name>no-integrations</name>
                 </property>
             </activation>
-            
-            <properties>
-            	<use-mock-integrations>true</use-mock-integrations>
-            </properties>
-            
+                       
             <dependencies>
                 <dependency>
                     <groupId>com.cubeia.network.users</groupId>
