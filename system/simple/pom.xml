@@ -73,6 +73,31 @@
     </build>
 
     <profiles>
+
+        <profile>
+            <id>history</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>history</name>
+                </property>
+            </activation>
+                                  
+            <dependencies>
+                <dependency>
+                    <groupId>com.cubeia.games.handhistory</groupId>
+                    <artifactId>hand-history-storage-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.cubeia.games.poker</groupId>
+                    <artifactId>tournament-history-storage-service</artifactId>
+                    <type>firebase-sar</type>
+                </dependency>                
+            </dependencies>
+        </profile>
+                
         <profile>
             <id>bots</id>
             <activation>

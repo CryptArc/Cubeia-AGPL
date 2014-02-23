@@ -166,7 +166,7 @@
         <profile>
             <id>use-integrations</id>
             <activation>
-                <!-- activeByDefault>true</activeByDefault -->
+                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>use-integrations</name>
                 </property>
@@ -184,12 +184,6 @@
                     <type>firebase-sar</type>
                 </dependency>
                 <dependency>
-                    <groupId>com.cubeia.games.handhistory</groupId>
-                    <artifactId>hand-history-storage-service</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                    <type>firebase-sar</type>
-                </dependency>
-                <dependency>
                     <groupId>com.cubeia.network.wallet.firebase</groupId>
                     <artifactId>cubeia-wallet-service</artifactId>
                     <version>${cubeia.network.version}</version>
@@ -202,12 +196,6 @@
                     <type>firebase-sar</type>
                 </dependency>
                 <dependency>
-                    <groupId>com.cubeia.games.poker</groupId>
-                    <artifactId>tournament-history-storage-service</artifactId>
-                    <type>firebase-sar</type>
-                </dependency>
-                
-                <dependency>
                     <groupId>com.cubeia.network.operator</groupId>
                     <artifactId>fb-operator-service</artifactId>
                     <version>${cubeia.network.version}</version>
@@ -219,7 +207,7 @@
         <profile>
             <id>no-integrations</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
                 <property>
                     <name>no-integrations</name>
                 </property>
