@@ -20,7 +20,7 @@
         <module>jetty-embed</module>
         <module>network</module>
         <module>site</module>
-        <module>simple</module>
+        <module>uar</module>
     </modules>    
 
     <dependencies>
