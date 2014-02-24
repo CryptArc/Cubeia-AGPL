@@ -16,7 +16,7 @@ mainly implemented in java.
 BUILD & START
 =============
 
-See INSTALL.TXT, which contains a quick-start and some more advanced options.
+The folder "system" contains a quick-start and some more advanced options.
 
 
 DEVELOPMENT
