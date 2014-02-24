@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Properties;
-import java.util.logging.Level;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -37,20 +37,27 @@ public class JettyEmbed  {
     public final int port;
     public final String warFile;
     public final String warContextPath;
+    public final String propPrefix;
     public final Properties prop;
+    public final Server server;
+    public final ContextHandlerCollection contexts;
 
     private static  Logger log;
 
-    public JettyEmbed(Object caller, int port, String warFile, String warContextPath, String id) {
+    public JettyEmbed(Object caller, int port, String warFile, String warContextPath, String propPrefix) {
         this.prop = prepareProperties();
         this.caller = caller;
         
-        String portStr = prop.getProperty(id + ".port", Integer.toString(port) );         
+        this.server = new Server(port);
+        this.contexts = new ContextHandlerCollection();
+        
+        String portStr = prop.getProperty(propPrefix + ".port", Integer.toString(port) );         
         this.port = Integer.parseInt(portStr);        
 
-        this.warContextPath = prop.getProperty(id + ".contextPath", warContextPath);
-        this.warFile = prop.getProperty(id + ".warFile", warFile);
-        
+        this.warContextPath = prop.getProperty(propPrefix + ".contextPath", warContextPath);
+        this.warFile = prop.getProperty(propPrefix + ".warFile", warFile);
+        this.propPrefix = propPrefix;
+                
         this.log =  Logger.getLogger(caller.getClass());
     }
     
@@ -67,7 +74,7 @@ public class JettyEmbed  {
         return prop;
     }
     
-    public String finalFileName(String libDir) {
+    public String finalFileName(String libDir, String warFile) {
         File dir = new File(libDir);
         FileFilter fileFilter = new WildcardFileFilter(warFile);
         File[] files = dir.listFiles(fileFilter);
@@ -85,18 +92,18 @@ public class JettyEmbed  {
      *
      * @return the absolute path to the war
      */
-    public String getWarPath() {
-        File file;
+    public String getWarPath(String warFile) {
+        File sarFile;
         String sarRoot;
         try {
-            file = new File(caller.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            sarRoot = file.getParent();
+            sarFile = new File(caller.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            sarRoot = sarFile.getParent();
         } catch (URISyntaxException ex) {
             log.debug(null, ex);
             sarRoot = "";
         }
         String libDir = FilenameUtils.concat(sarRoot, "META-INF/lib");
-        String filename = this.finalFileName(libDir);
+        String filename = this.finalFileName(libDir, warFile);
         String warPath = FilenameUtils.concat(libDir, filename);
         log.debug("warPath : " + warPath);    
         return warPath;
@@ -108,7 +115,7 @@ public class JettyEmbed  {
      *
      * @return the webapp context 
      */
-    public WebAppContext createWebAppContext() {
+    public WebAppContext createWebAppContext(String warFile, String warContextPath) {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(warContextPath);
 
@@ -119,7 +126,14 @@ public class JettyEmbed  {
             log.debug(ex, ex);
         }
 
-        webapp.setWar(getWarPath());    
+        webapp.setWar(getWarPath(warFile));
+        contexts.addHandler(webapp);
+       
+        //ATTN: do not use jetty-env.xml here to provice the datasource
+        //datasource is provided by firebase, using this additional file
+        //within uar/.../firebase/conf/game/deploy/pokerDS-ds.xml
+        //which makes it available on jndi as pokerDS
+        
         return webapp;
     }
     
@@ -127,17 +141,10 @@ public class JettyEmbed  {
     public Server start() {
         log.debug(caller.getClass().getCanonicalName() + " - on embedded jetty on port: " + port);
         try {
-            Server server = new Server(port);
 
-            WebAppContext context = createWebAppContext();
-            server.setHandler(context);
-            context.setServer(server);
-            
-            //ATTN: do not use jetty-env.xml here to provice the datasource
-            //datasource is provided by firebase, using this additional file
-            //within uar/.../firebase/conf/game/deploy/pokerDS-ds.xml
-            //which makes it available on jndi as pokerDS
-        
+            createWebAppContext(this.warFile, this.warContextPath);
+             
+            server.setHandler(contexts);
             server.start();
             return server;
 

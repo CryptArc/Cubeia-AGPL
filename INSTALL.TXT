@@ -45,16 +45,22 @@ hg clone https://bitbucket.org/cubeia/cubeia-poker
 cd cubeia-poker
 mvn clean install
 cd  system/simple
-mvn firebase:run
+mvn firebase:run -Dhibernate.hbm2ddl.auto=create
 
-http://localhost:8181 - CLIENT
+the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
+of the initial data. Please take care when restarting, as this will overwrite
+any existing data.
 
-There is no user registration at this point. Use any name, and the password
-should be an integer > 1000 (e.g.: test/1001).
+
+OPERATE THE GAME
+================
+
+http://localhost:8181 - A very basic website with user-registration
+
+http://localhost:8181/game - CLIENT
 
 Join a table. Use a 2nd browser to sit with a 2nd player to make a quick test.
 Use another integer as a password, as it becomes the user-id.
-
 
 http://localhost:8081 - BOTS (to get some more opponents)
 
@@ -64,71 +70,13 @@ the tables are getting players. Join one or more tables and check the game.
 After this, you can start tournament bots, asking them to leave one seat open,
 so you can join a tournament.
 
-
-http://localhost:8088 - ADMIN
-
-Get a look at the Admin application. It will become functional with the next
-steps.
-
-
-INTEGRATED (USER, ACCOUNT AND OPERATOR MANAGEMENT)
-================================================================================
-
-The default build of the poker-system results in a system with mock-services
-(or mock-integrations). This means that there is no real user and account
-management.
-
-In order to build & start a poker system which integrates fully:
-
-MONGO DB
-========
-
-Mandatory: for hand histories and tournament histories, install mongodb on your
-system.
-
-http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
-http://www.mongodb.org/downloads
-
-Ensure to have mongod running. The database will be created by the software, 
-default configuration is: db: poker, user: poker, pass: poker
-
-INTEGRATION BUILD
-=================
-
-It's not  necessary to rebuild the whole source, just the system/simple will be
-repackaged with integrations:
-
-cd  system/simple
-mvn clean package -Puse-integrations
-mvn firebase:run -Dhibernate.hbm2ddl.auto=create
-
-the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
-of the initial data. Please take care when restarting, as this will overwrite
-any existing data.
-
-Within the Poker Admin (http://localhost:8088) create an Operator 1 (e.g. 'Main')
-
-
-BOT REGISTRATION
-================
- 
-BOTS: are like other users, so if you want to use the bots in an integrated 
-system, you have to create accounts for them, too. 200 bots Bot_1 ... Bot_200:
+IMPORTANT:
+Bots are like other users, so if you want to use the bots, you have to create
+user-accounts for them, too. Example for 200 bots (Bot_1 ... Bot_200):
 
   cd tools/user-creator/target
   java -jar user-creator.jar -d -u Bot -p 1 -o 0 -r 200
 
-For more info on the user-creator tool, see the README.TXT.
-
-
-OPERATE THE GAME
-================
-
-http://localhost:8089 - A very basic user-registration
-
-http://localhost:8181 - CLIENT
-
-http://localhost:8081 - BOTS (to get some more opponents)
 
 http://localhost:8088 - ADMIN
 
@@ -138,6 +86,11 @@ The names for the tables are picked up from a list.
 Now you can create a simple Sit&Go, which should show up in the lobby.
 
 Last, create a Scheduled Tournament template.
+
+-
+
+That's it, the Simple Poker System is running.
+
 
 
 ================================================================================
@@ -149,14 +102,29 @@ UPDATE AND REBUILD
 
 After source code updates via
 
+cd cubeia-poker
 hg pull -u
-
-in the root directory, build all relevant sources in one pass with
-
-mvn clean package install -U -Puse-integrations
+mvn clean package install -U
 
 The "-U" flag ensures that dependencies are updated (important when sources are
 under development).
+
+
+HISTORIES (HAND & TOURNAMENT)
+=============================
+
+Mandatory: for hand histories and tournament histories, install mongodb on your
+system.
+
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
+http://www.mongodb.org/downloads
+
+Ensure to have mongod running. The database will be created by the software, 
+default configuration is: db: poker, user: poker, pass: poker
+
+cd system/simple
+mvn package -Phistory
+mvn firebase:run
 
 
 FIREBASE
@@ -180,18 +148,12 @@ firebase/game/deploy directory, or you have to make a symbolic link. Remember to
 verify the configuration files (new files or new configuration data).
 
 
-DATABASES
-================================================================================
+MYSQL DATABASE
+==============
 
 The simple system uses an embedded H2 database, enabling this way a simplified
 setup and simplified updates. You may want to change to a mysql database,
 especially if you want to keep the data once you start using the poker-system.
-
-MYSQL DB
-========
-
-Mandatory: create a mysql database.
-the default configuration is: db: poker, user: poker, pass: poker
 
 A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
 mysql command-line, or execute it, giving the full path, e.g. 
@@ -206,14 +168,13 @@ You have to change the deployed datasources within:
 
 
 
-WEBSITE INTEGRATION
-=================== 
+FURTHER WEBSITE INTEGRATION
+=========================== 
 
-The typical use-case is to integrate Cubeia Poker with an existing website.
+Edit the OPERATOR 1 to setup further integrations links, e.g. edit profile or
+add credits.
 
-Edit the OPERATOR 1 to setup links to the website (e.g. wordpress site) you 
-want to integrate).
-
+If you want to integrate an existent website with user-registration:
 There are several supporting modules available, like e.g. a simple jdbc login
 to an existent database (of your website, e.g. wordpress based):
 
