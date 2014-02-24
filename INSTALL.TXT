@@ -1,6 +1,17 @@
 ================================================================================
-               CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+               CUBEIA POKER - OPEN SOURCE STAND-ALONE SYSTEM
 ================================================================================
+
+
+IMPORTANT
+=========
+
+The main scope of this stand-alone system is to simplify the source-code-level
+evaluation of Cubeia Poker, Network and Firebase for potential Cubeia customers.
+
+Being Open Source, it is of course possible for to evolve this system towards a
+production installation, but not without knowledge of the involved technologies,
+like java, ssl and server technology in general.
 
 
 PREREQUISITES
@@ -10,41 +21,23 @@ PREREQUISITES
 * Maven 3.0.4 or higher
 * Mercurial 
 
+Check the versions with
+  hg --version
+  mvn -v
 
-IMPORTANT
-=========
-
-Please follow this sequence *strictly*, otherwise you will run into a cascade of
-problems. If you ask for support on the forum, please mention which steps
-succeeded so far, and with which step you got the problem.
-
-Ideally, you'll have a running system within an hour.
-
-Please don't forget that Cubeia Poker is under development. This alone makes
-things sometimes very difficult, especially when updating to newer versions.
+Ensure that maven has enough memory reserved, on linux just do:
+  export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
 
 
-BASICS
-======
+GET & BUILD
+===========
 
-* Ensure that maven has enough memory reserved, otherwise you will possibly run
-into annoying "java.lang.OutOfMemoryError: PermGen space". On linux just do:
-
-export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
-
-* Avoid using an IDE if you are not familiar with one, as this can introduce
-additional barriers. Use the command-line and simple editors. Later, when you
-feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
-IntelliJ, etc.).
-
-
-QUICK-START
-================================================================================
-
-hg clone https://bitbucket.org/cubeia/cubeia-poker
-cd cubeia-poker
+mkdir cubeia
+cd cubeia
+hg clone https://bitbucket.org/cubeia/cubeia-poker poker
+cd poker
 mvn clean install
-cd  system/simple
+cd  system/uar
 mvn firebase:run -Dhibernate.hbm2ddl.auto=create
 
 the -Dhibernate.hbm2ddl.auto=create creates the database schema and adds most
@@ -52,15 +45,15 @@ of the initial data. Please take care when restarting, as this will overwrite
 any existing data.
 
 
+
 OPERATE THE GAME
 ================
 
-http://localhost:8181 - A very basic website with user-registration
+http://localhost:8181 - A very basic website (use to register)
 
 http://localhost:8181/game - CLIENT
 
-Join a table. Use a 2nd browser to sit with a 2nd player to make a quick test.
-Use another integer as a password, as it becomes the user-id.
+Join a table. Use a 2nd browser for a 2nd player to make a quick test.
 
 http://localhost:8081 - BOTS (to get some more opponents)
 
@@ -89,7 +82,7 @@ Last, create a Scheduled Tournament template.
 
 -
 
-That's it, the Simple Poker System is running.
+That's it, the Cubeia Poker System is running.
 
 
 
@@ -102,7 +95,7 @@ UPDATE AND REBUILD
 
 After source code updates via
 
-cd cubeia-poker
+cd cubeia/poker
 hg pull -u
 mvn clean package install -U
 
@@ -122,8 +115,8 @@ http://www.mongodb.org/downloads
 Ensure to have mongod running. The database will be created by the software, 
 default configuration is: db: poker, user: poker, pass: poker
 
-cd system/simple
-mvn package -Phistory
+cd system/uar
+mvn clean package -Phistory
 mvn firebase:run
 
 
@@ -134,18 +127,20 @@ Firebase (Cubeia's Game Application Server which drives Cubeia Poker) was
 fetched during the build. You can start the poker-server directly by starting 
 firebase from within
 
-./system/simple/target/firebase-run/firebase-<version>-CE
+./system/uar/target/firebase-run/firebase-<version>-CE
 
 This location (the "target" folder) is overwritten by a clean build (mvn clean),
 or when calling firebase:run.
 
 Once your poker-system runs fine, you can copy the firebase folder to another
-location. If your poker directory resides in e.g. mycubeia/poker, you could copy
-firebase to mycubeia/firebase.
+location. If your poker directory resides in e.g. cubeia/poker, you could copy
+firebase to cubeia/poker001 (where 001 is just a running version number).
 
 In this case, you either have to copy new versions of the poker-uar.uar into the
 firebase/game/deploy directory, or you have to make a symbolic link. Remember to
 verify the configuration files (new files or new configuration data).
+
+Alternatively, you copy the next stable version to cubeia/poker002.
 
 
 MYSQL DATABASE
