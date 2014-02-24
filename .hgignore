@@ -13,6 +13,7 @@ target
 *.hsp
 *.db
 .idea
+nbactions.xml
 *.iml
 *~
 server/game-modules/poker-uar/src/test/resources/firebase/conf/cluster.props
