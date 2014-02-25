@@ -7,11 +7,14 @@ IMPORTANT
 =========
 
 The main scope of this stand-alone system is to simplify the source-code-level
-evaluation of Cubeia Poker, Network and Firebase for potential Cubeia customers.
+evaluation of Cubeia Poker, Network and Firebase for any interested parties and
+of course for potential Cubeia customers. You don't need any special knowledge
+to install this system.
 
-Being Open Source, it is of course possible for to evolve this system towards a
-production installation, but not without knowledge of the involved technologies,
-like java, ssl and server technology in general.
+Still, anyone can evolve this Open Source Poker System towards a production 
+system. Further Development, maintenance and live operation require of course
+some deep knowledge of the involved technologies, like java, SOA/WOA and
+web-servers in general.
 
 
 PREREQUISITES
@@ -122,7 +125,7 @@ This will create 4 mysql databases (poker, accounting, user, operator).
 
 You have to change the deployed datasources within:
 
-./src/test/resources/firebase/conf/game/deploy
+./system/uar/src/test/resources/firebase/conf/game/deploy
 
 
 
