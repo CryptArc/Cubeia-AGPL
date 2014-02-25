@@ -15,6 +15,9 @@ describe("Poker.TableLayoutManager Test", function(){
         playerAction:function() {},
         playSound:function() {}
     };
+    var DynamicHand = {
+        setCardsAlignment : function(a){}
+    };
 
     var MockSeat = Class.extend({
         mockSeatPos : -1,
@@ -30,7 +33,8 @@ describe("Poker.TableLayoutManager Test", function(){
         clearSeat : function() {
 
         },
-        isMySeat : function(){return false;}
+        isMySeat : function(){return false;},
+        setCardsAlignment: function(a){}
     });
     var MockMyPlayerSeat = MockSeat.extend({
         init : function(tableId,elementId, seatId, player, templateManager, myActionsManager, animationManager) {
@@ -49,6 +53,7 @@ describe("Poker.TableLayoutManager Test", function(){
         Poker.MockUtils.mock("MyActionsManager",MockMyActionsManager);
         Poker.MockUtils.mock("DealerButton",MockDealerButton);
         Poker.MockUtils.mock("MyPlayerSeat",MockMyPlayerSeat);
+        Poker.MockUtils.mock("DynamicHand",DynamicHand)
 
 
         tableLayoutManager = new Poker.TableLayoutManager(1, $("#testTable"),

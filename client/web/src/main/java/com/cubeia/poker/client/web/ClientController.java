@@ -1,5 +1,6 @@
 package com.cubeia.poker.client.web;
 
+import static com.cubeia.backoffice.operator.api.OperatorConfigParamDTO.CLIENT_TITLE;
 import static com.cubeia.backoffice.operator.api.OperatorConfigParamDTO.CSS_URL;
 
 import java.util.Map;
@@ -154,6 +155,10 @@ public class ClientController {
         }
         if(opConfig != null && opConfig.get(CSS_URL) != null) {
             modelMap.addAttribute("cssOverride", opConfig.get(CSS_URL));
+        }
+
+        if(opConfig!=null && opConfig.get(CLIENT_TITLE) != null) {
+            modelMap.addAttribute("clientTitle", opConfig.get(CLIENT_TITLE));
         }
         
         modelMap.addAttribute("pureToken", pure);

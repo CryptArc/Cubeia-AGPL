@@ -253,12 +253,13 @@ Poker.TableLayoutManager = Class.extend({
      */
     onPlayerAdded : function(seatId,player) {
         console.log("Player " + player.name + " added at seat " + seatId);
-
+        var self = this;
         var seat = null;
         var elementId = null;
         if (player.id == Poker.MyPlayer.id) {
             elementId = "myPlayerSeat-"+this.tableId;
             seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.myActionsManager,this.animationManager,this.soundManager);
+            seat.setCardsAlignment(0);
             this.myPlayerSeatId = seatId;
             this._calculateSeatPositions();
             if(this.currentDealer!=-1) {
@@ -279,10 +280,20 @@ Poker.TableLayoutManager = Class.extend({
             elementId = "seat"+seatId+"-"+this.tableId;
             seat = new Poker.Seat(elementId, seatId, player, this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
-
+            seat.setCardsAlignment(self._getNormalizedSeatPosition(seatId),self.capacity);
             this.seats.put(seatId,seat);
         }
 
+    },
+    getCardsAlignment : function(el) {
+         var dim = Poker.Utils.calculateDistance($("#myPlayerSeat-"+this.tableId),el,true,true);
+        console.log("Calc align", dim);
+         if(dim.left<0) {
+            return -1;
+         } else if(dim.left>0){
+            return 1;
+         }
+         return 0;
     },
     /**
      * Called when a player left the table,
@@ -406,6 +417,13 @@ Poker.TableLayoutManager = Class.extend({
         this._storeCard(card);
     },
     exposePrivateCards : function(playerCards) {
+        var el;
+        var cssUtils = new Poker.CSSUtils();
+        var seats = this.seats.values();
+        $.each(seats,function(i,s){
+            s.exposeCards();
+        });
+
         for(var i = 0; i<playerCards.length; i++) {
             var cards = playerCards[i].cards;
             for(var j = 0; j<cards.length; j++) {
@@ -419,7 +437,7 @@ Poker.TableLayoutManager = Class.extend({
         if(cardString == card.cardString) {
             return;
         }
-
+        /*
         var animManager = this.animationManager;
 
         // callback to ensure that the image is loaded before firing the animation
@@ -427,9 +445,9 @@ Poker.TableLayoutManager = Class.extend({
             setTimeout(function() {
                 new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(animManager);
             }, 50)
-        };
+        };*/
 
-        card.exposeCard(cardString, imageLoadedCallback);
+        card.exposeCard(cardString, function(){});
 
     },
     onMoveDealerButton : function(seatId) {
@@ -598,7 +616,9 @@ Poker.TableLayoutManager = Class.extend({
         console.log("seat length on calculate = " + this.seats.size());
         var seats = this.seats.values();
         for(var s in seats){
-            seats[s].setSeatPos(seats[s].seatId,this._getNormalizedSeatPosition(seats[s].seatId));
+            var pos = this._getNormalizedSeatPosition(seats[s].seatId);
+            seats[s].setSeatPos(seats[s].seatId,pos);
+            seats[s].setCardsAlignment(pos,this.capacity);
         }
         //do empty seats, question is if we want them or not, looked a bit empty without them
         for(var i = 0; i<this.capacity; i++){

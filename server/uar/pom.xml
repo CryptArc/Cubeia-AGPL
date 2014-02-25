@@ -97,25 +97,24 @@
     </dependencies>
 
     <build>
-		<resources>
-			<resource>
+		<testResources>
+			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.props</include>
 				</includes>
-			</resource>
-			<resource>
+			</testResource>
+			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>false</filtering>
 				<excludes>
 					<exclude>**/*.props</exclude>
 				</excludes>
-			</resource>
-		</resources>    
+			</testResource>
+		</testResources>
 	    
         <plugins>
-        
 		      <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-dependency-plugin</artifactId>
@@ -147,6 +146,7 @@
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
                 <version>${firebase.version}</version>
+
                 <configuration>
                     <!-- enable copy of overlay files -->
                     <overlaysEnabled>true</overlaysEnabled>
@@ -155,7 +155,7 @@
                     <!-- 
                     <overlaySourceDirectory>${basedir}/src/test/resources/firebase</overlaySourceDirectory>
                      -->
-                    <overlaySourceDirectory>${basedir}/target/classes/firebase</overlaySourceDirectory>
+                    <overlaySourceDirectory>${basedir}/target/test-classes/firebase</overlaySourceDirectory>
 
                     <!-- included Firebase archives with scope provided -->
                     <includeProvidedArchives>true</includeProvidedArchives>

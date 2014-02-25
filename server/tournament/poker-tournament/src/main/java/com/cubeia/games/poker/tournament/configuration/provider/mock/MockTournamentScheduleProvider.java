@@ -99,7 +99,25 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setDescription("This is a massive speed tournament!");
         speedCfg.setVariant(PokerVariant.TEXAS_HOLDEM);
         tournamentConfigurations.add(massiveQuickTourny);
-        
+
+
+        ScheduledTournamentConfiguration freeroll = createFreeroll();
+        TournamentConfiguration freeconf = freeroll.getConfiguration();
+        freeconf.setMinPlayers(2);
+        freeconf.setMaxPlayers(20);
+        freeconf.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        freeconf.setBuyIn(BigDecimal.valueOf(0));
+        freeconf.setFee(BigDecimal.valueOf(0));
+        freeconf.setPayoutStructure(payouts);
+        freeconf.setCurrency("EUR");
+        freeconf.setStartingChips(new BigDecimal(100000));
+        freeconf.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.DEFAULT.name()));
+        freeconf.setId(1);
+        freeconf.setVariant(PokerVariant.CRAZY_PINEAPPLE);
+        freeconf.setDescription("This is MTT tournament that starts every five minutes");
+        // configuration.getOperatorIds().add(666L);
+        tournamentConfigurations.add(freeroll);
+
         
         return tournamentConfigurations;
     }
@@ -130,5 +148,11 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
                 "0 */30 * * * ?", 1, 30, 30);
         return new ScheduledTournamentConfiguration(tournamentSchedule, "Every thirty min", 1);
+    }
+
+    private ScheduledTournamentConfiguration createFreeroll() {
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
+                "0 */30 * * * ?", 1, 30, 30);
+        return new ScheduledTournamentConfiguration(tournamentSchedule, "Freeroll Every thirty min", 1);
     }
 }

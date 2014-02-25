@@ -47,6 +47,9 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     setSeatPos : function(prev,pos) {
         //do nothing
     },
+    exposeCards : function(){
+
+    },
     renderSeat : function(){
         var output = this.templateManager.render("myPlayerSeatTemplate",this.player);
         this.seatElement.html(output);
@@ -58,6 +61,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.levelElement = this.seatElement.find(".player-level");
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
+        this.hand = new Poker.DynamicHand(this.cardsContainer);
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);
@@ -72,7 +76,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             var act = allowedActions[a];
             if (act.type.id == Poker.ActionType.DISCARD.id) {
                 this.seatElement.find(".discard-description").show();
-                this.cardsContainer.addClass("discard-enable");
                 this.hand.enableDiscards(act.minAmount, act.maxAmount);
             }
         }
@@ -109,6 +112,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
         } else if(actionType == Poker.ActionType.DISCARD) {
             this.discardCards(cardsToDiscard);
+            this.hand.disableDiscards();
         }
         this.seatElement.find(".discard-description").hide();
         this.cardsContainer.removeClass("discard-enable");
@@ -165,6 +169,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.actionText.html("").hide();
     },
     onCardDealt : function(card) {
+        return;
         var div = card.getJQElement();
         new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
         Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{card:card});

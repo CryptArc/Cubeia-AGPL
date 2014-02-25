@@ -131,7 +131,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/ChatInput.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/cards/PlayerHand.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/cards/DynamicHand.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/MyPlayerSeat.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/cards/Card.js"></script>
@@ -193,7 +193,6 @@
     <script type="text/javascript" src="${cp}/js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
 
-    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=${addThisPubId}"></script>
     <script type="text/javascript" src="${cp}/js/base/cs-leaderboard.js"></script>
 
 
@@ -201,6 +200,11 @@
         <script type="text/javascript">
             Poker.OperatorConfig.operatorId = ${operatorId};
             Poker.SkinConfiguration.operatorId = ${operatorId};
+        </script>
+    </c:if>
+    <c:if test="${not empty clientTitle}">
+        <script type="text/javascript">
+            Poker.SkinConfiguration.title = "${clientTitle}";
         </script>
     </c:if>
     <c:if test="${not empty token}">
@@ -812,7 +816,9 @@
     <div class="avatar-base">
 
     </div>
+    <div class="avatar-base-border">
 
+    </div>
     <div class="player-name">
         {{name}}
     </div>
@@ -857,9 +863,7 @@
     <li class="filter-button currency" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
-    <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
-        <img class="card-image" src="{{backgroundImage}}" id="playerCardImage-{{domId}}" style=""/>
-    </div>
+    <img class="card-image number-{{cardNum}}" src="{{backgroundImage}}" id="{{domId}}" style=""/>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
@@ -880,6 +884,9 @@
 
     </div>
     <div class="avatar-base">
+
+    </div>
+    <div class="avatar-base-border">
 
     </div>
     <div class="avatar">

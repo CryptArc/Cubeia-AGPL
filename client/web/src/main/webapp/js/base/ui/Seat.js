@@ -28,6 +28,7 @@ Poker.Seat = Class.extend({
     awardElement : null,
     itemElement : null,
     hand : null,
+    alignCards : 0,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
         this.seatId = seatId;
@@ -35,7 +36,9 @@ Poker.Seat = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.seatElement = $("#" + elementId);
         this.renderSeat();
-        this.hand = new Poker.PlayerHand();
+    },
+    setCardsAlignment : function(pos,capacity) {
+        this.hand.setAlignment(pos,capacity);
     },
     setSeatPos: function(previousPos, position) {
         this.seatElement.removeClass("seat-empty").removeClass("seat-pos-" + previousPos).removeClass("seat-inactive").addClass("seat-pos-" + position);
@@ -55,7 +58,7 @@ Poker.Seat = Class.extend({
         this.levelElement = this.seatElement.find(".player-level");
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
-
+        this.hand = new Poker.DynamicHand(this.cardsContainer);
         this.reset();
     },
     updateAvatar : function(url) {
@@ -120,6 +123,9 @@ Poker.Seat = Class.extend({
         this.player = player;
         this.handlePlayerStatus();
     },
+    exposeCards : function() {
+        this.hand.exposeCards();
+    },
     handlePlayerStatus: function() {
         if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.reset();
@@ -136,8 +142,8 @@ Poker.Seat = Class.extend({
         if(this.progressbar!=null) {
             this.progressbar.stop();
         }
-        if (this.cardsContainer) {
-            this.cardsContainer.empty();
+        if(this.hand) {
+            this.hand.clear();
         }
         this.seatElement.removeClass("seat-folded");
         this.onReset();
@@ -181,14 +187,15 @@ Poker.Seat = Class.extend({
         new Poker.CSSClassAnimation(this.actionAmount).addClass("placed").start(this.animationManager);
     },
     fold: function() {
+        this.hand.fold();
         this.seatElement.addClass("seat-folded");
         this.seatElement.removeClass("active-seat");
         this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/back.png");
     },
     dealCard: function(card) {
-        this.cardsContainer.append(card.render(this.cardsContainer.children().length));
+        //.append(card.render(this.cardsContainer.children().length));
         this.hand.addCard(card);
-        this.onCardDealt(card);
+        //this.onCardDealt(card);
     },
     onCardDealt: function(card) {
         var div = card.getJQElement();

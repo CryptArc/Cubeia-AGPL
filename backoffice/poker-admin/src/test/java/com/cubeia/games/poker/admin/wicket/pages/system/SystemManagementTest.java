@@ -19,6 +19,7 @@ package com.cubeia.games.poker.admin.wicket.pages.system;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import com.cubeia.network.shared.web.wicket.AdminConfig;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
@@ -42,6 +43,9 @@ public class SystemManagementTest {
     @Mock
     private FirebaseJMXFactory jmxFactory;
 
+    @Mock
+    AdminConfig config;
+
     private WicketTester tester;
 
     @Before
@@ -50,6 +54,7 @@ public class SystemManagementTest {
         ApplicationContextMock context = new ApplicationContextMock();
         context.putBean("networkClient", networkClient);
         context.putBean("jmxFactory", jmxFactory);
+        context.putBean("adminConfig",config);
         tester = new WicketTester();
         tester.getApplication().getComponentInstantiationListeners().add(new SpringComponentInjector(tester.getApplication(), context));
     }

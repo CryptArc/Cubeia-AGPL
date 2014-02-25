@@ -52,6 +52,13 @@ public class PayoutsTest {
     }
 
     @Test
+    public void testZeroBuyIn() {
+        Payouts decimalPayouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"), eur, bd("0"));
+        assertThat(decimalPayouts.getPayoutForPosition(1), is(bd("0.81")));
+        assertThat(decimalPayouts.getPayoutForPosition(2), is(bd("0.39")));
+    }
+
+    @Test
     public void testRounding() {
         Payouts decimalPayouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"), eur, bd("0.20"));
         assertThat(decimalPayouts.getPayoutForPosition(1), is(bd("0.80")));
