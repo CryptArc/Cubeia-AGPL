@@ -101,6 +101,7 @@
     <script src="${cp}/js/base/communication/CommunicationManager.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="${cp}/js/base/communication/player-api/PlayerApi.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/communication/player-api/AccountingApi.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/profile/Profile.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/profile/MyProfile.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/profile/ProfileManager.js"></script>
@@ -163,6 +164,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/View.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TabView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ResponsiveTabView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/CreditsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/LoginView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
@@ -183,7 +185,8 @@
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/LoadingOverlay.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ChatManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ResourcePreLoader.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/communication/lobby/Unsubscribe.js"></script>
@@ -586,10 +589,137 @@
                 </div>
             </div>
         </div>
+        <div id="creditsView" style="display:none;">
+            <div class="container">
+                <div class="row" style="margin-bottom: 5px;">
+                    <div class="col-sm-12">
+                        <a class="close-button  default-btn">Close</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <nav class="navbar-inverse navbar-variant credits-navbar" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-variant-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="nav-active-item">Cash Games</a>
+                            </div>
+                            <div class="navbar-collapse navbar-variant-collapse collapse">
+                                <ul class="nav nav-pills">
+                                    <li id="depositMenuItem" class="active"><a>Deposit</a></li>
+                                    <li id="withdrawMenuItem"><a>Withdraw</a></li>
+                                    <li id="transactionsMenuItem"><a>Transactions</a></li>
+                                    <li><a>&nbsp;</a></li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+                <div class="tab-container deposit-container"  style="display:none;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2>Deposit</h2>
+                            <h3>Your Personal Bitcoin Wallet Address</h3>
+                            <p>
+                                Send Bitcoins to this wallet address and they will automatically be put on your Poker account! Just scan the QR-code or copy the walled address into your Bitcoin client.
+                            </p>
+                            <div class="deposit-wallet-container">
+                                <div class="qr-code-container">
+                                    <img src="" id="walletAddressQR"/>
+                                </div>
+                                <div class="wallet-address-container">
+                                    <label>Deposit Address:</label>
+                                    <div class="form-control">
+                                        <input type="text" id="walletAddress" disabled/>
+                                    </div>
+
+                                    <span class="min-deposit">Min deposit is <span class="min-deposit-amount"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-container withdraw-container"  style="display:none;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2>Withdraw</h2>
+                            <div class="edit-address-container" style="display:none;">
+                                <form class="form-inline">
+                                    <div class="edit-address-error alert alert-danger" style="display:none;">
+                                        Unable to save address. Make sure it is a valid address.
+                                    </div>
+                                    <div class="alert alert-info alert-no-address">
+                                        You have to specify a withdraw address to be able to withdraw
+                                    </div>
+                                    <div class="form-group withdraw-address-container">
+                                        <label>New Withdraw Address:</label>
+                                        <input id="newWithdrawAddress" class="form-control" type="text"/>
+                                    </div>
+                                    <div class="form-group buttons-container">
+                                        <a class="cancel-button btn default-btn">Cancel</a>
+                                        <a class="save-button btn default-btn">Save</a>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                            <div class="withdraw-amount-container" style="display:none;">
+                                <form class="form-inline">
+                                    <div class="withdraw-error alert alert-danger" style="display:none;">
+                                        Unable to request withdraw.
+
+                                    </div>
+                                    <div class="form-group withdraw-address-container">
+                                        <p>Withdrawable balance: <span class="xmb-balance"></span>. Min amount: <span class="min-withdraw-amount">1 mBTC</span></p>
+                                        <label>Withdraw to address:</label>
+                                        <div class="form-control">
+                                            <input id="currentWithdrawAddress" class="current-address" disabled>
+                                            <a class="btn btn-info edit-address"></a>
+                                        </div>
+                                    </div>
+
+                                </form>
+                                <br/>
+                                <div class="form-inline" role="form">
+                                    <div class="form-group amount-group" o>
+                                        <label>Amount:</label>
+                                        <input id="withdrawAmount" class="form-control withdraw-amount" autocomplete="off" type="text"/>
+                                        <a class="withdraw-button btn default-btn">Withdraw</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <h3>Pending Withdrawals</h3>
+                            <div class="pending-withdrawals-container">
+                                You currently have no pending withdrawals
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-container transaction-container"  style="display:none;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <nav class="navbar-inverse navbar-limits transactions-navbar">
+                                <ul class="nav nav-pills">
+                                    <li id="depositListItem"><a>Deposits</a></li>
+                                    <li id="withdrawListItem"><a>Withdrawals</a></li>
+                                </ul>
+                            </nav>
+                            <div class="withdraw-list-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
 
         <div id="lobbyView" class="lobby-container"  style="display:none;">
             <div class="container">
-
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="logo-container">
@@ -792,7 +922,9 @@
             <a class="close-button default-btn">Close</a>
         </div>
     </div>
-
+    <div class="top-loading-overlay" id="topLoadingOverlay" style="display:none;">
+        <div class="loading-overlay-progress"></div>
+    </div>
 </div>
 <script id="balanceTemplate" type="text/mustache">
     {{#accounts}}
@@ -920,7 +1052,82 @@
     </div>
 </div>
 
+<script type="text/mustache" id="depositListTemplate">
+    <table width="100%" class="deposits-table">
+        <thead>
 
+        <th>Id</th>
+        <th>Requested</th>
+        <th class="amount">Amount (mBTC)</th>
+        <th>Status</th>
+        <th>Confirmed</th>
+        <th>Block depth</th>
+        <th>To Address</th>
+        </thead>
+        <tbody>
+        {{#deposits}}
+        <tr>
+            <td class="id">{{id}}</td>
+            <td>{{date created}}</td>
+            <td class="amount">{{mbtc satoshis}}</td>
+            <td class="status">{{handlingStatus}}</td>
+            <td class="confirmed">{{confirmed}}</td>
+            <td class="block-depth">{{blockDepth}}</td>
+            <td class="to-address">{{toAddress}}</td>
+        </tr>
+        {{/deposits}}
+        </tbody>
+    </table>
+
+</script>
+<script type="text/mustache" id="withdrawListTemplate">
+    <table width="100%" class="withdrawals-table">
+        <thead>
+
+        <th>Id</th>
+        <th>Requested</th>
+        <th class="amount">Amount (mBTC)</th>
+        <th>Status</th>
+        <th>To Address</th>
+        </thead>
+        <tbody>
+        {{#withdrawals }}
+        <tr>
+            <td class="id">{{id}}</td>
+            <td>{{date created}}</td>
+            <td class="amount">{{mbtc satoshis}}</td>
+            <td class="status">{{status}}</td>
+            <td class="to-address">{{toAddress}}</td>
+        </tr>
+        {{/withdrawals}}
+        </tbody>
+    </table>
+
+</script>
+<script type="text/mustache" id="transactionTemplate">
+    <table width="80%" class="pending-table">
+        <thead>
+
+            <th>Requested</th>
+            <th class="amount">Amount (mBTC)</th>
+            <th></th>
+        </thead>
+        <tbody>
+        {{#withdrawals }}
+            <tr>
+                <td>{{date created}}</td>
+                <td class="amount">{{mbtc satoshis}}</td>
+                <td class="cancel" rowspan="2"><a class="btn default-btn" id="cancelWithdrawal{{id}}">Cancel</a></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="to-address">{{toAddress}}</td>
+
+            </tr>
+        {{/withdrawals}}
+        </tbody>
+    </table>
+
+</script>
 <script type="text/mustache" id="sitAndGoLobbyListTemplate">
     <table class="table lobby-list-table">
         <thead class="table-item-header">
@@ -1281,8 +1488,8 @@
             </a>
     </p>
 
-    </div>
-    <script type="text/mustache" id="tournamentBuyInContent">
+</div>
+<script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
             <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currencySymbol balance currencyCode}}</span>

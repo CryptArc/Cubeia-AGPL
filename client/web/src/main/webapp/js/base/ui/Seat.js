@@ -29,11 +29,13 @@ Poker.Seat = Class.extend({
     itemElement : null,
     hand : null,
     alignCards : 0,
+    chatManager : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
         this.seatId = seatId;
         this.player = player;
         this.templateManager = Poker.AppCtx.getTemplateManager();
+        this.chatManager = Poker.AppCtx.getChatManager();
         this.seatElement = $("#" + elementId);
         this.renderSeat();
     },
@@ -59,6 +61,24 @@ Poker.Seat = Class.extend({
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
         this.hand = new Poker.DynamicHand(this.cardsContainer);
+        var self = this;
+        this.avatarElement.click(function(e){
+            var items = null;
+            if(!self.chatManager.isMuted(self.player.id)) {
+                items = [
+                    {title : "Mute Player", callback : function(){
+                        self.chatManager.mutePlayer(self.player.id);
+                    }}];
+            } else {
+                items = [
+                    {title : "Unmute Player", callback : function(){
+                        self.chatManager.unmutePlayer(self.player.id);
+                    }}];
+            }
+
+            if(self.chatManager)
+            new Poker.ContextMenu(e,items);
+        });
         this.reset();
     },
     updateAvatar : function(url) {

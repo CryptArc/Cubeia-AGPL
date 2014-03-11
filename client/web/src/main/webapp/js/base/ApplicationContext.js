@@ -20,10 +20,19 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+        var chatManager = new Poker.ChatManager();
+        this.getChatManager = function() {
+            return chatManager;
+        };
 
         var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl, settings.operatorApiBaseUrl);
         this.getPlayerApi = function() {
             return playerApi;
+        };
+
+        var accountingApi = new Poker.AccountingApi(settings.playerApiBaseUrl);
+        this.getAccountingApi = function() {
+            return accountingApi;
         };
 
         //this
@@ -206,7 +215,9 @@ Poker.AppCtx = Class.extend({
          */
         this.getPingManager = function() {
             return pingManager;
-        }
+        };
+
+
         Handlebars.registerHelper('translateCurrencyCode',function(currencyCode){
             return Poker.Utils.translateCurrencyCode(currencyCode);
         });
@@ -225,6 +236,10 @@ Poker.AppCtx = Class.extend({
         Handlebars.registerHelper('validId', function(){
             var id = arguments[0];
             return id!=null && id>=0;
+        });
+
+        Handlebars.registerHelper('mbtc', function(satoshis){
+            return Poker.Utils.formatCurrency(parseInt(satoshis)/100000);
         });
         Handlebars.registerHelper('renderLock',function(level){
             var myLevel = profileManager.myPlayerProfile.level

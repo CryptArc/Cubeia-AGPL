@@ -1,22 +1,19 @@
-IMPORTANT
-=========
-
-Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both products are
-open source and in production.
-
-
 INTRO
 =====
 
-Cubeia Poker is an Open Source poker system which can scale up from a simple
-single server setup up to a services oriented distributed cluster system. It is
-mainly implemented in java.
+Cubeia Poker is an Open Source poker system which can scale from a simple
+single server setup up to a services oriented distributed cluster system
+
+It is based on Cubeia Firebase and Cubeia Network, which are both open source
+and in production since years. The main implementation language is java.
 
 
-BUILD & START
-=============
+BUILD
+=====
 
-See INSTALL.TXT, which contains a quick-start and some more advanced options.
+mvn clean install
+
+The folder "system" contains details on how to setup a poker system.
 
 
 DEVELOPMENT
@@ -51,8 +48,8 @@ modules.
 LINKS
 =====
 
-Info   :  https://bitbucket.org/cubeia/cubeia-poker/wiki/Home
 Repo   :  https://bitbucket.org/cubeia/cubeia-poker
-Forum  :  http://www.cubeia.org/index.php/forums
+Site   :  http://www.cubeia.org
+Forum  :  http://forum.cubeia.org
 Service:  http://www.cubeia.com/?page_id=251
 

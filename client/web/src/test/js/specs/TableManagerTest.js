@@ -1,11 +1,12 @@
 
-
+var Poker = Poker || {};
 describe("Poker.TableManager Test", function(){
 
 
     var tableManager = null;
     var table = null;
     beforeEach(function() {
+        Poker.AppCtx.getChatManager = Poker.AppCtx.getChatManager || function(){ return new Poker.ChatManager();};
         tableManager = new Poker.TableManager();
         table = null;
     });

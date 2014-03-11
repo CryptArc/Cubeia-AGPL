@@ -56,6 +56,8 @@ Poker.PlayerApi = Class.extend({
         var url = this.playerApiBaseUrl + "/player/bonus/"+bonusName;
         this.requestInfo(url,sessionToken,"POST",callback,errorCallback);
     },
+
+
     requestInfo : function(url,sessionToken,method,callback,errorCallback) {
         if(this.playerApiBaseUrl==null || this.playerApiBaseUrl=="") {
             return;
@@ -67,7 +69,7 @@ Poker.PlayerApi = Class.extend({
                 callback(data);
             },
             error : function() {
-                console.log("Error while fetching player profile " + url);
+                console.log("Error while fetching " + url);
                 if(typeof(errorCallback)!="undefined") {
                     errorCallback();
                 }

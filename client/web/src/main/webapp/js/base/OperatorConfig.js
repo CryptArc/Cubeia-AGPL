@@ -69,10 +69,10 @@ Poker.OperatorConfig = Class.extend({
         return this.getValue("LOBBY_TOP_PROMOTION_URL",null);
     },
     getBuyCreditsUrl : function() {
-        return this.getValue("BUY_CREDITS_URL", "http://localhost:8083/player-api/html/buy-credits.html");
+        return this.getValue("BUY_CREDITS_URL", "");
     },
     getAccountInfoUrl : function() {
-        return this.getValue("ACCOUNT_INFO_URL", "internal");
+        return this.getValue("ACCOUNT_INFO_URL", "");
     },
     getShareUrl : function() {
         return this.getValue("SHARE_URL", null);

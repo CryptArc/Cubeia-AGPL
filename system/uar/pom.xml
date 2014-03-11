@@ -14,24 +14,7 @@
     </parent>
 
      <build>
-         
-		<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*.props</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>false</filtering>
-				<excludes>
-					<exclude>**/*.props</exclude>
-				</excludes>
-			</resource>
-		</resources>
-                       
+                     
         <plugins>     
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,28 +34,48 @@
                                     <artifactId>mysql-connector-java</artifactId>
                                     <version>5.1.27</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.h2database</groupId>
+                                    <artifactId>h2</artifactId>
+                                    <version>1.3.167</version>
+                                </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${project.build.directory}/classes/firebase/lib/common</outputDirectory>
+                            <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/lib/common</outputDirectory>
                         </configuration>
                     </execution>
-                                                   
+                                                                                                              
                 </executions>
             </plugin>
                         
-            <plugin>
-                <!-- plugin setting are inherited from root pom -->                          
-                <groupId>com.cubeia.tools</groupId>
-                <artifactId>firebase-maven-plugin</artifactId>
-                <version>${firebase.version}</version>
-                <configuration>
-                    <!-- override the base resources location-->
-                    <overlaySourceDirectory>${project.build.directory}/classes/firebase</overlaySourceDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
+
+        <profile>
+            <id>history</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>history</name>
+                </property>
+            </activation>
+                                  
+            <dependencies>
+                <dependency>
+                    <groupId>com.cubeia.games.handhistory</groupId>
+                    <artifactId>hand-history-storage-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.cubeia.games.poker</groupId>
+                    <artifactId>tournament-history-storage-service</artifactId>
+                    <type>firebase-sar</type>
+                </dependency>                
+            </dependencies>
+        </profile>
+                
         <profile>
             <id>bots</id>
             <activation>
@@ -94,7 +97,7 @@
         <profile>
             <id>client</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
                 <property>
                     <name>client</name>
                 </property>
@@ -249,6 +252,39 @@
                     <type>firebase-sar</type>
                 </dependency>         
             </dependencies>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Quick solution to get the property-file to the
+                        firebase directory. Hard-coded paths non-critical,
+                        as they affect the dev-environment quick-start -->
+
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-property-file</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/conf</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>../../client/web/src/test/resources/</directory>
+                                            <includes>
+                                                <include>client.properties</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>                                      
+                </plugins>
+            </build>             
         </profile>        
     </profiles>
 

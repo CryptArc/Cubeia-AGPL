@@ -21,10 +21,13 @@ Poker.TableManager = Class.extend({
 
     tablesToBeRemoved : null,
 
+    chatManager : null,
+
     init : function() {
         this.tables = new Poker.Map();
         this.tableNames = new Poker.Map();
         this.tablesToBeRemoved = [];
+        this.chatManager = Poker.AppCtx.getChatManager();
     },
     /**
      * Checks whether a table exist
@@ -593,7 +596,7 @@ Poker.TableManager = Class.extend({
 
                 player = { name : name + " (Watcher)" };
             }
-            if(player!=null) {
+            if(player!=null && !this.chatManager.isMuted(playerId)) {
                 table.getLayoutManager().onChatMessage(player,message);
             }
 

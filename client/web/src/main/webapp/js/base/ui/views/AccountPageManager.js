@@ -39,13 +39,22 @@ Poker.AccountPageManager = Class.extend({
             self.closeAccountOverlay();
             if(self.buyCreditsView==null) {
                 var url = Poker.OperatorConfig.getBuyCreditsUrl();
-                self.buyCreditsView = new Poker.ExternalPageView(
-                    "buyCreditsView","Buy credits","C",self.addToken(url),
-                    function(){
-                        vm.removeView(self.buyCreditsView);
-                        self.buyCreditsView = null;
-                    });
-                self.buyCreditsView.fixedSizeView = true;
+                if(url!=null && url=="internal") {
+                     self.buyCreditsView = new Poker.CreditsView(function(){
+                         Poker.AppCtx.getViewManager().removeView(self.buyCreditsView);
+                         self.buyCreditsView = null;
+                     });
+
+                } else {
+                    self.buyCreditsView = new Poker.ExternalPageView(
+                        "buyCreditsView","Buy credits","C",self.addToken(url),
+                        function(){
+                            vm.removeView(self.buyCreditsView);
+                            self.buyCreditsView = null;
+                        });
+                    self.buyCreditsView.fixedSizeView = true;
+                }
+
                 Poker.AppCtx.getViewManager().addView(self.buyCreditsView);
 
             }
