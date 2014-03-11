@@ -186,7 +186,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LoadingOverlay.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ChatManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ResourcePreLoader.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/communication/lobby/Unsubscribe.js"></script>

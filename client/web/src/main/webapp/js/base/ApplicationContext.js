@@ -20,6 +20,10 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+        var chatManager = new Poker.ChatManager();
+        this.getChatManager = function() {
+            return chatManager;
+        };
 
         var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl, settings.operatorApiBaseUrl);
         this.getPlayerApi = function() {
@@ -211,7 +215,9 @@ Poker.AppCtx = Class.extend({
          */
         this.getPingManager = function() {
             return pingManager;
-        }
+        };
+
+
         Handlebars.registerHelper('translateCurrencyCode',function(currencyCode){
             return Poker.Utils.translateCurrencyCode(currencyCode);
         });
