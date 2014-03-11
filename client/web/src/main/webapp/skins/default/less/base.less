@@ -54,6 +54,7 @@
 @import "cards.less";
 @import "iframe-loader.less";
 @import "leaderboard.less";
+@import "credits-view.less";
 
 
 label {
@@ -212,6 +213,42 @@ label {
     float:right;
     margin:1em 0 0 0.5em;
 }
+
+.top-loading-overlay {
+    width:100%;
+    height: 100%;
+    opacity: 0.5;
+    background: #000;
+    z-index: 99999999999;
+}
+
+.loading-overlay-progress:after {
+    border-width: 0 3px 0 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, .5);
+    border-radius: 50%;
+    display: block;
+    height: 50px;
+    left: 50%;
+    margin: -25px 0 0 -25px;
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    content: "";
+    animation: overlay-spin 1s infinite linear;
+    -webkit-animation: overlay-spin 1s infinite linear;
+
+}
+
+@keyframes overlay-spin {
+               from { transform: rotate(0deg); }
+               to { transform: rotate(360deg); }
+           }
+@-webkit-keyframes overlay-spin {
+                       from { -webkit-transform: rotate(0deg); }
+                       to { -webkit-transform: rotate(360deg); }
+                   }
+
 
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
     @import "devices/ipad/ipad-base.less";

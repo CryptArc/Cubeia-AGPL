@@ -12,7 +12,7 @@ Poker.BasicMenu = Class.extend({
     addItem : function(item,clickFunction) {
         var self = this;
         this.items.put(item,clickFunction);
-        this.container.find(item).click(function(evt){
+        this.container.find(item).off().click(function(evt){
             self.selectItem(item);
         });
     },

@@ -26,6 +26,11 @@ Poker.AppCtx = Class.extend({
             return playerApi;
         };
 
+        var accountingApi = new Poker.AccountingApi(settings.playerApiBaseUrl);
+        this.getAccountingApi = function() {
+            return accountingApi;
+        };
+
         //this
         var templateManager = new Poker.TemplateManager();
 
@@ -225,6 +230,10 @@ Poker.AppCtx = Class.extend({
         Handlebars.registerHelper('validId', function(){
             var id = arguments[0];
             return id!=null && id>=0;
+        });
+
+        Handlebars.registerHelper('mbtc', function(satoshis){
+            return Poker.Utils.formatCurrency(parseInt(satoshis)/100000);
         });
         Handlebars.registerHelper('renderLock',function(level){
             var myLevel = profileManager.myPlayerProfile.level
