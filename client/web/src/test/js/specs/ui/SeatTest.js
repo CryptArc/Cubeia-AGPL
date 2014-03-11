@@ -12,6 +12,7 @@ describe("Poker.Seat Test", function(){
     beforeEach(function() {
         Poker.AppCtx = Poker.AppCtx || {};
         Poker.AppCtx.getTemplateManager = Poker.AppCtx.getTemplateManager || function(){ return new Poker.TemplateManager();};
+        Poker.AppCtx.getChatManager = Poker.AppCtx.getChatManager || function(){ return new Poker.ChatManager();};
         mockAnimationManager = jasmine.createSpyObj('mockAnimationManager',['animate']);
         var player = new Poker.Player(1,"TestPlayer");
         seat = new Poker.Seat("testSeat", 0, player, mockAnimationManager);
