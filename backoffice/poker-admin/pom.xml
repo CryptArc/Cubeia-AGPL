@@ -500,6 +500,29 @@
                     <version>1.0-SNAPSHOT</version>
                 </dependency>
             </dependencies>
+            
+            <repositories>
+                <repository>
+                    <id>cubeia-release-repo</id>
+                    <name>Internal Release Repository</name>
+                    <url>http://m2.cubeia.com/nexus/content/repositories/internal-releases</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>cubeia-snapshot-repo</id>
+                    <name>Internal Release Snapshot Repository</name>
+                    <url>http://m2.cubeia.com/nexus/content/repositories/internal-snapshots</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </repository>
+                
+            </repositories>
+            
         </profile>
 
         <profile>
