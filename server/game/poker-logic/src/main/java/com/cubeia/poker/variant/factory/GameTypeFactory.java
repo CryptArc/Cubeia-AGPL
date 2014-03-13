@@ -20,6 +20,7 @@ package com.cubeia.poker.variant.factory;
 import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.crazypineapple.CrazyPineapple;
+import com.cubeia.poker.variant.omaha.Omaha;
 import com.cubeia.poker.variant.stud.FiveCardStud;
 import com.cubeia.poker.variant.stud.SevenCardStud;
 import com.cubeia.poker.variant.telesina.Telesina;
@@ -48,6 +49,9 @@ public class GameTypeFactory {
                 break;
             case SEVEN_CARD_STUD:
                 gameType = SevenCardStud.createGame();
+                break;
+            case OMAHA:
+                gameType = Omaha.createGame();
                 break;
             default:
                 throw new UnsupportedOperationException("unsupported poker variant: " + variant);

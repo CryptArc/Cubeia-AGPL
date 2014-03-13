@@ -33,11 +33,12 @@ public class BlindsStructureFactory {
         List<Level> levels = newArrayList();
         BigDecimal smallBlind = new BigDecimal(2000);
         BigDecimal bigBlind = new BigDecimal(4000);
-        BigDecimal ante = BigDecimal.ZERO;
+        BigDecimal ante = new BigDecimal(1000);
         for (int i = 0; i < 20; i++) {
             levels.add(new Level(smallBlind, bigBlind, ante, 1, false));
             smallBlind = smallBlind.multiply(new BigDecimal(2));
             bigBlind = bigBlind.multiply(new BigDecimal(2));
+            ante = ante.multiply(new BigDecimal(2));
         }
         return levels;
     }

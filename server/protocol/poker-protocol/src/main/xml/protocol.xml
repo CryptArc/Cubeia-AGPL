@@ -145,6 +145,7 @@
         <value>CRAZY_PINEAPPLE</value>
         <value>FIVE_CARD_STUD</value>
         <value>SEVEN_CARD_STUD</value>
+        <value>OMAHA</value>
     </enum>
 
     <enum name="bet_strategy">

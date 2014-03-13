@@ -37,6 +37,10 @@ public class Hand implements Serializable {
     public final static int MAX_CARDS = 7;
 
     private List<Card> cards = new ArrayList<Card>();
+    private List<Card> pocketCards = new ArrayList<>();
+
+
+    private List<Card> communityCards = new ArrayList<>();
 
     private static final Logger log = LoggerFactory.getLogger(Hand.class);
 
@@ -100,10 +104,28 @@ public class Hand implements Serializable {
     public void addCard(Card card) {
         cards.add(card);
     }
+    public void addPocketCard(Card card) {
+        addCard(card);
+        pocketCards.add(card);
+    }
+    public void addCommunityCard(Card card) {
+        addCard(card);
+        communityCards.add(card);
+    }
 
     public void addCards(Collection<Card> cardsToAdd) {
         cards.addAll(cardsToAdd);
     }
+    public void addPocketCards(Collection<Card> cardsToAdd) {
+        addCards(cardsToAdd);
+        pocketCards.addAll(cardsToAdd);
+    }
+    public void addCommunityCards(Collection<Card> cardsToAdd) {
+        addCards(cardsToAdd);
+        communityCards.addAll(cardsToAdd);
+    }
+
+
 
     /**
      * Sort all cards in an descending order.
@@ -171,4 +193,13 @@ public class Hand implements Serializable {
         }
         return false;
     }
+
+    public List<Card> getCommunityCards() {
+        return communityCards;
+    }
+
+    public List<Card> getPocketCards() {
+        return pocketCards;
+    }
+
 }

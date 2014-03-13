@@ -251,8 +251,8 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
                 continue;
             }
             Hand hand = new Hand();
-            hand.addCards(player.getPocketCards().getCards());
-            hand.addCards(context.getCommunityCards());
+            hand.addPocketCards(player.getPocketCards().getCards());
+            hand.addCommunityCards(context.getCommunityCards());
             HandInfo handInfo = handEvaluator.getBestHandInfo(hand);
             if (handInfo.getCards() == null) {
                 log.warn("Cards in best hand is null for player " + player + " pocket cards: "

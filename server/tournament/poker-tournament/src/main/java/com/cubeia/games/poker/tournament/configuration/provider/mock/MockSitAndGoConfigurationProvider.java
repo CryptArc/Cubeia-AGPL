@@ -63,7 +63,7 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
 
         // Temporarily making this a rebuy tournament.
         headsUp.getConfiguration().setRebuyConfiguration(new RebuyConfiguration(1000, true, 1, BigDecimal.valueOf(100), new BigDecimal(200000), BigDecimal.valueOf(100), new BigDecimal(200000)));
-        headsUp.getConfiguration().getBlindsStructure().insertLevel(1, new Level(new BigDecimal(20), new BigDecimal(40), new BigDecimal(0), 2, true));
+        headsUp.getConfiguration().getBlindsStructure().insertLevel(1, new Level(new BigDecimal(20), new BigDecimal(40), new BigDecimal(5), 2, true));
         requestedTournaments.put("Heads up", headsUp);
         requestedTournaments.put("Heads up Crazy", createSitAndGoConfiguration("Heads up Crazy", 2, getRegistry().getTimingProfile("DEFAULT"), payouts,PokerVariant.CRAZY_PINEAPPLE));
         requestedTournaments.put("Express 5 Players", createSitAndGoConfiguration("Express 5 Players", 5, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
@@ -72,9 +72,21 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
         requestedTournaments.put("Crazy 20 Players", createSitAndGoConfiguration("Crazy 20 Players", 20, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.CRAZY_PINEAPPLE));
         requestedTournaments.put("100 Players", createSitAndGoConfiguration("100 Players", 100, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("1000 Players", createSitAndGoConfiguration("1000 Players", 1000, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
-        SitAndGoConfiguration stud = createSitAndGoConfiguration("2 Players 7 Card Stud", 2, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.SEVEN_CARD_STUD);
+        SitAndGoConfiguration stud = createSitAndGoConfiguration("2 Players 7 Stud", 2, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.SEVEN_CARD_STUD);
         stud.getConfiguration().setBetStrategy(BetStrategyType.FIXED_LIMIT);
-        requestedTournaments.put("1000 Players", stud);
+        requestedTournaments.put("2 Players 7 Stud", stud);
+
+        SitAndGoConfiguration stud2 = createSitAndGoConfiguration("5 Players 7 Stud", 5, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.SEVEN_CARD_STUD);
+        stud2.getConfiguration().setBetStrategy(BetStrategyType.FIXED_LIMIT);
+        requestedTournaments.put("5 Players 7 Stud", stud2);
+
+        SitAndGoConfiguration fiveCardStud = createSitAndGoConfiguration("2 Players 5 Stud", 5, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.FIVE_CARD_STUD);
+        fiveCardStud.getConfiguration().setBetStrategy(BetStrategyType.FIXED_LIMIT);
+        requestedTournaments.put("2 Players 5 Stud", fiveCardStud);
+
+        SitAndGoConfiguration omaha = createSitAndGoConfiguration("2 Players Omaha", 2, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.OMAHA);
+        omaha.getConfiguration().setBetStrategy(BetStrategyType.NO_LIMIT);
+        requestedTournaments.put("2 Players Omaha", omaha);
     }
 
     private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings, PayoutStructure payoutStructure,PokerVariant variant) {

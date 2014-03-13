@@ -3204,6 +3204,7 @@ com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA = 1;
 com.cubeia.games.poker.io.protocol.VariantEnum.CRAZY_PINEAPPLE = 2;
 com.cubeia.games.poker.io.protocol.VariantEnum.FIVE_CARD_STUD = 3;
 com.cubeia.games.poker.io.protocol.VariantEnum.SEVEN_CARD_STUD = 4;
+com.cubeia.games.poker.io.protocol.VariantEnum.OMAHA = 5;
 com.cubeia.games.poker.io.protocol.VariantEnum.makeVariantEnum = function (a) {
     switch (a) {
         case 0:
@@ -3215,7 +3216,9 @@ com.cubeia.games.poker.io.protocol.VariantEnum.makeVariantEnum = function (a) {
         case 3:
             return com.cubeia.games.poker.io.protocol.VariantEnum.FIVE_CARD_STUD;
         case 4:
-            return com.cubeia.games.poker.io.protocol.VariantEnum.SEVEN_CARD_STUD
+            return com.cubeia.games.poker.io.protocol.VariantEnum.SEVEN_CARD_STUD;
+        case 5:
+            return com.cubeia.games.poker.io.protocol.VariantEnum.OMAHA
     }
     return -1
 };
@@ -3230,7 +3233,9 @@ com.cubeia.games.poker.io.protocol.VariantEnum.toString = function (a) {
         case 3:
             return"FIVE_CARD_STUD";
         case 4:
-            return"SEVEN_CARD_STUD"
+            return"SEVEN_CARD_STUD";
+        case 5:
+            return"OMAHA"
     }
     return"INVALID_ENUM_VALUE"
 };

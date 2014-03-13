@@ -111,8 +111,8 @@ public class HandResultCreator {
         for (PokerPlayer player : players) {
             if (!player.hasFolded()) {
                 Hand h = new Hand();
-                h.addCards(player.getPocketCards().getCards());
-                h.addCards(communityCards);
+                h.addPocketCards(player.getPocketCards().getCards());
+                h.addCommunityCards(communityCards);
                 playerHands.add(new PlayerHand(player.getId(), h));
             }
         }

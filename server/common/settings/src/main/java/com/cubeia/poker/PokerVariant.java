@@ -22,5 +22,6 @@ public enum PokerVariant {
     TELESINA,
     CRAZY_PINEAPPLE,
     FIVE_CARD_STUD,
-    SEVEN_CARD_STUD;
+    SEVEN_CARD_STUD,
+    OMAHA;
 }

@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.cubeia.poker.PokerVariant;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -97,6 +98,12 @@ public class EditTournament extends BasePage {
             protected void onSubmit() {
             	log.debug("submit");
                 ScheduledTournamentConfiguration configuration = getModel().getObject();
+                TournamentConfiguration tournamentConfiguration = configuration.getConfiguration();
+                PokerVariant variant = tournamentConfiguration.getVariant();
+                if(variant == PokerVariant.SEVEN_CARD_STUD && tournamentConfiguration.getSeatsPerTable()>7) {
+                    error("Maximum number of seats per table for 7 card stud is 7");
+                    return;
+                }
                 ScheduledTournamentConfiguration savedTournamentConfig = adminDAO.merge(configuration);
                 info("Tournament updated, id = " + tournamentId);
                 

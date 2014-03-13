@@ -215,6 +215,7 @@ Poker.Seat = Class.extend({
     dealCard: function(card) {
         //.append(card.render(this.cardsContainer.children().length));
         this.hand.addCard(card);
+        this.hideActionInfo();
         //this.onCardDealt(card);
     },
     onCardDealt: function(card) {

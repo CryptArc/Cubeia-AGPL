@@ -67,7 +67,9 @@ public class DealPocketCardsRound implements Round {
              * Note, not checking if the player is sitting in. If he was sitting in at hand start (and thus ended up in the current hand seating map),
              * he should still be sitting in. Any player who declined the entry bet should also already have been removed from this map.
              */
-            dealPocketCards(p, numberOfCardsToDeal);
+            if(!p.hasFolded()) {
+                dealPocketCards(p, numberOfCardsToDeal);
+            }
         }
     }
 
@@ -76,7 +78,11 @@ public class DealPocketCardsRound implements Round {
         for (int i = 0; i < n; i++) {
             p.addPocketCard(context.getDeck().deal(), false);
         }
-        serverAdapterHolder.get().notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+        if(context.isAtLeastAllButOneAllIn() && p.isExposingPocketCards()) {
+            serverAdapterHolder.get().notifyPrivateExposedCards(p.getId(), p.getPocketCards().getCards());
+        } else {
+            serverAdapterHolder.get().notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+        }
     }
 
     public void dealFaceUpPocketCards(int cardsToDeal) {

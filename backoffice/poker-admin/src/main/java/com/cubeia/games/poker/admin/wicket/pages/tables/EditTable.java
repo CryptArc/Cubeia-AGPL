@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
+import com.cubeia.poker.PokerVariant;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -45,6 +46,10 @@ public class EditTable extends BasePage {
 
             @Override
             protected void onSubmit(TableConfigTemplate config) {
+                if(config.getVariant() == PokerVariant.SEVEN_CARD_STUD && config.getSeats()>7) {
+                    error("Maximum number of seats per table for 7 card stud is 7");
+                    return;
+                }
                 adminDAO.merge(config);
                 // info("Table template updated, id = " + templateId);
                 setResponsePage(ListTables.class);

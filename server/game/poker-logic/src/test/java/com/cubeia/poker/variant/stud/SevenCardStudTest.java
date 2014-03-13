@@ -73,7 +73,8 @@ public class SevenCardStudTest {
 
     private MockPlayer[] p;
 
-    private Random randomizer = new Random();
+    @Mock
+    private Random randomizer;
 
     @Before
     public void setup() {
@@ -81,7 +82,7 @@ public class SevenCardStudTest {
         rakeSettings = RakeSettings.createDefaultRakeSettings(BigDecimal.valueOf(0));
         sevenCardStud = SevenCardStud.createGame();
         sevenCardStud.addHandFinishedListener(handFinishedListener);
-
+        when(randomizer.nextInt(anyInt())).thenReturn(1);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(serverAdapter.getSystemRNG()).thenReturn(randomizer);
     }
@@ -95,75 +96,87 @@ public class SevenCardStudTest {
         act(p[2], ANTE);
         timeout();
 
-        act(p[0], CALL);
+        act(p[0], BRING_IN);
         act(p[1], CALL);
-        act(p[2], CHECK);
-
-        // Flop
+        act(p[2], CALL);
         timeout();
+
         act(p[1], CHECK);
         act(p[2], CHECK);
         act(p[0], CHECK);
 
-        // Discard round
-        Assert.assertTrue(discard(p[1], 3));
-        Assert.assertTrue(discard(p[2], 6));
-        Assert.assertTrue(discard(p[0], 0));
 
         // Turn
         timeout();
-        act(p[1], CHECK);
         act(p[2], CHECK);
         act(p[0], CHECK);
+        act(p[1], CHECK);
 
         // River
         timeout();
-        act(p[1], CHECK);
         act(p[2], CHECK);
         act(p[0], CHECK);
+        act(p[1], CHECK);
 
-        Assert.assertEquals(2,p[0].getPrivatePocketCards().size());
-        Assert.assertEquals(2,p[1].getPrivatePocketCards().size());
-        Assert.assertEquals(2,p[2].getPrivatePocketCards().size());
+        timeout();
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+        act(p[1], CHECK);
+
+
+        Assert.assertEquals(3,p[0].getPrivatePocketCards().size());
+        Assert.assertEquals(3,p[1].getPrivatePocketCards().size());
+        Assert.assertEquals(3,p[2].getPrivatePocketCards().size());
+
+        Assert.assertEquals(4,p[0].getPublicPocketCards().size());
+        Assert.assertEquals(4,p[1].getPublicPocketCards().size());
+        Assert.assertEquals(4,p[2].getPublicPocketCards().size());
 
         verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
     }
 
+
+
     @Test
-    public void testBugHand() {
-        startHand(prepareContext(6));
+    public void testBasicFoldHand() {
+        startHand(prepareContext(3));
 
-        act(p[1], SMALL_BLIND);
-        act(p[2], BIG_BLIND);
-
-        timeout();
-        Assert.assertTrue(act(p[3], CALL));
-        Assert.assertTrue(act(p[4], FOLD));
-        Assert.assertTrue(act(p[5], RAISE,null, new BigDecimal(600)));
-        Assert.assertTrue(act(p[0], FOLD));
-        Assert.assertTrue(act(p[1], FOLD));
-        Assert.assertTrue(act(p[2], CALL));
-        Assert.assertTrue(act(p[3], FOLD));
-
-        // Flop
+        act(p[0], ANTE);
+        act(p[1], ANTE);
+        act(p[2], ANTE);
         timeout();
 
-        Assert.assertTrue(act(p[2], CHECK));
-        Assert.assertTrue(act(p[5], BET, null,new BigDecimal(300)));
-        Assert.assertTrue(act(p[2], CALL));
+        act(p[0], BET,null,new BigDecimal("100.00"));
+        act(p[1], FOLD);
+        act(p[2], CALL);
+        timeout();
+        Assert.assertTrue(p[1].hasFolded());
 
-        Assert.assertTrue(discard(p[2],8));
-        Assert.assertTrue(discard(p[5],15));
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+
 
         // Turn
         timeout();
-        Assert.assertTrue(act(p[2], CHECK));
-        Assert.assertTrue(act(p[5], CHECK));
+        act(p[2], CHECK);
+        act(p[0], CHECK);
 
         // River
         timeout();
-        Assert.assertTrue(act(p[2], CHECK));
-        Assert.assertTrue(act(p[5], CHECK));
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+
+        timeout();
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+
+
+        Assert.assertEquals(3,p[0].getPrivatePocketCards().size());
+        Assert.assertEquals(3,p[2].getPrivatePocketCards().size());
+        Assert.assertEquals(2,p[1].getPrivatePocketCards().size());
+        Assert.assertEquals(4,p[0].getPublicPocketCards().size());
+        Assert.assertEquals(4,p[2].getPublicPocketCards().size());
+
 
 
         verify(handFinishedListener).handFinished(Mockito.<HandResult>any(), eq(HandEndStatus.NORMAL));
@@ -221,8 +234,8 @@ public class SevenCardStudTest {
 
     private PokerContext prepareContext(int numberOfPlayers) {
         BlindsLevel level = new BlindsLevel(new BigDecimal(50), new BigDecimal(100), BigDecimal.ZERO);
-        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(PokerVariant.CRAZY_PINEAPPLE,level, betStrategy, new BigDecimal(100), new BigDecimal(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
+        BetStrategyType betStrategy = BetStrategyType.FIXED_LIMIT;
+        PokerSettings settings = new PokerSettings(PokerVariant.SEVEN_CARD_STUD,level, betStrategy, new BigDecimal(100), new BigDecimal(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
         PokerContext context = new PokerContext(settings);
         sevenCardStud.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);
