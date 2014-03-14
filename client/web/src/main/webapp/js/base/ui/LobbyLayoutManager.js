@@ -135,14 +135,17 @@ Poker.LobbyLayoutManager = Class.extend({
             }
         }
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
+        console.log("CURRENCIES ", currencies);
         if(currencies.length>1) {
             $("#currencyMenu .currency").remove();
             $(".filter-group.currencies").show();
             var t = this.templateManager.getRenderTemplate("currencyFilterTemplate");
             for(var i = 0; i<currencies.length; i++) {
-                $("#currencyMenu").append(t.render(currencies[i]));
+                var output = t.render(currencies[i]);
+                $("#currencyMenu").append(output);
+
             }
-            this.currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
+            this.currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code",false);
             this.requiredFilters.push(this.currencyFilter);
         } else {
             $(".filter-group.currencies").hide();
@@ -166,34 +169,9 @@ Poker.LobbyLayoutManager = Class.extend({
 
     },
     initCashGameFilters: function() {
-         var fullTablesFilter = new Poker.LobbyFilter("hideFullTables", false,
-                 function(enabled, lobbyData) {
-                     if (enabled) {
-                         return lobbyData.seated < lobbyData.capacity;
-                     } else {
-                         return true;
-                     }
-                 }, this);
-         this.cashGameFilters.push(fullTablesFilter);
-         var emptyTablesFilter = new Poker.LobbyFilter("hideEmptyTables", false,
-                 function(enabled, lobbyData) {
-                     if (enabled) {
-                         return lobbyData.seated > 0;
-                     } else {
-                         return true;
-                     }
 
-                 }, this);
 
-         this.cashGameFilters.push(emptyTablesFilter);
 
-         var items = [
-              { id : "NL", name: "No Limit"},
-              { id : "PL", name: "Pot Limit"},
-              { id : "FL", name: "Fixed Limit"}
-          ];
-         this.limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
-         this.cashGameFilters.push(this.limitFilters);
 
 
         var variants = [
@@ -207,6 +185,14 @@ Poker.LobbyLayoutManager = Class.extend({
         this.variantFilter = new Poker.RadioGroupFilter(variants, this,["variant"],"variant");
         this.cashGameFilters.push(this.variantFilter);
 
+        var items = [
+            { id : "NL", name: "No Limit"},
+            { id : "PL", name: "Pot Limit"},
+            { id : "FL", name: "Fixed Limit"}
+        ];
+        this.limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
+        this.cashGameFilters.push(this.limitFilters);
+
          var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 10, -1);
 
          this.cashGameFilters.push(highStakes);
@@ -219,6 +205,28 @@ Poker.LobbyLayoutManager = Class.extend({
 
          this.sitAndGoFilters.push(this.limitFilters);
          this.sitAndGoFilters.push(new Poker.PrivateTournamentFilter());
+
+
+        var fullTablesFilter = new Poker.LobbyFilter("hideFullTables", false,
+            function(enabled, lobbyData) {
+                if (enabled) {
+                    return lobbyData.seated < lobbyData.capacity;
+                } else {
+                    return true;
+                }
+            }, this);
+        this.cashGameFilters.push(fullTablesFilter);
+        var emptyTablesFilter = new Poker.LobbyFilter("hideEmptyTables", false,
+            function(enabled, lobbyData) {
+                if (enabled) {
+                    return lobbyData.seated > 0;
+                } else {
+                    return true;
+                }
+
+            }, this);
+
+        this.cashGameFilters.push(emptyTablesFilter);
 
          var registeringOnly = new Poker.EqualsFilter("registeringOnly",true,this,"status","REGISTERING");
          this.sitAndGoFilters.push(registeringOnly);

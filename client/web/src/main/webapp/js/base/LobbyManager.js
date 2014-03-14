@@ -348,8 +348,12 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     currentFilter : null,
     idProperty : "id",
     emptyFilterGroups : null,
-    init : function(group, lobbyLayoutManager, properties,prefix,idProperty) {
+    autoHideEmpty : true,
+    init : function(group, lobbyLayoutManager, properties,prefix,idProperty, autoHideEmpty) {
         var self = this;
+        if(typeof(autoHideEmpty)!="undefined") {
+            this.autoHideEmpty = autoHideEmpty;
+        }
         if(typeof(prefix)!="undefined") {
             this.prefix = prefix;
         } else {
@@ -367,22 +371,28 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
         $("#" + prefix + this.currentFilter).addClass("active");
         this.reset();
         $.each(group,function(i,el){
-
-            $("#" + prefix + el[self.idProperty]).touchSafeClick(function(e){
+            var link = $("#" + prefix + el[self.idProperty]);
+            link.touchSafeClick(function(e){
                 self.deselectButtons();
                 self.currentFilter = el[self.idProperty];
                 $(this).addClass("active");
                 self.filterUpdated();
-            }).hide();
+            });
+            if(self.autoHideEmpty) {
+               link.hide();
+            }
         });
 
     },
     reset : function() {
-        var self = this;
-        this.emptyFilterGroups = new Poker.Map();
-        $.each(this.radioGroup,function(i,e){
-            self.emptyFilterGroups.put(e[self.idProperty],e);
-        });
+        if(this.autoHideEmpty == true) {
+            var self = this;
+            this.emptyFilterGroups = new Poker.Map();
+            $.each(this.radioGroup,function(i,e){
+                self.emptyFilterGroups.put(e[self.idProperty],e);
+            });
+        }
+
     },
     deselectButtons : function() {
         var self = this;
@@ -401,7 +411,9 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     filterSingle : function(property,lobbyData) {
         var p = lobbyData[property];
         if (typeof(p) != "undefined" && !this.enabled) {
-            this.emptyFilterGroups.remove(p);
+            if(this.autoHideEmpty==true) {
+                this.emptyFilterGroups.remove(p);
+            }
             return (p == this.currentFilter);
         } else {
             return true;
@@ -411,14 +423,30 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
         this.lobbyLayoutManager.filterUpdated();
     },
     hideEmptyFilters : function() {
-        var self = this;
+        if(this.autoHideEmpty==true) {
+            var self = this;
+            $.each(this.radioGroup,function(i,e){
+                $("#" + self.prefix + e[self.idProperty]).show();
+            });
+            console.log("empty = ", this.getEmptyFilterGroups());
+            $.each(this.getEmptyFilterGroups(),function(i,e){
+                $("#" + self.prefix + e).hide();
+            });
+        }
         $.each(this.radioGroup,function(i,e){
-            $("#" + self.prefix + e[self.idProperty]).show();
+            var item = $("#" + self.prefix + e[self.idProperty]);
+            if(item.hasClass("active") && !item.is(":visible") ) {
+                $.each(self.radioGroup,function(j,g){
+                    var select = $("#" + self.prefix + g[self.idProperty]);
+                    if(select.is(":visible")){
+                        select.click();
+                        return false;
+                    }
+                });
+                return false;
+            }
         });
-        console.log("empty = ", this.getEmptyFilterGroups());
-        $.each(this.getEmptyFilterGroups(),function(i,e){
-            $("#" + self.prefix + e).hide();
-        });
+
     },
     getEmptyFilterGroups : function(){
         return this.emptyFilterGroups.keys();
