@@ -389,6 +389,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>poker-admin</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -401,9 +402,12 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
+                <!--
+                
                 <configuration>
                     <warName>poker-admin</warName>
                 </configuration>
+                -->
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -484,6 +488,11 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            
+            <build>
+                <finalName>poker-admin-bitcoin</finalName>
+            </build>
+            
             <dependencies>
                 <dependency>
                     <groupId>com.cubeia.bitcoin</groupId>
@@ -491,6 +500,29 @@
                     <version>1.0-SNAPSHOT</version>
                 </dependency>
             </dependencies>
+            
+            <repositories>
+                <repository>
+                    <id>cubeia-release-repo</id>
+                    <name>Internal Release Repository</name>
+                    <url>http://m2.cubeia.com/nexus/content/repositories/internal-releases</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>cubeia-snapshot-repo</id>
+                    <name>Internal Release Snapshot Repository</name>
+                    <url>http://m2.cubeia.com/nexus/content/repositories/internal-snapshots</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </repository>
+                
+            </repositories>
+            
         </profile>
 
         <profile>
