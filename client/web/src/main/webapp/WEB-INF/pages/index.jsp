@@ -782,14 +782,16 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <a class="nav-active-item">Cash Games</a>
+                                <a class="nav-active-item">Game Type</a>
                             </div>
                             <div class="navbar-collapse navbar-variant-collapse collapse">
                                 <ul class="nav nav-pills">
-                                    <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
-                                    <li id="variantTelesina"><a>Telesina</a></li>
-                                    <li id="variantCrazyPineapple"><a>Crazy Holdem</a></li>
-                                    <li><a>&nbsp;</a></li>
+                                    <li id="variantTEXAS_HOLDEM"><a>Hold'em</a></li>
+                                    <li id="variantOMAHA"><a>Omaha</a></li>
+                                    <li id="variantCRAZY_PINEAPPLE"><a>Crazy Holdem</a></li>
+                                    <li id="variantSEVEN_CARD_STUD"><a>7 Card Stud</a></li>
+                                    <li id="variantFIVE_CARD_STUD"><a>5 Card Stud</a></li>
+                                    <li id="variantTELESINA"><a>Telesina</a></li>
                                 </ul>
                             </div>
                         </nav>

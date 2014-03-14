@@ -38,7 +38,7 @@ public class LobbyDomainSelectorImplTest {
 		TableConfigTemplate templ = Mockito.mock(TableConfigTemplate.class);
 		Mockito.when(templ.getVariant()).thenReturn(TEXAS_HOLDEM);
 		Mockito.when(templ.getSeats()).thenReturn(10);
-		Assert.assertEquals("texas/cashgame/REAL_MONEY/10", selector .selectLobbyDomainFor(templ));
+		Assert.assertEquals("cashgame/texas/10", selector .selectLobbyDomainFor(templ));
 	}
 	
 	@Test
@@ -46,7 +46,7 @@ public class LobbyDomainSelectorImplTest {
 		TableConfigTemplate templ = Mockito.mock(TableConfigTemplate.class);
 		Mockito.when(templ.getVariant()).thenReturn(TEXAS_HOLDEM);
 		Mockito.when(templ.getSeats()).thenReturn(6);
-		Assert.assertEquals("texas/cashgame/REAL_MONEY/6", selector.selectLobbyDomainFor(templ));
+		Assert.assertEquals("cashgame/texas/6", selector.selectLobbyDomainFor(templ));
 	}
 	
 	@Test
@@ -54,7 +54,7 @@ public class LobbyDomainSelectorImplTest {
 		TableConfigTemplate templ = Mockito.mock(TableConfigTemplate.class);
 		Mockito.when(templ.getVariant()).thenReturn(TELESINA);
 		Mockito.when(templ.getSeats()).thenReturn(6);
-		Assert.assertEquals("telesina/cashgame/REAL_MONEY/6", selector.selectLobbyDomainFor(templ));
+		Assert.assertEquals("cashgame/telesina/6", selector.selectLobbyDomainFor(templ));
 	}
 
 	@Test
@@ -62,6 +62,6 @@ public class LobbyDomainSelectorImplTest {
 		TableConfigTemplate templ = Mockito.mock(TableConfigTemplate.class);
 		Mockito.when(templ.getVariant()).thenReturn(CRAZY_PINEAPPLE);
 		Mockito.when(templ.getSeats()).thenReturn(10);
-		Assert.assertEquals("crazyp/cashgame/REAL_MONEY/10", selector.selectLobbyDomainFor(templ));
+		Assert.assertEquals("cashgame/crazyp/10", selector.selectLobbyDomainFor(templ));
 	}
 }

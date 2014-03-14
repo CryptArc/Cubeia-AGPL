@@ -14,6 +14,8 @@ Poker.LobbyLayoutManager = Class.extend({
     state : null,
     topMenu : null,
     currencyFilter : null,
+    variantFilter : null,
+    limitsFilter : null,
 
     cashGameSortingFunction : null,
     sitAndGoSortingFunction : null,
@@ -43,38 +45,38 @@ Poker.LobbyLayoutManager = Class.extend({
         this.requiredFilters = [];
 
         var self = this;
-
+       /*
         var variantMenu = new Poker.BasicMenu(".navbar-variant");
         variantMenu.addItem("#variantTexas",function(){
-            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
+
         });
         variantMenu.addItem("#variantTelesina",function(){
-            new Poker.LobbyRequestHandler().subscribeToCashGames("telesina");
+
         });
 
         variantMenu.addItem("#variantCrazyPineapple",function(){
-            new Poker.LobbyRequestHandler().subscribeToCashGames("crazyp");
+
         });
 
         variantMenu.activateItem("#variantTexas");
-
+         */
         this.topMenu = new Poker.BasicMenu(".navbar-top");
         this.topMenu.addItem("#cashGameMenu", function(){
             self.state = Poker.LobbyLayoutManager.CASH_STATE;
-            variantMenu.activateItem("#variantTexas");
-            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
+            //variantMenu.activateItem("#variantTexas");
+            new Poker.LobbyRequestHandler().subscribeToCashGames("cashgame");
             $.ga._trackEvent("user_navigation", "click_cashGameMenu");
         });
 
         this.topMenu.addItem("#sitAndGoMenu",function (e) {
             self.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
-            variantMenu.hide();
+            //variantMenu.hide();
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
             $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
         });
         this.topMenu.addItem("#tournamentMenu",function (e) {
             self.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
-            variantMenu.hide();
+            //variantMenu.hide();
             new Poker.LobbyRequestHandler().subscribeToTournaments();
             $.ga._trackEvent("user_navigation", "click_tournamentMenu");
         });
@@ -190,8 +192,20 @@ Poker.LobbyLayoutManager = Class.extend({
               { id : "PL", name: "Pot Limit"},
               { id : "FL", name: "Fixed Limit"}
           ];
-         var limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
-         this.cashGameFilters.push(limitFilters);
+         this.limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
+         this.cashGameFilters.push(this.limitFilters);
+
+
+        var variants = [
+            { id : "TEXAS_HOLDEM", name: "Hold'em"},
+            { id : "CRAZY_PINEAPPLE", name: "Crazy Hold'em"},
+            { id : "OMAHA", name : "Omaha" },
+            { id : "TELESINA", name: "Telesina"},
+            { id : "FIVE_CARD_STUD", name : "Five Card Stud"},
+            { id : "SEVEN_CARD_STUD", name : "Seven Card Stud"}
+        ];
+        this.variantFilter = new Poker.RadioGroupFilter(variants, this,["variant"],"variant");
+        this.cashGameFilters.push(this.variantFilter);
 
          var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 10, -1);
 
@@ -203,7 +217,7 @@ Poker.LobbyLayoutManager = Class.extend({
          var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
          this.cashGameFilters.push(lowStakes);
 
-         this.sitAndGoFilters.push(limitFilters);
+         this.sitAndGoFilters.push(this.limitFilters);
          this.sitAndGoFilters.push(new Poker.PrivateTournamentFilter());
 
          var registeringOnly = new Poker.EqualsFilter("registeringOnly",true,this,"status","REGISTERING");
@@ -369,6 +383,7 @@ Poker.LobbyLayoutManager = Class.extend({
 
         var self = this;
         var count = 0;
+        this.resetRadioGroupFilters();
         $.each(listItems, function (i, item) {
             if(self.isAllowedByFilters(item, filters)) {
                 count++;
@@ -382,12 +397,20 @@ Poker.LobbyLayoutManager = Class.extend({
                 });
             }
 
-
         });
+        this.hideEmptyFilters();
         if (count == 0) {
             listContainer.append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
         container.height("");
+    },
+    resetRadioGroupFilters : function() {
+        this.limitFilters.reset();
+        this.variantFilter.reset();
+    },
+    hideEmptyFilters : function() {
+        this.limitFilters.hideEmptyFilters();
+        this.variantFilter.hideEmptyFilters();
     },
     getTableItemHtml : function (templateId, data) {
         var item = this.templateManager.render(templateId, data);

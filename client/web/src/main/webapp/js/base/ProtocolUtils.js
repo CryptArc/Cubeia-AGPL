@@ -116,7 +116,8 @@ Poker.ProtocolUtils = Class.extend({
             smallBlind: param("SMALL_BLIND"),
             bigBlind : param("BIG_BLIND"),
             showInLobby : param("VISIBLE_IN_LOBBY"),
-            currencyCode : param("CURRENCY_CODE")
+            currencyCode : param("CURRENCY_CODE"),
+            variant : param("VARIANT")
         };
 
         return data;

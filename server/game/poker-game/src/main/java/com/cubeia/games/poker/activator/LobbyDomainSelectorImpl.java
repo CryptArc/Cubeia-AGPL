@@ -25,7 +25,7 @@ public class LobbyDomainSelectorImpl implements LobbyDomainSelector {
 
 	@Override
 	public String selectLobbyDomainFor(TableConfigTemplate templ) {
-		return getGameShortName(templ) + "/cashgame/REAL_MONEY/" + templ.getSeats();
+		return "cashgame/" + getGameShortName(templ) +"/"+ templ.getSeats();
 	}
 
 	private String getGameShortName(TableConfigTemplate templ) {
@@ -33,6 +33,9 @@ public class LobbyDomainSelectorImpl implements LobbyDomainSelector {
 			case TELESINA : return "telesina";
 			case TEXAS_HOLDEM : return "texas";
 			case CRAZY_PINEAPPLE : return "crazyp";
+            case OMAHA: return "omaha";
+            case SEVEN_CARD_STUD: return "sevencardstud";
+            case FIVE_CARD_STUD: return "fivecardstud";
 		}
 		throw new IllegalArgumentException("Unknown variant: " + templ.getVariant());
 	}

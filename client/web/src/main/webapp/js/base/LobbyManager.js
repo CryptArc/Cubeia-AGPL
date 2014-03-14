@@ -347,7 +347,7 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     prefix : null,
     currentFilter : null,
     idProperty : "id",
-
+    emptyFilterGroups : null,
     init : function(group, lobbyLayoutManager, properties,prefix,idProperty) {
         var self = this;
         if(typeof(prefix)!="undefined") {
@@ -365,15 +365,24 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
         var prefix = this.prefix;
         this.currentFilter = group[0][this.idProperty];
         $("#" + prefix + this.currentFilter).addClass("active");
+        this.reset();
         $.each(group,function(i,el){
+
             $("#" + prefix + el[self.idProperty]).touchSafeClick(function(e){
                 self.deselectButtons();
                 self.currentFilter = el[self.idProperty];
                 $(this).addClass("active");
                 self.filterUpdated();
-            });
+            }).hide();
         });
 
+    },
+    reset : function() {
+        var self = this;
+        this.emptyFilterGroups = new Poker.Map();
+        $.each(this.radioGroup,function(i,e){
+            self.emptyFilterGroups.put(e[self.idProperty],e);
+        });
     },
     deselectButtons : function() {
         var self = this;
@@ -392,6 +401,7 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     filterSingle : function(property,lobbyData) {
         var p = lobbyData[property];
         if (typeof(p) != "undefined" && !this.enabled) {
+            this.emptyFilterGroups.remove(p);
             return (p == this.currentFilter);
         } else {
             return true;
@@ -399,6 +409,19 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     },
     filterUpdated : function () {
         this.lobbyLayoutManager.filterUpdated();
+    },
+    hideEmptyFilters : function() {
+        var self = this;
+        $.each(this.radioGroup,function(i,e){
+            $("#" + self.prefix + e[self.idProperty]).show();
+        });
+        console.log("empty = ", this.getEmptyFilterGroups());
+        $.each(this.getEmptyFilterGroups(),function(i,e){
+            $("#" + self.prefix + e).hide();
+        });
+    },
+    getEmptyFilterGroups : function(){
+        return this.emptyFilterGroups.keys();
     }
 
 
