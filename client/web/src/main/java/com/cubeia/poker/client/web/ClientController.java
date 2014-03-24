@@ -5,16 +5,14 @@ import com.cubeia.backoffice.operator.client.OperatorServiceClient;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import static com.cubeia.backoffice.operator.api.OperatorConfigParamDTO.CLIENT_TITLE;
@@ -100,6 +98,12 @@ public class ClientController {
         return handleStart(request,modelMap,skin);
     }
 
+    @RequestMapping("/logout")
+    public @ResponseBody String invalidateSession(HttpSession session) {
+        session.invalidate();
+        return "{ \"status\" : \"OK\"}";
+    }
+
 	private void checkSetFirebaseAttributes(ModelMap modelMap) {
 		if(firebaseHost != null && firebaseHost.length() > 0) {
         	modelMap.addAttribute("firebaseHost", firebaseHost);
@@ -126,58 +130,60 @@ public class ClientController {
 
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/token/{token}"})
-    public String handleStartWithTokenURL(HttpServletResponse response,
-                                          HttpServletRequest request,
+    public String handleStartWithTokenURL(HttpServletRequest request,
+                                          HttpSession session,
                                           @PathVariable("skin") String skin,
                                           @PathVariable("operatorId") Long operatorId,
                                           @PathVariable("token") String token) {
 
-        return setCookieAndRedirect(request,response, skin, operatorId, token);
+        return setSessionAttributeAndRedirect(request, session, skin, operatorId, token);
     }
 
-    private String setCookieAndRedirect(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        String skin,
-                                        Long operatorId,
-                                        String token) {
+    private String setSessionAttributeAndRedirect(HttpServletRequest request,
+                                                  HttpSession session,
+                                                  String skin,
+                                                  Long operatorId,
+                                                  String token) {
 
-        addCookie(response, "token", token);
+        session.setAttribute("token",token);
+
         String servletPath = request.getServletPath();
         return String.format("redirect:%s/skin/%s/operator/%s",servletPath,skin,operatorId.toString());
     }
 
-    private void addCookie(HttpServletResponse response, String cookieName, String cookieValue) {
-        Cookie tokenCookie = new Cookie(cookieName, cookieValue);
-        tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(86400);
-        response.addCookie(tokenCookie);
-    }
+
 
     @RequestMapping(value = "/skin/{skin}/operator/{operatorId}")
     public String handleStartWithTokenCookie(HttpServletRequest request,
-                                             ModelMap modelMap,
+                                             HttpSession session,
+                                             ModelMap map,
                                              @PathVariable("skin") String skin,
-                                             @PathVariable("operatorId") Long operatorId,
-                                             @CookieValue(value = "token",required = false) String token) {
-        return doHandleStartWithToken(request, modelMap, skin, operatorId, token, trueTokenEnabled);
+                                             @PathVariable("operatorId") Long operatorId) {
+        Object tokenObj = session.getAttribute("token");
+        String token = null;
+        if(tokenObj!=null) {
+            token = (String) tokenObj;
+        }
+        return doHandleStartWithToken(request, map, skin, operatorId, token, trueTokenEnabled);
     }
 
     @RequestMapping(value = "/session/skin/{skin}/operator/{operatorId}")
     public String handleStartWithSessionCookie(HttpServletRequest request, ModelMap modelMap,
                                              @PathVariable("skin") String skin,
                                              @PathVariable("operatorId") Long operatorId,
-                                             @CookieValue(value = "session") String session) {
+                                             @ModelAttribute("token") String session) {
         return doHandleStartWithToken(request, modelMap, skin, operatorId, session, trueTokenEnabled);
     }
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/session/{token}"})
     public String handleStartWithPureToken(HttpServletRequest request,
                                            HttpServletResponse response,
+                                           HttpSession httpSession,
                                            @PathVariable("skin") String skin,
                                            @PathVariable("operatorId") Long operatorId,
                                            @PathVariable("session") String session) {
 
-        response.addCookie(new Cookie("session",session));
+        httpSession.setAttribute("token",session);
         String servletPath = request.getServletPath();
         return String.format("redirect:%s/session/skin/%s/operator/%s",servletPath,skin,operatorId.toString());
     }
@@ -223,22 +229,13 @@ public class ClientController {
 
     @RequestMapping(value = {"/operator/{operatorId}/token/{token}"})
     public String handleStartWithTokenAndDefaultSkin(HttpServletRequest request,
-                                                     HttpServletResponse response,
+                                                     HttpSession session,
                                                      @PathVariable("operatorId") Long operatorId,
                                                      @PathVariable("token") String token) {
 
-        return setCookieAndRedirect(request, response, defaultSkin, operatorId, token);
+        return setSessionAttributeAndRedirect(request, session, defaultSkin, operatorId, token);
     }
-    
-    @RequestMapping(value = {"/operator/{operatorId}/session/{token}"})
-    public String handleStartWithPureTokenAndDefaultSkin(HttpServletRequest request, ModelMap modelMap,
-                                       @PathVariable("operatorId") Long operatorId,
-                                       @PathVariable("token") String token) {
 
-        return handleStartWithTokenCookie(request, modelMap, defaultSkin, operatorId, token);
-    }
-    
-    
 
     @RequestMapping(value = {"/skin/{skin}/hand-history/{tableId}"})
     public String handleHansHistory(HttpServletRequest request, ModelMap modelMap,

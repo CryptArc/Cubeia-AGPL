@@ -10,6 +10,9 @@ Poker.PlayerApi = Class.extend({
         this.playerApiBaseUrl = playerApiBaseUrl;
         this.operatorApiBaseUrl = operatorApiBaseUrl;
     },
+    invalidateSession : function(){
+        return $.ajax(contextPath + "/logout",{ type : "GET" });
+    },
     /**
      * Retrieves the player profile for a specific player
      * @param {Number} playerId id of the player to get the profile for
