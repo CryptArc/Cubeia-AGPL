@@ -123,9 +123,12 @@ Poker.AccountPageManager = Class.extend({
                 message: i18n.t("account.logout-warning"),
                 displayCancelButton: true
             }, function() {
-                Poker.AppCtx.getCommunicationManager().setIgnoreNextForceLogout();
-                Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
-                document.location = logout_url;
+                Poker.AppCtx.getPlayerApi().invalidateSession().always(function(){
+                    Poker.AppCtx.getCommunicationManager().setIgnoreNextForceLogout();
+                    Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
+                    document.location = logout_url;
+                });
+
             });
         }
     },
