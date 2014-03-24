@@ -141,13 +141,16 @@ public class ClientController {
                                         Long operatorId,
                                         String token) {
 
-        Cookie tokenCookie = new Cookie("token", token);
+        addCookie(response, "token", token);
+        String servletPath = request.getServletPath();
+        return String.format("redirect:%s/skin/%s/operator/%s",servletPath,skin,operatorId.toString());
+    }
+
+    private void addCookie(HttpServletResponse response, String cookieName, String cookieValue) {
+        Cookie tokenCookie = new Cookie(cookieName, cookieValue);
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(86400);
         response.addCookie(tokenCookie);
-        String cp = request.getContextPath();
-        String servletPath = request.getServletPath();
-        return String.format("redirect:%s%s/skin/%s/operator/%s",cp,servletPath,skin,operatorId.toString());
     }
 
     @RequestMapping(value = "/skin/{skin}/operator/{operatorId}")
@@ -175,9 +178,8 @@ public class ClientController {
                                            @PathVariable("session") String session) {
 
         response.addCookie(new Cookie("session",session));
-        String cp = request.getContextPath();
         String servletPath = request.getServletPath();
-        return String.format("redirect:%s%s/session/skin/%s/operator/%s",cp,servletPath,skin,operatorId.toString());
+        return String.format("redirect:%s/session/skin/%s/operator/%s",servletPath,skin,operatorId.toString());
     }
 
     private String doHandleStartWithToken(HttpServletRequest request, ModelMap modelMap, String skin, Long operatorId,
