@@ -24,6 +24,7 @@ Poker.DynamicHand = Class.extend({
     cardWidth: 90,
     maxCards : 5,
     align : 0,
+    useTransform : true,
 
     alignments : {
         "2" : [0,0],
@@ -173,9 +174,26 @@ Poker.DynamicHand = Class.extend({
             }
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
-                cssUtils.setTranslate3d(card.getContainerElement(),pos.x,pos.y,0,"px");
+                if(this.useTransform == true) {
+                    cssUtils.setTranslate3d(card.getContainerElement(),pos.x,pos.y,0,"px");
+                } else {
+                    el.css("left",pos.x + "px");
+                }
             }
         }
+        var self = this;
+        setTimeout(function(){
+            var cards = self.cards.values();
+            if(cards.length>1) {
+                var c1 = cards[0].getContainerElement();
+                var c2 = cards[1].getContainerElement();
+                if(c1 && c1.position().left == c2.position().left) {
+                    self.useTransform=false;
+                    self.updateCardPositions();
+                }
+            }
+        },500);
+
     },
     discardCards : function(cardsToDiscard) {
         for(var c in cardsToDiscard) {
