@@ -428,7 +428,6 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
             $.each(this.radioGroup,function(i,e){
                 $("#" + self.prefix + e[self.idProperty]).show();
             });
-            console.log("empty = ", this.getEmptyFilterGroups());
             $.each(this.getEmptyFilterGroups(),function(i,e){
                 $("#" + self.prefix + e).hide();
             });
