@@ -175,10 +175,10 @@ Poker.DynamicHand = Class.extend({
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
                 if(this.useTransform == true) {
-                    cssUtils.setTranslate3d(card.getContainerElement(),pos.x,pos.y,0,"px");
+                    cssUtils.setTranslate3d(el,pos.x,pos.y,0,"px");
                     el.css("left","");
                 } else {
-                    cssUtils.setTranslate3d(card.getContainerElement(),0,0,0,"px");
+                    cssUtils.clearTransform(el);
                     el.css("left",pos.x + "px");
                 }
             }
