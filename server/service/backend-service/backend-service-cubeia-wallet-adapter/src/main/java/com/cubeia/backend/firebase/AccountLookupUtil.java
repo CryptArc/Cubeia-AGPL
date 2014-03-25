@@ -45,6 +45,7 @@ public class AccountLookupUtil {
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(SYSTEM_ACCOUNT));
         request.setUserId(accountUserId);
+        request.setLimit(100);
         AccountQueryResult accounts = walletService.listAccounts(request);
         for (Account account : accounts.getAccounts()) {
             if (account.getCurrencyCode().equals(currency)) {
@@ -67,7 +68,7 @@ public class AccountLookupUtil {
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(STATIC_ACCOUNT));
         request.setUserId(playerId);
-        request.setLimit(1);
+        request.setLimit(100);
         AccountQueryResult accounts = walletService.listAccounts(request);
         if (accounts.getAccounts() == null || accounts.getAccounts().size() < 1) {
             return -1;
