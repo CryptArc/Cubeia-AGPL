@@ -142,9 +142,16 @@ Poker.CommunicationManager = Class.extend({
         console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
         
         var useCometd = $.url().param("cometd") != undefined;
+        var isSafari5 = function isSafari5() {
+            var safari =  !!navigator.userAgent.match(' Safari/') && !navigator.userAgent.match(' Chrom') && !!navigator.userAgent.match(' Version/5.');
+            if(safari) {
+                console.log("Safari 5.x detected ");
+            }
+            return safari;
+        };
         
-        if (useCometd) {
-        	console.log("Using cometd transport");
+        if (useCometd || isSafari5()) {
+            console.log("Using cometd adapter as fallback");
             this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", false, function() {
             	org.cometd.JSON.toJSON = JSON.stringify;
             	org.cometd.JSON.fromJSON = JSON.parse;

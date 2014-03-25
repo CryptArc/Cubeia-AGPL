@@ -135,7 +135,6 @@ Poker.LobbyLayoutManager = Class.extend({
             }
         }
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
-        console.log("CURRENCIES ", currencies);
         if(currencies.length>1) {
             $("#currencyMenu .currency").remove();
             $(".filter-group.currencies").show();
@@ -350,7 +349,6 @@ Poker.LobbyLayoutManager = Class.extend({
                 callbackFunction(listItem);
             });
         }
-        console.log("update complete");
     },
     updateTableItems : function(items) {
         for(var i = 0; i<items.length; i++) {
