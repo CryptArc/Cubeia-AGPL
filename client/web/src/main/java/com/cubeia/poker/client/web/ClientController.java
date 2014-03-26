@@ -180,7 +180,10 @@ public class ClientController {
             String url = opConfig.get(OperatorConfigParamDTO.LOGOUT_PAGE_URL);
             map.put("logoutUrl",url);
         }
-
+        if(skin==null || !skin.matches(SAFE_PATTER)) {
+            map.addAttribute("skin","");
+        }
+        map.addAttribute("cp",request.getContextPath());
         return "session-timeout";
     }
 
