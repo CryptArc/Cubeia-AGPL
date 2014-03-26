@@ -130,6 +130,17 @@ public class ClientController {
         }
 	}
 
+    @RequestMapping("/skin/{skin}/operator/{operatorId}/token/{token}/{section:[a-z0-9]+}/{value:[a-z0-9]+}")
+    public String handleStartWithTokenURLAndSection(HttpServletRequest request,
+                                          HttpSession session,
+                                          @PathVariable("skin") String skin,
+                                          @PathVariable("operatorId") Long operatorId,
+                                          @PathVariable("token") String token,
+                                          @PathVariable("section") String section,
+                                          @PathVariable("value") String value) {
+        String hash = String.format("#/%s/%s",section,value);
+        return setSessionAttributeAndRedirect(request, session, skin, operatorId, token,hash);
+    }
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/token/{token}"})
     public String handleStartWithTokenURL(HttpServletRequest request,
@@ -138,25 +149,27 @@ public class ClientController {
                                           @PathVariable("operatorId") Long operatorId,
                                           @PathVariable("token") String token) {
 
-        return setSessionAttributeAndRedirect(request, session, skin, operatorId, token);
+
+        return setSessionAttributeAndRedirect(request, session, skin, operatorId, token,"");
     }
 
     private String setSessionAttributeAndRedirect(HttpServletRequest request,
                                                   HttpSession session,
                                                   String skin,
                                                   Long operatorId,
-                                                  String token) {
+                                                  String token,
+                                                  String hash) {
 
         session.setAttribute("token",token);
 
         String servletPath = request.getServletPath();
-        return String.format("redirect:%s/skin/%s/operator/%s",servletPath,skin,operatorId.toString());
+        return String.format("redirect:%s/skin/%s/operator/%s%s",servletPath,skin,operatorId.toString(),hash);
     }
 
 
 
-    @RequestMapping(value = "/skin/{skin}/operator/{operatorId}")
-    public String handleStartWithTokenCookie(HttpServletRequest request,
+    @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}"})
+    public String handleStartWithToken(HttpServletRequest request,
                                              HttpSession session,
                                              ModelMap map,
                                              @PathVariable("skin") String skin,
@@ -253,7 +266,7 @@ public class ClientController {
                                                      @PathVariable("operatorId") Long operatorId,
                                                      @PathVariable("token") String token) {
 
-        return setSessionAttributeAndRedirect(request, session, defaultSkin, operatorId, token);
+        return setSessionAttributeAndRedirect(request, session, defaultSkin, operatorId, token,"");
     }
 
 
