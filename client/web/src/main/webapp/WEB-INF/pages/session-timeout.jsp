@@ -34,7 +34,7 @@
                    <div class="loading-box">
                        <div class="session-timed-out-container">
                            <div class="">
-                               Your session has timed out, please <a href="">click here </a> to login.
+                               Your session has timed out, please <a href="${logoutUrl}">click here </a> to login.
                            </div>
                        </div>
 
