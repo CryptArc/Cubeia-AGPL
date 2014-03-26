@@ -22,10 +22,10 @@
     "login" : {
         "login" : "登入",
         "status" : "狀態:",
-        "disconnected" : "連接已斷開, 重試中（數數%秒）",
+        "disconnected" : "連接已斷開, 重試中（數數 %s 秒）",
         "connecting" : "連接中",
         "connected" : "已連接",
-        "login-failed" : "連接失敗狀態 %秒"
+        "login-failed" : "連接失敗狀態  %s 秒"
     },
     "lobby" : {
         "menu" : {
