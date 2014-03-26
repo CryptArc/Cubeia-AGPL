@@ -5,9 +5,11 @@ import com.cubeia.backoffice.operator.client.OperatorServiceClient;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -163,8 +165,23 @@ public class ClientController {
         String token = null;
         if(tokenObj!=null) {
             token = (String) tokenObj;
+            return doHandleStartWithToken(request, map, skin, operatorId, token, trueTokenEnabled,true);
+        } else {
+            return handleSessionTimedOut(request,map,skin,operatorId);
         }
-        return doHandleStartWithToken(request, map, skin, operatorId, token, trueTokenEnabled);
+    }
+
+    private String handleSessionTimedOut(HttpServletRequest request, ModelMap map, String skin, Long operatorId) {
+        Map<OperatorConfigParamDTO, String> opConfig = safeGetOperatorConfig(operatorId);
+        if(opConfig != null && opConfig.get(CSS_URL) != null) {
+            map.addAttribute("cssOverride", opConfig.get(CSS_URL));
+        }
+        if(opConfig != null && opConfig.get(OperatorConfigParamDTO.LOGOUT_PAGE_URL) != null) {
+            String url = opConfig.get(OperatorConfigParamDTO.LOGOUT_PAGE_URL);
+            map.put("logoutUrl",url);
+        }
+
+        return "session-timeout";
     }
 
     @RequestMapping(value = "/session/skin/{skin}/operator/{operatorId}")
@@ -172,7 +189,7 @@ public class ClientController {
                                              @PathVariable("skin") String skin,
                                              @PathVariable("operatorId") Long operatorId,
                                              @ModelAttribute("token") String session) {
-        return doHandleStartWithToken(request, modelMap, skin, operatorId, session, trueTokenEnabled);
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, session, trueTokenEnabled,true);
     }
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/session/{token}"})
@@ -189,12 +206,14 @@ public class ClientController {
     }
 
     private String doHandleStartWithToken(HttpServletRequest request, ModelMap modelMap, String skin, Long operatorId,
-        String token, boolean pure) {
+        String token, boolean pure, boolean requireToken) {
         modelMap.addAttribute("cp",request.getContextPath());
         modelMap.addAttribute("operatorId",operatorId);
 
         Map<OperatorConfigParamDTO, String> opConfig = safeGetOperatorConfig(operatorId);
-        
+
+        modelMap.addAttribute("requireToken", requireToken);
+
         if(token==null || !token.matches(SAFE_PATTER)) {
             modelMap.addAttribute("token","");
         } else {

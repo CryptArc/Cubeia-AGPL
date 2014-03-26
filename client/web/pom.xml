@@ -122,12 +122,29 @@
                 	<warName>poker-client</warName>
                     <webResources>
                         <resource>
-                            <directory>${project.build.directory}/filtered-resources</directory>
+                            <directory>${project.build.directory}/filtered-resources/src/main/webapp/</directory>
                             <targetPath>.</targetPath>
                         </resource>
                     </webResources>
                 </configuration>
             </plugin>
+            <!--
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/filtered-resources/WEB-INF/pages/"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>replacer</artifactId>
@@ -141,8 +158,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <file>/src/main/webapp/WEB-INF/pages/index.jsp</file>
-                    <outputFile>${project.build.directory}/filtered-resources/WEB-INF/pages/index.jsp</outputFile>
+                    <includes>
+                        <include>src/main/webapp/WEB-INF/pages/index.jsp</include>
+                        <include>src/main/webapp/WEB-INF/pages/session-timeout.jsp</include>
+                    </includes>
+                    <outputDir>target/filtered-resources/</outputDir>
                     <replacements>
                         <replacement>
                             <token>rel=\"stylesheet/less\"</token>
