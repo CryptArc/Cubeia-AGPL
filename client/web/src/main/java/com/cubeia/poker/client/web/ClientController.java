@@ -165,7 +165,7 @@ public class ClientController {
         String token = null;
         if(tokenObj!=null) {
             token = (String) tokenObj;
-            return doHandleStartWithToken(request, map, skin, operatorId, token, trueTokenEnabled,true);
+            return doHandleStartWithToken(request, map, skin, operatorId, token, trueTokenEnabled);
         } else {
             return handleSessionTimedOut(request,map,skin,operatorId);
         }
@@ -189,7 +189,7 @@ public class ClientController {
                                              @PathVariable("skin") String skin,
                                              @PathVariable("operatorId") Long operatorId,
                                              @ModelAttribute("token") String session) {
-        return doHandleStartWithToken(request, modelMap, skin, operatorId, session, trueTokenEnabled,true);
+        return doHandleStartWithToken(request, modelMap, skin, operatorId, session, trueTokenEnabled);
     }
 
     @RequestMapping(value = {"/skin/{skin}/operator/{operatorId}/session/{token}"})
@@ -206,13 +206,11 @@ public class ClientController {
     }
 
     private String doHandleStartWithToken(HttpServletRequest request, ModelMap modelMap, String skin, Long operatorId,
-        String token, boolean pure, boolean requireToken) {
+        String token, boolean pure) {
         modelMap.addAttribute("cp",request.getContextPath());
         modelMap.addAttribute("operatorId",operatorId);
 
         Map<OperatorConfigParamDTO, String> opConfig = safeGetOperatorConfig(operatorId);
-
-        modelMap.addAttribute("requireToken", requireToken);
 
         if(token==null || !token.matches(SAFE_PATTER)) {
             modelMap.addAttribute("token","");
