@@ -77,6 +77,12 @@ Poker.OperatorConfig = Class.extend({
     getShareUrl : function() {
         return this.getValue("SHARE_URL", null);
     },
+    getOperatorName : function() {
+        return this.getValue("OPERATOR_NAME", null);
+    },
+    getOperatorUrl : function() {
+        return this.getValue("CLIENT_HOME_URL", null);
+    },
     getEnabledCurrencies : function() {
         return this.currencyMap.values();
     },
