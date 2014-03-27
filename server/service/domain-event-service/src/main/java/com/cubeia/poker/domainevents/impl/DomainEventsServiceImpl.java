@@ -156,8 +156,9 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		try {
 			int tournamentId = instance.getState().getId();
 			String tournamentName = instance.getState().getName();
+			int registeredPlayersCount = instance.getState().getRegisteredPlayersCount();
 			// Replace spaces with underscores because the achievement system does not like spaces.
-			tournamentName.replace(" ", "_");
+			// tournamentName.replace(" ", "_");
 			
 			int playerId = player.getPlayerId();
 			Integer operatorId = clientRegistry.getOperatorId(playerId);
@@ -198,6 +199,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			
 			event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount().add(payout)+"");
 			event.attributes.put(PokerAttributes.accountCurrency.name(), currencyCode);  
+			event.attributes.put(PokerAttributes.tournamentPlayerCount.name(), registeredPlayersCount+"");
 			
 			event.attributes.put(PokerAttributes.screenname.name(), player.getScreenname());
 			
