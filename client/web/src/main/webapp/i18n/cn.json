@@ -1,5 +1,6 @@
-"discard": { 
-        "description" : "選擇放棄手牌" 
+{
+    "discard": {
+        "description" : "選擇放棄手牌"
     },
     "level-up" : { 
         "title" : "升級！", 
@@ -154,7 +155,8 @@
             "tables" : "牌桌",
             "payouts" : "派彩",
             "blinds-structure" : "盲注架構"
-"players" : {
+        },
+        "players" : {
             "players" : "玩家们",
             "player" : "玩家",
             "stack" : "码",
