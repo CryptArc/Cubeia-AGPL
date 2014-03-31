@@ -17,21 +17,18 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toDateOrNull;
-import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toIntOrNull;
-import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.toStringOrNull;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -50,12 +47,12 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.*;
 
 /**
  * Page for searching for and viewing hand histories.
@@ -72,7 +69,7 @@ public class HandHistory extends BasePage {
 
     private final HandHistory.HandProvider handProvider;
 
-    private AjaxFallbackDefaultDataTable<HistoricHand, String> handsTable;
+    private DefaultDataTable<HistoricHand, String> handsTable;
 
     public HandHistory(PageParameters parameters) {
         super(parameters);
@@ -95,7 +92,7 @@ public class HandHistory extends BasePage {
 
     private void addResultsTable() {
         List<IColumn<HistoricHand,String>> columns = createColumns();
-        handsTable = new AjaxFallbackDefaultDataTable<HistoricHand,String>("hands", columns, handProvider, 8);
+        handsTable = new DefaultDataTable<HistoricHand,String>("hands", columns, handProvider, 26);
         add(handsTable);
     }
 

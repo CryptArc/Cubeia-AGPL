@@ -1,17 +1,20 @@
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import static com.google.common.collect.Lists.newArrayList;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.components.datepicker.BootstrapDatePicker;
+import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
+import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.googlecode.wicket.jquery.ui.Options;
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -31,15 +34,12 @@ import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.components.datepicker.BootstrapDatePicker;
-import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
-import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.googlecode.wicket.jquery.ui.Options;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class SearchTournamentHistory extends BasePage {
@@ -56,15 +56,28 @@ public class SearchTournamentHistory extends BasePage {
 
     public SearchTournamentHistory(PageParameters p) {
         super(p);
+
+        Form<TournamentLookup> tournamentLookupForm = new Form<TournamentLookup>("lookup", new CompoundPropertyModel(new TournamentLookup())) {
+
+            @Override
+            protected void onSubmit() {
+                TournamentLookup str = getModel().getObject();
+                setResponsePage(ShowTournament.class, ParamBuilder.params("historicTournamentId", str.historicTournamentId));
+            }
+        };
+        add(tournamentLookupForm);
+        tournamentLookupForm.add(new TextField<String>("historicTournamentId").setRequired(true));
         addForm();
         addResultsTable();
 
         add(new FeedbackPanel("feedback"));
     }
-
+    private class TournamentLookup implements IClusterable {
+        String historicTournamentId;
+    }
     private void addResultsTable() {
         List<IColumn<HistoricTournament,String>> columns = createColumns();
-        add(new AjaxFallbackDefaultDataTable<HistoricTournament,String>("tournaments", columns, tournamentProvider, 8));
+        add(new DefaultDataTable<HistoricTournament,String>("tournaments", columns, tournamentProvider, 25));
     }
 
     private List<IColumn<HistoricTournament,String>> createColumns() {
@@ -131,7 +144,7 @@ public class SearchTournamentHistory extends BasePage {
         };
 
         Options dateOptions = new Options();
-        dateOptions.set("format", "'mm/dd/yy'");
+        dateOptions.set("format", "'yyyy-mm-dd'");
 
         Options timeOptions = new Options();
         timeOptions.set("timeFormat", "'H:i'");
