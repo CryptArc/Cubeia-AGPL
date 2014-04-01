@@ -28,7 +28,7 @@ public class HistoricTournamentSearchPanel extends SearchResultPanel<HistoricTou
                 new PageParameters().add("historicTournamentId", tournament.get_id()));
         pl.add(idLabel);
         add(new Label("tournamentName", tournament.getTournamentName()));
-        SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd hh:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
         add(new Label("startTime", df.format(tournament.getStartTime())));
 
         add(pl);
