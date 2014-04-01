@@ -282,6 +282,13 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
                 "pokerHandId", request.getHandId());
     }
 
+    /**
+     * TODO: This lookup should be by operator and currency and not only currency.
+     *       I.e. add support for operator specific rake accounts.
+     *       
+     * @param currencyCode
+     * @return Account id
+     */
     private long getRakeAccount(String currencyCode) {
         if (!systemRakeAccounts.containsKey(currencyCode)) {
             long value;
