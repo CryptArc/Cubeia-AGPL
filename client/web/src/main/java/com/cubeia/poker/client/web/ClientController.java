@@ -50,6 +50,9 @@ public class ClientController {
     @Value("${pure.token.enabled}")
     private boolean trueTokenEnabled;
 
+    @Value("${firebase.secure.connection}")
+    private boolean secureConnection;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -128,6 +131,7 @@ public class ClientController {
         if(addThisPubId!=null) {
             modelMap.addAttribute("addThisPubId",addThisPubId);
         }
+        modelMap.addAttribute("secureConnection",secureConnection);
 	}
 
     @RequestMapping("/skin/{skin}/operator/{operatorId}/token/{token}/{section:[a-z0-9]+}/{value:[a-z0-9]+}")

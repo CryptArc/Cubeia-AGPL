@@ -291,7 +291,8 @@
                         webSocketPort : webSocketPort,
                         tournamentLobbyUpdateInterval : 10000,
                         playerApiBaseUrl : "${playerApiBaseUrl}",
-                        operatorApiBaseUrl : "${operatorApiBaseUrl}"
+                        operatorApiBaseUrl : "${operatorApiBaseUrl}",
+                        secure : ${secureConnection}
                     });
                     onApplicationWired();
                 });
