@@ -7,6 +7,13 @@ import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.node
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubeia.games.poker.admin.wicket.components.HistoricHandSearchPanel;
+import com.cubeia.games.poker.admin.wicket.components.HistoricTournamentSearchPanel;
+import com.cubeia.network.shared.web.wicket.module.PanelCreator;
+import com.cubeia.network.shared.web.wicket.search.SearchResultPanel;
+import com.cubeia.network.web.search.User;
+import com.cubeia.network.web.search.UserPanel;
+import org.apache.wicket.model.Model;
 import org.springframework.stereotype.Component;
 
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
@@ -75,6 +82,23 @@ public class PokerAdminModule extends AdminWebModule {
                 node("Edit Rake Configuration", EditRake.class, false));
 
         add(pages,"System Management", "system", SystemManagement.class,"icon-list-alt");
+    }
+
+    public PokerAdminModule() {
+
+        registerSearchType("historichand",HistoricHandSearchEntity.class, new PanelCreator<HistoricHandSearchEntity>() {
+            @Override
+            public SearchResultPanel createPanel(String wicketId, HistoricHandSearchEntity entity) {
+                return new HistoricHandSearchPanel(wicketId, Model.of(entity));
+            }
+        });
+
+        registerSearchType("historictournament",HistoricTournamentSearchEntity.class, new PanelCreator<HistoricTournamentSearchEntity>() {
+            @Override
+            public SearchResultPanel createPanel(String wicketId, HistoricTournamentSearchEntity entity) {
+                return new HistoricTournamentSearchPanel(wicketId, Model.of(entity));
+            }
+        });
     }
 
     @Override
