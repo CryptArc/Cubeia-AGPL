@@ -271,6 +271,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             try {
                 // long lookupOperatorAccountId = accountLookupUtil.lookupOperatorAccountId(walletService, rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
             	long operatorRakeAccountId = accountLookupUtil.lookupOperatorRakeAccountId(walletService, rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
+            	log.debug("Transfer rake ["+rakeEntry.getValue()+"] to operator["+rakeEntry.getKey()+"] account["+operatorRakeAccountId+"]");
 				txBuilder.entry(operatorRakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
             } catch (NoSuchAccountException e) {
             	log.warn("No operator rake account found for rake entry. Will use system rake account as placeholder. Reported error: "+e);
