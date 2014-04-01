@@ -59,12 +59,13 @@ public class CollectorServiceImpl implements HandHistoryCollectorService, Servic
     private JsonHandHistoryLogger jsonPersist;
 
     @Override
-    public void startHand(String id, Table table, List<Player> seats) {
+    public void startHand(String id, Table table, List<Player> seats, Settings settings) {
         log.debug("Start hand on table: " + id);
         if (cache.containsKey(table.getTableId())) {
             log.warn("Starting new hand, but cache is not empty, for table: " + table.getTableId());
         }
         HistoricHand hand = new HistoricHand(id);
+        hand.setSettings(settings);
         hand.setTable(table);
         hand.setStartTime(new DateTime().getMillis());
         hand.getSeats().addAll(seats);

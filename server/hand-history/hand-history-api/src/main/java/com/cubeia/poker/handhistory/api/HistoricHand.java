@@ -41,6 +41,7 @@ public class HistoricHand implements Serializable {
 
     private List<HandHistoryEvent> events = new ArrayList<HandHistoryEvent>();
     private List<Player> seats = new ArrayList<Player>(6);
+    private Settings settings;
 
     public HistoricHand() {
     }
@@ -113,6 +114,16 @@ public class HistoricHand implements Serializable {
         this.seats = seats;
     }
 
+
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -127,6 +138,7 @@ public class HistoricHand implements Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (results != null ? !results.equals(that.results) : that.results != null) return false;
         if (seats != null ? !seats.equals(that.seats) : that.seats != null) return false;
+        if (settings != null ? !settings.equals(that.settings) : that.settings != null) return false;
         if (table != null ? !table.equals(that.table) : that.table != null) return false;
 
         return true;
@@ -142,6 +154,7 @@ public class HistoricHand implements Serializable {
         result = 31 * result + (results != null ? results.hashCode() : 0);
         result = 31 * result + (events != null ? events.hashCode() : 0);
         result = 31 * result + (seats != null ? seats.hashCode() : 0);
+        result = 31 * result + (settings != null ? settings.hashCode() : 0);
         return result;
     }
 
@@ -156,6 +169,7 @@ public class HistoricHand implements Serializable {
                 ", results=" + results +
                 ", events=" + events +
                 ", seats=" + seats +
+                ", settings=" + settings +
                 '}';
     }
 }

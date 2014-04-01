@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.cubeia.poker.handhistory.api.*;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,23 +41,6 @@ import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.network.web.user.UserSummary;
 import com.cubeia.network.web.wallet.TransactionInfo;
-import com.cubeia.poker.handhistory.api.Amount;
-import com.cubeia.poker.handhistory.api.BestHandType;
-import com.cubeia.poker.handhistory.api.GameCard;
-import com.cubeia.poker.handhistory.api.GamePot;
-import com.cubeia.poker.handhistory.api.HandHistoryEvent;
-import com.cubeia.poker.handhistory.api.HandResult;
-import com.cubeia.poker.handhistory.api.HandStrengthCommon;
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.handhistory.api.Player;
-import com.cubeia.poker.handhistory.api.PlayerAction;
-import com.cubeia.poker.handhistory.api.PlayerBestHand;
-import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
-import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
-import com.cubeia.poker.handhistory.api.PotUpdate;
-import com.cubeia.poker.handhistory.api.Results;
-import com.cubeia.poker.handhistory.api.ShowDownSummary;
-import com.cubeia.poker.handhistory.api.TableCardsDealt;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class ShowHand extends BasePage {
@@ -135,6 +119,14 @@ public class ShowHand extends BasePage {
         add(new Label("startTime", new Date(hand.getStartTime()).toString()));
         add(new Label("endTime", new Date(hand.getEndTime()).toString()));
         add(new Label("totalRake", formatAmount(hand.getResults().getTotalRake())));
+        Settings settings = hand.getSettings();
+        if(settings==null) {
+            settings = new Settings();
+        }
+        add(new Label("variant", settings.getVariant()));
+        add(new Label("betStrategy", settings.getBetStrategyType()));
+        add(new Label("currencyCode", settings.getCurrencyCode()));
+
     }
 
     @SuppressWarnings("serial")

@@ -28,8 +28,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import com.cubeia.games.poker.common.money.Currency;
+import com.cubeia.poker.PokerVariant;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.handhistory.api.*;
 import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.settings.PokerSettings;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -67,6 +71,7 @@ public class HandHistoryReporter {
 
     @Inject
     private PokerState state;
+    private Settings settingsFromState;
 
     public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
         PotUpdate ev = new PotUpdate();
@@ -147,13 +152,14 @@ public class HandHistoryReporter {
             return; // SANITY CHECK
         }
         List<Player> seats = getSeatsFromState();
+        Settings settings = getSettingsFromState();
         String tableExtId = getIntegrationTableId();
         String handExtId = getIntegrationHandId();
         com.cubeia.poker.handhistory.api.Table table = new com.cubeia.poker.handhistory.api.Table();
         table.setTableId(this.table.getId());
         table.setTableIntegrationId(tableExtId);
         table.setTableName(this.table.getMetaData().getName());
-        this.service.startHand(handExtId, table, seats);
+        this.service.startHand(handExtId, table, seats, settings);
     }
 
     public void notifyNewRound() {
@@ -221,5 +227,30 @@ public class HandHistoryReporter {
     private String getPlayerName(int id) {
         TablePlayerSet set = table.getPlayerSet();
         return set.getPlayer(id).getName();
+    }
+
+    public Settings getSettingsFromState() {
+        Settings s = new Settings();
+        PokerSettings settings = state.getSettings();
+        if(settings!=null) {
+
+            PokerVariant variant = settings.getVariant();
+            if(variant!=null) {
+                s.setVariant(variant.name());
+            }
+
+            Currency currency = settings.getCurrency();
+            if(currency!=null) {
+                s.setCurrencyCode(currency.getCode());
+            }
+
+            BetStrategyType betStrategyType = settings.getBetStrategyType();
+            if(betStrategyType!=null) {
+                s.setBetStrategyType(betStrategyType.name());
+
+            }
+        }
+        return s;
+
     }
 }
