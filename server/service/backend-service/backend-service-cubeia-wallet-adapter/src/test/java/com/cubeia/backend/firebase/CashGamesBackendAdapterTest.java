@@ -29,6 +29,7 @@ import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import org.junit.Before;
@@ -67,12 +68,14 @@ public class CashGamesBackendAdapterTest {
     private WalletServiceContract walletService;
     private com.cubeia.games.poker.common.money.Currency eur = new com.cubeia.games.poker.common.money.Currency( "EUR", 2);
 
+    @Mock PublicClientRegistryService clientRegistry;
 
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil);
+        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry);
         backend.accountLookupUtil = accountLookupUtil;
+        backend.clientRegistry = clientRegistry;
     }
 
     @Test

@@ -46,6 +46,7 @@ import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.games.poker.common.money.*;
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
@@ -90,6 +91,8 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     protected WalletServiceContract walletService;
 
     protected AccountLookupUtil accountLookupUtil;
+    
+    protected PublicClientRegistryService clientRegistry;
 
     /**
      * Maps currency to rake account.
@@ -102,9 +105,10 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
      */
     protected Map<String, Long> promotionsAccounts = Maps.newHashMap();
 
-    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil) throws SystemException {
+    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil, PublicClientRegistryService clientRegistry) throws SystemException {
         this.walletService = walletService;
         this.accountLookupUtil = accountLookupUtil;
+        this.clientRegistry = clientRegistry;
     }
 
     @Override
@@ -267,22 +271,46 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             }
         }
         for (Map.Entry<Integer, Money> rakeEntry: operatorRake.entrySet()) {
-            log.debug("transferring rake: operatorId = " + rakeEntry.getKey() + ", amount = " + rakeEntry.getValue());
-            try {
-                // long lookupOperatorAccountId = accountLookupUtil.lookupOperatorAccountId(walletService, rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
-            	long operatorRakeAccountId = accountLookupUtil.lookupOperatorRakeAccountId(rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
-            	log.debug("Transfer rake ["+rakeEntry.getValue()+"] to operator["+rakeEntry.getKey()+"] account["+operatorRakeAccountId+"]");
-				txBuilder.entry(operatorRakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
-            } catch (NoSuchAccountException e) {
-            	log.warn("No operator rake account found for rake entry. Will use system rake account as placeholder. Reported error: "+e);
-                txBuilder.entry(getSystemRakeAccount(rakeEntry.getValue().getCurrencyCode()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
-            }
+            String currencyCode = rakeEntry.getValue().getCurrencyCode();
+			long rakeAccountId = getRakeAccount(rakeEntry.getKey(), currencyCode);
+			log.debug("transferring rake: operatorId = " + rakeEntry.getKey() + ", amount = " + rakeEntry.getValue()+" to RakeAcccountID = "+rakeAccountId);
+			txBuilder.entry(rakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
+			
+//            
+//            try {
+//                // long lookupOperatorAccountId = accountLookupUtil.lookupOperatorAccountId(walletService, rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
+//            	long operatorRakeAccountId = accountLookupUtil.lookupOperatorRakeAccountId(rakeEntry.getKey(), rakeEntry.getValue().getCurrencyCode());
+//            	log.debug("Transfer rake ["+rakeEntry.getValue()+"] to operator["+rakeEntry.getKey()+"] account["+operatorRakeAccountId+"]");
+//				txBuilder.entry(operatorRakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
+//            } catch (NoSuchAccountException e) {
+//            	log.warn("No operator rake account found for rake entry. Will use system rake account as placeholder. Reported error: "+e);
+//                txBuilder.entry(getSystemRakeAccount(rakeEntry.getValue().getCurrencyCode()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
+//            }
         }
         txBuilder.comment("poker hand result");
         txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
                 "pokerHandId", request.getHandId());
     }
 
+    
+    /**
+     * This method will lookup the correct rake account for the given operator and currency. If a specific operator rake account
+     * is found then it will be returned, otherwise a system wide rake account will be looked up. 
+     * @param operatorId
+     * @param currencyCode
+     * @return account id to use
+     */
+    private long getRakeAccount(Integer operatorId, String currencyCode) {
+    	long accountId = -1;
+    	try {
+    		accountId = accountLookupUtil.lookupOperatorRakeAccountId(operatorId, currencyCode);
+        } catch (NoSuchAccountException e) {
+        	log.info("No operator rake account found for rake entry. Will use system rake account as placeholder. Operator["+operatorId+"] Currency["+currencyCode+"]");
+        	accountId = getSystemRakeAccount(currencyCode);
+        }
+    	return accountId;
+    }
+    
     /**
      * FIXME: This lookup should be by operator and currency and not only currency.
      *       I.e. add support for operator specific rake accounts.
@@ -333,7 +361,10 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     private BatchHandResponse createBatchHandResponse(HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap, TransactionResult txResult, String currency) {
         List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
         for (AccountBalanceResult sb : txResult.getBalances()) {
-            if (sb.getAccountId() != getSystemRakeAccount(currency) && sessionToPlayerSessionMap.containsKey(sb.getAccountId())) {
+            // if (sb.getAccountId() != getSystemRakeAccount(currency) && sessionToPlayerSessionMap.containsKey(sb.getAccountId())) {
+        	
+        	// If not a player at the table it is probably a rake account and we must skip it
+        	if (sessionToPlayerSessionMap.containsKey(sb.getAccountId())) {
                 PlayerSessionId playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
                 Money balance = convertFromWalletMoney(sb.getBalance());
                 BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());
@@ -398,7 +429,8 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     public void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
         TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(fromAccount), convertToWalletMoney(money.negate()).getAmount());
-        txBuilder.entry(getSystemRakeAccount(money.getCurrencyCode()), convertToWalletMoney(money).getAmount());
+        long rakeAccount = getRakeAccount(getOperatorId(fromAccount.playerId), money.getCurrencyCode());
+        txBuilder.entry(rakeAccount, convertToWalletMoney(money).getAmount());
         txBuilder.comment(comment);
         TransactionRequest txRequest = txBuilder.toTransactionRequest();
         log.debug("sending tx request to wallet: {}", txRequest);
@@ -409,12 +441,17 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     @Override
     public void transferMoneyFromRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
         TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
-        txBuilder.entry(getSystemRakeAccount(money.getCurrencyCode()), convertToWalletMoney(money.negate()).getAmount());
+        long rakeAccount = getRakeAccount(getOperatorId(fromAccount.playerId), money.getCurrencyCode());
+		txBuilder.entry(rakeAccount, convertToWalletMoney(money.negate()).getAmount());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(fromAccount), convertToWalletMoney(money).getAmount());
         txBuilder.comment(comment);
         TransactionRequest txRequest = txBuilder.toTransactionRequest();
         log.debug("sending tx request to wallet: {}", txRequest);
         TransactionResult txResult = walletService.doTransaction(txRequest);
         log.debug("Result: " + txResult);
+    }
+    
+    private Integer getOperatorId(int playerId) {
+    	return clientRegistry.getOperatorId(playerId);
     }
 }

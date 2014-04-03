@@ -42,8 +42,6 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
     private JsonHandHistoryLogger jsonLogger;
 
     public void persist(HistoricHand hand) {
-        log.info("Persisting hand to mongo");
-
         try {
             mongoStorage.persist(hand);
         } catch (Exception e) {

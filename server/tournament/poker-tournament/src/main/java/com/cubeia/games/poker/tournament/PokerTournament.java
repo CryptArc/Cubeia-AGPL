@@ -340,7 +340,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         updateBalances(report);
         increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), tableId);
         Set<Integer> playersOut = getPlayersOut(report);
-        log.info("Players out of tournament[" + instance.getId() + "] : " + playersOut);
+        log.debug("Players out of tournament[" + instance.getId() + "] : " + playersOut);
         boolean rebuysRequested = handlePlayersOut(tableId, playersOut);
         if (rebuysRequested) {
             log.debug("Rebuys requested, won't start next hand yet.");
@@ -931,8 +931,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 	}
 
     public MttRegisterResponse checkRegistration(MttRegistrationRequest request) {
-        log.info("Checking if " + request + " is allowed to register.");
-
+        log.debug("Checking if " + request + " is allowed to register.");
 
         if (isReRegistration(request)) {
             return MttRegisterResponse.ALLOWED;

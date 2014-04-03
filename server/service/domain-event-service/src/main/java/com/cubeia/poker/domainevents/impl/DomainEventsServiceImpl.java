@@ -76,7 +76,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 
 	@Override
 	public void sendEvent(GameEvent event) {
-		log.info("DomainEvents Send GameEvent: "+event);
+		log.debug("DomainEvents Send GameEvent: "+event);
 		client.send(event);
 	}
 
@@ -89,7 +89,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	 */
 	@Override
 	public void onEvent(BonusEvent event) {
-		log.info("On Bonus Event ("+event.hashCode()+"): "+event);
+		log.debug("On Bonus Event ("+event.hashCode()+"): "+event);
 		try {
 			int playerId = Integer.parseInt(event.player);
 			String json = mapper.writeValueAsString(event);
@@ -97,7 +97,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			wrapper.broadcast = event.broadcast;
 			
 			if (event.broadcast) {
-				log.info("Send bonus event through table: "+event);
+				log.debug("Send bonus event through table: "+event);
 				Map<Integer, Integer> seatedTables = clientRegistry.getSeatedTables(playerId);
 				for (int tableId : seatedTables.keySet()) {
 					GameObjectAction action = new GameObjectAction(tableId);
@@ -145,7 +145,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		ByteBuffer msgData = serializer.pack(msg);
 		
 		ClientServiceAction action = new ClientServiceAction(playerId, 0, msgData.array());
-		log.info("Send bonus event as client action: "+action);
+		log.debug("Send bonus event as client action: "+action);
 		router.getRouter().dispatchToPlayer(playerId, action);
 
 	}
@@ -178,7 +178,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			
 			Money accountBalance = new Money(new BigDecimal(-1), new Currency(currencyCode, 2));
 			try {
-				log.info("sendTournamentPayoutEvent - Cash game backend: "+cashGameBackend);
+				log.debug("sendTournamentPayoutEvent - Cash game backend: "+cashGameBackend);
 				accountBalance = cashGameBackend.getAccountBalance(playerId, currencyCode);
 			} catch (GetBalanceFailedException e) {
 				log.error("Failed to get balance for player["+playerId+"] and currency["+currencyCode+"]", e);

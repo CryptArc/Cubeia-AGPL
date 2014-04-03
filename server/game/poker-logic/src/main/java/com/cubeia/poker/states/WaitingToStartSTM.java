@@ -48,10 +48,9 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
     @Override
     public void enterState() {
-        log.info("Entered waiting to start state.");
         if (!context.isTournamentTable() && !getServerAdapter().isSystemShutDown()) {
             long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
-            log.info("Scheduling timeout in " + timeout + " millis.");
+            log.debug("Scheduling timeout in " + timeout + " millis.");
             getServerAdapter().scheduleTimeout(timeout);
         }
     }
@@ -71,7 +70,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
         if (getPlayersReadyToStartHand().size() < 2) {
             context.setHandFinished(true);
-            log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + getPlayersReadyToStartHand().size() + " sitting in of " + context.getSeatedPlayers().size());
+            log.debug("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + getPlayersReadyToStartHand().size() + " sitting in of " + context.getSeatedPlayers().size());
             changeState(new NotStartedSTM());
         } else if (systemIsShutDown()) {
             log.info("Won't start new hand since system is down.");
@@ -125,7 +124,6 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
     @Override
     public boolean act(PokerAction action) {
-        log.info("Discarding out of order action: " + action);
         return false;
     }
 
@@ -136,10 +134,8 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     public void setPlayersWithoutMoneyAsSittingOut() {
         ThreadLocalProfiler.add("setPlayersWithoutMoneyAsSittingOut");
         for (PokerPlayer player : context.getPlayerMap().values()) {
-            log.info("Checking if player " + player.getId() + " can post entry bet.");
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
-                log.info("Player with id " + player.getId() + " can not post entry bet.");
                 markPlayerAsSittingOutOrAway(player);
             }
         }
