@@ -133,7 +133,7 @@ Poker.AppCtx = Class.extend({
         };
 
 
-        var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort, settings.operatorId);
+        var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort, settings.secure);
         /**
          *
          * @return {Poker.CommunicationManager}

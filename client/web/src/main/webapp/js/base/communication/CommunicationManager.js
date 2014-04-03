@@ -15,6 +15,7 @@ Poker.CommunicationManager = Class.extend({
 
     webSocketUrl : null,
     webSocketPort : null,
+    secure : false,
     ignoreNextForceLogout : false,
 
     /**
@@ -28,7 +29,8 @@ Poker.CommunicationManager = Class.extend({
      * @param {Number} webSocketPort
      * @constructor
      */
-    init : function(webSocketUrl, webSocketPort) {
+    init : function(webSocketUrl, webSocketPort,secure) {
+        this.secure = secure || false;
         this.webSocketUrl = webSocketUrl;
         this.webSocketPort = webSocketPort;
         this.tableManager = Poker.AppCtx.getTableManager();
@@ -152,7 +154,7 @@ Poker.CommunicationManager = Class.extend({
         
         if (useCometd || isSafari5()) {
             console.log("Using cometd adapter as fallback");
-            this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", false, function() {
+            this.connector.connect("FIREBASE.CometdAdapter", this.webSocketUrl, this.webSocketPort, "cometd", this.secure, function() {
             	org.cometd.JSON.toJSON = JSON.stringify;
             	org.cometd.JSON.fromJSON = JSON.parse;
                 var cometd = new org.cometd.Cometd();
@@ -161,7 +163,7 @@ Poker.CommunicationManager = Class.extend({
             });
         } else {
         	console.log("Using websocket transport");
-           this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
+           this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket",this.secure);
         }
     },
 

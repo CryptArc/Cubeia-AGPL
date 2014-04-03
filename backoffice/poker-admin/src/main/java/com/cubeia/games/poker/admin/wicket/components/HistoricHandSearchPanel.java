@@ -25,7 +25,7 @@ public class HistoricHandSearchPanel extends SearchResultPanel<HistoricHandSearc
         BookmarkablePageLink pl = new BookmarkablePageLink<>("historicHandLink", ShowHand.class,
                 new PageParameters().add("handId", hand.get_id()));
         pl.add(idLabel);
-        SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd hh:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
         add(new Label("startTime", df.format(hand.getStartTime())));
         add(new Label("endTime", df.format(hand.getEndTime())));
         add(new ListView<Player>("playerList",hand.getSeats()){
