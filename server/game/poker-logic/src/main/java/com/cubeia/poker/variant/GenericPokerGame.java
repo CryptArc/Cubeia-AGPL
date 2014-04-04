@@ -197,7 +197,7 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
         currentRound = new ExposePrivateCardsRound(context, serverAdapterHolder, revealOrderCalculator);
         Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
-        HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(),
+        HandResult handResult = new HandResultCreator(handEvaluator).createHandResult(context.getCommunityCards(),
                 handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers,context.getSettings().getCurrency());
 
         notifyHandFinished(handResult, HandEndStatus.NORMAL);

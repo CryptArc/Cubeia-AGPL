@@ -3,9 +3,9 @@ package com.cubeia.poker.variant.omaha;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class OmahaHandCalculator extends TexasHoldemHandCalculator {
@@ -51,6 +51,11 @@ public class OmahaHandCalculator extends TexasHoldemHandCalculator {
             HandStrength handStrength = getHandStrength(h);
             allPossibleHands.add(handStrength);
         }
+    }
+
+    @Override
+    public Comparator<Hand> createHandComparator(int playersInPot) {
+        return Collections.reverseOrder(new OmahaHandComparator());
     }
 
     private void addHandsWithCommunityCards(List<HandStrength> allPossibleHands,
