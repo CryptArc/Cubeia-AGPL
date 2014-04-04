@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class OmahaHandCalculatorTest {
 
@@ -55,6 +56,31 @@ public class OmahaHandCalculatorTest {
         info = calculator.getBestHandInfo(hand);
         assertEquals(HandType.PAIR, info.getHandType());
     }
+
+    @Test
+    public void testOmahaBug() throws Exception {
+        Hand hand = new Hand();
+        hand.addPocketCards(new Hand("TC 5C KD 8H").getCards());
+        hand.addCommunityCards(new Hand("6D 9H 6S KH AC").getCards());
+        HandInfo info = calculator.getBestHandInfo(hand);
+        assertEquals(info.getHandType(),HandType.TWO_PAIRS);
+
+        for(Card c : info.getCards()) {
+            if(c.getRank().equals(Rank.ACE)){
+                fail("ACE should not be included");
+            }
+        }
+
+        hand = new Hand();
+        hand.addPocketCards(new Hand("QH QC 10H 5H").getCards());
+        hand.addCommunityCards(new Hand("6D 9H 6S KH AC").getCards());
+        info = calculator.getBestHandInfo(hand);
+        assertEquals(info.getHandType(),HandType.TWO_PAIRS);
+
+
+
+    }
+
 
     @Test
     public void testGetBestHandInfoForFullBoard() throws Exception {

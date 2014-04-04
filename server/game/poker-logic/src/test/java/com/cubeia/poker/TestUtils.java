@@ -54,6 +54,17 @@ public class TestUtils {
         return players;
     }
 
+    public static MockPlayer[] createMockPlayers(int numberOfPlayers, BigDecimal... balance) {
+        MockPlayer[] players = new MockPlayer[numberOfPlayers];
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            createMockPlayer(balance[i], players, i);
+
+        }
+
+        return players;
+    }
+
     public static void createMockPlayer(BigDecimal balance, MockPlayer[] players, int seatId) {
         createMockPlayer(balance,players,seatId,seatId);
     }

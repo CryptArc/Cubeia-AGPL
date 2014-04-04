@@ -20,7 +20,7 @@ package com.cubeia.poker.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class BlindsLevel implements Serializable {
+public class    BlindsLevel implements Serializable {
 
     private static final long serialVersionUID = 0;
 
