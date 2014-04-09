@@ -12,7 +12,7 @@ public interface DomainEventsService extends Contract {
 
     public void sendEvent(GameEvent event);
 
-    public void sendTournamentPayoutEvent(MttPlayer tournamentPlayer, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance);
+    public void sendTournamentPayoutEvent(MttPlayer tournamentPlayer, BigDecimal buyIn, BigDecimal fee, BigDecimal payout, String currencyCode, int position, MttInstance instance);
     
     public void sendEndPlayerSessionEvent(int playerId, String screenname, int operatorId, Money accountBalance);
 

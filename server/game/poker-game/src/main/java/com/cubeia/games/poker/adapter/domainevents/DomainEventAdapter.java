@@ -68,6 +68,11 @@ public class DomainEventAdapter {
 		event.attributes.put(PokerAttributes.screenname.name(), player.getScreenname());
 		event.attributes.put(PokerAttributes.tournament.name(), tournamentTable+"");
 		event.attributes.put(PokerAttributes.accountCurrency.name(), pokerSettings.getCurrency().getCode());
+        BigDecimal rakeContributionByPlayer = handResult.getRakeContributionByPlayer(player);
+        if(rakeContributionByPlayer==null) {
+            rakeContributionByPlayer = BigDecimal.ZERO;
+        }
+        event.attributes.put(PokerAttributes.rake.name(),  rakeContributionByPlayer+"");
 		
 		boolean isWin = calculateIsWin(result);
 		if (isWin) {

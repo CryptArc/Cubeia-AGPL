@@ -29,12 +29,10 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Deck;
-import com.cubeia.poker.hand.DeckProvider;
-import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.*;
 import com.cubeia.poker.handhistory.api.Results;
 import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
@@ -84,6 +82,7 @@ public class OmahaTest {
     private ServerAdapter serverAdapter;
 
     private int winnerPlayerId;
+    private HandType winningHand = null;
 
     private GameType omaha;
 
@@ -106,21 +105,32 @@ public class OmahaTest {
                    if(p.getId() == winnerPlayerId) {
                        BigDecimal netResult = results.get(p).getNetResult();
                        Assert.assertTrue("player " + p.getId() + " expected to win but had net result = " + netResult, netResult.compareTo(BigDecimal.ZERO)>0);
+
                    }
                 }
+                if(winningHand!=null) {
+                    List<RatedPlayerHand> playerHands = result.getPlayerHands();
+                    for(RatedPlayerHand ph : playerHands) {
+                        if(ph.getPlayerId() == winnerPlayerId) {
+                            Assert.assertEquals(ph.getHandInfo().getHandType(),winningHand);
+                        }
+                    }
+                }
+
             }
         };
 
 
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(serverAdapter.getSystemRNG()).thenReturn(randomizer);
-        when(mockDeck.deal()).thenReturn(Card.fromString("7H"),new Hand("8S 2D 2S KD 5C 8H TC QH QC TH 5H 6D 9H 6S KH AC").getCards().toArray(new Card[0]));
+
         omaha = createOmaha();
         omaha.addHandFinishedListener(handFinishedListener);
     }
 
     @Test
     public void testBasicHand() {
+        when(mockDeck.deal()).thenReturn(Card.fromString("7H"),new Hand("8S 2D 2S KD 5C 8H TC QH QC TH 5H 6D 9H 6S KH AC").getCards().toArray(new Card[0]));
         winnerPlayerId = 101;
         startHand(prepareContext(3,new BigDecimal[]{new BigDecimal("747.92"), new BigDecimal("248.19"), new BigDecimal("1000.00")}));
 
@@ -154,6 +164,53 @@ public class OmahaTest {
         // River
         timeout();
         timeout();
+        //Assert.assertTrue(p[1].getBalance().compareTo(BigDecimal.ZERO)>0);
+
+        Assert.assertEquals(4,p[0].getPrivatePocketCards().size());
+        Assert.assertEquals(4,p[1].getPrivatePocketCards().size());
+        Assert.assertEquals(4,p[2].getPrivatePocketCards().size());
+
+
+    }
+
+    @Test
+    public void testBasicHandTwo() {
+        when(mockDeck.deal()).thenReturn(Card.fromString("7S"),new Hand("7D AS 6S 8S 8C 2S 8D 4H 4D 3D KS 3C KC 5D AH AD").getCards().toArray(new Card[0]));
+        winnerPlayerId = 100;
+        winningHand = HandType.THREE_OF_A_KIND;
+
+        startHand(prepareContext(3,new BigDecimal[]{new BigDecimal("218.64"), new BigDecimal("520.25"), new BigDecimal("55.21")}));
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        timeout();
+        ensureCards(p[0], new Hand("7S 7D AS 6S").getCards());
+        ensureCards(p[1], new Hand("8S 8C 2S 8D").getCards());
+        ensureCards(p[2], new Hand("4H 4D 3D KS").getCards());
+
+        act(p[0], CALL);
+        act(p[1], CALL);
+        act(p[2], CHECK);
+
+        timeout();
+
+        //flop
+        timeout();
+        act(p[0], CHECK);
+        act(p[1], CHECK);
+        act(p[2], CHECK);
+
+
+        // Turn
+        timeout();
+        act(p[0], CHECK);
+        act(p[1], CHECK);
+        act(p[2], CHECK);
+
+        // River
+        timeout();
+        act(p[0], CHECK);
+        act(p[1], CHECK);
+        act(p[2], CHECK);
         //Assert.assertTrue(p[1].getBalance().compareTo(BigDecimal.ZERO)>0);
 
         Assert.assertEquals(4,p[0].getPrivatePocketCards().size());

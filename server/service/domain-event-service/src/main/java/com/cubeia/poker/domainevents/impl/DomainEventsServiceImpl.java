@@ -149,17 +149,15 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		router.getRouter().dispatchToPlayer(playerId, action);
 
 	}
-	
+
 
 	@Override
-	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
+	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal buyIn, BigDecimal fee, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
 		try {
 			int tournamentId = instance.getState().getId();
 			String tournamentName = instance.getState().getName();
 			int registeredPlayersCount = instance.getState().getRegisteredPlayersCount();
-			// Replace spaces with underscores because the achievement system does not like spaces.
-			// tournamentName.replace(" ", "_");
-			
+
 			int playerId = player.getPlayerId();
 			Integer operatorId = clientRegistry.getOperatorId(playerId);
 			
@@ -191,6 +189,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			event.operator = operatorId+"";
 			
 			event.attributes.put(PokerAttributes.stake.name(), buyIn +"");
+            event.attributes.put(PokerAttributes.rake.name(),fee+"");
 			event.attributes.put(PokerAttributes.winAmount.name(), payout +"");
 			event.attributes.put(PokerAttributes.netResult.name(), payout.subtract(buyIn) +"");
 			event.attributes.put(PokerAttributes.tournamentId.name(), tournamentId+"");
