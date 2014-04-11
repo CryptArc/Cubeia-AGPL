@@ -934,7 +934,7 @@
     <div class="account-row">
         <span class="balance-header">Balance:</span>
         <div>
-            <span class="account-balance">{{formattedBalance}}</span>
+            <span class="account-balance">{{{formattedBalance}}}</span>
         </div>
     </div>
     {{/accounts}}
