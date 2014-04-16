@@ -18,5 +18,6 @@
         <module>integration-api</module>
         <module>settings</module>
         <module>common</module>
+        <module>accounts</module>
     </modules>
 </project>
