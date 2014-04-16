@@ -21,7 +21,6 @@ import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_AC
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
 import static java.util.Arrays.asList;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.wallet.api.config.AccountAttributes;
-import com.cubeia.backoffice.wallet.api.config.AccountRoles;
+import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.Account;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
@@ -167,7 +166,7 @@ public class AccountLookupUtil {
     	query.setCurrency(key.currencyCode);
     	query.setUserId(key.userId);
     	query.setType(key.type.name());
-    	query.getAttributes().put(AccountAttributes.ROLE.name(), AccountRoles.RAKE.name());
+    	query.getAttributes().put(AccountAttributes.ROLE.name(), AccountRole.RAKE.name());
 		Account account = walletService.findUniqueAccount(query);
 		if (account == null) {
 			throw new NoSuchAccountException("No account matches the query: "+query);

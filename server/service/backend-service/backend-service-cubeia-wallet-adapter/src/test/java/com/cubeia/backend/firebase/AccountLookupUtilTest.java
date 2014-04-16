@@ -36,7 +36,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.wallet.api.config.AccountAttributes;
-import com.cubeia.backoffice.wallet.api.config.AccountRoles;
+import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.Account;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
@@ -97,7 +97,7 @@ public class AccountLookupUtilTest {
     	assertThat(query.getCurrency(), is("EUR"));
     	assertThat(query.getOperatorId(), is(1L));
     	assertThat(query.getType(), is(AccountType.OPERATOR_ACCOUNT.name()));
-    	assertThat(query.getAttributes().get(AccountAttributes.ROLE.name()), is(AccountRoles.RAKE.name()));
+    	assertThat(query.getAttributes().get(AccountAttributes.ROLE.name()), is(AccountRole.RAKE.name()));
     }
     
     @Test (expected=NoSuchAccountException.class)
