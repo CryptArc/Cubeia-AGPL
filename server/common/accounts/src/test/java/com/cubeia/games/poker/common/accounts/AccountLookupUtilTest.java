@@ -44,12 +44,12 @@ public class AccountLookupUtilTest {
     @Mock
     private WalletServiceClient walletClient;
 
-    AccountLookupUtil lookup;
+    AccountLookup lookup;
     
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        lookup = new AccountLookupUtil(walletClient);
+        lookup = new AccountLookup(walletClient);
     }
     
     @Test

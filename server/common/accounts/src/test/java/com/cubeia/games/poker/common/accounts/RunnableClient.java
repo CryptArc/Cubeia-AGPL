@@ -8,7 +8,7 @@ public class RunnableClient {
 	
 	public static void main(String[] args) {
 		WalletServiceClient walletClient = new WalletServiceClientHTTP("http://localhost:9091/wallet-service-rest/rest");
-		AccountLookupUtil accounts = new AccountLookupUtil(walletClient);
+		AccountLookup accounts = new AccountLookup(walletClient);
 		
 		long id = accounts.lookupOperatorAccount(1L, "EUR", AccountRole.RAKE);
 		System.out.println("Operator[1] Rake Account ID (EUR): "+id);

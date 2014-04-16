@@ -48,7 +48,7 @@ import com.google.common.cache.LoadingCache;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class AccountLookupUtil {
+public class AccountLookup {
 	
     Logger log = LoggerFactory.getLogger(getClass());
 	
@@ -65,7 +65,7 @@ public class AccountLookupUtil {
 
 	private final WalletServiceClient walletClient;
 	
-    public AccountLookupUtil(WalletServiceClient walletClient) {
+    public AccountLookup(WalletServiceClient walletClient) {
 		this.walletClient = walletClient;
 	}
 
