@@ -369,7 +369,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
-        long accountId = this.accountLookupUtil.lookupAccountIdForPlayerAndCurrency(playerId, currency);
+        long accountId = this.accountLookupUtil.lookupStaticMainAccountIdForPlayerAndCurrency(new Long(playerId), currency);
         log.debug("Found account ID {} for player {}", accountId, playerId);
         if (accountId == -1) {
             log.warn("No account found for " + playerId + " and currency " + currency + ". Returning zero money.");

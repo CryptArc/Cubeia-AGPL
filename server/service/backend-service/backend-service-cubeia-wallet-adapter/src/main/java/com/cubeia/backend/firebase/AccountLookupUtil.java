@@ -17,9 +17,6 @@
 
 package com.cubeia.backend.firebase;
 
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_ACCOUNT;
-import static java.util.Arrays.asList;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +28,9 @@ import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.wallet.api.config.AccountAttributes;
 import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
-import com.cubeia.backoffice.wallet.api.dto.AccountQueryResult;
 import com.cubeia.backoffice.wallet.api.dto.exception.TooManyAccountsFoundException;
 import com.cubeia.backoffice.wallet.api.dto.request.AccountQuery;
-import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
@@ -73,23 +67,13 @@ public class AccountLookupUtil {
      * @param currency the currency code that the account should have
      * @return the accountId of the matching account, or -1 if none found
      */
-    public long lookupAccountIdForPlayerAndCurrency(long playerId, String currency) {
-        ListAccountsRequest request = new ListAccountsRequest();
-        request.setStatus(AccountStatus.OPEN);
-        request.setTypes(asList(STATIC_ACCOUNT));
-        request.setUserId(playerId);
-        request.setLimit(100);
-        AccountQueryResult accounts = walletService.listAccounts(request);
-        if (accounts.getAccounts() == null || accounts.getAccounts().size() < 1) {
-            return -1;
-        }
-
-        for (Account account : accounts.getAccounts()) {
-            if (account.getCurrencyCode().equals(currency)) {
-                return account.getId();
-            }
-        }
-        return -1;
+    public long lookupStaticMainAccountIdForPlayerAndCurrency(Long playerId, String currency) {
+    	try {
+    		return lookupUniqueAccountId(null, playerId, currency, AccountType.STATIC_ACCOUNT, createRoleMap(AccountRole.MAIN));
+    	} catch (NoSuchAccountException e) {
+    		log.warn("No account found for playerId["+playerId+"] currency["+currency+"] Role["+AccountRole.MAIN+"]");
+    		return -1;
+    	}
     }
     
     /**
@@ -105,13 +89,12 @@ public class AccountLookupUtil {
      */
     public long lookupOperatorAccount(long operatorId, String currencyCode, AccountRole role) {
     	log.debug("Lookup Operator account. Operator["+operatorId+"] currency["+currencyCode+"] Role["+role+"]");
-    	Map<String, String> attributes = new HashMap<String, String>();
-    	attributes.put(AccountAttributes.ROLE.name(), role.name());
+    	Map<String, String> attributes = createRoleMap(role);
     	long accountId = lookupUniqueAccountId(operatorId, null, currencyCode, AccountType.OPERATOR_ACCOUNT, attributes);
 		log.debug("Lookup Operator account. Operator["+operatorId+"] currency["+currencyCode+"] Role["+role+"], Result: "+accountId);
 		return accountId;
     }
-    
+
     /**
      * Look up a unique system account
      * 
@@ -123,8 +106,7 @@ public class AccountLookupUtil {
      */
     public long lookupSystemAccount(String currencyCode, AccountRole role) {
     	log.debug("Lookup System account. Currency["+currencyCode+"] Role["+role+"]");
-    	Map<String, String> attributes = new HashMap<String, String>();
-    	attributes.put(AccountAttributes.ROLE.name(), role.name());
+    	Map<String, String> attributes = createRoleMap(role);
     	long accountId = lookupUniqueAccountId(null, null, currencyCode, AccountType.SYSTEM_ACCOUNT, attributes);
 		log.debug("Lookup System account. Currency["+currencyCode+"] Role["+role+"], Result: "+accountId);
 		return accountId;
@@ -168,6 +150,12 @@ public class AccountLookupUtil {
 			throw new NoSuchAccountException("No account matches the query: "+query);
 		}
 		return account.getId();
+	}
+    
+    private Map<String, String> createRoleMap(AccountRole role) {
+		Map<String, String> attributes = new HashMap<String, String>();
+    	attributes.put(AccountAttributes.ROLE.name(), role.name());
+		return attributes;
 	}
 
 }
