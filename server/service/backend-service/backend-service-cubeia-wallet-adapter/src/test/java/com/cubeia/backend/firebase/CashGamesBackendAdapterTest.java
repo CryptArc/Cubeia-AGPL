@@ -24,6 +24,7 @@ import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
+import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
@@ -184,7 +185,7 @@ public class CashGamesBackendAdapterTest {
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
 
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
-        when(accountLookupUtil.lookupOperatorRakeAccountId(0, "EUR")).thenReturn(rakeAccountId);
+        when(accountLookupUtil.lookupOperatorAccount(0, "EUR", AccountRole.RAKE)).thenReturn(rakeAccountId);
         BatchHandResponse batchHandResponse = backend.batchHand(request);
 
         TransactionRequest txRequest = txCaptor.getValue();

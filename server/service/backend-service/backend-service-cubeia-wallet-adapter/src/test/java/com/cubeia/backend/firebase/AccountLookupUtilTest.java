@@ -17,15 +17,9 @@
 
 package com.cubeia.backend.firebase;
 
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus.OPEN;
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,12 +32,9 @@ import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.wallet.api.config.AccountAttributes;
 import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
-import com.cubeia.backoffice.wallet.api.dto.AccountQueryResult;
 import com.cubeia.backoffice.wallet.api.dto.exception.TooManyAccountsFoundException;
 import com.cubeia.backoffice.wallet.api.dto.request.AccountQuery;
-import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
@@ -64,23 +55,19 @@ public class AccountLookupUtilTest {
     public void testLookupRakeAccountId() throws SystemException {
         AccountLookupUtil acl = new AccountLookupUtil(walletService);
 
-        ArgumentCaptor<ListAccountsRequest> requestCaptor = ArgumentCaptor.forClass(ListAccountsRequest.class);
+        ArgumentCaptor<AccountQuery> requestCaptor = ArgumentCaptor.forClass(AccountQuery.class);
+        Account account = new Account();
+    	account.setId(22L);
+    	
+        when(walletService.findUniqueAccount(requestCaptor.capture())).thenReturn(account);
 
-        AccountQueryResult accountQueryResult = mock(AccountQueryResult.class);
-        Account rakeAccount = mock(Account.class);
-        Long rakeAccountId = -2000L;
-        when(rakeAccount.getId()).thenReturn(rakeAccountId);
-        when(rakeAccount.getCurrencyCode()).thenReturn("EUR");
-        when(accountQueryResult.getAccounts()).thenReturn(asList(rakeAccount));
-        when(walletService.listAccounts(requestCaptor.capture())).thenReturn(accountQueryResult);
+        long lookupRakeAccountId = acl.lookupSystemAccount("EUR", AccountRole.RAKE);
+        assertThat(lookupRakeAccountId, is(22L));
 
-        long lookupRakeAccountId = acl.lookupRakeAccountId(walletService, "EUR");
-        assertThat(lookupRakeAccountId, is(rakeAccountId));
-
-        ListAccountsRequest lar = requestCaptor.getValue();
-        assertThat(lar.getStatuses(), is((Collection<AccountStatus>) asList(OPEN)));
-        assertThat(lar.getTypes(), is((Collection<AccountType>) asList(SYSTEM_ACCOUNT)));
-        assertThat(lar.getUserId(), is(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID));
+        AccountQuery query = requestCaptor.getValue();
+        assertThat(query.getType(), is(AccountType.SYSTEM_ACCOUNT.name()));
+        assertThat(query.getCurrency(), is("EUR"));
+        assertThat(query.getAttributes().get(AccountAttributes.ROLE.name()), is(AccountRole.RAKE.name()));
     }
 
     @Test
@@ -89,8 +76,8 @@ public class AccountLookupUtilTest {
     	
     	Account account = new Account();
     	account.setId(22L);
-		when(walletService.findUniqueAccount(requestCaptor.capture())).thenReturn(account );
-    	long id = lookup.lookupOperatorRakeAccountId(1L, "EUR");
+		when(walletService.findUniqueAccount(requestCaptor.capture())).thenReturn(account);
+    	long id = lookup.lookupOperatorAccount(1L, "EUR", AccountRole.RAKE);
     	assertThat(id, is(22L));
     	
     	AccountQuery query = requestCaptor.getValue();
@@ -103,12 +90,12 @@ public class AccountLookupUtilTest {
     @Test (expected=NoSuchAccountException.class)
     public void testLookupOperatorRakeAccountNotFound() {
     	when(walletService.findUniqueAccount(Mockito.any(AccountQuery.class))).thenThrow(new NoSuchAccountException("not found"));
-    	lookup.lookupOperatorRakeAccountId(1L, "EUR");
+    	lookup.lookupOperatorAccount(1L, "EUR", AccountRole.RAKE);
     }
     
     @Test (expected=TooManyAccountsFoundException.class)
     public void testLookupOperatorRakeAccountNotUnique() {
     	when(walletService.findUniqueAccount(Mockito.any(AccountQuery.class))).thenThrow(new TooManyAccountsFoundException("more than one"));
-    	lookup.lookupOperatorRakeAccountId(1L, "EUR");
+    	lookup.lookupOperatorAccount(1L, "EUR", AccountRole.RAKE);
     }
 }
