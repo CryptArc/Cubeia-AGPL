@@ -42,6 +42,7 @@ import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.accounting.api.UnbalancedTransactionException;
+import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
@@ -79,9 +80,9 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
      */
     public static final int GAME_ID = 1;
 
-    static final Long RAKE_ACCOUNT_USER_ID = -1000L;
-
-    static final Long PROMOTIONS_ACCOUNT_USER_ID = -2000L;
+//    static final Long RAKE_ACCOUNT_USER_ID = -1000L;
+//
+//    static final Long PROMOTIONS_ACCOUNT_USER_ID = -2000L;
 
     private Logger log = LoggerFactory.getLogger(CashGamesBackendAdapter.class);
 
@@ -303,7 +304,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     private long getRakeAccount(Integer operatorId, String currencyCode) {
     	long accountId = -1;
     	try {
-    		accountId = accountLookupUtil.lookupOperatorRakeAccountId(operatorId, currencyCode);
+    		accountId = accountLookupUtil.lookupOperatorAccount(operatorId, currencyCode, AccountRole.RAKE);
         } catch (NoSuchAccountException e) {
         	log.info("No operator rake account found for rake entry. Will use system rake account as placeholder. Operator["+operatorId+"] Currency["+currencyCode+"]");
         	accountId = getSystemRakeAccount(currencyCode);
@@ -321,11 +322,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     private long getSystemRakeAccount(String currencyCode) {
         if (!systemRakeAccounts.containsKey(currencyCode)) {
             long value;
-            try {
-                value = accountLookupUtil.lookupRakeAccountId(walletService, currencyCode);
-            } catch (SystemException e) {
-                throw new RuntimeException("No rake account found for currency " + currencyCode);
-            }
+        	value = accountLookupUtil.lookupSystemAccount(currencyCode, AccountRole.RAKE);
             systemRakeAccounts.put(currencyCode, value);
         }
         return systemRakeAccounts.get(currencyCode);
@@ -334,11 +331,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     private long getPromotionsAccount(String currencyCode) {
         if (!promotionsAccounts.containsKey(currencyCode)) {
             long value;
-            try {
-                value = accountLookupUtil.lookupPromotionsAccountId(walletService, currencyCode);
-            } catch (SystemException e) {
-                throw new RuntimeException("No promotions account found for currency " + currencyCode);
-            }
+            value = accountLookupUtil.lookupSystemAccount(currencyCode, AccountRole.PROMOTION);
             promotionsAccounts.put(currencyCode, value);
         }
         return promotionsAccounts.get(currencyCode);
@@ -376,7 +369,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
-        long accountId = this.accountLookupUtil.lookupAccountIdForPlayerAndCurrency(walletService, playerId, currency);
+        long accountId = this.accountLookupUtil.lookupStaticMainAccountIdForPlayerAndCurrency(new Long(playerId), currency);
         log.debug("Found account ID {} for player {}", accountId, playerId);
         if (accountId == -1) {
             log.warn("No account found for " + playerId + " and currency " + currency + ". Returning zero money.");

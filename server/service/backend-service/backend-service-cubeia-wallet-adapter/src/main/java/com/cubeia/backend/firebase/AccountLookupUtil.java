@@ -17,10 +17,8 @@
 
 package com.cubeia.backend.firebase;
 
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_ACCOUNT;
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
-import static java.util.Arrays.asList;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -30,13 +28,9 @@ import com.cubeia.backoffice.accounting.api.NoSuchAccountException;
 import com.cubeia.backoffice.wallet.api.config.AccountAttributes;
 import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
-import com.cubeia.backoffice.wallet.api.dto.AccountQueryResult;
 import com.cubeia.backoffice.wallet.api.dto.exception.TooManyAccountsFoundException;
 import com.cubeia.backoffice.wallet.api.dto.request.AccountQuery;
-import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
-import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
@@ -48,13 +42,13 @@ public class AccountLookupUtil {
 	Logger log = LoggerFactory.getLogger(getClass());
 	
 	
-	private LoadingCache<AccountKey, Long> accountIdCache = CacheBuilder.newBuilder()
+	private LoadingCache<AccountQuery, Long> accountIdCache = CacheBuilder.newBuilder()
             .concurrencyLevel(4)
             .maximumSize(10000)
             .expireAfterWrite(5, TimeUnit.MINUTES)
-            .build(new CacheLoader<AccountKey, Long>() {
-                public Long load(AccountKey key) {
-                    return lookupAccountId(key);
+            .build(new CacheLoader<AccountQuery, Long>() {
+                public Long load(AccountQuery key) {
+                    return remoteLookupUniqueAccountId(key);
                 }
             });
 
@@ -65,30 +59,6 @@ public class AccountLookupUtil {
 		this.walletService = walletService;
 	}
 
-	public long lookupPromotionsAccountId(WalletServiceContract walletService, String currencyCode) throws SystemException {
-        return lookupSystemAccount(walletService, currencyCode, CashGamesBackendAdapter.PROMOTIONS_ACCOUNT_USER_ID);
-    }
-
-	public long lookupRakeAccountId(WalletServiceContract walletService, String currency) throws SystemException {
-    	log.debug("Lookup rake account for currency["+currency+"] and userId["+currency+"]");
-        return lookupSystemAccount(walletService, currency, CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID);
-    }
-
-    private long lookupSystemAccount(WalletServiceContract walletService, String currency, Long accountUserId) throws SystemException {
-        ListAccountsRequest request = new ListAccountsRequest();
-        request.setStatus(AccountStatus.OPEN);
-        request.setTypes(asList(SYSTEM_ACCOUNT));
-        request.setUserId(accountUserId);
-        request.setLimit(100);
-        AccountQueryResult accounts = walletService.listAccounts(request);
-        for (Account account : accounts.getAccounts()) {
-            if (account.getCurrencyCode().equals(currency)) {
-                return account.getId();
-            }
-        }
-        throw new SystemException("Error getting rake account for currency " + currency + ". Looked for account matching: " + request);
-    }
-
     /**
      * Gets the account id for the account with the given playerId and currency code.
      *
@@ -97,138 +67,95 @@ public class AccountLookupUtil {
      * @param currency the currency code that the account should have
      * @return the accountId of the matching account, or -1 if none found
      */
-    public long lookupAccountIdForPlayerAndCurrency(WalletServiceContract walletService, long playerId, String currency) {
-        ListAccountsRequest request = new ListAccountsRequest();
-        request.setStatus(AccountStatus.OPEN);
-        request.setTypes(asList(STATIC_ACCOUNT));
-        request.setUserId(playerId);
-        request.setLimit(100);
-        AccountQueryResult accounts = walletService.listAccounts(request);
-        if (accounts.getAccounts() == null || accounts.getAccounts().size() < 1) {
-            return -1;
-        }
-
-        for (Account account : accounts.getAccounts()) {
-            if (account.getCurrencyCode().equals(currency)) {
-                return account.getId();
-            }
-        }
-        return -1;
+    public long lookupStaticMainAccountIdForPlayerAndCurrency(Long playerId, String currency) {
+    	try {
+    		return lookupUniqueAccountId(null, playerId, currency, AccountType.STATIC_ACCOUNT, createRoleMap(AccountRole.MAIN));
+    	} catch (NoSuchAccountException e) {
+    		log.warn("No account found for playerId["+playerId+"] currency["+currency+"] Role["+AccountRole.MAIN+"]");
+    		return -1;
+    	}
     }
     
     /**
-     * Look up rake account for operator.
+     * Look up a unique account for operator.
      * 
-     * @param walletService
+     * @param walletClient
      * @param operatorId
      * @param currencyCode
+     * @param role
      * @return Account id
      * @throws NoSuchAccountException if no account found
      * @throws RuntimeException if multiple accounts found for the query
      */
-    public long lookupOperatorRakeAccountId(long operatorId, String currencyCode) {
-    	log.debug("Lookup Operator Rake account. Operator["+operatorId+"] currency["+currencyCode+"]");
-    	long accountId = lookupUniqueRakeAccountId(operatorId, null, currencyCode, AccountType.OPERATOR_ACCOUNT);
-		log.debug("Lookup Operator Rake account. Operator["+operatorId+"] currency["+currencyCode+"], Result: "+accountId);
+    public long lookupOperatorAccount(long operatorId, String currencyCode, AccountRole role) {
+    	log.debug("Lookup Operator account. Operator["+operatorId+"] currency["+currencyCode+"] Role["+role+"]");
+    	Map<String, String> attributes = createRoleMap(role);
+    	long accountId = lookupUniqueAccountId(operatorId, null, currencyCode, AccountType.OPERATOR_ACCOUNT, attributes);
+		log.debug("Lookup Operator account. Operator["+operatorId+"] currency["+currencyCode+"] Role["+role+"], Result: "+accountId);
 		return accountId;
     }
 
     /**
-     * Lookup any account with ROLE=RAKE
+     * Look up a unique system account
      * 
-     * @param walletService
-     * @param operatorId
-     * @param userId
      * @param currencyCode
-     * @param type
+     * @param role
      * @return Account id
      * @throws NoSuchAccountException if no account found
      * @throws RuntimeException if multiple accounts found for the query
      */
-    public long lookupUniqueRakeAccountId(Long operatorId, Long userId, String currencyCode, AccountType type) {
-    	AccountKey key = new AccountKey();
-    	key.currencyCode = currencyCode;
-    	key.operatorId = operatorId;
-    	key.type = type;
-    	key.userId = userId;
-    	try {
-			return accountIdCache.get(key);
+    public long lookupSystemAccount(String currencyCode, AccountRole role) {
+    	log.debug("Lookup System account. Currency["+currencyCode+"] Role["+role+"]");
+    	Map<String, String> attributes = createRoleMap(role);
+    	long accountId = lookupUniqueAccountId(null, null, currencyCode, AccountType.SYSTEM_ACCOUNT, attributes);
+		log.debug("Lookup System account. Currency["+currencyCode+"] Role["+role+"], Result: "+accountId);
+		return accountId;
+    }
+    
+    /**
+     * Lookup a unique account
+     * 
+     * @param walletClient
+     * @param operatorId
+     * @param userId
+     * @param currencyCode
+     * @param type
+     * @param attributes
+     * @return Account id
+     * @throws NoSuchAccountException if no account found
+     * @throws RuntimeException if multiple accounts found for the query
+     */
+    private long lookupUniqueAccountId(Long operatorId, Long userId, String currencyCode, AccountType type, Map<String, String> attributes) {
+    	AccountQuery query = new AccountQuery();
+    	query.setOperatorId(operatorId);
+    	query.setCurrency(currencyCode);
+    	query.setUserId(userId);
+    	query.setType(type.name());
+		query.setAttributes(attributes);
+    	return lookupUniqueAccountId(query);
+    }
+    
+    private long lookupUniqueAccountId(AccountQuery query) {
+		try {
+			return accountIdCache.get(query);
 		} catch (Exception e) {
 			Throwables.propagateIfPossible(e.getCause(), NoSuchAccountException.class, TooManyAccountsFoundException.class);
 		    throw new IllegalStateException(e);
 		}
-    }
+	}
     
-    
-    protected Long lookupAccountId(AccountKey key) {
-    	AccountQuery query = new AccountQuery();
-    	query.setOperatorId(key.operatorId);
-    	query.setCurrency(key.currencyCode);
-    	query.setUserId(key.userId);
-    	query.setType(key.type.name());
-    	query.getAttributes().put(AccountAttributes.ROLE.name(), AccountRole.RAKE.name());
+    protected Long remoteLookupUniqueAccountId(AccountQuery query) {
 		Account account = walletService.findUniqueAccount(query);
 		if (account == null) {
 			throw new NoSuchAccountException("No account matches the query: "+query);
 		}
 		return account.getId();
 	}
+    
+    private Map<String, String> createRoleMap(AccountRole role) {
+		Map<String, String> attributes = new HashMap<String, String>();
+    	attributes.put(AccountAttributes.ROLE.name(), role.name());
+		return attributes;
+	}
 
-    
-    private class AccountKey {
-    	
-    	public Long operatorId;
-    	public Long userId;
-    	public String currencyCode;
-    	public AccountType type;
-    	
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((currencyCode == null) ? 0 : currencyCode.hashCode());
-			result = prime * result + ((operatorId == null) ? 0 : operatorId.hashCode());
-			result = prime * result + ((type == null) ? 0 : type.hashCode());
-			result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-			return result;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			AccountKey other = (AccountKey) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (currencyCode == null) {
-				if (other.currencyCode != null)
-					return false;
-			} else if (!currencyCode.equals(other.currencyCode))
-				return false;
-			if (operatorId == null) {
-				if (other.operatorId != null)
-					return false;
-			} else if (!operatorId.equals(other.operatorId))
-				return false;
-			if (type != other.type)
-				return false;
-			if (userId == null) {
-				if (other.userId != null)
-					return false;
-			} else if (!userId.equals(other.userId))
-				return false;
-			return true;
-		}
-		
-		private AccountLookupUtil getOuterType() {
-			return AccountLookupUtil.this;
-		}
-    	
-    }
-    
 }
