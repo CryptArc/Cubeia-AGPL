@@ -184,12 +184,19 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     @Override
     public void closeSession(CloseSessionRequest request) {
         PlayerSessionId sid = request.getPlayerSessionId();
-        long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
-        log.debug("Closing session " + walletSessionId);
-        com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService.endSessionAndDepositAll(LICENSEE_ID, walletSessionId,
+        long sessionAccountId = getWalletSessionIdByPlayerSessionId(sid);
+        log.debug("Closing session account in wallet " + sessionAccountId);
+        
+        
+        
+        
+        
+        
+        
+        com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService.endSessionAndDepositAll(LICENSEE_ID, sessionAccountId,
                 "session ended by game " + GAME_ID + ", player id = " + sid.playerId);
 
-        log.debug("wallet session {} closed for player {}, amount deposited: {}", new Object[]{walletSessionId, sid.playerId, amountDeposited});
+        log.debug("wallet session {} closed for player {}, amount deposited: {}", new Object[]{sessionAccountId, sid.playerId, amountDeposited});
     }
 
     private long getWalletSessionIdByPlayerSessionId(PlayerSessionId sid) {
@@ -201,10 +208,22 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         Money amount = request.getAmount();
         PlayerSessionId sid = request.getPlayerSessionId();
         Long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
-        com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
+//        com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
         try {
-            log.debug("Sending withdrawal request. " + request);
-            walletService.withdraw(walletAmount, LICENSEE_ID, walletSessionId, "reserve " + amount + " by player " + sid.playerId);
+
+        	// Transfer money from static main account to session account.
+        	long playerMainAccountId = accountLookupUtil.lookupMainAccountIdForPlayer(new Long(sid.playerId), amount.getCurrencyCode());
+        	
+        	TransactionBuilder builder = new TransactionBuilder(amount.getCurrencyCode(), amount.getFractionalDigits());
+        	builder.entry(playerMainAccountId, amount.getAmount().negate()).
+        	entry(walletSessionId, amount.getAmount()).
+        	comment("reserve " + amount + " by player " + sid.playerId);
+        	
+        	TransactionRequest tx = builder.toTransactionRequest();
+        	walletService.doTransaction(tx);
+        	
+//        	log.debug("Sending withdrawal request. " + request);
+//            walletService.withdraw(walletAmount, LICENSEE_ID, walletSessionId, "reserve " + amount + " by player " + sid.playerId);
 
             AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
             Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
