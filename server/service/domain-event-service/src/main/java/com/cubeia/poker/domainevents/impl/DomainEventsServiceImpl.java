@@ -15,6 +15,7 @@ import com.cubeia.events.client.EventClient;
 import com.cubeia.events.client.EventListener;
 import com.cubeia.events.event.GameEvent;
 import com.cubeia.events.event.GameEventType;
+import com.cubeia.events.event.SystemEvent;
 import com.cubeia.events.event.achievement.BonusEvent;
 import com.cubeia.events.event.poker.PokerAttributes;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -77,6 +78,12 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	@Override
 	public void sendEvent(GameEvent event) {
 		log.debug("DomainEvents Send GameEvent: "+event);
+		client.send(event);
+	}
+	
+	@Override
+	public void sendEvent(SystemEvent event) {
+		log.debug("DomainEvents Send SystemEvent: "+event);
 		client.send(event);
 	}
 

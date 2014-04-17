@@ -153,4 +153,8 @@ public interface AsynchronousCashGamesBackend {
     void transferMoneyFromRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment);
     
     Currency getCurrency(String currencyCode);
+    
+    public long lookupBonusAccountIdForPlayer(Long playerId, String currency);
+    
+    public long lookupMainAccountIdForPlayer(Long playerId, String currency);
 }

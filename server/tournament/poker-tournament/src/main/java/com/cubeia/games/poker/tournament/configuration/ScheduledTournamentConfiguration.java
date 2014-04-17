@@ -36,7 +36,9 @@ import static javax.persistence.FetchType.EAGER;
 @Entity
 public class ScheduledTournamentConfiguration implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue
     private int id;
 

@@ -118,6 +118,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     private transient HistoryPersister historyPersister;
 
     private transient CashGamesBackendService backend;
+    
     private transient UserServiceContract userService;
 
     private transient PacketSender sender;
@@ -546,7 +547,15 @@ public class PokerTournament implements TableNotifier, Serializable {
     private void transferMoneyAndCloseSession(PlayerSessionId playerSession, BigDecimal payout) {
         if (payout.compareTo(BigDecimal.ZERO) > 0) {
             notifyInTheMoney();
-            backend.transfer(createPayoutRequest(payout, playerSession));
+            
+            TransferMoneyRequest payoutRequest = createPayoutRequest(payout, playerSession);
+            // Check if we should pay out directly to a bonus account instead of to the players real money account
+            if (pokerState.isPayOutAsBonus()) {
+            	log.debug("Tournament["+instance.getId()+"] pays out as bonus, setting payout request bonus flag to true");
+            	payoutRequest.toBonusAccount = true;
+            }
+            
+			backend.transfer(payoutRequest);
             pokerState.setPayout(playerSession.playerId, payout);
         }
         backend.closeTournamentSession(new CloseSessionRequest(playerSession), createTournamentId());

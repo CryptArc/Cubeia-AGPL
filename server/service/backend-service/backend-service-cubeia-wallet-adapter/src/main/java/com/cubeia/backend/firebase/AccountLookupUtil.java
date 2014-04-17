@@ -67,11 +67,20 @@ public class AccountLookupUtil {
      * @param currency the currency code that the account should have
      * @return the accountId of the matching account, or -1 if none found
      */
-    public long lookupStaticMainAccountIdForPlayerAndCurrency(Long playerId, String currency) {
+    public long lookupMainAccountIdForPlayer(Long playerId, String currency) {
     	try {
     		return lookupUniqueAccountId(null, playerId, currency, AccountType.STATIC_ACCOUNT, createRoleMap(AccountRole.MAIN));
     	} catch (NoSuchAccountException e) {
     		log.warn("No account found for playerId["+playerId+"] currency["+currency+"] Role["+AccountRole.MAIN+"]");
+    		return -1;
+    	}
+    }
+    
+    public long lookupBonusAccountIdForPlayer(Long playerId, String currency) {
+    	try {
+    		return lookupUniqueAccountId(null, playerId, currency, AccountType.STATIC_ACCOUNT, createRoleMap(AccountRole.BONUS));
+    	} catch (NoSuchAccountException e) {
+    		log.warn("No account found for playerId["+playerId+"] currency["+currency+"] Role["+AccountRole.BONUS+"]");
     		return -1;
     	}
     }

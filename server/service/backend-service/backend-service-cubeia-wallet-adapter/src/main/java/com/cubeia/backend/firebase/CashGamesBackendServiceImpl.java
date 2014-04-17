@@ -26,6 +26,8 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
+
 import org.apache.log4j.Logger;
 
 import static com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest.TOURNAMENT_ACCOUNT;
@@ -36,6 +38,7 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
     private static final Logger log = Logger.getLogger(CashGamesBackendServiceImpl.class);
     private CashGamesBackendAdapter adapter;
     private ServiceRouter router;
+	private AccountLookupUtil accountLookupUtil;
 
     public CashGamesBackendServiceImpl() {
         super(20, 500);
@@ -55,8 +58,10 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
     public void init(ServiceContext con) throws SystemException {
         WalletServiceContract walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
         PublicClientRegistryService clientRegistry = con.getParentRegistry().getServiceInstance(PublicClientRegistryService.class);
+        DomainEventsService domainEventService = con.getParentRegistry().getServiceInstance(DomainEventsService.class);
         closeOpenSessionAccounts(walletService);
-        adapter = new CashGamesBackendAdapter(walletService, new AccountLookupUtil(walletService), clientRegistry);
+        accountLookupUtil = new AccountLookupUtil(walletService);
+		adapter = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService);
     }
 
     private void closeOpenSessionAccounts(WalletServiceContract walletService) {
@@ -88,5 +93,15 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
     @Override
     public void stop() {
     }
+
+	@Override
+	public long lookupBonusAccountIdForPlayer(Long playerId, String currency) {
+		return accountLookupUtil.lookupMainAccountIdForPlayer(playerId, currency);
+	}
+
+	@Override
+	public long lookupMainAccountIdForPlayer(Long playerId, String currency) {
+		return accountLookupUtil.lookupBonusAccountIdForPlayer(playerId, currency);
+	}
 
 }

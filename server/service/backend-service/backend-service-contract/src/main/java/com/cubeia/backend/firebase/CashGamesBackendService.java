@@ -20,7 +20,6 @@ package com.cubeia.backend.firebase;
 import com.cubeia.backend.cashgame.Asynchronous;
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.firebase.api.service.Contract;
-import com.cubeia.games.poker.common.money.Currency;
 
 /**
  * This contract mimics the {@link CashGamesBackend} with 

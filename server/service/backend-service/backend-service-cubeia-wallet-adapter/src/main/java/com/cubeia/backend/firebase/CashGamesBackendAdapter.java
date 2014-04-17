@@ -17,6 +17,21 @@
 
 package com.cubeia.backend.firebase;
 
+import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
@@ -46,22 +61,18 @@ import com.cubeia.backoffice.wallet.api.config.AccountRole;
 import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
+import com.cubeia.events.event.SystemEvent;
+import com.cubeia.events.event.SystemEventType;
+import com.cubeia.events.event.SystemLevels;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
-import com.cubeia.games.poker.common.money.*;
 import com.cubeia.games.poker.common.money.Currency;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
 
 /**
  * Adapter from the Backend Service Contract to the Cubeia Wallet Service.
@@ -106,10 +117,13 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
      */
     protected Map<String, Long> promotionsAccounts = Maps.newHashMap();
 
-    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil, PublicClientRegistryService clientRegistry) throws SystemException {
+    protected DomainEventsService domainEventService;
+
+    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil, PublicClientRegistryService clientRegistry, DomainEventsService domainEventService) throws SystemException {
         this.walletService = walletService;
         this.accountLookupUtil = accountLookupUtil;
         this.clientRegistry = clientRegistry;
+		this.domainEventService = domainEventService;
     }
 
     @Override
@@ -369,7 +383,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
-        long accountId = this.accountLookupUtil.lookupStaticMainAccountIdForPlayerAndCurrency(new Long(playerId), currency);
+        long accountId = this.accountLookupUtil.lookupMainAccountIdForPlayer(new Long(playerId), currency);
         log.debug("Found account ID {} for player {}", accountId, playerId);
         if (accountId == -1) {
             log.warn("No account found for " + playerId + " and currency " + currency + ". Returning zero money.");
@@ -389,7 +403,31 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public void transfer(TransferMoneyRequest request) {
-        TransactionBuilder txBuilder = new TransactionBuilder(request.amount.getCurrencyCode(), request.amount.getFractionalDigits());
+		String currency = request.amount.getCurrencyCode();
+		
+		// Check if bonus transfer and redefine the request accordingly
+		if (request.isToBonusAccount()) {
+    		log.debug("Transfer request for bonus account: {}", request);
+    		// We need to override the to session account to bonus account . 
+    		Long playerId = new Long(request.toSession.playerId);
+    		long bonusAccountIdForPlayer = accountLookupUtil.lookupBonusAccountIdForPlayer(playerId, currency);
+    		
+    		if (bonusAccountIdForPlayer < 0) {
+    			log.warn("Missing bonus account for player["+playerId+"] and currency["+currency+"] for payout! Will try to create a new bonus account and make the transfer to the new account. TransferRequest["+request+"]");
+    			bonusAccountIdForPlayer = walletService.createBonusAccount(playerId, currency);
+    		} 
+    		
+    		if (bonusAccountIdForPlayer > 0) {
+	    		log.debug("Transfer to bonus account["+bonusAccountIdForPlayer+"] for player["+request.toSession.playerId+"]. Override transfer request with new account assignment");
+	    		PlayerSessionId toSession = new PlayerSessionId(request.toSession.playerId, bonusAccountIdForPlayer+"");
+				request = new TransferMoneyRequest(request.amount, request.fromSession, toSession, request.comment);
+    		} else {
+    			sendBonusFailedEvent(request);
+    			throw new NoSuchAccountException("Could not find bonus account for player["+playerId+"] and currency["+currency+"]. Even tried to create a new bonus account.");
+    		}
+    	}
+    	
+        TransactionBuilder txBuilder = new TransactionBuilder(currency, request.amount.getFractionalDigits());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(request.fromSession), convertToWalletMoney(request.amount.negate()).getAmount());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(request.toSession), convertToWalletMoney(request.amount).getAmount());
         txBuilder.toTransactionRequest();
@@ -399,6 +437,19 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         TransactionResult txResult = walletService.doTransaction(txRequest);
         log.debug("Result: " + txResult);
     }
+
+	private void sendBonusFailedEvent(TransferMoneyRequest request) {
+		try {
+			SystemEvent event = new SystemEvent();
+			event.type = SystemEventType.error.name();
+			event.level = SystemLevels.ERROR.name();
+			event.name = "Bonus account payout failed";
+			event.information = "Failed to lookup and create bonus account. The transfer have not been successfully executed and an error has been propagated (which cause a tournament to stop unexpectedly). Transfer Request: "+request;
+			domainEventService.sendEvent(event);
+		} catch (Exception e) {
+			log.error("Failed to send System Event", e);
+		}
+	}
 
     @Override
     public Currency getCurrency(String currencyCode) {

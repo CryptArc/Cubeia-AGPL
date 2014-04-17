@@ -17,6 +17,9 @@
 
 package com.cubeia.backend.cashgame.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.games.poker.common.money.Money;
 
@@ -30,6 +33,12 @@ public class TransferMoneyRequest {
     public final PlayerSessionId fromSession;
     public final PlayerSessionId toSession;
     public final String comment;
+    
+    /**
+     * If this flag is set to true then the player receiving account
+     * should be a bonus account and not a main account.
+     */
+    public boolean toBonusAccount = false;
 
     public TransferMoneyRequest(Money amount, PlayerSessionId fromSession, PlayerSessionId toSession, String comment) {
         this.amount = amount;
@@ -40,11 +49,11 @@ public class TransferMoneyRequest {
 
     @Override
     public String toString() {
-        return "TransferMoneyRequest{" +
-                "amount=" + amount +
-                ", fromSession=" + fromSession +
-                ", toSession=" + toSession +
-                ", comment='" + comment + '\'' +
-                '}';
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
+    
+    public boolean isToBonusAccount() {
+		return toBonusAccount;
+	}
+    
 }

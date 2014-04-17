@@ -61,6 +61,16 @@ public class CashGamesBackendServiceBaseTest {
             protected CashGamesBackend getCashGamesBackend() {
                 return backend;
             }
+
+			@Override
+			public long lookupBonusAccountIdForPlayer(Long playerId, String currency) {
+				return -1;
+			}
+
+			@Override
+			public long lookupMainAccountIdForPlayer(Long playerId, String currency) {
+				return -1;
+			}
         };
     }
 

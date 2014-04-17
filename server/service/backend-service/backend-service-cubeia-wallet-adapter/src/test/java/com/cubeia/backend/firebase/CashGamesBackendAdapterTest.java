@@ -17,9 +17,51 @@
 
 package com.cubeia.backend.firebase;
 
+import static com.cubeia.backend.firebase.CashGamesBackendAdapter.GAME_ID;
+import static com.cubeia.backend.firebase.CashGamesBackendAdapter.LICENSEE_ID;
+import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
+import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY;
+import static java.lang.String.valueOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.dto.*;
+import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
+import com.cubeia.backend.cashgame.dto.HandResult;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
@@ -33,30 +75,7 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Currency;
-import java.util.UUID;
-
-import static com.cubeia.backend.firebase.CashGamesBackendAdapter.GAME_ID;
-import static com.cubeia.backend.firebase.CashGamesBackendAdapter.LICENSEE_ID;
-import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
-import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY;
-import static java.lang.String.valueOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.*;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 
 public class CashGamesBackendAdapterTest {
 
@@ -70,11 +89,13 @@ public class CashGamesBackendAdapterTest {
     private com.cubeia.games.poker.common.money.Currency eur = new com.cubeia.games.poker.common.money.Currency( "EUR", 2);
 
     @Mock PublicClientRegistryService clientRegistry;
+    
+    @Mock DomainEventsService domainEventService;
 
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry);
+        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService);
         backend.accountLookupUtil = accountLookupUtil;
         backend.clientRegistry = clientRegistry;
     }
@@ -179,9 +200,9 @@ public class CashGamesBackendAdapterTest {
 
         ArgumentCaptor<TransactionRequest> txCaptor = ArgumentCaptor.forClass(TransactionRequest.class);
         TransactionResult txResult = mock(TransactionResult.class);
-        AccountBalanceResult sessionBalance1 = new AccountBalanceResult(session1Id, walletMoney("11.11"));
-        AccountBalanceResult sessionBalance2 = new AccountBalanceResult(session2Id, walletMoney("22.22"));
-        AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(rakeAccountId, walletMoney("1232322.22"));
+        AccountBalanceResult sessionBalance1 = new AccountBalanceResult(session1Id, walletMoney("11.11"), new HashMap<String, String>());
+        AccountBalanceResult sessionBalance2 = new AccountBalanceResult(session2Id, walletMoney("22.22"), new HashMap<String, String>());
+        AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(rakeAccountId, walletMoney("1232322.22"), new HashMap<String, String>());
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
 
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
@@ -230,11 +251,80 @@ public class CashGamesBackendAdapterTest {
         PlayerSessionId playerSessionId = new PlayerSessionId(playerId, "" + sessionId);
 
         com.cubeia.backoffice.accounting.api.Money balance = new com.cubeia.backoffice.accounting.api.Money("SEK", 2, new BigDecimal("343434"));
-        AccountBalanceResult sessionBalance = new AccountBalanceResult(sessionId, balance);
+        AccountBalanceResult sessionBalance = new AccountBalanceResult(sessionId, balance, new HashMap<String, String>());
         when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
 
         BalanceUpdate balanceUpdate = backend.getSessionBalance(playerSessionId);
         assertThat(balanceUpdate.getBalance(), is(new Money(new BigDecimal("343434.00"), new com.cubeia.games.poker.common.money.Currency("SEK", 2))));
         assertThat(balanceUpdate.getPlayerSessionId(), is(playerSessionId));
     }
+    
+    @Test
+    public void testTransferRequest() {
+    	ArgumentCaptor<TransactionRequest> txCaptor = ArgumentCaptor.forClass(TransactionRequest.class);
+    	TransactionResult txResult = mock(TransactionResult.class);
+    	when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
+    	
+    	Money amount = new Money(new BigDecimal("10.50"), new com.cubeia.games.poker.common.money.Currency("EUR", 2));
+		PlayerSessionId fromSession = new PlayerSessionId(1, "100");
+		PlayerSessionId toSession = new PlayerSessionId(2, "200");
+		TransferMoneyRequest request = new TransferMoneyRequest(amount, fromSession, toSession, "test");
+		backend.transfer(request);
+		Mockito.verifyZeroInteractions(accountLookupUtil);
+		
+		TransactionRequest tx = txCaptor.getValue();
+		List<TransactionEntry> entries = new ArrayList<TransactionEntry>(tx.getEntries());
+		assertThat(entries.get(0).getAccountId(), is(100L));
+		assertThat(entries.get(1).getAccountId(), is(200L));
+    }
+    
+    @Test
+    public void testTransferRequestToBonus() {
+    	when(accountLookupUtil.lookupBonusAccountIdForPlayer(1L, "EUR")).thenReturn(110L);
+    	when(accountLookupUtil.lookupBonusAccountIdForPlayer(2L, "EUR")).thenReturn(220L);
+    	
+    	ArgumentCaptor<TransactionRequest> txCaptor = ArgumentCaptor.forClass(TransactionRequest.class);
+    	TransactionResult txResult = mock(TransactionResult.class);
+    	when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
+    	
+    	Money amount = new Money(new BigDecimal("10.50"), new com.cubeia.games.poker.common.money.Currency("EUR", 2));
+		PlayerSessionId fromSession = new PlayerSessionId(1, "100");
+		PlayerSessionId toSession = new PlayerSessionId(2, "200");
+		TransferMoneyRequest request = new TransferMoneyRequest(amount, fromSession, toSession, "test");
+		request.toBonusAccount = true;
+		backend.transfer(request);
+		Mockito.verify(accountLookupUtil).lookupBonusAccountIdForPlayer(2L, "EUR");
+		
+		TransactionRequest tx = txCaptor.getValue();
+		List<TransactionEntry> entries = new ArrayList<TransactionEntry>(tx.getEntries());
+		assertThat(entries.get(0).getAccountId(), is(100L));
+		assertThat(entries.get(1).getAccountId(), is(220L));
+    }
+    
+    @Test
+    public void testTransferRequestToBonusAccountNotFound() {
+    	when(accountLookupUtil.lookupBonusAccountIdForPlayer(2L, "EUR")).thenReturn(-1L);
+    	
+    	ArgumentCaptor<TransactionRequest> txCaptor = ArgumentCaptor.forClass(TransactionRequest.class);
+    	TransactionResult txResult = mock(TransactionResult.class);
+    	when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
+    	
+    	when(walletService.createBonusAccount(2L, "EUR")).thenReturn(440L);
+    	
+    	Money amount = new Money(new BigDecimal("10.50"), new com.cubeia.games.poker.common.money.Currency("EUR", 2));
+		PlayerSessionId fromSession = new PlayerSessionId(1, "100");
+		PlayerSessionId toSession = new PlayerSessionId(2, "200");
+		TransferMoneyRequest request = new TransferMoneyRequest(amount, fromSession, toSession, "test");
+		request.toBonusAccount = true;
+		backend.transfer(request);
+		Mockito.verify(walletService).createBonusAccount(2L, "EUR");
+		Mockito.verify(accountLookupUtil).lookupBonusAccountIdForPlayer(2L, "EUR");
+		
+		TransactionRequest tx = txCaptor.getValue();
+		List<TransactionEntry> entries = new ArrayList<TransactionEntry>(tx.getEntries());
+		assertThat(entries.get(0).getAccountId(), is(100L));
+		assertThat(entries.get(1).getAccountId(), is(440L));
+		
+    }
+    
 }

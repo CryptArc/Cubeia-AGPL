@@ -44,8 +44,6 @@ public class CashGamesBackendMock extends CashGamesBackendServiceBase implements
 		return router;
 	}
 
-
-
     @Override
     public void setRouter(ServiceRouter router) {
         this.router = router;
@@ -73,5 +71,15 @@ public class CashGamesBackendMock extends CashGamesBackendServiceBase implements
 
     @Override
     public void stop() { }
+
+	@Override
+	public long lookupBonusAccountIdForPlayer(Long playerId, String currency) {
+		return -1;
+	}
+
+	@Override
+	public long lookupMainAccountIdForPlayer(Long playerId, String currency) {
+		return -1;
+	}
 
 }
