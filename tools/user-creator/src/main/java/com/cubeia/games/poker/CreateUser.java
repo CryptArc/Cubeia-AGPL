@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.util.UUID;
 
+import com.cubeia.backoffice.wallet.api.config.AccountRole;
+import com.cubeia.backoffice.wallet.util.AccountLookup;
 import org.apache.commons.codec.binary.Hex;
 
 import com.cubeia.backoffice.accounting.api.Money;
@@ -116,6 +118,7 @@ public class CreateUser {
             System.out.println("Set User service on port 9090, wallet on 9091");
             userService = "http://localhost:9090/user-service-rest/rest";
             walletService = "http://localhost:9091/wallet-service-rest/rest";
+
         }
         
         String usernameBase = username;
@@ -135,10 +138,12 @@ public class CreateUser {
 	private long tryInitialAmount(long accountId, long userId) throws Exception {
 		if(balance > 0) {
 			WalletServiceClientHTTP client = new WalletServiceClientHTTP(walletService);
+            AccountLookup lookup  = new AccountLookup(client);
 			TransactionRequest req = new TransactionRequest();
 			Money credit = new Money(currency, 2, new BigDecimal(String.valueOf(balance)));
 			req.getEntries().add(new TransactionEntry(accountId, credit));
-			Account acc = client.getAccount(bankaccount, currency);
+            long bankAccount = lookup.lookupSystemAccount(currency, AccountRole.MAIN);
+			Account acc = client.getAccountById(bankAccount);
 			req.getEntries().add(new TransactionEntry(acc.getId(), credit.negate()));
 			req.setComment("initial balance for user " + userId);
 			return client.doTransaction(req).getTransactionId();
