@@ -7,21 +7,18 @@ import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.node
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cubeia.games.poker.admin.wicket.components.HistoricHandSearchPanel;
-import com.cubeia.games.poker.admin.wicket.components.HistoricTournamentSearchPanel;
-import com.cubeia.network.shared.web.wicket.module.PanelCreator;
-import com.cubeia.network.shared.web.wicket.search.SearchResultPanel;
-import com.cubeia.network.web.search.User;
-import com.cubeia.network.web.search.UserPanel;
 import org.apache.wicket.model.Model;
 import org.springframework.stereotype.Component;
 
+import com.cubeia.games.poker.admin.wicket.components.HistoricHandSearchPanel;
+import com.cubeia.games.poker.admin.wicket.components.HistoricTournamentSearchPanel;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
 import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.CreateRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.EditRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.ListRakes;
 import com.cubeia.games.poker.admin.wicket.pages.system.SystemManagement;
+import com.cubeia.games.poker.admin.wicket.pages.system.VerifySystemAccounts;
 import com.cubeia.games.poker.admin.wicket.pages.tables.CreateTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.EditTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
@@ -40,8 +37,10 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitA
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
 import com.cubeia.network.shared.web.wicket.module.AdminWebModule;
+import com.cubeia.network.shared.web.wicket.module.PanelCreator;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 import com.cubeia.network.shared.web.wicket.pages.search.SearchPage;
+import com.cubeia.network.shared.web.wicket.search.SearchResultPanel;
 
 @Component
 public class PokerAdminModule extends AdminWebModule {
@@ -81,7 +80,8 @@ public class PokerAdminModule extends AdminWebModule {
                 node("Create Rake Configuration", CreateRake.class),
                 node("Edit Rake Configuration", EditRake.class, false));
 
-        add(pages,"System Management", "system", SystemManagement.class,"icon-list-alt");
+        add(pages,"System Management", "system", SystemManagement.class,"icon-list-alt",
+        		node("Verify Accounts", VerifySystemAccounts.class));
     }
 
     public PokerAdminModule() {
