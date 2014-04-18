@@ -198,7 +198,13 @@ Poker.AccountPageManager = Class.extend({
     onBonusInfo : function(profile) {
         var self = this;
         var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("balanceTemplate");
-        $("#accountBalancesContainer").html(template.render({accounts : profile.accounts }));
+        var displayAccounts = [];
+        $.each(profile.accounts,function(i,a){
+            if(a.role=="MAIN" || (a.role == "BONUS" && a.balance &&  parseFloat(a.balance)>0)) {
+                displayAccounts.push(a);
+            }
+        });
+        $("#accountBalancesContainer").html(template.render({accounts : displayAccounts }));
 
         $("#topUpCurrencies").empty();
 

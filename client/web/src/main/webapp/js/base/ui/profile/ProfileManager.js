@@ -132,9 +132,9 @@ Poker.ProfileManager = Class.extend({
         var self = this;
         $.each(bonusInfo.accounts,function(i,a){
             if(Poker.OperatorConfig.isCurrencyEnabled(a.currency)) {
-                if(a.role=="MAIN" || (a.role == "BONUS" && a.balance &&  parseFloat(a.balance)>0)) {
-                    self.myPlayerProfile.addBalance(a.balance, a.currency, a.role);
-                }
+
+                self.myPlayerProfile.addBalance(a.balance, a.currency, a.role);
+
             }
         });
         $.each(bonusInfo.bonuses,function(i,b){
