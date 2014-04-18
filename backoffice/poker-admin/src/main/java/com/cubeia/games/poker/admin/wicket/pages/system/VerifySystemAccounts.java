@@ -136,7 +136,7 @@ public class VerifySystemAccounts extends BasePage {
 		    	AccountInformation info = item.getModel().getObject();
 		    	item.add(new Label("role", info.getRole()));
 		    	item.add(new Label("currency", info.getCurrency()));
-		    	Label found = new Label("accountFound", info.isFound() ? "Found, ID: "+info.getId() : "Missing");
+		    	Label found = new Label("accountFound", info.isFound() ? "ID "+info.getId() : "Missing");
 		    	if (info.isFound()) {
 		    		found.add(new AttributeModifier("class", "label label-success"));
 		    	} else {
@@ -154,7 +154,7 @@ public class VerifySystemAccounts extends BasePage {
 		    	item.add(new Label("operator", info.getOperator()));
 		    	item.add(new Label("role", info.getRole()));
 		    	item.add(new Label("currency", info.getCurrency()));
-		    	Label found = new Label("accountFound", info.isFound() ? "Found, ID: "+info.getId() : "Missing");
+		    	Label found = new Label("accountFound", info.isFound() ? "ID "+info.getId() : "Missing");
 		    	if (info.isFound()) {
 		    		found.add(new AttributeModifier("class", "label label-success"));
 		    	} else {
@@ -204,6 +204,7 @@ public class VerifySystemAccounts extends BasePage {
 		public void setRole(AccountRole role) {
 			this.role = role;
 		}
+		@SuppressWarnings("unused")
 		public AccountType getType() {
 			return type;
 		}
