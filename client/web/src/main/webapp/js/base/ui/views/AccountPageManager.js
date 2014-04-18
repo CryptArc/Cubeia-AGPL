@@ -200,7 +200,7 @@ Poker.AccountPageManager = Class.extend({
         var template = Poker.AppCtx.getTemplateManager().getRenderTemplate("balanceTemplate");
         var displayAccounts = [];
         $.each(profile.accounts,function(i,a){
-            if(a.role=="MAIN" || (a.role == "BONUS" && a.balance &&  parseFloat(a.balance)>0)) {
+            if(a.role=="MAIN" || (a.role == "BONUS" && a.amount &&  parseFloat(a.amount)>0)) {
                 displayAccounts.push(a);
             }
         });
