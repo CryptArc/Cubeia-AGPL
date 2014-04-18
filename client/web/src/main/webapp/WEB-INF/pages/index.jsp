@@ -932,7 +932,7 @@
 <script id="balanceTemplate" type="text/mustache">
     {{#accounts}}
     <div class="account-row">
-        <span class="balance-header">Balance:</span>
+        <span class="balance-header">{{accountLabel role}}</span>
         <div>
             <span class="account-balance">{{{formattedBalance}}}</span>
         </div>

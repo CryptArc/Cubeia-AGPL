@@ -238,6 +238,14 @@ Poker.AppCtx = Class.extend({
             return id!=null && id>=0;
         });
 
+        Handlebars.registerHelper('accountLabel', function(role){
+            if(role == "BONUS") {
+                return "Bonus:";
+            } else {
+                return "Balance:"
+            }
+        });
+
         Handlebars.registerHelper('mbtc', function(satoshis){
             return Poker.Utils.formatCurrency(parseInt(satoshis)/100000);
         });
