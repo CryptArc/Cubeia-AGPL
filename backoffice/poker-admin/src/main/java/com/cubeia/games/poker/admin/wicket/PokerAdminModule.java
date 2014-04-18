@@ -81,7 +81,7 @@ public class PokerAdminModule extends AdminWebModule {
                 node("Edit Rake Configuration", EditRake.class, false));
 
         add(pages,"System Management", "system", SystemManagement.class,"icon-list-alt",
-        		node("Verify Accounts", VerifySystemAccounts.class));
+        		node("Verify Accounts", "verify-accounts", VerifySystemAccounts.class));
     }
 
     public PokerAdminModule() {
