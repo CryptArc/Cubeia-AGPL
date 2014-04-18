@@ -186,13 +186,6 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         PlayerSessionId sid = request.getPlayerSessionId();
         long sessionAccountId = getWalletSessionIdByPlayerSessionId(sid);
         log.debug("Closing session account in wallet " + sessionAccountId);
-        
-        
-        
-        
-        
-        
-        
         com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService.endSessionAndDepositAll(LICENSEE_ID, sessionAccountId,
                 "session ended by game " + GAME_ID + ", player id = " + sid.playerId);
 

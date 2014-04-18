@@ -1071,7 +1071,9 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private OpenTournamentSessionRequest createOpenTournamentSessionRequest() {
         TournamentId tournamentId = createTournamentId();
-        return new OpenTournamentSessionRequest(-1, tournamentId, pokerState.createZeroMoney());
+        OpenTournamentSessionRequest request = new OpenTournamentSessionRequest(-1, tournamentId, pokerState.createZeroMoney());
+        request.setSystemTournamentAccount(true);
+        return request;
     }
 
     public void handleTrigger(TournamentTrigger trigger) {

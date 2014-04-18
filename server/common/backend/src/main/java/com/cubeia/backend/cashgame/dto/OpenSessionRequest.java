@@ -27,6 +27,7 @@ public class OpenSessionRequest implements Serializable {
     public final String objectId;
     public final Money openingBalance;
     private String accountName;
+    private boolean systemTournamentAccount;
 
     public OpenSessionRequest(int playerId, String objectId, Money openingBalance) {
         this.playerId = playerId;
@@ -54,6 +55,14 @@ public class OpenSessionRequest implements Serializable {
         this.accountName = accountName;
     }
 
+    public boolean isSystemTournamentAccount() {
+		return systemTournamentAccount;
+	}
+    
+    public void setSystemTournamentAccount(boolean systemTournamentAccount) {
+		this.systemTournamentAccount = systemTournamentAccount;
+	}
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -61,6 +70,7 @@ public class OpenSessionRequest implements Serializable {
         sb.append("{playerId=").append(playerId);
         sb.append(", objectId='").append(objectId).append('\'');
         sb.append(", openingBalance=").append(openingBalance);
+        sb.append(", systemTournamentAccount=").append(systemTournamentAccount);
         sb.append('}');
         return sb.toString();
     }
