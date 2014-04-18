@@ -13,11 +13,12 @@ Poker.MyProfile = Poker.Profile.extend({
         this.accounts = [];
         this.bonuses = [];
     },
-    addBalance : function(amount,currencyCode){
+    addBalance : function(amount,currencyCode,role){
         var balance = new Poker.Balance();
         balance.amount = amount;
         balance.currencyCode = currencyCode;
         balance.formattedBalance = Poker.Utils.formatWithSymbol(amount, currencyCode);
+        balance.role = role;
         var updated = false;
         for(var i = 0; i<this.accounts.length; i++) {
             if(this.accounts[i].currencyCode == currencyCode) {
@@ -57,7 +58,8 @@ Poker.MyProfile = Poker.Profile.extend({
 Poker.Balance = Class.extend({
     formattedBalance : null,
     amount  : 0,
-    currencyCode : null
+    currencyCode : null,
+    role : null
 });
 
 Poker.Bonus = Class.extend({
