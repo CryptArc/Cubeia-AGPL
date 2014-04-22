@@ -84,7 +84,7 @@ Poker.AchievementManager = Class.extend({
             } else if (message.type == "bonusReleased") {
                 var msg = "Released "+message.message.attributes.amount+message.message.attributes.currency+" from your bonus account.";
                 var n = new Poker.TextNotifcation(
-                    i18n.t("bonus.released")+' '+message.attributes.name,
+                    i18n.t("bonus.released"),
                     msg,
                     "images/notification/bonus-released.png");
                 Poker.AppCtx.getNotificationsManager().notify(n, {time:15000});
