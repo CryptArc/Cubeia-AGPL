@@ -72,21 +72,21 @@ Poker.AchievementManager = Class.extend({
 	            	this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
             	}
             } else if (message.type == "bonusActivated") {
-                var msg = "Awarded "+message.message.attributes.amountReal+message.message.attributes.currency+" and "+
-                    message.message.attributes.amountReal+message.message.attributes.currency+" as bonus.";
+                var msg = "Awarded "+message.attributes.amountReal+message.attributes.currency+" and "+
+                    message.attributes.amountReal+message.attributes.currency+" as bonus.";
                 var n = new Poker.TextNotifcation(
                     i18n.t("bonus.activated")+' '+message.attributes.name,
                     msg,
-                    "images/notification/bonus-activated.png");
+                    contextPath + "/skins/default/images/notification/bonus-activated.png");
                 Poker.AppCtx.getNotificationsManager().notify(n, {time:15000});
                 this.soundManager.playSound(Poker.Sounds.BONUS_ACTIVATED, 0);
 
             } else if (message.type == "bonusReleased") {
-                var msg = "Released "+message.message.attributes.amount+message.message.attributes.currency+" from your bonus account.";
+                var msg = "Released "+message.attributes.amount+message.attributes.currency+" from your bonus account.";
                 var n = new Poker.TextNotifcation(
                     i18n.t("bonus.released"),
                     msg,
-                    "images/notification/bonus-released.png");
+                    contextPath + "/skins/default/images/notification/bonus-released.png");
                 Poker.AppCtx.getNotificationsManager().notify(n, {time:15000});
                 this.soundManager.playSound(Poker.Sounds.BONUS_RELEASED, 0);
             }
