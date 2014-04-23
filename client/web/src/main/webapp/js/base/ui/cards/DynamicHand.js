@@ -176,7 +176,7 @@ Poker.DynamicHand = Class.extend({
             }
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
-                el.css("left",pos.x + "px");
+                el.css("left",Math.floor(pos.x) + "px");
 
             }
         }
