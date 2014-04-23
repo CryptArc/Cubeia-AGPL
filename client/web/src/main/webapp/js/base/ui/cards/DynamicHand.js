@@ -168,7 +168,6 @@ Poker.DynamicHand = Class.extend({
             this.calculateCardDimensions();
         }
         var cssUtils = new Poker.CSSUtils();
-        cssUtils.addTransformOrigin(this.handContainer,this.getTransformOrigin());
         for(var i = 0; i<this.cardOrder.length; i++) {
             var card = this.cards.get(this.cardOrder[i]);
             var pos  = this.getPositionForCard(i+1,this.cardOrder.length);
@@ -177,13 +176,8 @@ Poker.DynamicHand = Class.extend({
             }
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
-                if(this.useTransform == true) {
-                    cssUtils.setTranslate3d(el,pos.x,pos.y,0,"px");
-                    el.css("left","");
-                } else {
-                    cssUtils.clearTransform(el);
-                    el.css("left",pos.x + "px");
-                }
+                el.css("left",pos.x + "px");
+
             }
         }
         var self = this;
@@ -192,9 +186,14 @@ Poker.DynamicHand = Class.extend({
             if(cards.length>1) {
                 var c1 = cards[0].getContainerElement();
                 var c2 = cards[1].getContainerElement();
-                if(c1 && c1.position().left == c2.position().left) {
-                    self.useTransform=false;
+                if(c1 && c1.position() && c2 && c2.position() && c1.position().left == c2.position().left) {
                     self.updateCardPositions();
+                }  else {
+                    if(!c1 || !c2) {
+                        console.log("Cards elements was null", c1, c2);
+                    } else {
+                        console.log("positions were null", c1.position(), c2.position());
+                    }
                 }
             }
         },500);

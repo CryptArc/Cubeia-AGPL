@@ -39,6 +39,13 @@
     -o-transition: -o-transform @params;
     transition: transform @params;
 }
+.transition-transform-multiple(@params,@param2) {
+    -webkit-transition: -webkit-transform @params,@param2;
+    -moz-transition: -moz-transform @params,@param2;
+    -o-transition: -o-transform @params,@param2;
+    transition: transform @params,@param2;
+}
+
 
 .transition(@params) {
     -webkit-transition: @params;
