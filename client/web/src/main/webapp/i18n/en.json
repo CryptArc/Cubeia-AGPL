@@ -16,8 +16,8 @@
         "awarded" : "New item: "
     },
     "bonus" : {
-        "activated" : "Bonus Activated: ",
-        "released" : "Bonus Money Released"
+        "activated" : "Bonus: ",
+        "released" : "Bonus Released"
     },
     "account" : {
         "logout" : "Log out",
