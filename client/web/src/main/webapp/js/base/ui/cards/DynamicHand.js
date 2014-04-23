@@ -42,9 +42,14 @@ Poker.DynamicHand = Class.extend({
         this.calculateCardDimensions();
         this.setup();
         var self = this;
+        this.calculateWidth();
         $(window).on('resizeEnd',function(){
+            self.calculateWidth();
             self.updateCardPositions();
         });
+    },
+    calculateWidth : function() {
+        this.width = Math.floor($(".table-view-container").width()*0.1);
     },
     setAlignment : function(pos,capacity) {
         var p = this.alignments[""+capacity];
@@ -67,11 +72,10 @@ Poker.DynamicHand = Class.extend({
         cssUtils.clearTransform(this.handContainer);
     },
     calculateCardProperties : function() {
-        this.width = this.handContainer.width();
         this.height = this.handContainer.height();
     },
     calculateCardDimensions : function() {
-        var w = this.handContainer.width();
+        var w = this.width;
         this.cardWidth = Math.floor(w/(1+(this.maxCards-1)*this.offset));
         this.handContainer.find("img").width(this.cardWidth).height(Math.floor(this.cardWidth*this.ratio))
     },
@@ -177,28 +181,10 @@ Poker.DynamicHand = Class.extend({
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
                 el.css("left",Math.floor(pos.x) + "px");
+                el.css("top",Math.floor(pos.y) + "px");
 
             }
         }
-        var self = this;
-        setTimeout(function(){
-            var cards = self.cards.values();
-            if(cards.length>1) {
-                var c1 = cards[0].getContainerElement();
-                var c2 = cards[1].getContainerElement();
-                if(c1 && c1.position()!=null && c2 && c2.position()!=null) {
-                    if(c1.position().left == c2.position().left) {
-                        self.updateCardPositions();
-                    }
-                }  else {
-                    if(!c1 || !c2) {
-                        console.log("Cards elements was null", c1, c2);
-                    } else {
-                        console.log("positions were null", c1.position(), c2.position());
-                    }
-                }
-            }
-        },500);
 
     },
     discardCards : function(cardsToDiscard) {
