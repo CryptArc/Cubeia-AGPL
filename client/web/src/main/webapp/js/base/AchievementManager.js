@@ -87,6 +87,7 @@ Poker.AchievementManager = Class.extend({
                 this.soundManager.playSound(Poker.Sounds.BONUS_ACTIVATED, 0);
 
             } else if (message.type == "bonusReleased") {
+                var currency = message.attributes.currency;
                 var released  =  Poker.Utils.formatWithSymbol(message.attributes.amount,currency);
                 var msg = "Released " + released +" from your bonus account.";
                 var n = new Poker.TextNotifcation(
