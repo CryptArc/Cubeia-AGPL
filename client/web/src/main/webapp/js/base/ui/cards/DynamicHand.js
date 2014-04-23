@@ -186,8 +186,10 @@ Poker.DynamicHand = Class.extend({
             if(cards.length>1) {
                 var c1 = cards[0].getContainerElement();
                 var c2 = cards[1].getContainerElement();
-                if(c1 && c1.position() && c2 && c2.position() && c1.position().left == c2.position().left) {
-                    self.updateCardPositions();
+                if(c1 && c1.position()!=null && c2 && c2.position()!=null) {
+                    if(c1.position().left == c2.position().left) {
+                        self.updateCardPositions();
+                    }
                 }  else {
                     if(!c1 || !c2) {
                         console.log("Cards elements was null", c1, c2);
