@@ -60,7 +60,7 @@ Poker.Seat = Class.extend({
         this.levelElement = this.seatElement.find(".player-level");
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
-        this.hand = new Poker.DynamicHand(this.cardsContainer);
+        this.hand = new Poker.DynamicHand(this.cardsContainer,false);
         var self = this;
         this.avatarElement.click(function(e){
             var items = null;

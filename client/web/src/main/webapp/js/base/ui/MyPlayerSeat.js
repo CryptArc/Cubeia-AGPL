@@ -61,7 +61,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.levelElement = this.seatElement.find(".player-level");
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
-        this.hand = new Poker.DynamicHand(this.cardsContainer);
+        this.hand = new Poker.DynamicHand(this.cardsContainer,true);
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);

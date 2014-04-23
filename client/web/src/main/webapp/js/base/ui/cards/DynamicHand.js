@@ -25,6 +25,7 @@ Poker.DynamicHand = Class.extend({
     maxCards : 5,
     align : 0,
     useTransform : true,
+    myPlayer : false,
 
     alignments : {
         "2" : [0,0],
@@ -35,9 +36,10 @@ Poker.DynamicHand = Class.extend({
         "9" : [0,-1,-1,-1,-1,0,1,1,1],
         "10" :[0,-1,-1,-1,-1,0,1,1,1,1]
     },
-    init : function(handContainer) {
-        this.handContainer = handContainer;
+    init : function(handContainer, myPlayer) {
 
+        this.handContainer = handContainer;
+        this.myPlayer = myPlayer;
         this.hoverCards = [];
         this.calculateCardDimensions();
         this.setup();
@@ -49,7 +51,8 @@ Poker.DynamicHand = Class.extend({
         });
     },
     calculateWidth : function() {
-        this.width = Math.floor($(".table-view-container").width()*0.1);
+        var fraction = this.myPlayer ? 0.2 : 0.13;
+        this.width = Math.floor($(".table-view-container").width()*fraction);
     },
     setAlignment : function(pos,capacity) {
         var p = this.alignments[""+capacity];
