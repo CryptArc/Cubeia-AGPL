@@ -51,7 +51,7 @@ Poker.DynamicHand = Class.extend({
         });
     },
     calculateWidth : function() {
-        var fraction = this.myPlayer ? 0.2 : 0.13;
+        var fraction = this.myPlayer ? 0.2 : 0.11;
         this.width = Math.floor($(".table-view-container").width()*fraction);
     },
     setAlignment : function(pos,capacity) {
