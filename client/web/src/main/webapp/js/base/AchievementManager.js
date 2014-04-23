@@ -72,8 +72,13 @@ Poker.AchievementManager = Class.extend({
 	            	this.soundManager.playSound(Poker.Sounds.PROGRESSION_ACHIEVEMENT, 0);
             	}
             } else if (message.type == "bonusActivated") {
-                var msg = "Awarded "+message.attributes.amountReal+message.attributes.currency+" and "+
-                    message.attributes.amountReal+message.attributes.currency+" as bonus.";
+                var currency = message.attributes.currency;
+                var bonusString = Poker.Utils.formatWithSymbol(message.attributes.amountBonus,currency);
+                var realString  =  Poker.Utils.formatWithSymbol(message.attributes.amountReal,currency);
+                var msg = "Awarded bonus of " + bonusString;
+                if(parseFloat(message.attributes.amountReal)>0) {
+                    msg = msg + " and " + realString + " to main account";
+                }
                 var n = new Poker.TextNotifcation(
                     i18n.t("bonus.activated")+' '+message.attributes.name,
                     msg,
@@ -82,7 +87,8 @@ Poker.AchievementManager = Class.extend({
                 this.soundManager.playSound(Poker.Sounds.BONUS_ACTIVATED, 0);
 
             } else if (message.type == "bonusReleased") {
-                var msg = "Released "+message.attributes.amount+message.attributes.currency+" from your bonus account.";
+                var released  =  Poker.Utils.formatWithSymbol(message.attributes.amount,currency);
+                var msg = "Released " + released +" from your bonus account.";
                 var n = new Poker.TextNotifcation(
                     i18n.t("bonus.released"),
                     msg,
