@@ -287,7 +287,7 @@ Poker.TableLayoutManager = Class.extend({
     },
     getCardsAlignment : function(el) {
          var dim = Poker.Utils.calculateDistance($("#myPlayerSeat-"+this.tableId),el,true,true);
-        console.log("Calc align", dim);
+        //console.log("Calc align", dim);
          if(dim.left<0) {
             return -1;
          } else if(dim.left>0){
@@ -426,7 +426,7 @@ Poker.TableLayoutManager = Class.extend({
 
         for(var i = 0; i<playerCards.length; i++) {
             var cards = playerCards[i].cards;
-            console.log("EXPOSE PRIVE CARDS = ", cards);
+            //console.log("EXPOSE PRIVE CARDS = ", cards);
             for(var j = 0; j<cards.length; j++) {
                 console.log("on exp 1 = ", cards[j] );
                 this.onExposePrivateCard(cards[j].id, cards[j].cardString);
@@ -436,7 +436,7 @@ Poker.TableLayoutManager = Class.extend({
     },
     onExposePrivateCard : function(cardId,cardString){
         var card = this.cardElements.get(cardId);
-        console.log("card = ",card);
+        //console.log("card = ",card);
         card.exposeCard(cardString, function(){});
 
     },

@@ -49,7 +49,7 @@ Poker.ViewManager = Class.extend({
                 timer = null;
             },300);
         });
-        $(window).on("resizeEnd",function(){
+        $(window).on("resizeEnd redrawTable",function(){
             self.setViewDimensions();
         });
         $(document).ready(function(){
@@ -428,9 +428,7 @@ Poker.ViewManager = Class.extend({
             leftMargin = 40;
             topMargin = 0;
             $("body").addClass("portrait");
-            console.log("Mobile & portrait");
         } else {
-            console.log("Not portrait");
             $("body").removeClass("portrait");
         }
         //tmp ipad fix

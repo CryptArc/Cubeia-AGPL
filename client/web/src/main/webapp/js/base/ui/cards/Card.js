@@ -57,7 +57,6 @@ Poker.Card = Class.extend({
      */
     setCardImage : function(imageUrl) {
         var element = this.getContainerElement();
-        console.log("Setting card image on el", element);
         element.attr("src",imageUrl).hide();
         setTimeout(function(){element.show();},50);
     },

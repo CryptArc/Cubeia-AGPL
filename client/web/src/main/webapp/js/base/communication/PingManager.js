@@ -19,7 +19,7 @@ Poker.PingManager = Class.extend({
             if(cm.connected==true) {
                 cm.sendVersionPacket();
             }
-        },60000)
+        },120000)
     },
     onDisconnect : function() {
         this.disconnects++;

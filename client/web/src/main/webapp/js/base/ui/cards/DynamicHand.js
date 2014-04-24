@@ -52,7 +52,9 @@ Poker.DynamicHand = Class.extend({
     },
     calculateWidth : function() {
         var fraction = this.myPlayer ? 0.2 : 0.11;
-        this.width = Math.floor($(".table-view-container").width()*fraction);
+        var containerWidth = $(".table-view-container").width();
+        console.log("container width=" + containerWidth);
+        this.width = Math.floor(containerWidth*fraction);
     },
     setAlignment : function(pos,capacity) {
         var p = this.alignments[""+capacity];

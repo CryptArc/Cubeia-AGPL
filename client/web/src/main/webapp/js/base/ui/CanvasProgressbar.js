@@ -21,7 +21,7 @@ Poker.CanvasProgressbar = Class.extend({
 
         this.soundManager = soundManager;
 
-        $(window).on("resizeEnd",function(){
+        $(window).on("resizeEnd redrawTable",function(){
             self.setSize();
         });
         this.canvas.parent().hide();
