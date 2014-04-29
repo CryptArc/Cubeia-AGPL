@@ -192,6 +192,7 @@ Poker.LobbyLayoutManager = Class.extend({
         this.limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
         this.cashGameFilters.push(this.limitFilters);
 
+        /*
          var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 10, -1);
 
          this.cashGameFilters.push(highStakes);
@@ -201,7 +202,7 @@ Poker.LobbyLayoutManager = Class.extend({
 
          var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
          this.cashGameFilters.push(lowStakes);
-
+          */
          this.sitAndGoFilters.push(this.limitFilters);
          this.sitAndGoFilters.push(new Poker.PrivateTournamentFilter());
 
@@ -227,9 +228,11 @@ Poker.LobbyLayoutManager = Class.extend({
 
         this.cashGameFilters.push(emptyTablesFilter);
 
+        /*
          var registeringOnly = new Poker.EqualsFilter("registeringOnly",true,this,"status","REGISTERING");
          this.sitAndGoFilters.push(registeringOnly);
          this.tournamentFilters.push(registeringOnly);
+         */
     },
 
     initTournamentFilters : function () {

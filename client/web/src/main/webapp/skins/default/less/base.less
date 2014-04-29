@@ -10,24 +10,30 @@
         tr {
             th {
                 border:none;
-                font-size: 80%;
+                text-transform: uppercase;
+                font-weight: 900;
+                font-size: 75%;
+                color:#999;
                 font-weight: normal;
             }
         }
     }
     tbody {
         tr {
-            background-color: #343333;
             border-color: transparent;
             td {
-                border-top: 4px solid #252525;
+                border-top: 1px solid #333;
                 padding: 12px;
                 line-height: 2;
+            }
+            &:last-child {
+                border-bottom: 1px solid #333;
             }
         }
     }
 }
 
+@import "constants.less";
 @import "compatability.less";
 @import "action-buttons.less";
 @import "lobby.less";

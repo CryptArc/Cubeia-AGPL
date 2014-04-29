@@ -1,3 +1,4 @@
+
 .login-view {
     .logo-container {
         width: 250px;
@@ -29,7 +30,7 @@
 
     li {
         a, a:hover, a:focus  {
-            font-family: "Myriad Pro", Arial, san-serif;
+            font-family:  Arial, san-serif;
             color: #fff;
             background-color: transparent;
         }
@@ -77,65 +78,233 @@
         color:#aaa;
     }
 }
-.navbar-top  {
-    background-color:transparent;
-    font-size: 180%;
-    .nav-item;
-    margin-bottom:5px;
+.top-promo {
+    background-color: @box-color;
+    .border-radius(4px);
+    padding: 15px;
+}
+.top-container {
+    background-color: #1c1c1c;
+    width:100%;
+    margin-bottom: 30px;
+}
+.full-width {
+    .linear-gradient(top, #363636 0%, #303030 100%);
+    border-top:2px solid #222;
 
-    li {
-        a {
-            padding: 5px 15px;
-        }
-        &:first-child {
-            border-left: none;
-        }
+    .menu-col {
+        padding-left: 0;
+    }
+    margin-bottom: 40px;
+}
+.profile {
+   .user-info-container  {
+       clear:both;
+       height: 110px;
+       background-color: @box-color;
+       .border-radius(4px);
+       margin-bottom:3px;
+       padding:20px;
+   }
+   .user-avatar {
+       width:18%;
+       padding-bottom: 18%;
+       background-size: 100% auto;
+       float:left;
+       background-repeat: no-repeat;
+   }
+   .user-info {
+        width:78%;
+       float:right;
+       .user-name {
+           font-size:140%;
+           display: inline-block;
+       }
+       .level {
+           display: inline-block;
+       }
+       div.xp-progress-container {
+           height:13px;
+           border: 1px solid #444;
+       }
+       .xp {
+           margin-top: 10px;
+           width: 95%;
+       }
+       .xp-info {
+
+           font-size:85%;
+           color:#ccc;
+           .next-level-container {
+               float:left;
+           }
+           .current-xp {
+               float: right;
+           }
+       }
+
+   }
+
+}
+.triggers {
+    font-size:150%;
+    font-weight:500;
+    margin-bottom:3px;
+
+    div.small {
+        font-weight: 600;
+        height:50px;
+        padding: 0;
+        padding-right:3px;
         &:last-child {
-            border-right: none;
+            padding-right: 0;
         }
-        border-right:1px solid #262626;
-        border-left:1px solid #3a3a3a;
+        display: inline-block;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+
+        div {
+            display: inline-block;
+            height: 50px;
+            line-height: 2.5;
+        }
+        .icon {
+
+            text-shadow: 1px 1px #222;
+            width:100%;
+            background-color: @box-color;
+            .border-radius(4px);
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            padding-left: 24px;
+            text-align: center;
+
+        }
+    }
+
+    .achievements {
+        .icon {
+
+            background-size: auto 60%;
+            background-image: url(../images/icon-achievement.png);
+        }
+    }
+    .items {
+        .icon {
+            line-height: 2;
+            font-size: 120%;
+            background-size: auto 60%;
+            background-image: url(../images/icon-medal.png);
+        }
+
+    }
+    .awards {
+        .icon {
+            line-height: 2;
+            font-size: 120%;
+            background-size: auto 55%;
+            background-image: url(../images/icon-crown.png);
+
+        }
     }
 }
+.full-profile-link {
+    color:#999;
+    padding-top:20px;
+    text-align: center;
+}
+.account {
+    padding: 8px 15px;
+    height:50px;
+    background-color: @secondary-box-color;
+    font-weight:600;
+    .border-radius(4px);
+    .account-name {
+        float:left;
+        width:50%;
+        font-size:130%;
+        margin-top: 6px;
+
+    }
+    .account-balance {
+        float:right;
+        width:50%;
+        text-align: right;
+        font-size:110%;
+        .bonus {
+            display: block;
+            color:#aaa;
+            font-size: 80%;
+            font-weight:normal;
+            padding-top: 4px;
+        }
+    }
+}
+.navbar-top  {
+    background-color:transparent;
+    font-size: 150%;
+    .nav-item;
+
+    li {
+        text-shadow: 1px 1px #222;
+        a, a:hover {
+            font-family: Arial, san-serif;
+            padding: 23px 20px;
+        }
+        &:first-child {
+            border-left:1px solid #292929
+        }
+        border-right:1px solid #292929;
+        //border-left:1px solid #252525;
+    }
+    li.active {
+        a, a:hover {
+            .border-radius(0px);
+            .linear-gradient(top, #2b2b2b 0%, #292929 100%);
+            color:#e22424;
+
+        }
+        border-right:1px solid #252525;
+        border-left:1px solid #252525;
+    }
+
+
+}
 .navbar-variant {
-    font-size: 140%;
-    background-color:#414141;
+    font-family: Arial,san-serif;
+    font-size: 130%;
+    background: transparent;
     .border-radius(0);
     .nav-item;
     margin-bottom:8px;
-    .box-shadow(0px 1px 3px #222);
+
+    border-top:1px solid #333;
+    border-bottom:1px solid #333;
     li {
         a {
             padding:15px 15px;
         }
         margin: 0;
-        border-right:1px solid #2f2f2f;
-        border-left:1px solid #525252;
+
 
         &:last-child {
             border-right: none;
         }
         &.active {
-            &:after {
-                position: absolute;
-                content: '';
-                width: 0;
-                height: 0;
-                left:50%;
-                border-left: 8px solid transparent;
-                border-right: 8px solid transparent;
-                border-top: 10px solid #414141;
-            }
+
         }
     }
 
 }
 
 .navbar-limits {
-    font-size: 120%;
+    font-size: 110%;
     background-color:transparent;
     .border-radius(0);
     .nav-item;
+    margin-top: -7px;
+    border-bottom:1px solid #333;
 
 }
 
@@ -145,16 +314,40 @@
     tbody {
         tr {
             cursor: pointer;
+
+            &.sit-and-go, &.tournament {
+                td {
+                    font-size: 110%;
+                    line-height: 1.3;
+                }
+            }
             td {
-                line-height: 1.2;
+                line-height: 1.6;
 
                 &.play-text {
                     vertical-align: middle;
                 }
+
+                .lobby-play-button {
+                    background-image: url("../images/play-icon.png");
+                    width:30px;
+                    height: 30px;
+                    background-size: 100%;
+                    background-position: center;
+                    display: block;
+                    float: right;
+                    opacity: 0.4;
+
+                }
             }
 
           &:hover {
-            background-color: #525252;
+            background-color: #252525;
+                td {
+                    .lobby-play-button {
+                        opacity: 1;
+                    }
+                }
           }
         }
     }
@@ -274,7 +467,7 @@ table thead {
     height: 0;
     border:none;
     display: block;
-    margin-bottom:20px;
+
     .transition(height 1s);
 
     &.loaded {

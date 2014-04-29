@@ -720,37 +720,93 @@
         </div>
 
         <div id="lobbyView" class="lobby-container"  style="display:none;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="logo-container">
-                        </div>
-                        <nav class="navbar-inverse currencies">
-                            <div class="filter-group currencies">
-                                <ul id="currencyMenu" class="nav nav-pills">
-                                    <li class="filter-button">
-                                        <a data-i18n="lobby.filters.currency" class="description">Select Currency:</a>
-                                    </li>
-                                </ul>
+            <div class="top-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="logo-container">
                             </div>
-                        </nav>
-                    </div>
-                    <div class="col-sm-4">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe loading" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
-                        <div class="top-promo-loading-container">
-                           <div class="iframe-loading"></div>
+                            <nav class="navbar-inverse currencies">
+                                <div class="filter-group currencies">
+                                    <ul id="currencyMenu" class="nav nav-pills">
+                                        <li class="filter-button">
+                                            <a data-i18n="lobby.filters.currency" class="description">Select Currency:</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="profile">
+                                <div class="row">
+                                    <div class="col-sm-12 user-info-container">
+                                        <div class="user-avatar" style="background-image: url(https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/t1.0-1/c14.14.172.172/s160x160/998060_10151818022256388_551148941_n.jpg);">
 
+                                        </div>
+                                        <div class="user-info">
+                                            <div class="user-name">Hagge</div>
+                                            <div class="level level-6"></div>
+
+                                            <div  class="xp">
+                                                <div class="xp-progress-container">
+                                                    <div  class="bar" style="width: 54.125%;"></div>
+                                                </div>
+                                                <div class="xp-info">
+                                                    <div class="next-level-container">Next level: <span >7</span></div>
+                                                    <div class="current-xp">1733 / 2100</div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row triggers">
+                                <div class="col-sm-6 small achievements">
+                                    <div class="icon value">20/30</div>
+                                </div>
+                                <div class="col-sm-3 small items">
+                                    <div class="icon value">5</div>
+                                </div>
+                                <div class="col-sm-3 small awards">
+                                    <div class="icon value">3</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 account">
+                                    <div class="account-name">Balance USD</div>
+                                    <div class="account-balance">
+                                        $1000.00
+                                        <span class="bonus">Bonus: $145.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 full-profile-link">
+                                    View full profile <span>&raquo;</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="top-promo">
+                                <iframe id="lobbyTopPromotionsIframe" class="lobby-top-promotions-iframe loading" scrolling="no"  marginheight="0" frameBorder="0"></iframe>
+                                <div class="top-promo-loading-container">
+                                    <div class="iframe-loading"></div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div class="row">
+            </div>
 
-                    <div class="col-sm-8">
+            <div class="container">
+                <div class="row full-width">
+                    <div class="col-sm-12 menu-col">
                         <nav class="navbar-inverse navbar-top" role="navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
@@ -762,7 +818,7 @@
                                 <a class="nav-active-item">Cash Games</a>
                             </div>
                             <div class="navbar-collapse navbar-top-collapse collapse">
-                                <ul class="nav nav-pills">
+                                <ul class="nav nav-pills wide-menu">
                                     <li class="active" id="cashGameMenu">
                                         <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
                                             [Cash Games]
@@ -774,6 +830,17 @@
                             </div>
 
                         </nav>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-sm-8">
+
 
                         <nav class="navbar-inverse navbar-variant filter cashgame-filter" role="navigation">
                             <div class="navbar-header">
@@ -803,6 +870,7 @@
                                 <li id="limitsFL"><a>Fixed Limit</a></li>
                             </ul>
                         </nav>
+                        <!--
                         <div class="lobby-checkbox-filter tournament-filter sitandgo-filter">
                             <input class="checkbox" checked="checked" id="registeringOnly" type="checkbox"/>
                             <label class="checkbox-icon-label" for="registeringOnly"  data-i18n="lobby.filters.show-registering">
@@ -820,6 +888,7 @@
                             </label>
 
                         </div>
+                        -->
                           <div id="tableListContainer"></div>
                     </div>
                     <div class="col-sm-4">
@@ -1179,7 +1248,7 @@
         <td class="table-name">{{name}}</td>
         <td class="seated">{{seated}}/{{capacity}}</td>
         <td class="blinds">{{currencyMultiple smallBlind bigBlind '/' currencyCode}}</td>
-        <td class="play-text hidden-phone" ><a class="btn btn-lobby" >{{t "lobby.list.go-to-table"}}</a></td>
+        <td class="play-text hidden-phone"><a class="lobby-play-button"></a></td>
     </tr>
 </script>
 <script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
@@ -1200,7 +1269,7 @@
                 <div class="list-item seated">{{registered}}/{{capacity}}</div>
             </div>
         </td>
-        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
+        <td class="play-text"><a class="lobby-play-button"></a></td>
     </tr>
 </script>
 <script type="text/mustache" id="tournamentListItemTemplate" style="display: none;">
@@ -1221,7 +1290,7 @@
             </div>
         </td>
 
-        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
+        <td class="play-text"><a class="lobby-play-button"></a></td>
     </tr>
 </script>
 <div id="potTransferTemplate" style="display: none;">
