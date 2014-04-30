@@ -741,55 +741,60 @@
                         <div class="col-sm-5">
                             <div class="profile">
                                 <div class="row">
-                                    <div class="col-sm-12 user-info-container">
-                                        <div class="user-avatar" style="background-image: url(https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/t1.0-1/c14.14.172.172/s160x160/998060_10151818022256388_551148941_n.jpg);">
+                                    <div class="col-sm-12">
+                                        <div class="user-info-container">
+                                            <div class="user-avatar profile-avatar" style="background-image: url(https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/t1.0-1/c14.14.172.172/s160x160/998060_10151818022256388_551148941_n.jpg);">
 
-                                        </div>
-                                        <div class="user-info">
-                                            <div class="user-name">Hagge</div>
-                                            <div class="level level-6"></div>
-
-                                            <div  class="xp">
-                                                <div class="xp-progress-container">
-                                                    <div  class="bar" style="width: 54.125%;"></div>
-                                                </div>
-                                                <div class="xp-info">
-                                                    <div class="next-level-container">Next level: <span >7</span></div>
-                                                    <div class="current-xp">1733 / 2100</div>
-                                                </div>
                                             </div>
+                                            <div class="user-info">
+                                                <div class="user-name profile-username"></div>
+                                                <div class="level profile-current-level"></div>
 
+                                                <div  class="xp">
+                                                    <div class="xp-progress-container">
+                                                        <div  class="bar profile-xp-progress"></div>
+                                                    </div>
+                                                    <div class="xp-info">
+                                                        <div class="next-level-container">Next level: <span class="profile-next-level"></span></div>
+                                                        <div class="current-xp profile-current-xp"></div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
 
                             </div>
 
                             <div class="row triggers">
-                                <div class="col-sm-6 small achievements">
-                                    <div class="icon value">20/30</div>
-                                </div>
-                                <div class="col-sm-3 small items">
-                                    <div class="icon value">5</div>
-                                </div>
-                                <div class="col-sm-3 small awards">
-                                    <div class="icon value">3</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 account">
-                                    <div class="account-name">Balance USD</div>
-                                    <div class="account-balance">
-                                        $1000.00
-                                        <span class="bonus">Bonus: $145.00</span>
+                                <div class="col-sm-12">
+                                    <div class="col-sm-6 small achievements">
+                                        <div class="icon value">20/30</div>
+                                    </div>
+                                    <div class="col-sm-3 small items">
+                                        <div class="icon value">5</div>
+                                    </div>
+                                    <div class="col-sm-3 small awards">
+                                        <div class="icon value">3</div>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="row">
-                                <div class="col-sm-12 full-profile-link">
-                                    View full profile <span>&raquo;</span>
+                                <div class="col-sm-12">
+                                    <div class="account">
+                                        <div class="account-name profile-current-balance-name"></div>
+                                        <div class="account-balance profile-account-balance">
+                                            <span class="real-money profile-current-balance">$1000.00</span>
+                                            <span class="bonus profile-current-bonus">Bonus: $145.00</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
+
                         </div>
                         <div class="col-sm-7">
                             <div class="top-promo">
@@ -805,9 +810,9 @@
             </div>
 
             <div class="container">
-                <div class="row full-width">
+                <div class="row">
                     <div class="col-sm-12 menu-col">
-                        <nav class="navbar-inverse navbar-top" role="navigation">
+                        <nav class="navbar-inverse navbar-top full-width" role="navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
                                     <span class="sr-only">Toggle navigation</span>
@@ -914,19 +919,19 @@
             <div id="internalAccountContent">
                 <div class="account-block details" id="account_details">
                     <div class="left">
-                        <div id="accountAvatar" class="player-avatar"></div>
-                        <div id="userLevel" class="level"></div>
+                        <div id="accountAvatar" class="player-avatar profile-avatar"></div>
+                        <div id="userLevel" class="level profile-current-level"></div>
                     </div>
                     <div class="right">
-                        <div id="user_name" class="name"></div>
+                        <div id="user_name" class="profile-username name"></div>
 
                         <div id="xpContainer" class="xp">
                             <div class="xp-progress-container">
-                                <div id="xpProgress" class="bar"></div>
+                                <div id="xpProgress" class="bar profile-xp-progress"></div>
                             </div>
                             <div class="xp-info">
-                                <div class="next-level-container">Next level: <span id="nextLevel"></span></div>
-                                <div class="current-xp" id="currentXp"></div>
+                                <div class="next-level-container">Next level: <span id="nextLevel" class="profile-next-level"></span></div>
+                                <div class="current-xp profile-current-xp" id="currentXp"></div>
                             </div>
                         </div>
                     </div>

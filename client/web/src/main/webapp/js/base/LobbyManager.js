@@ -349,6 +349,7 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     idProperty : "id",
     emptyFilterGroups : null,
     autoHideEmpty : true,
+    changeListener : null,
     init : function(group, lobbyLayoutManager, properties,prefix,idProperty, autoHideEmpty) {
         var self = this;
         if(typeof(autoHideEmpty)!="undefined") {
@@ -377,6 +378,9 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
                 self.currentFilter = el[self.idProperty];
                 $(this).addClass("active");
                 self.filterUpdated();
+                if(self.changeListener!=null){
+                    self.changeListener(el[self.idProperty]);
+                }
             });
             if(self.autoHideEmpty) {
                link.hide();

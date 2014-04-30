@@ -215,8 +215,8 @@
     text-align: center;
 }
 .account {
-    padding: 8px 15px;
-    height:50px;
+    padding: 10px 15px;
+    height:54px;
     background-color: @secondary-box-color;
     font-weight:600;
     .border-radius(4px);
@@ -228,17 +228,38 @@
 
     }
     .account-balance {
+
         float:right;
         width:50%;
         text-align: right;
         font-size:110%;
-        .bonus {
-            display: block;
-            color:#aaa;
-            font-size: 80%;
-            font-weight:normal;
-            padding-top: 4px;
+
+
+        &.with-bonus {
+            .bonus {
+                display: block;
+                color:#aaa;
+                font-size: 80%;
+                font-weight:normal;
+                padding-top: 4px;
+            }
+            .real-money {
+                width:50%;
+                font-size:100%;
+                margin-top: 6px;
+                line-height: 1;
+            }
         }
+        .real-money {
+            width:50%;
+            font-size:110%;
+            margin-top: 15px;
+            line-height: 2;
+        }
+        .bonus {
+            display: none;
+        }
+
     }
 }
 .navbar-top  {
@@ -471,14 +492,14 @@ table thead {
     .transition(height 1s);
 
     &.loaded {
-        height:200px;
+        height:190px;
     }
 }
 
 .top-promo-loading-container {
     width:100%;
     margin: 0;
-    height: 200px;
+    height: 190px;
     font-size:130%;
     div {
         padding-top:80px;

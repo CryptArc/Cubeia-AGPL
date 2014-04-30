@@ -145,6 +145,9 @@ Poker.LobbyLayoutManager = Class.extend({
 
             }
             this.currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code",false);
+            this.currencyFilter.changeListener = function(currency) {
+                Poker.AppCtx.getAccountPageManager().currencyChanged(currency);
+            };
             this.requiredFilters.push(this.currencyFilter);
         } else {
             $(".filter-group.currencies").hide();
