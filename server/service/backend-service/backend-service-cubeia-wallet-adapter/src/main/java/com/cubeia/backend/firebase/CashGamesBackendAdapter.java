@@ -334,7 +334,11 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         } catch (NoSuchAccountException e) {
         	log.info("No operator rake account found for rake entry. Will use system rake account as placeholder. Operator["+operatorId+"] Currency["+currencyCode+"]");
         	accountId = getSystemRakeAccount(currencyCode);
+        } catch (Exception e){
+            log.error("Failed to get rake account for operator "+operatorId + " and " + currencyCode,e);
+            accountId = getSystemRakeAccount(currencyCode);
         }
+
     	return accountId;
     }
     

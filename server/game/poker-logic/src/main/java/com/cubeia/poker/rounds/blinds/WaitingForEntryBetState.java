@@ -34,6 +34,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     @Override
     public boolean entryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
+        if(player==null){
+            log.error("Player "+playerId+" was missing from context when posting entry bet");
+            return false;
+        }
         ActionRequest actionRequest = player.getActionRequest();
         if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.ENTRY_BET)) {
             player.setHasPostedEntryBet(true);
@@ -49,6 +53,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     @Override
     public boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
+        if(player==null){
+            log.error("Player "+playerId+" was missing from context when declining entry bet");
+            return false;
+        }
         ActionRequest actionRequest = player.getActionRequest();
         if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
             blindsRound.entryBetDeclined(player);
@@ -62,6 +70,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     @Override
     public boolean waitForBigBlind(int playerId, PokerContext context, BlindsRound round) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
+        if(player==null){
+            log.error("Player "+playerId+" was missing from context when waiting for big blind");
+            return false;
+        }
         ActionRequest actionRequest = player.getActionRequest();
         if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.WAIT_FOR_BIG_BLIND)) {
             round.askForNextEntryBetOrFinishBlindsRound();
@@ -75,6 +87,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     @Override
     public boolean deadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
+        if(player==null){
+            log.error("Player "+playerId+" was missing from context when posting dead small blind");
+            return false;
+        }
         ActionRequest actionRequest = player.getActionRequest();
         if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
@@ -92,7 +108,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     @Override
     public boolean bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
-
+        if(player==null){
+            log.error("Player "+playerId+" was missing from context when posted big plus small dead blind");
+            return false;
+        }
         ActionRequest actionRequest = player.getActionRequest();
         if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
