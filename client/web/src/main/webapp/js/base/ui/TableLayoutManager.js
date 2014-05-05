@@ -152,6 +152,19 @@ Poker.TableLayoutManager = Class.extend({
             this.tableView.addClass("variant-crazy-pineapple");
         }
     },
+    updateName : function(name) {
+        if(this.tournamentTable==true) {
+            var view = Poker.AppCtx.getViewManager().findViewByTableId(this.tableId);
+            if(view){
+                view.updateName(name + " table");
+            }
+        }
+    },
+    updateCapacity : function(capacity){
+        $("#seatContainer-"+this.tableId).removeClass("table-"+this.capacity).addClass("table-"+capacity);
+        this.capacity = capacity;
+        this._calculateSeatPositions();
+    },
     onChatMessage : function(player, message) {
         this.chatLog.appendChatMessage(player,message);
         if(this.chatLog.messagesRead == false) {

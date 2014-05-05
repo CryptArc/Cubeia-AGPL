@@ -478,7 +478,7 @@ Poker.TableManager = Class.extend({
      * @param variant
      * @param  currency
      */
-    notifyGameStateUpdate : function(tableId, capacity, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
+    notifyGameStateUpdate : function(tableId, capacity, newBlinds, secondsToNextLevel,betStrategy, variant, currency,name) {
         console.log("Seconds to next level: " + secondsToNextLevel);
         console.log("notifyGameStateUpdate = " + betStrategy);
         var table = this.getTable(tableId);
@@ -489,10 +489,24 @@ Poker.TableManager = Class.extend({
         table.currency = currency;
         this.notifyBlindsUpdated(tableId, newBlinds, currency, secondsToNextLevel);
         this.notifyVariantUpdated(tableId,variant);
+        this.updateName(tableId,name);
+        this.updateCapacity(tableId, capacity);
+    },
+    updateCapacity : function(tableId, capacity) {
+        var table = this.getTable(tableId);
+        if(table.getLayoutManager().capacity != capacity) {
+            table.capacity = capacity;
+            table.getLayoutManager().updateCapacity(capacity);
+
+        }
     },
     notifyVariantUpdated : function(tableId,variant) {
         var table = this.getTable(tableId);
         table.getLayoutManager().updateVariant(variant);
+    },
+    updateName : function(tableId,name) {
+        var table = this.getTable(tableId);
+        table.getLayoutManager().updateName(name);
     },
     notifyBlindsUpdated : function(tableId, newBlinds, currency, secondsToNextLevel) {
         console.log("Seconds to next level: " + secondsToNextLevel);
