@@ -260,7 +260,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
         int tournamentId = snapshot.getTournamentId();
         int secondsToNextLevel = secondsToNextLevel(snapshot.getBlindsLevel());
         String name = table.getMetaData().getName();
+        if (tournamentId > 0) {
+        	name = state.getSettings().getTableName();
+        }
         int capacity = state.getSettings().getTableSize();
+        log.info("----------- GAME STATE TABLE NAME: "+name+", Capacity: "+capacity);
         Enums.Variant variant = convertVariant(state.getSettings().getVariant());
         GameState gs = new GameState(name, capacity, tournamentId, handStartInfo, blindsLevel, secondsToNextLevel, betStrategy,currency,variant);
         sendPrivatePacket(playerId, gs);

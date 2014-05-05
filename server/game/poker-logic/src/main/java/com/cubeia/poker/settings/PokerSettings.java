@@ -17,17 +17,15 @@
 
 package com.cubeia.poker.settings;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Map;
+
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.timing.TimingProfile;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.Map;
 
 public class PokerSettings implements Serializable {
 
@@ -54,6 +52,8 @@ public class PokerSettings implements Serializable {
     private final PokerVariant variant;
 
     private long sitoutTimeLimitMilliseconds = 5 * 60 * 1000;
+
+	private String tableName;
 
     public PokerSettings(PokerVariant variant, BlindsLevel blindsLevel, BetStrategyType betStrategyType, BigDecimal minBuyIn, BigDecimal maxBuyIn, TimingProfile timing,
             int tableSize, RakeSettings rakeSettings, Currency currency, Map<Serializable, Serializable> attributes) {
@@ -136,4 +136,12 @@ public class PokerSettings implements Serializable {
     public PokerVariant getVariant() {
         return variant;
     }
+    
+    public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 }
