@@ -136,7 +136,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="target/filtered-resources/WEB-INF/pages/"/>
+                                <mkdir dir="target/filtered-resources/WEB-INF/page/"/>
                             </tasks>
                         </configuration>
                         <goals>
