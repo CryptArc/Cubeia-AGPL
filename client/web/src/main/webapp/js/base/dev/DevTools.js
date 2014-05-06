@@ -9,14 +9,15 @@ Poker.DevTools = Class.extend({
     cardIdSeq : 0,
     mockEventManager : null,
     variant : null,
-    TEXAS_HOLDEM : { numCards : 3, id : 0},
+    TEXAS_HOLDEM : { numCards : 2, id : 0},
+    OMAHA : { numCards : 4, id : 5},
     TELESINA : { numCards : 5, id:  1},
-    capacity : 10,
+    capacity : 8,
 
     init : function() {
         var self = this;
         this.initCards();
-        this.variant = this.TELESINA;
+        this.variant = this.OMAHA;
     },
     initCards : function() {
        var suits = "hsdc ";
@@ -44,6 +45,7 @@ Poker.DevTools = Class.extend({
                 templateManager,capacity,new Poker.SoundManager());
 
             self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
+            self.tableManager.updateCapacity(self.tableId,capacity);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             //new Poker.PositionEditor("#tableView-"+self.tableId);
             tableLayoutManager.updateVariant(self.variant.id);
@@ -76,7 +78,7 @@ Poker.DevTools = Class.extend({
                 bl.bigBlind = "1";
                 bl.smallBlind = "0.5";
                 bl.isBreak = false;
-                self.tableManager.notifyGameStateUpdate(self.tableId,10, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT,self.variant.id,null);
+                self.tableManager.notifyGameStateUpdate(self.tableId,capacity, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT,self.variant.id,null);
             }));
         this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){
