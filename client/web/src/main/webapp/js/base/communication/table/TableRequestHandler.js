@@ -34,8 +34,11 @@ Poker.TableRequestHandler = Class.extend({
         this.connector = Poker.AppCtx.getConnector();
         this.tableManager = Poker.AppCtx.getTableManager();
     },
-    joinTable : function() {
-        this.connector.joinTable(this.tableId, -1);
+    joinTable : function(seat) {
+        if(typeof(seat)=="undefined") {
+            seat = -1;
+        }
+        this.connector.joinTable(this.tableId, seat);
     },
 
     openTableWithName : function(capacity,name){

@@ -262,6 +262,11 @@ Poker.TableLayoutManager = Class.extend({
         if (!active) {
             seat.addClass("seat-inactive");
         }
+        var self = this;
+        seat.off().touchSafeClick(function(){
+            new Poker.TableRequestHandler(self.tableId).joinTable(seatId);
+        });
+
     },
     onBuyInCompleted : function() {
         this.buyInDialog.close();
@@ -304,6 +309,7 @@ Poker.TableLayoutManager = Class.extend({
         } else {
 
             elementId = "seat"+seatId+"-"+this.tableId;
+            $("#"+elementId).off();
             seat = new Poker.Seat(elementId, seatId, player, this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
             seat.setCardsAlignment(self._getNormalizedSeatPosition(seatId),self.capacity);
