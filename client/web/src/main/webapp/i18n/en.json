@@ -269,6 +269,10 @@
             "header" : "Message",
             "message" : "This tournament is now closed."
         },
+        "free-check" : {
+            "header" : "Are you sure you want to fold?",
+            "message" : "You are about to fold when it's free to check"
+        },
         "tournament-register-success" : {
             "header" : "Message",
             "message" : "You successfully registered to tournament %s"

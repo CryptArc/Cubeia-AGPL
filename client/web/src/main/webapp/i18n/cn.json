@@ -264,6 +264,10 @@
             "header" : "信息",
             "message" : "比赛已关闭"
         },
+        "free-check" : {
+            "header" : "Are you sure you want to fold?",
+            "message" : "You are about to fold when it's free to check"
+        },
         "tournament-register-success" : {
             "header" : "信息",
             "message" : "您已成功注 %s 比赛"

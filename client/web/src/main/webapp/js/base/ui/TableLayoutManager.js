@@ -43,6 +43,7 @@ Poker.TableLayoutManager = Class.extend({
     tournamentTable : false,
     active : true,
     profileUpdateHandler : null,
+    freeCheck : false,
 
     /**
      *
@@ -87,6 +88,7 @@ Poker.TableLayoutManager = Class.extend({
 
         var actionCallback = function(actionType,amount){
            self.handleAction(actionType,amount);
+
 
         };
         this.buyInDialog = new Poker.BuyInDialog();
@@ -189,6 +191,17 @@ Poker.TableLayoutManager = Class.extend({
         } else if (actionType.id == Poker.ActionType.DISCARD.id) {
             var discards = this.seats.get(this.myPlayerSeatId).hand.getDiscards();
             new Poker.PokerRequestHandler(this.tableId).sendDiscards(discards);
+            return;
+        } else if(this.freeCheck==true && actionType.id == Poker.ActionType.FOLD.id) {
+            Poker.AppCtx.getDialogManager().displayGenericDialog({
+                container : self.tableView,
+                translationKey : "free-check",
+                displayCancelButton : true,
+                okButtonText: "Fold"
+            }, function(){
+                new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
+                return true;
+            });
             return;
         }
         new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
@@ -541,16 +554,30 @@ Poker.TableLayoutManager = Class.extend({
                 seats[s].inactivateSeat();
             }
         }
+
         var seat = this.getSeatByPlayerId(player.id);
+        if(player.id == Poker.MyPlayer.id){
+            this.calculateFreeCheck(allowedActions);
+        }
         var autoHandled = seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
         if(autoHandled==false && player.id == Poker.MyPlayer.id && !this.active) {
             this.playSound(Poker.Sounds.TIME_WARNING_FIRST,true);
         }
     },
+    calculateFreeCheck : function(allowedActions){
+        for(var i = 0; i<allowedActions.length; i++) {
+            var act = allowedActions[i];
+            if(act.type.id == Poker.ActionType.CHECK.id)  {
+                this.freeCheck = true;
+                return;
+            }
+        }
+        this.freeCheck = false;
+    },
     isDiscardRound : function(allowedActions) {
         for(var i = 0; i<allowedActions.length; i++) {
             var act = allowedActions[i];
-            if(act.type.id == Poker.ActionType.DISCARD)  {
+            if(act.type.id == Poker.ActionType.DISCARD.id)  {
                 return true;
             }
         }
