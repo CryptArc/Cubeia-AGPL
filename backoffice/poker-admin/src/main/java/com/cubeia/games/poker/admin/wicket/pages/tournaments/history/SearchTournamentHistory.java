@@ -41,7 +41,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class SearchTournamentHistory extends BasePage {
 
     private static final Logger log = LoggerFactory.getLogger(SearchTournamentHistory.class);

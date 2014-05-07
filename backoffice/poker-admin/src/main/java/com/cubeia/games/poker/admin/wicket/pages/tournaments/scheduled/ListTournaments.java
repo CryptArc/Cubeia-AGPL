@@ -46,7 +46,7 @@ import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
  */
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ListTournaments extends BasePage {
 
 	private static final long serialVersionUID = 1L;

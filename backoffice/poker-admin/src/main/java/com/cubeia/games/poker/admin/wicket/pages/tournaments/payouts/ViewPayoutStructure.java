@@ -25,7 +25,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import com.cubeia.games.poker.admin.service.PayoutStructureViewHelper;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ViewPayoutStructure extends BasePage {
 
 	private static final long serialVersionUID = 1L;

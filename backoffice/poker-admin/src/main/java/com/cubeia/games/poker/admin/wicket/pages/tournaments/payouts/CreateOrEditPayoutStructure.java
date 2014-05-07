@@ -42,7 +42,7 @@ import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class CreateOrEditPayoutStructure extends BasePage {
 
     private static final Logger log = LoggerFactory.getLogger(CreateOrEditPayoutStructure.class);

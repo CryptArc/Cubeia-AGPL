@@ -18,7 +18,7 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.poker.settings.RakeSettings;
 
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class CreateRake extends BasePage {
 
 	private static final long serialVersionUID = 1L;

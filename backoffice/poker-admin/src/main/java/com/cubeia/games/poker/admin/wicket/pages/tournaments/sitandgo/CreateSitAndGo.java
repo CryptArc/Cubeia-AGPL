@@ -33,7 +33,7 @@ import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class CreateSitAndGo extends BasePage {
 
     private static final transient Logger log = LoggerFactory.getLogger(CreateSitAndGo.class);

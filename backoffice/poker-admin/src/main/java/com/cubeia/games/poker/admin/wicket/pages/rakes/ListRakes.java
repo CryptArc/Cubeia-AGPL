@@ -34,7 +34,7 @@ import com.cubeia.poker.settings.RakeSettings;
 /**
  * Page for listing all rake configurations.
  */
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ListRakes extends BasePage {
 
 	private static final long serialVersionUID = 1L;
