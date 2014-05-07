@@ -521,7 +521,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             User userById = userService.getUserById(playerId);
             operatorId = userById.getOperatorId().intValue();
         } else {
-            log.debug("Operator id not found int client registry for player " + playerId);
+            log.debug("Operator id not found in client registry for player " + playerId);
         }
         return operatorId;
     }
