@@ -51,7 +51,7 @@ import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ShowTournament extends BasePage {
 
     private static final Logger log = Logger.getLogger(ShowTournament.class);

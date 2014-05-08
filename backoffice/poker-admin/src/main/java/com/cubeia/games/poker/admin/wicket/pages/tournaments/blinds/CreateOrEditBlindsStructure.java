@@ -46,7 +46,7 @@ import com.cubeia.network.shared.web.wicket.list.ListEditor;
 import com.cubeia.network.shared.web.wicket.list.RemoveButton;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class CreateOrEditBlindsStructure extends BasePage {
 
     @SpringBean(name = "adminDAO")

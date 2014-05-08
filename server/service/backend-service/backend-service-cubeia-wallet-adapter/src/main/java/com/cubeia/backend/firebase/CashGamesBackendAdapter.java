@@ -29,6 +29,9 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.cubeia.backoffice.users.api.dto.User;
+import com.cubeia.backoffice.users.client.UserServiceClient;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,11 +122,16 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     protected DomainEventsService domainEventService;
 
-    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil, PublicClientRegistryService clientRegistry, DomainEventsService domainEventService) throws SystemException {
+    protected UserServiceContract userService;
+
+    public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil,
+                                   PublicClientRegistryService clientRegistry, DomainEventsService domainEventService,
+                                   UserServiceContract userService) throws SystemException {
         this.walletService = walletService;
         this.accountLookupUtil = accountLookupUtil;
         this.clientRegistry = clientRegistry;
 		this.domainEventService = domainEventService;
+        this.userService = userService;
     }
 
     @Override
@@ -508,6 +516,13 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     }
     
     private Integer getOperatorId(int playerId) {
-    	return clientRegistry.getOperatorId(playerId);
+        Integer operatorId = clientRegistry.getOperatorId(playerId);
+        if(operatorId==null){
+            User userById = userService.getUserById(playerId);
+            operatorId = userById.getOperatorId().intValue();
+        } else {
+            log.debug("Operator id not found in client registry for player " + playerId);
+        }
+        return operatorId;
     }
 }

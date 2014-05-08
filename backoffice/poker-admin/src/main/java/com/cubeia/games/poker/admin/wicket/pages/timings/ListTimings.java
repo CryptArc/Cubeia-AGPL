@@ -34,7 +34,7 @@ import com.cubeia.poker.timing.TimingProfile;
 /**
  * Page for listing all timing configurations.
  */
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ListTimings extends BasePage {
 
 	private static final long serialVersionUID = 1L;

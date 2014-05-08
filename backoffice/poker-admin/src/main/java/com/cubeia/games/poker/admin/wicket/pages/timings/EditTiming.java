@@ -17,7 +17,7 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.poker.timing.TimingProfile;
 
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class EditTiming extends BasePage {
 
 	private static final long serialVersionUID = 1L;

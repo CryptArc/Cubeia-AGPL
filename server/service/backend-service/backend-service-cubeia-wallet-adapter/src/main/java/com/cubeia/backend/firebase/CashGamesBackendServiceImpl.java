@@ -18,6 +18,7 @@
 package com.cubeia.backend.firebase;
 
 import com.cubeia.backend.cashgame.CashGamesBackend;
+import com.cubeia.backoffice.users.client.UserServiceClient;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -25,6 +26,7 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.domainevents.api.DomainEventsService;
 
@@ -59,9 +61,10 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
         WalletServiceContract walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
         PublicClientRegistryService clientRegistry = con.getParentRegistry().getServiceInstance(PublicClientRegistryService.class);
         DomainEventsService domainEventService = con.getParentRegistry().getServiceInstance(DomainEventsService.class);
+        UserServiceContract userService = con.getParentRegistry().getServiceInstance(UserServiceContract.class);
         closeOpenSessionAccounts(walletService);
         accountLookupUtil = new AccountLookupUtil(walletService);
-		adapter = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService);
+		adapter = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService,userService);
     }
 
     private void closeOpenSessionAccounts(WalletServiceContract walletService) {

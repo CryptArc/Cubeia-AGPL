@@ -57,7 +57,7 @@ import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.*;
 /**
  * Page for searching for and viewing hand histories.
  */
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class HandHistory extends BasePage {
 
     private static final Logger log = LoggerFactory.getLogger(HandHistory.class);
