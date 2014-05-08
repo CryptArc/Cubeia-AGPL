@@ -80,8 +80,7 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
     }
 
     private PokerSettings createSettings(Table table, TournamentTableSettings tableSettings, String externalTableId) {
-        // int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
-        int numberOfSeats = tableSettings.getSeatsPerTable();
+        int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), BigDecimal.ZERO, BigDecimal.ZERO); // No rake in tournaments.
         BlindsLevel level = new BlindsLevel(new BigDecimal(-1), new BigDecimal(-1), new BigDecimal(-1)); // Blinds will be sent later.
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
