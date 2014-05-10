@@ -412,7 +412,8 @@ Poker.TableLayoutManager = Class.extend({
             this.tableInfoElement.show();
             this.tableInfoElement.find(".table-blinds-value").html(Poker.Utils.formatCurrency(level.smallBlind) +
                 "/" + Poker.Utils.formatCurrency(level.bigBlind));
-            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))),currency);
+            var bigBlind = Math.floor(parseFloat(level.bigBlind.replace(",",""))*100)/100;
+            this.myActionsManager.setBigBlind(bigBlind,currency);
 
         }
     },

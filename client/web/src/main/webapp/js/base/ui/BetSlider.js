@@ -31,6 +31,8 @@ Poker.BetSlider = Class.extend({
     triggerChange : true,
     betCallback : null,
     step : 1,
+    markerContainer : null,
+    containerElement : null,
     init : function(tableId,containerId,betCallback,step) {
        this.markers = [];
        this.valueOutputs =  $(".slider-value");
@@ -49,13 +51,16 @@ Poker.BetSlider = Class.extend({
         this.currentBetAmount = this.minBet;
         var container = $("#"+this.containerId);
         container.remove();
-        container = $("<div/>").attr("id",this.containerId).addClass("poker-slider");
+        $("#tableView-"+this.tableId + " .bottom-bar .marker-container").remove();
+        container = $("<div/>").attr("id",this.containerId).addClass("slider-container");
+        var sliderElement = $("<div/>").addClass("poker-slider");
+
         var betInputId = "betInput"+this.tableId;
         $("#"+betInputId).off().remove();
-
         var betInput = $("<input/>").attr("id",betInputId).attr("type","text").addClass("bet-input");
+        container.append(sliderElement).append(betInput);
 
-        $("#tableView-"+this.tableId).append(container).append(betInput);
+        $("#tableView-"+this.tableId + " .bottom-bar").append(container);
         this.betInput = $("#"+betInputId);
         this.betInput.on("keyup",function(e){
             var val = parseFloat($.trim($(this).val()));
@@ -74,7 +79,7 @@ Poker.BetSlider = Class.extend({
         });
         this.betInput.blur();
 
-
+         this.containerElement = container;
 
         var sliderMouseDown = function (e) { // disable clicks on track
             var sliderHandle =  self.slider.find('.ui-slider-handle');
@@ -93,12 +98,12 @@ Poker.BetSlider = Class.extend({
             }
         };
 
-        container.on('mousedown', sliderMouseDown).on('touchstart', sliderMouseDown);
+        sliderElement.on('mousedown', sliderMouseDown).on('touchstart', sliderMouseDown);
 
-        this.slider = container.slider({
+        this.slider = sliderElement.slider({
                 animate: true,
                 range: "min",
-                orientation: "vertical",
+                orientation: "horizontal",
                 value: self.minBet,
                 max: self.maxBet,
                 min: 0,
@@ -122,18 +127,25 @@ Poker.BetSlider = Class.extend({
 
             });
 
+
+        var markerContainer = $("<div/>").addClass("marker-container");
+        this.markers.sort(function(a,b){
+           return a.value - b.value;
+        });
         $.each(this.markers,function(i,m){
             var value = m.value;
             var marker = m.name;
             var percent = 100-Math.round(100*(value/self.maxBet))-2;
 
 
-            var div = $("<div/>").append(marker).addClass("marker").css("top", percent+"%");
-            container.append(div);
+            var div = $("<div/>").append(marker).addClass("marker");
+            markerContainer.append(div);
             div.touchSafeClick(function(e){
                 self.slider.slider("value",value);
             });
         });
+        $("#tableView-"+this.tableId + " .bottom-bar").append(markerContainer);
+        this.markerContainer = markerContainer;
         this.handleChangeValue(null,this.minBet);
     },
     betAmountInRange : function(value) {
@@ -202,6 +214,12 @@ Poker.BetSlider = Class.extend({
       }
     },
     hide : function() {
+        if(this.markerContainer) {
+            this.markerContainer.hide();
+        }
+        if(this.containerElement) {
+            this.containerElement.hide();
+        }
         if(this.slider) {
             this.slider.hide();
         }

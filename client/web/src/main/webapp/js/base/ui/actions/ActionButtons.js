@@ -7,16 +7,15 @@ var Poker = Poker || {};
  */
 Poker.ActionButtons = Poker.AbstractTableButtons.extend({
 
-    doBetActionButton : null,
-    doRaiseActionButton : null,
     cancelBetActionButton : null,
     fixedBetActionButton : null,
     fixedRaiseActionButton : null,
 
     init : function(view, actionCallback, raiseCallback, betCallback, amountCallback, cancelCallback) {
         this._super(view,actionCallback);
-        this._addActionButton($(".action-bet",view),Poker.ActionType.BET,betCallback ,false);
-        this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,raiseCallback,false);
+
+        this._addBetAmountButton($(".action-bet",view),Poker.ActionType.BET,actionCallback,amountCallback);
+        this._addBetAmountButton($(".action-raise",view),Poker.ActionType.RAISE,actionCallback,amountCallback);
 
         this._addActionButton($(".action-bring-in",view),Poker.ActionType.BRING_IN,actionCallback ,true);
         this._addActionButton($(".action-check", view), Poker.ActionType.CHECK, actionCallback, false);
@@ -29,16 +28,6 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this._addActionButton($(".action-decline-rebuy", view), Poker.ActionType.DECLINE_REBUY, actionCallback, true);
         this._addActionButton($(".action-add-on", view), Poker.ActionType.ADD_ON, actionCallback, true);
         this._addActionButton($(".action-discard", view), Poker.ActionType.DISCARD, actionCallback, true);
-
-
-        //we can't put it in actionButtons since it's a duplicate action
-        this.doBetActionButton = new Poker.BetAmountButton($(".do-action-bet",view),
-            Poker.ActionType.BET,actionCallback,true,amountCallback);
-        this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),
-            Poker.ActionType.RAISE,actionCallback,true,amountCallback);
-        this.cancelBetActionButton = new Poker.ActionButton($(".action-cancel-bet",view),null,function(){
-            cancelCallback();
-        },false);
 
         this.fixedBetActionButton = new Poker.ActionButton($(".fixed-action-bet",view),Poker.ActionType.BET,actionCallback,true);
         this.fixedRaiseActionButton = new Poker.ActionButton($(".fixed-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
@@ -54,11 +43,17 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         }
         this.buttons.put(actionType.id, button);
     },
+    _addBetAmountButton : function(button,action, actionCallback, amountCallback) {
+        var button = new Poker.BetAmountButton(button, action ,actionCallback,false,amountCallback);
+        this.buttons.put(action.id, button);
+    },
     betOrRaise : function(){
-        if(this.doBetActionButton.isVisible()){
-            this.doBetActionButton.click();
+        var button = this.buttons.get(Poker.ActionType.BET.id);
+        if(button.isVisible()){
+            button.click();
         } else {
-            this.doRaiseActionButton.click();
+            button = this.buttons.get(Poker.ActionType.RAISE.id);
+            button.click();
         }
     },
     hideAll : function() {
@@ -70,9 +65,6 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
             }
             buttons[a].el.hide();
         }
-        this.cancelBetActionButton.hide();
-        this.doBetActionButton.hide();
-        this.doRaiseActionButton.hide();
         this.fixedBetActionButton.hide();
         this.fixedRaiseActionButton.hide();
     },

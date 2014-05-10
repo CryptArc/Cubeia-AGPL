@@ -230,6 +230,13 @@ Poker.MyActionsManager  = Class.extend({
     },
     showActionButtons : function(actions, mainPot, fixedLimit) {
         this.userActionsContainer.show();
+        for(var i = 0; i<actions.length; i++) {
+            var type = actions[i].type;
+            if(type == Poker.ActionType.BET || type == Poker.ActionType.RAISE) {
+                this.showSlider(actions[i].minAmount,actions[i].maxAmount,mainPot);
+                break;
+            }
+        }
         this.actionButtons.showButtons(actions, mainPot, fixedLimit);
     },
     showRebuyButtons : function(rebuyCost, chipsForRebuy) {
