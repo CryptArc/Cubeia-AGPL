@@ -26,7 +26,7 @@ Poker.DynamicHand = Class.extend({
     align : 0,
     useTransform : true,
     myPlayer : false,
-
+    tableId : -1,
     alignments : {
         "2" : [0,0],
         "5" : [0,-1,0,0,1],
@@ -36,24 +36,27 @@ Poker.DynamicHand = Class.extend({
         "9" : [0,-1,-1,-1,0,0,1,1,1],
         "10" :[0,-1,-1,-1,-1,0,1,1,1,1]
     },
-    init : function(handContainer, myPlayer) {
+    init : function(handContainer, myPlayer, tableId) {
 
         this.handContainer = handContainer;
         this.myPlayer = myPlayer;
+        this.tableId = tableId;
         this.hoverCards = [];
         this.calculateCardDimensions();
         this.setup();
         var self = this;
         this.calculateWidth();
         $(window).on('resizeEnd',function(){
-            self.calculateWidth();
-            self.updateCardPositions();
+            setTimeout(function(){
+                self.calculateWidth();
+                self.calculateCardDimensions();
+                self.updateCardPositions();
+            },50);
         });
     },
     calculateWidth : function() {
         var fraction = this.myPlayer ? 0.2 : 0.11;
-        var containerWidth = $(".table-container").width();
-        console.log("container width=" + containerWidth);
+        var containerWidth = $("#tableView-"+this.tableId).width();
         this.width = Math.floor(containerWidth*fraction);
     },
     setAlignment : function(pos,capacity) {

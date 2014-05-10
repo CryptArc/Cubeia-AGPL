@@ -310,7 +310,7 @@ Poker.TableLayoutManager = Class.extend({
 
             elementId = "seat"+seatId+"-"+this.tableId;
             $("#"+elementId).off();
-            seat = new Poker.Seat(elementId, seatId, player, this.animationManager);
+            seat = new Poker.Seat(this.tableId, elementId, seatId, player, this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
             seat.setCardsAlignment(self._getNormalizedSeatPosition(seatId),self.capacity);
             this.seats.put(seatId,seat);

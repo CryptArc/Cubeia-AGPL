@@ -30,7 +30,9 @@ Poker.Seat = Class.extend({
     hand : null,
     alignCards : 0,
     chatManager : null,
-    init: function(elementId, seatId, player, animationManager) {
+    tableId : null,
+    init: function(tableId, elementId, seatId, player, animationManager) {
+        this.tableId = tableId;
         this.animationManager = animationManager;
         this.seatId = seatId;
         this.player = player;
@@ -60,7 +62,7 @@ Poker.Seat = Class.extend({
         this.levelElement = this.seatElement.find(".player-level");
         this.awardElement = this.seatElement.find(".player-award");
         this.itemElement = this.seatElement.find(".player-item");
-        this.hand = new Poker.DynamicHand(this.cardsContainer,false);
+        this.hand = new Poker.DynamicHand(this.cardsContainer,false, this.tableId);
         var self = this;
         this.avatarElement.click(function(e){
             var items = null;
