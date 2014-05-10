@@ -87,6 +87,14 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
         SitAndGoConfiguration omaha = createSitAndGoConfiguration("2 Players Omaha", 2, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.OMAHA);
         omaha.getConfiguration().setBetStrategy(BetStrategyType.NO_LIMIT);
         requestedTournaments.put("2 Players Omaha", omaha);
+
+
+        SitAndGoConfiguration multiTableShortHanded = createSitAndGoConfiguration("5 Plr Mtt Holdem", 5, getRegistry().getTimingProfile("DEFAULT"), payouts, PokerVariant.TEXAS_HOLDEM);
+        multiTableShortHanded.getConfiguration().setBetStrategy(BetStrategyType.NO_LIMIT);
+        multiTableShortHanded.getConfiguration().setSeatsPerTable(5);
+        multiTableShortHanded.getConfiguration().setMaxPlayers(20);
+        multiTableShortHanded.getConfiguration().setMinPlayers(20);
+        requestedTournaments.put("2 Plr Mtt Holdem", multiTableShortHanded);
     }
 
     private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings, PayoutStructure payoutStructure,PokerVariant variant) {
