@@ -29,9 +29,6 @@ describe("Poker.ActionButtonsTest", function(){
         for(var x in actionTypes) {
             expect(actionButtons.getButton(actionTypes[x]).el.is(":visible")).toBeFalsy();
         }
-        expect(actionButtons.doBetActionButton.el.is(":visible")).toBeFalsy();
-        expect(actionButtons.doRaiseActionButton.el.is(":visible")).toBeFalsy();
-        expect(actionButtons.cancelBetActionButton.el.is(":visible")).toBeFalsy();
         expect(actionButtons.fixedBetActionButton.el.is(":visible")).toBeFalsy();
         expect(actionButtons.fixedRaiseActionButton.el.is(":visible")).toBeFalsy();
 

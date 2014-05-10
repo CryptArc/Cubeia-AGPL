@@ -1371,17 +1371,7 @@
                     <span class="amount"></span>
                     <span>{{t "table.buttons.small-blind"}}</span>
                 </div>
-                <div class="action-button action-cancel-bet" style="display:none;">
-                    <span>{{t "table.buttons.cancel"}}</span>
-                </div>
-                <div class="action-button do-action-bet" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>{{t "table.buttons.bet"}}</span>
-                </div>
-                <div class="action-button do-action-raise" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>{{t "table.buttons.raise-to"}}</span>
-                </div>
+
                 <div class="action-button fixed-action-bet" style="display:none;">
                     <span class="amount"></span>
                     <span>{{t "table.buttons.bet"}}</span>

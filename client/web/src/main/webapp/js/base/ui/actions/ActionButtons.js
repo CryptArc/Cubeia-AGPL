@@ -11,7 +11,7 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
     fixedBetActionButton : null,
     fixedRaiseActionButton : null,
 
-    init : function(view, actionCallback, raiseCallback, betCallback, amountCallback, cancelCallback) {
+    init : function(view, actionCallback, raiseCallback, betCallback, amountCallback) {
         this._super(view,actionCallback);
 
         this._addBetAmountButton($(".action-bet",view),Poker.ActionType.BET,actionCallback,amountCallback);
