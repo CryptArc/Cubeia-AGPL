@@ -23,7 +23,8 @@ describe("Poker.TableLayoutManager Test", function(){
         mockSeatPos : -1,
         seatId : -1,
         player : null,
-        init : function(elementId, seatId, player, templateManager, animationManager) {
+        tableId : -1,
+        init : function(tableId, elementId, seatId, player, templateManager, animationManager) {
             this.seatId = seatId;
             this.player = player;
         },
@@ -38,7 +39,7 @@ describe("Poker.TableLayoutManager Test", function(){
     });
     var MockMyPlayerSeat = MockSeat.extend({
         init : function(tableId,elementId, seatId, player, templateManager, myActionsManager, animationManager) {
-            this._super(elementId, seatId, player, templateManager, animationManager);
+            this._super(tableId, elementId, seatId, player, templateManager, animationManager);
         },
         isMySeat : function(){return true;}
     });

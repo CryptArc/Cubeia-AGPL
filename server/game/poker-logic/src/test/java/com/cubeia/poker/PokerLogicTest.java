@@ -530,7 +530,7 @@ public class PokerLogicTest extends GuiceTest {
         int[] p = TestUtils.createPlayerIdArray(mp);
         addPlayers(state, mp);
 
-        state.removePlayer(p[1]);
+        state.removePlayer(p[1], false);
 
         // Force start
         state.timeout();

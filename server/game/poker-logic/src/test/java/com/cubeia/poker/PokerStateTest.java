@@ -17,6 +17,32 @@
 
 package com.cubeia.poker;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.betting.BetStrategyType;
@@ -34,24 +60,6 @@ import com.cubeia.poker.states.StateChanger;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PokerStateTest {
 
@@ -84,7 +92,8 @@ public class PokerStateTest {
         when(settings.getCurrency()).thenReturn(new Currency("EUR",2));
         when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
-
+        when(settings.getRatholingTimeOutMinutes()).thenReturn(60L);
+        
         state.setServerAdapter(serverAdapter);
         state.init(gameType, settings);
         state.pokerContext.settings = settings;
@@ -332,5 +341,32 @@ public class PokerStateTest {
         Collection<PokerPlayer> players = captor.getValue();
         assertThat(players.size(), is(1));
         assertThat(players, hasItem(player1));
+    }
+    
+    @Test
+    public void testLeavingBalanceSet() {
+    	PokerPlayer player1 = mock(PokerPlayer.class);
+    	when(player1.getId()).thenReturn(1);
+    	int pid = player1.getId();
+    	when(player1.getBalance()).thenReturn(new BigDecimal("12.50"));
+    	
+    	state.addPlayer(player1);
+    	
+		state.setLeavingBalance(pid, new BigDecimal("12.50"));
+		assertThat(state.getLeavingBalance(44433), is(BigDecimal.ZERO));
+    	assertThat(state.getLeavingBalance(pid), is(new BigDecimal("12.50")));
+    	
+    	state.clearLeavingBalance(pid);
+    	assertThat(state.getLeavingBalance(pid), is(BigDecimal.ZERO));
+    }
+    
+    @Test
+    public void testTournamentLeavingBalanceNotSet() {
+    	PokerPlayer player1 = mock(PokerPlayer.class);
+    	int pid = player1.getId();
+    	when(player1.getBalance()).thenReturn(new BigDecimal("12.50"));
+    	
+    	state.addPlayer(player1);
+		assertThat(state.getLeavingBalance(pid), is(BigDecimal.ZERO));
     }
 }

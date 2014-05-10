@@ -16,6 +16,20 @@
  */
 package com.cubeia.poker;
 
+import static java.util.Collections.singleton;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
@@ -36,18 +50,8 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-
-import static java.util.Collections.singleton;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -98,6 +102,8 @@ public class PokerState implements Serializable, IPokerState {
     protected PokerContext pokerContext;
 
     private GameType gameType;
+    
+    private Cache<Integer, BigDecimal> leavingPlayerBalances;
 
     public PokerState() {
     }
@@ -112,6 +118,13 @@ public class PokerState implements Serializable, IPokerState {
         this.gameType = gameType;
         gameType.setPokerContextAndServerAdapter(pokerContext, serverAdapterHolder);
         stateHolder.changeState(new NotStartedSTM(gameType, pokerContext, serverAdapterHolder, stateChanger));
+        
+        leavingPlayerBalances = CacheBuilder.newBuilder()
+        	    .concurrencyLevel(4)
+        	    .maximumSize(200)
+        	    .expireAfterWrite(settings.getRatholingTimeOutMinutes(), TimeUnit.MINUTES)
+        	    .build();
+        
     }
 
     /**
@@ -208,7 +221,7 @@ public class PokerState implements Serializable, IPokerState {
         return getCurrentState();
     }
 
-    public void removePlayer(int playerId) {
+    public void removePlayer(int playerId, boolean tournamentPlayer) {
         pokerContext.removePlayer(playerId);
     }
 
@@ -454,4 +467,31 @@ public class PokerState implements Serializable, IPokerState {
     public void notifyAddOnPeriodClosed() {
         serverAdapter.notifyAddOnPeriodClosed();
     }
+
+    /**
+     * 
+     * @param playerId
+     * @return Zero if not found
+     */
+	public BigDecimal getLeavingBalance(int playerId) {
+		log.debug("Get leaving balane for player: "+playerId+". Balance cache: "+leavingPlayerBalances.asMap());
+		BigDecimal balance = leavingPlayerBalances.getIfPresent(playerId);
+		if (balance != null) {
+			return balance;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
+	
+	public void setLeavingBalance(int playerId, BigDecimal balance) {
+    	log.debug("Setting leaving balance for player "+playerId+" to "+balance);
+    	if (balance != null) {
+    		leavingPlayerBalances.put(playerId, balance);
+    	}
+	}
+
+	public void clearLeavingBalance(int playerId) {
+		log.debug("Clearing player previous balance for pid: "+playerId);
+		leavingPlayerBalances.invalidate(playerId);
+	}
 }

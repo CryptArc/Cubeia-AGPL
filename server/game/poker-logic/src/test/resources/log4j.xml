@@ -13,5 +13,10 @@
         <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
     </category>
+    
+    <root>
+        <priority value="trace"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
 
 </log4j:configuration>

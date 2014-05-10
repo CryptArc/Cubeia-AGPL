@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -92,10 +93,12 @@ public class CashGamesBackendAdapterTest {
     
     @Mock DomainEventsService domainEventService;
 
+    @Mock UserServiceContract userServiceContract;
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService);
+        backend = new CashGamesBackendAdapter(walletService, accountLookupUtil, clientRegistry, domainEventService, userServiceContract);
         backend.accountLookupUtil = accountLookupUtil;
         backend.clientRegistry = clientRegistry;
     }

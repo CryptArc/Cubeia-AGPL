@@ -17,6 +17,15 @@
 
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -24,10 +33,18 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
-import com.cubeia.games.poker.common.money.*;
 import com.cubeia.games.poker.common.money.Currency;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PerformAddOn;
+import com.cubeia.games.poker.io.protocol.PingPacket;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.PongPacket;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
@@ -36,14 +53,6 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-
-import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
-import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 
 /**
  * This class visits incoming packets and calls the appropriate method in the poker game.
@@ -140,15 +149,33 @@ public class PokerHandler extends DefaultPokerHandler {
                     BigDecimal buyInAmount = new BigDecimal(packet.amount).setScale(currency.getFractionalDigits(),BigDecimal.ROUND_DOWN);
                     BigDecimal sum = buyInAmount.add(pokerPlayer.getBalance()).add(pokerPlayer.getBalanceNotInHand());
 
-                    if (sum.compareTo(state.getMaxBuyIn()) <= 0  && sum.compareTo(state.getMinBuyIn()) >= 0) {
+                    BigDecimal maxBuyIn = state.getMaxBuyIn();
+					BigDecimal minBuyIn = state.getMinBuyIn();
+					
+					// Check rat-holing cache, i.e. the player's previous balance at the table
+					BigDecimal previousBalance = state.getLeavingBalance(pokerPlayer.getId());
+					if (previousBalance.compareTo(minBuyIn) > 0) {
+						minBuyIn = previousBalance;
+					}
+					
+					if (previousBalance.compareTo(maxBuyIn) > 0) {
+						maxBuyIn = previousBalance;
+					}
+					
+					log.debug("Perform buyin. Requested amount["+buyInAmount+"] minBuyIn["+minBuyIn+"] maxBuyIn["+maxBuyIn+"]");
+					
+					if (sum.compareTo(maxBuyIn) <= 0  && sum.compareTo(minBuyIn) >= 0) {
                         state.handleBuyInRequest(pokerPlayer, buyInAmount);
 
                         BuyInResponse buyInResponse = new BuyInResponse(format(pokerPlayer.getBalance()), format(pokerPlayer.getPendingBalanceSum()),
                                                                         "0", BuyInResultCode.PENDING);
                         sendBuyInResponseToPlayer(pokerPlayer, buyInResponse);
+                        
+                        log.debug("Sent buy in response to ["+pokerPlayer.getId()+"]: "+buyInResponse);
 
                         // sit in the player
                         state.playerIsSittingIn(playerId);
+                        state.clearLeavingBalance(playerId);
 
                         // sit in the player when the buyin is done
                         pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
@@ -165,6 +192,7 @@ public class PokerHandler extends DefaultPokerHandler {
                 log.warn("Poker Player that was not found at table tried to buy in. Table[" + table.getId() + "], Request[" + packet + "]");
             }
         } catch (Exception e) {
+        	e.printStackTrace();
             log.error("Buy in request failed, request[" + packet + "]", e);
         }
     }

@@ -136,7 +136,7 @@ public class PokerTournamentTest extends GuiceTest {
         TestUtils.act(state, p[0], PokerActionType.FOLD);
         TestUtils.act(state, p[1], PokerActionType.FOLD);
 
-        state.removePlayer(p[2]);
+        state.removePlayer(p[2], true);
 
         state.timeout(); // starts next hand
 

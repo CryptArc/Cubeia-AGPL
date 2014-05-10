@@ -36,30 +36,61 @@ public class BuyInCalculatorTest {
 
         MinAndMaxBuyInResult result;
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO);
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO, BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(tableMinBuyIn));
         assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn));
         assertThat(result.isBuyInPossible(), is(true));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(70));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(70), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(tableMinBuyIn.subtract(bd(70))));
         assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn.subtract(bd(70))));
         assertThat(result.isBuyInPossible(), is(true));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(99));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(99), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(anteLevel));
         assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn.subtract(bd(99))));
         assertThat(result.isBuyInPossible(), is(true));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMinBuyIn);
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMinBuyIn, BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(anteLevel));
         assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn.subtract(tableMinBuyIn)));
         assertThat(result.isBuyInPossible(), is(true));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(5000));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, bd(5000), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(anteLevel));
         assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn.subtract(bd(5000))));
         assertThat(result.isBuyInPossible(), is(true));
+    }
+    
+    @Test
+    public void testPreviousBalance() {
+    	BigDecimal tableMinBuyIn = new BigDecimal(100);
+        BigDecimal tableMaxBuyIn = new BigDecimal(200);
+        BigDecimal anteLevel = new BigDecimal(20);
+        BuyInCalculator blc = new BuyInCalculator();
+
+        MinAndMaxBuyInResult result;
+
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO, BigDecimal.ZERO);
+        assertThat(result.getMinBuyIn(), is(tableMinBuyIn));
+        assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn));
+        assertThat(result.isBuyInPossible(), is(true));
+        
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO, bd(150));
+        assertThat(result.getMinBuyIn(), is(bd(150)));
+        assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn));
+        assertThat(result.isBuyInPossible(), is(true));
+        
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO, bd(250));
+        assertThat(result.getMinBuyIn(), is(bd(250)));
+        assertThat(result.getMaxBuyIn(), is(bd(250)));
+        assertThat(result.isBuyInPossible(), is(true));
+        
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, BigDecimal.ZERO, bd(50));
+        assertThat(result.getMinBuyIn(), is(tableMinBuyIn));
+        assertThat(result.getMaxBuyIn(), is(tableMaxBuyIn));
+        assertThat(result.isBuyInPossible(), is(true));
+        
     }
 
     private BigDecimal bd(int i) {
@@ -75,12 +106,12 @@ public class BuyInCalculatorTest {
 
         MinAndMaxBuyInResult result;
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.subtract(anteLevel));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.subtract(anteLevel), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(anteLevel));
         assertThat(result.getMaxBuyIn(), is(anteLevel));
         assertThat(result.isBuyInPossible(), is(true));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.subtract(anteLevel.divide(bd(2))));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.subtract(anteLevel.divide(bd(2))), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(anteLevel.divide(bd(2))));
         assertThat(result.getMaxBuyIn(), is(anteLevel.divide(bd(2))));
         assertThat(result.isBuyInPossible(), is(true));
@@ -96,12 +127,12 @@ public class BuyInCalculatorTest {
 
         MinAndMaxBuyInResult result;
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn);
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn, BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(bd(0)));
         assertThat(result.getMaxBuyIn(), is(bd(0)));
         assertThat(result.isBuyInPossible(), is(false));
 
-        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.add(BigDecimal.ONE));
+        result = blc.calculateBuyInLimits(tableMinBuyIn, tableMaxBuyIn, anteLevel, tableMaxBuyIn.add(BigDecimal.ONE), BigDecimal.ZERO);
         assertThat(result.getMinBuyIn(), is(bd(0)));
         assertThat(result.getMaxBuyIn(), is(bd(0)));
         assertThat(result.isBuyInPossible(), is(false));
@@ -112,10 +143,12 @@ public class BuyInCalculatorTest {
         BigDecimal tableMaxBuyIn = new BigDecimal(20000);
         BuyInCalculator blc = new BuyInCalculator();
 
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(5000), bd(20000)), is(bd(20000 - 5000)));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(5000), bd(2000)), is(bd(2000)));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(0), bd(20000)), is(bd(20000)));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(20000), bd(20000)), is(bd(0)));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(5000), bd(20000), bd(0)), is(bd(20000 - 5000)));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(5000), bd(2000), bd(0)), is(bd(2000)));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(0), bd(20000), bd(0)), is(bd(20000)));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(20000), bd(20000), bd(0)), is(bd(0)));
+        
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, bd(20000), bd(20000), bd(50000)), is(bd(50000)));
     }
 
 }

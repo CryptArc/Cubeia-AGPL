@@ -43,7 +43,7 @@ import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
 import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ListPayoutStructures extends BasePage {
 
     @SpringBean(name = "adminDAO")

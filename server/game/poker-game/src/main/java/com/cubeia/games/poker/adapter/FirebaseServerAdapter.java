@@ -260,6 +260,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
         int tournamentId = snapshot.getTournamentId();
         int secondsToNextLevel = secondsToNextLevel(snapshot.getBlindsLevel());
         String name = table.getMetaData().getName();
+        if (tournamentId > 0) {
+        	name = state.getSettings().getTableName();
+        }
         int capacity = state.getSettings().getTableSize();
         Enums.Variant variant = convertVariant(state.getSettings().getVariant());
         GameState gs = new GameState(name, capacity, tournamentId, handStartInfo, blindsLevel, secondsToNextLevel, betStrategy,currency,variant);
@@ -488,9 +491,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
 
                 BigDecimal playerBalanceIncludingPending = pokerPlayer.getBalance().add(pokerPlayer.getBalanceNotInHand());
+                BigDecimal previousBalance = state.getLeavingBalance(player.getId());
                 BigDecimal amountToBuyIn = buyInCalculator.calculateAmountToReserve(state.getMaxBuyIn(), playerBalanceIncludingPending,
-                                                                              player.getRequestedBuyInAmount());
-
+                                                                              player.getRequestedBuyInAmount(), previousBalance);
+                
+                if (previousBalance.compareTo(BigDecimal.ZERO) > 0) {
+                	player.setReturningBuyin(true);
+                }
+                
                 if (amountToBuyIn.compareTo(BigDecimal.ZERO) > 0) {
                     log.trace("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}",
                             new Object[]{player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
@@ -537,7 +545,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
                 MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(state.getMinBuyIn(), state.getMaxBuyIn(),
-                        state.getAnteLevel(), playerBalance);
+                        state.getAnteLevel(), playerBalance, state.getLeavingBalance(playerId));
+                
                 resp.minAmount = format(buyInRange.getMinBuyIn(),currency);
                 resp.maxAmount = format(balanceInWallet.min(buyInRange.getMaxBuyIn()),currency);
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;

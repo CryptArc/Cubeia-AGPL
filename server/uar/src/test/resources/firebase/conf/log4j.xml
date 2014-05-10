@@ -50,6 +50,16 @@
             <param name="ConversionPattern" value="%d %-5p %t %c{4} - T[%X{tableid}] P[%X{playerid}] - %m%n"/>
         </layout>
     </appender>
+    
+    <appender name="CHAT_LOG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="logs/chat/chat.log"/>
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <param name="staticLogFileName" value="false"/>
+        <param name="Append" value="false"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %t %c{4} - T[%X{tableid}] P[%X{playerid}] - %m%n"/>
+        </layout>
+    </appender>
 
     <!--
            System out, minimize the use of this.
@@ -76,6 +86,11 @@
         <appender-ref ref="SYSTEM_LOG"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="STDOUT"/>
+    </category>
+    
+    <category name="CHAT_LOG" additivity="false">
+        <priority value="debug"/>
+        <appender-ref ref="CHAT_LOG"/>
     </category>
 
     <!--

@@ -15,7 +15,7 @@ describe("Poker.Seat Test", function(){
         Poker.AppCtx.getChatManager = Poker.AppCtx.getChatManager || function(){ return new Poker.ChatManager();};
         mockAnimationManager = jasmine.createSpyObj('mockAnimationManager',['animate']);
         var player = new Poker.Player(1,"TestPlayer");
-        seat = new Poker.Seat("testSeat", 0, player, mockAnimationManager);
+        seat = new Poker.Seat(0,"testSeat", 0, player, mockAnimationManager);
     });
 
     it("Test render seat", function(){

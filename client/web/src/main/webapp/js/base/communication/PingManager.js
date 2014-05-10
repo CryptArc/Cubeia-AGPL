@@ -19,7 +19,7 @@ Poker.PingManager = Class.extend({
             if(cm.connected==true) {
                 cm.sendVersionPacket();
             }
-        },120000)
+        },240000)
     },
     onDisconnect : function() {
         this.disconnects++;
@@ -40,7 +40,7 @@ Poker.PingManager = Class.extend({
     report : function() {
         var now = new Date().getTime();
         var elapsed = now-this.lastReport;
-        if(elapsed>300000)   {
+        if(elapsed>1000000)   {
             var p = this.sessionPingStats;
             var query = "?disconnects="+this.disconnects+"&max="+ p.max + "&min="+ p.min + "&count="+ p.count+"&average="+ p.getAverage()+"&pid="+Poker.MyPlayer.id;
             $.ajax(contextPath + "/poker/ping"+query,{

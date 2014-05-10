@@ -41,13 +41,15 @@ public class PokerStatePlayerSitInTest {
     ServerAdapter serverAdapter;
     @Mock
     GameType gameType;
-
+    
+    @Mock PokerSettings settings;
+    
     @Before
     public void setup() {
         initMocks(this);
 
         state = new PokerState();
-        state.init(gameType, null);
+        state.init(gameType, settings);
         state.setServerAdapter(serverAdapter);
     }
 

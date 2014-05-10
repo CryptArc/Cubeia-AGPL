@@ -17,11 +17,11 @@
 
 package com.cubeia.games.poker.tournament.messages;
 
+import java.io.Serializable;
+
 import com.cubeia.poker.PokerVariant;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
-
-import java.io.Serializable;
 
 public class TournamentTableSettings implements Serializable {
 
@@ -32,6 +32,12 @@ public class TournamentTableSettings implements Serializable {
     private final BetStrategyType betStrategyType;
 
     private final PokerVariant variant;
+
+	private String name;
+
+	private int seatsPerTable;
+
+	private String tournamentLobbyPath;
 
     public TournamentTableSettings(TimingProfile timingProfile, BetStrategyType betStrategyType, PokerVariant variant) {
         this.timingProfile = timingProfile;
@@ -50,4 +56,28 @@ public class TournamentTableSettings implements Serializable {
     public PokerVariant getVariant() {
         return variant;
     }
+
+    public String getName() {
+		return name;
+	}
+    
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getSeatsPerTable() {
+		return seatsPerTable;
+	}
+	
+	public void setSeatsPerTable(int seats) {
+		this.seatsPerTable = seats;
+	}
+
+	public String getTournamentLobbyPath() {
+		return tournamentLobbyPath;
+	}
+	
+	public void setTournamentLobbyPath(String tournamentLobbyPath) {
+		this.tournamentLobbyPath = tournamentLobbyPath;
+	}
 }

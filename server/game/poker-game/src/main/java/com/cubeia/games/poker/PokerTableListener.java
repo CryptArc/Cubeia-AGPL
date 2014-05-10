@@ -223,10 +223,11 @@ public class PokerTableListener implements TournamentTableListener {
             PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
             log.debug("Close player session: "+pokerPlayer);
             if (pokerPlayer != null) { // Check if player was removed already
+            	state.setLeavingBalance(playerId, state.getBalance(playerId));
                 backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber(), state);
             }
         }
         log.debug("Remove player from state : "+playerId);
-        state.removePlayer(playerId);
+        state.removePlayer(playerId, tournamentPlayer);
     }
 }

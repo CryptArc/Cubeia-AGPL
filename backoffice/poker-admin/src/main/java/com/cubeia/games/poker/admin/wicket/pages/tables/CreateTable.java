@@ -32,7 +32,7 @@ import java.math.BigDecimal;
 
 import static com.cubeia.poker.PokerVariant.TEXAS_HOLDEM;
 
-@AuthorizeInstantiation({"ROLE_ADMIN"})
+@AuthorizeInstantiation({"ADMIN"})
 public class CreateTable extends BasePage {
 
     private static final long serialVersionUID = 6896786450236805072L;

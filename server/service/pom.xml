@@ -21,6 +21,7 @@
         <module>shutdown-service</module>
         <module>domain-event-service</module>
         <module>player-service</module>
+        <module>chat-filter</module>
   </modules>
 
 </project>

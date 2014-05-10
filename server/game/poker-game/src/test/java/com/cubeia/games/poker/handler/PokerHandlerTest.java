@@ -105,6 +105,7 @@ public class PokerHandlerTest {
         when(pokerHandler.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(pokerHandler.state.getMaxBuyIn()).thenReturn(new BigDecimal(60));
         when(pokerHandler.state.getMinBuyIn()).thenReturn(new BigDecimal(10));
+        when(pokerHandler.state.getLeavingBalance(Mockito.anyInt())).thenReturn(BigDecimal.ZERO);
         // when(backend.getCallbackFactory()).thenReturn(callbackFactory);
     }
 
@@ -360,4 +361,39 @@ public class PokerHandlerTest {
         verify(state, never()).playerIsSittingIn(playerId);
         // verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
+    
+    @Test
+    public void testRatholing() {
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(BigDecimal.ZERO);
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(BigDecimal.ZERO);
+
+        when(state.getLeavingBalance(pokerPlayer.getId())).thenReturn(new BigDecimal(200));
+        
+        // Request less money than last balance (ratholing)
+        BuyInRequest buyInRequest = new BuyInRequest("20", true);
+
+        pokerHandler.visit(buyInRequest);
+
+        // since amount is lower than previous amount we should not be able to buy in
+        verify(backend, Mockito.never()).reserveMoneyForTable(Mockito.any(ReserveRequest.class), Mockito.<TableId>any());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.any(BigDecimal.class));
+        verify(state, never()).playerIsSittingIn(playerId);
+        verify(state, Mockito.never()).handleBuyInRequest(Mockito.any(PokerPlayerImpl.class), Mockito.any(BigDecimal.class));
+        
+        BuyInRequest buyInRequest2 = new BuyInRequest("199", true);
+        pokerHandler.visit(buyInRequest2);
+        verify(state, Mockito.never()).handleBuyInRequest(Mockito.any(PokerPlayerImpl.class), Mockito.any(BigDecimal.class));
+        
+        BuyInRequest buyInRequest3 = new BuyInRequest("201", true);
+        pokerHandler.visit(buyInRequest3);
+        verify(state, Mockito.never()).handleBuyInRequest(Mockito.any(PokerPlayerImpl.class), Mockito.any(BigDecimal.class));
+        
+        BuyInRequest buyInRequest4 = new BuyInRequest("200", true);
+        pokerHandler.visit(buyInRequest4);
+        verify(state).handleBuyInRequest(pokerPlayer, new BigDecimal("200.00"));
+    }
+    
+    
 }

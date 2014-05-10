@@ -260,6 +260,10 @@
             "header" : "Turneringsinfo",
             "message" : "Turneringen har avslutats"
         },
+        "free-check" : {
+            "header" : "Are you sure you want to fold?",
+            "message" : "You are about to fold when it's free to check"
+        },
         "tournament-register-success" : {
             "header" : "Registrerad",
             "message" : "Du har registrerats till turnering %s"

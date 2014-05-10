@@ -39,34 +39,36 @@ public class BuyInCalculator {
      * @param tableMaxBuyIn max buy in on table
      * @param anteLevel     ante level on table
      * @param balanceAtTable players balance
+     * @param previousBalance 
      * @return a container for min, max and a buy in possible flag
      */
-    public MinAndMaxBuyInResult calculateBuyInLimits(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal balanceAtTable) {
+    public MinAndMaxBuyInResult calculateBuyInLimits(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal balanceAtTable, BigDecimal previousBalance) {
         if (balanceAtTable.compareTo(tableMaxBuyIn) >= 0) {
             return new MinAndMaxBuyInResult(BigDecimal.ZERO, BigDecimal.ZERO, false);
         }
 
         return new MinAndMaxBuyInResult(
-                calculateMinBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable),
-                calculateMaxBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable),
+                calculateMinBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable, previousBalance),
+                calculateMaxBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable, previousBalance),
                 true);
     }
 
-    public BigDecimal calculateAmountToReserve(BigDecimal tableMaxBuyIn, BigDecimal playerBalanceIncludingPending, BigDecimal amountRequestedByUser) {
-        return amountRequestedByUser.min(tableMaxBuyIn.subtract(playerBalanceIncludingPending));
+    public BigDecimal calculateAmountToReserve(BigDecimal tableMaxBuyIn, BigDecimal playerBalanceIncludingPending, BigDecimal amountRequestedByUser, BigDecimal previousBalance) {
+         BigDecimal amount = amountRequestedByUser.min(tableMaxBuyIn.subtract(playerBalanceIncludingPending));
+         return amount.max(previousBalance);
     }
 
-    private BigDecimal calculateMinBuyIn(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal playerBalance) {
+    private BigDecimal calculateMinBuyIn(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal playerBalance, BigDecimal previousBalance) {
     	log.info("calculateMinBuyIn tableMinBuyIn["+tableMinBuyIn+"] tableMaxBuyIn["+tableMaxBuyIn+"] anteLevel["+anteLevel+"] playerBalance["+playerBalance+"]");
         if (playerBalance.compareTo(tableMinBuyIn) < 0) {
-            return anteLevel.max(tableMinBuyIn.subtract(playerBalance));
+            return anteLevel.max(tableMinBuyIn.subtract(playerBalance)).max(previousBalance);
         } else {
-            return anteLevel.min(tableMaxBuyIn.subtract(playerBalance));
+            return anteLevel.min(tableMaxBuyIn.subtract(playerBalance)).max(previousBalance);
         }
     }
 
-    private BigDecimal calculateMaxBuyIn(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal balanceAtTable) {
-        return tableMaxBuyIn.subtract(balanceAtTable);
+    private BigDecimal calculateMaxBuyIn(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal balanceAtTable, BigDecimal previousBalance) {
+        return tableMaxBuyIn.subtract(balanceAtTable).max(previousBalance);
     }
 
     /**

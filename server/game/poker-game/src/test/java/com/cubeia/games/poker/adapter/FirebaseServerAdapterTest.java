@@ -130,6 +130,7 @@ public class FirebaseServerAdapterTest {
         when(table.getId()).thenReturn(1337);
         when(pokerState.getSettings()).thenReturn(settings);
         when(settings.getCurrency()).thenReturn(new Currency("EUR",2));
+        when(pokerState.getLeavingBalance(Mockito.anyInt())).thenReturn(BigDecimal.ZERO);
     }
 
     @Test
@@ -193,6 +194,48 @@ public class FirebaseServerAdapterTest {
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 
+    }
+    
+    @Test
+    public void testNotifyBuyInRatholing() throws GetBalanceFailedException {
+    	PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        int playerId = 1337;
+        when(pokerPlayer.getId()).thenReturn(playerId);
+
+        when(pokerState.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
+
+        BigDecimal minBuyIn = new BigDecimal(100).setScale(2);
+        when(pokerState.getMinBuyIn()).thenReturn(minBuyIn);
+
+        BigDecimal maxBuyIn = new BigDecimal(45000);
+        when(pokerState.getMaxBuyIn()).thenReturn(maxBuyIn);
+        when(pokerState.getAnteLevel()).thenReturn(BigDecimal.ZERO);
+        when(pokerState.getLeavingBalance(playerId)).thenReturn(bd(30000,2));
+
+        BigDecimal playerBalanceOnTable = bd(0,2);
+        BigDecimal playerBalanceOnTableOutsideHand = bd(0,2);
+        BigDecimal playerRequestedBalance = bd(0,2);
+        BigDecimal playerTotalBalanceOnTable = playerBalanceOnTable.add(playerBalanceOnTableOutsideHand).add(playerRequestedBalance);
+
+        when(pokerPlayer.getBalance()).thenReturn(playerBalanceOnTable);
+        when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand.add(playerRequestedBalance));
+        BigDecimal mainAccountBalance = bd(500000,2);
+        when(backend.getAccountBalance(playerId, "EUR")).thenReturn(new Money(mainAccountBalance,eur));
+
+        adapter.notifyBuyInInfo(pokerPlayer.getId(), true);
+
+        ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+        verify(notifier).notifyPlayer(eq(playerId), captor.capture());
+        GameDataAction gda = captor.getValue();
+
+        BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+        assertThat(buyInInfoRespPacket.balanceInWallet, is(format(mainAccountBalance)));
+
+        assertThat(buyInInfoRespPacket.balanceOnTable, is((format(playerTotalBalanceOnTable))));
+        assertThat(buyInInfoRespPacket.minAmount, is("30000.00")); // Should be same as previous balance
+        assertThat(buyInInfoRespPacket.maxAmount, is(format((maxBuyIn.subtract(playerTotalBalanceOnTable)))));
+        assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
+        assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
     }
 
     private BigDecimal bd(int i) {
@@ -265,8 +308,8 @@ public class FirebaseServerAdapterTest {
         when(player2.getBalance()).thenReturn(BigDecimal.ZERO);
         when(player3.getBalance()).thenReturn(BigDecimal.ZERO);
 
-        when(buyInCalculator.calculateAmountToReserve(Mockito.any(BigDecimal.class),Mockito.any(BigDecimal.class),eq(bd(5000)))).thenReturn(bd(2500));
-        when(buyInCalculator.calculateAmountToReserve(Mockito.any(BigDecimal.class), Mockito.any(BigDecimal.class), eq(bd(25000)))).thenReturn(bd(0));
+        when(buyInCalculator.calculateAmountToReserve(Mockito.any(BigDecimal.class),Mockito.any(BigDecimal.class), eq(bd(5000)), eq(bd(0)))).thenReturn(bd(2500));
+        when(buyInCalculator.calculateAmountToReserve(Mockito.any(BigDecimal.class), Mockito.any(BigDecimal.class), eq(bd(25000)), eq(bd(0)))).thenReturn(bd(0));
 
         adapter.performPendingBuyIns(players);
 
@@ -276,7 +319,7 @@ public class FirebaseServerAdapterTest {
         verify(player1).setRequestedBuyInAmount(bd(2500));
         verify(player2).clearRequestedBuyInAmountAndRequest();
     }
-
+    
     @Test
     public void testNotifyBuyInInfoErrorGettingWalletBalance() throws IOException, GetBalanceFailedException {
         PokerPlayer pokerPlayer = mock(PokerPlayer.class);

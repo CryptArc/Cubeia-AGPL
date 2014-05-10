@@ -96,6 +96,7 @@ Poker.ViewManager = Class.extend({
         }
 
         this.setViewDimensions();
+        $(window).trigger("resizeEnd");
 
     },
     closeMultiTableView : function() {

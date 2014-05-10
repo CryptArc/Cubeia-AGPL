@@ -83,6 +83,12 @@
         </dependency>
         
         <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>chat-filter</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
+        
+        <dependency>
 			<groupId>com.cubeia.games.poker</groupId>
 			<artifactId>domain-event-service</artifactId>
 			<type>firebase-sar</type>

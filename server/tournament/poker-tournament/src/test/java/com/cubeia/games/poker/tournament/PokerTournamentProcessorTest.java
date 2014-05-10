@@ -27,6 +27,7 @@ import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.common.Attribute;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
@@ -177,6 +178,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.domainEventService = domainEventService;
         
         state = new MTTStateSupport(1, 1);
+        state.setLobbyPath(new LobbyPath());
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
         when(instance.getSystemPlayerRegistry()).thenReturn(playerRegistry);
         when(instance.getState()).thenReturn(state);
@@ -191,6 +193,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(configuration.getVariant()).thenReturn(PokerVariant.TEXAS_HOLDEM);
         when(senderFactory.create(Mockito.<MttNotifier>any(), Mockito.<MttInstance>any())).thenReturn(sender);
         when(cashGamesBackendService.getCurrency(anyString())).thenReturn(new Currency("EUR",2));
+
 
         support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         support.setMttNotifier(new MttNotifierAdapter());

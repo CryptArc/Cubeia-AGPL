@@ -88,9 +88,7 @@ Poker.MyActionsManager  = Class.extend({
         var amountFunc = function(){return self.slider.getValue();};
 
         this.actionButtons = new Poker.ActionButtons(view,actionCallback,
-            raiseCallback,betCallback, amountFunc, function(){
-                self.onClickCancelButton();
-            });
+            raiseCallback,betCallback, amountFunc);
 
         this.sitOutNextHand =  new Poker.CheckboxAction(view,".sit-out-next-hand",false);
 
@@ -121,23 +119,13 @@ Poker.MyActionsManager  = Class.extend({
     },
     onClickBetButton : function(minAmount,maxAmount,mainPot) {
         this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
-        this.actionButtons.doBetActionButton.show();
     },
     onClickRaiseButton : function(minAmount,maxAmount,mainPot) {
         this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
-        this.actionButtons.doRaiseActionButton.show();
     },
     handleBetSliderButtons : function(minAmount,maxAmount,mainPot) {
         this.hideActionElements();
-        this.actionButtons.cancelBetActionButton.show();
         this.showSlider(minAmount,maxAmount,mainPot);
-    },
-    onClickCancelButton : function() {
-        this.hideActionElements();
-        this.showActionButtons(this.currentActions);
-        this.actionButtons.doBetActionButton.hide();
-        this.actionButtons.cancelBetActionButton.hide();
-        this.hideSlider();
     },
     onSatDown : function() {
         this.hideActionElements();
@@ -230,6 +218,13 @@ Poker.MyActionsManager  = Class.extend({
     },
     showActionButtons : function(actions, mainPot, fixedLimit) {
         this.userActionsContainer.show();
+        for(var i = 0; i<actions.length; i++) {
+            var type = actions[i].type;
+            if(type == Poker.ActionType.BET || type == Poker.ActionType.RAISE) {
+                this.showSlider(actions[i].minAmount,actions[i].maxAmount,mainPot);
+                break;
+            }
+        }
         this.actionButtons.showButtons(actions, mainPot, fixedLimit);
     },
     showRebuyButtons : function(rebuyCost, chipsForRebuy) {

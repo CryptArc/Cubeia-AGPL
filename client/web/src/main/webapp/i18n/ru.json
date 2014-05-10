@@ -246,6 +246,10 @@
             "header" : "Сообщение",
             "message" : "Этот турнир сейчас закрыт."
         },
+        "free-check" : {
+            "header" : "Are you sure you want to fold?",
+            "message" : "You are about to fold when it's free to check"
+        },
         "tournament-register-success" : {
             "header" : "Сообщение",
             "message" : "Вы зарегистрировались в Турнире %s"

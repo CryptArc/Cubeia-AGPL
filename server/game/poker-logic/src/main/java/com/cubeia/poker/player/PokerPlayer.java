@@ -275,4 +275,12 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus);
 
     public MissedBlindsStatus getMissedBlindsStatus();
+    
+    /**
+     * Flag if this player is returning to a table he has left recently with a table chip stack.
+     * If this is the case then that player will be forced to buy in on a at least the same level.
+     * 
+     * @param value
+     */
+    public void setReturningBuyin(boolean value);
 }

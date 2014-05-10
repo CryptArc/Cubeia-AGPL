@@ -178,7 +178,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         assertEquals(5, state.getSeatedPlayers().size());
         assertEquals(4, state.getCurrentHandSeatingMap().size());
 
-        state.removePlayer(p5.getId());
+        state.removePlayer(p5.getId(), true);
         assertEquals(4, state.getSeatedPlayers().size());
     }
 

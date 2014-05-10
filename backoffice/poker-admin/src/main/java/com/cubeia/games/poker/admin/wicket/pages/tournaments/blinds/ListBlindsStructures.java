@@ -42,7 +42,7 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
 import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
+@AuthorizeInstantiation({"ADMIN", "ROLE_USER"})
 public class ListBlindsStructures extends BasePage {
 
 	private static final long serialVersionUID = 1L;

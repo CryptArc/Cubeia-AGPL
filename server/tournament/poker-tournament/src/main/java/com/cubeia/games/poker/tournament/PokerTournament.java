@@ -898,7 +898,10 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private TournamentTableSettings getTableSettings() {
-        return new TournamentTableSettings(pokerState.getTiming(), pokerState.getBetStrategy(), pokerState.getVariant());
+    	TournamentTableSettings settings = new TournamentTableSettings(pokerState.getTiming(), pokerState.getBetStrategy(), pokerState.getVariant());
+    	settings.setName(instance.getState().getName());
+    	settings.setSeatsPerTable(state.getSeats());
+    	return settings;
     }
 
     public void playerRegistered(MttRegistrationRequest request) {

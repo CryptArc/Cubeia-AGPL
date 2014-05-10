@@ -247,7 +247,7 @@
                     Poker.SkinConfiguration.onLoad();
                 }
 
-                // less.watch(); //development only
+                //less.watch(); //development only
                 $(".describe").describe();
 
                 $("title").html(Poker.SkinConfiguration.title);
@@ -1413,6 +1413,7 @@
             </div>
 
 
+
             <div id="userActActions-{{tableId}}" class="user-actions">
                 <div class="action-button action-fold"  style="display: none;">
                     <span>{{t "table.buttons.fold"}}</span>
@@ -1444,17 +1445,7 @@
                     <span class="amount"></span>
                     <span>{{t "table.buttons.small-blind"}}</span>
                 </div>
-                <div class="action-button action-cancel-bet" style="display:none;">
-                    <span>{{t "table.buttons.cancel"}}</span>
-                </div>
-                <div class="action-button do-action-bet" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>{{t "table.buttons.bet"}}</span>
-                </div>
-                <div class="action-button do-action-raise" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>{{t "table.buttons.raise-to"}}</span>
-                </div>
+
                 <div class="action-button fixed-action-bet" style="display:none;">
                     <span class="amount"></span>
                     <span>{{t "table.buttons.bet"}}</span>
@@ -1524,6 +1515,7 @@
                     </div>
 
             </div>
+
             <div id="waitForBigBlind-{{tableId}}" class="wait-for-big-blind" style="display:none;">
                 <input class="checkbox" type="checkbox" id="wait-for-big-blind-cb-{{tableId}}" checked="checked"/>
                 <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">{{t "table.wait-for-big-blind"}}</label>

@@ -108,6 +108,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private boolean canRaise = false;
 
     private boolean away;
+    
+    private boolean returningBuyin = false;
 
     public DefaultPokerPlayer(int id) {
         playerId = id;
@@ -455,10 +457,13 @@ public class DefaultPokerPlayer implements PokerPlayer {
         // TODO: This is broken. If we allow the player to perform an add-on, but then the player happens to win a lot of chips during that hand,
         //       these chips will be stuck as "balanceNotInHand" until his balance drops low enough, at which point suddenly the player would get
         //       those chips. Madness.
+        //
+        // Note: This is made more complicated since rat-holing players (returningBuyin below), stipulates that you must buy-in with what you
+        // 		 last left the table with, so a player is allowed to buy in with more than max buy in. But only on a sit-down though.
         boolean hasPending = balanceNotInHand.compareTo(BigDecimal.ZERO) > 0;
         if (hasPending && balance.compareTo(maxBuyIn) < 0) {
             BigDecimal allowedAmount = maxBuyIn.subtract(balance);
-            if (balanceNotInHand.compareTo(allowedAmount) > 0) {
+            if (!returningBuyin && balanceNotInHand.compareTo(allowedAmount) > 0) {
                 balance = balance.add(allowedAmount);
                 balanceNotInHand = balanceNotInHand.subtract(allowedAmount);
                 log.debug("committing pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + balanceNotInHand);
@@ -467,6 +472,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
                 log.debug("committing all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
                 balanceNotInHand = BigDecimal.ZERO;
             }
+            setReturningBuyin(false); // Only valid for first buy-in
             saveStartingBalance();
             return true;
         }
@@ -559,4 +565,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+    
+    public boolean isReturningBuyin() {
+		return returningBuyin;
+	}
+    
+    public void setReturningBuyin(boolean returningBuyin) {
+		this.returningBuyin = returningBuyin;
+	}
 }

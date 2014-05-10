@@ -26,34 +26,39 @@ Poker.DynamicHand = Class.extend({
     align : 0,
     useTransform : true,
     myPlayer : false,
-
+    tableId : -1,
     alignments : {
         "2" : [0,0],
         "5" : [0,-1,0,0,1],
         "6" : [0,-1,-1,0,1,1],
         "7" : [0,-1,-1,-1,-1,0,1],
-        "8" : [0,-1,-1,-1,-1,0,1,1],
-        "9" : [0,-1,-1,-1,-1,0,1,1,1],
+        "8" : [0,-1,-1,-1,0,1,1,1],
+        "9" : [0,-1,-1,-1,0,0,1,1,1],
         "10" :[0,-1,-1,-1,-1,0,1,1,1,1]
     },
-    init : function(handContainer, myPlayer) {
+    init : function(handContainer, myPlayer, tableId) {
 
         this.handContainer = handContainer;
         this.myPlayer = myPlayer;
+        this.tableId = tableId;
         this.hoverCards = [];
         this.calculateCardDimensions();
         this.setup();
         var self = this;
         this.calculateWidth();
-        $(window).on('resizeEnd',function(){
-            self.calculateWidth();
-            self.updateCardPositions();
+        $(window).on('resizeEnd redrawTable',function(){
+            setTimeout(function(){
+                if($("#tableView-"+self.tableId).is(":visible")) {
+                    self.calculateWidth();
+                    self.calculateCardDimensions();
+                    self.updateCardPositions();
+                }
+            },50);
         });
     },
     calculateWidth : function() {
         var fraction = this.myPlayer ? 0.2 : 0.11;
-        var containerWidth = $(".table-view-container").width();
-        console.log("container width=" + containerWidth);
+        var containerWidth = $("#tableView-"+this.tableId).width();
         this.width = Math.floor(containerWidth*fraction);
     },
     setAlignment : function(pos,capacity) {
@@ -185,8 +190,9 @@ Poker.DynamicHand = Class.extend({
             }
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
-                el.css("left",Math.floor(pos.x) + "px");
-                el.css("top",Math.floor(pos.y) + "px");
+                cssUtils.setTranslate3d(el,Math.floor(pos.x),Math.floor(pos.y),0, "px")
+               // el.css("left",+ "px");
+               // el.css("top",Math.floor(pos.y) + "px");
 
             }
         }
