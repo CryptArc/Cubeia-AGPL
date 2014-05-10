@@ -743,7 +743,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="user-info-container">
-                                            <div class="user-avatar profile-avatar" style="background-image: url(https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/t1.0-1/c14.14.172.172/s160x160/998060_10151818022256388_551148941_n.jpg);">
+                                            <div class="user-avatar profile-avatar" style="">
 
                                             </div>
                                             <div class="user-info">
@@ -771,13 +771,13 @@
                             <div class="row triggers">
                                 <div class="col-sm-12">
                                     <div class="col-sm-6 small achievements">
-                                        <div class="icon value">20/30</div>
+                                        <div class="icon value">0/1</div>
                                     </div>
                                     <div class="col-sm-3 small items">
-                                        <div class="icon value">5</div>
+                                        <div class="icon value">0</div>
                                     </div>
                                     <div class="col-sm-3 small awards">
-                                        <div class="icon value">3</div>
+                                        <div class="icon value">0</div>
                                     </div>
                                 </div>
 

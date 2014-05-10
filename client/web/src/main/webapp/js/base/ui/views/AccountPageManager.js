@@ -112,7 +112,11 @@ Poker.AccountPageManager = Class.extend({
         var self = this;
         $(".username").html(name);
         $(".user-id").html(playerId);
-        this.selectedCurrency = Poker.OperatorConfig.getEnabledCurrencies()[0].code;
+        var currencies =  Poker.OperatorConfig.getEnabledCurrencies();
+
+        if(currencies && currencies.length>0) {
+            this.selectedCurrency = currencies[0].code;
+        }
         Poker.AppCtx.getProfileManager().loadMyPlayerProfile();
 
     },
