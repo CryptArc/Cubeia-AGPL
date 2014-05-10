@@ -58,7 +58,7 @@ Poker.CreditsView = Poker.ResponsiveTabView.extend({
         sectionMenu.addItem("#depositMenuItem",function(){
             self.showSection("deposit");
             self.requestAddress();
-            self.requestQRCode();
+
         });
         this.requestAddress();
         this.requestQRCode();
@@ -123,9 +123,11 @@ Poker.CreditsView = Poker.ResponsiveTabView.extend({
         this.getViewElement().find("."+id+"-container").show();
     },
     requestAddress : function() {
+        var self = this;
         this.accountingApi.requestWalletAddress()
             .done(function(data){
                 $("#walletAddress").val(data.toAddress);
+                self.requestQRCode();
             }).fail(function(){
 
             }); console.log("Unable to request deposit address");
