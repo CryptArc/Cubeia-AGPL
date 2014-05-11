@@ -7,6 +7,7 @@ Poker.MyProfile = Poker.Profile.extend({
     thisLevelXp : 0,
     accounts : null,
     bonuses : null,
+    stats : null,
 
     init : function(){
         this._super();

@@ -89,7 +89,7 @@ Poker.ProfileManager = Class.extend({
     loadMyPlayerProfile : function() {
         var self = this;
         var token = Poker.MyPlayer.sessionToken;
-        this.playerApi.requestPlayerProfile(Poker.MyPlayer.id,token,
+        this.playerApi.requestPrivatePlayerProfile(token,
             function(profile){
                 self.handleProfile(profile);
             },
@@ -126,6 +126,7 @@ Poker.ProfileManager = Class.extend({
         this.myPlayerProfile.name = this.extractName(profile);
         this.myPlayerProfile.avatarUrl = profile.externalAvatarUrl;
         this.myPlayerProfile.level = profile.level;
+        this.myPlayerProfile.stats = profile.stats;
         this.notifyListeners();
     },
     handleBonusInfo : function(bonusInfo) {

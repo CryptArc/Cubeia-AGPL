@@ -10,7 +10,7 @@ Poker.ResourcePreloader = Class.extend({
         if(images!=null && images.length > 0) {
             for(var i = 0; i<images.length; i++) {
                 if(images[i]!="") {
-                    if(images[i].indexOf(skin + "/images/cards")!=-1 || images[i].indexOf(skin + "/images/table")!=-1)   {
+                    if(images[i].indexOf(skin + "/images/table")!=-1)   {
                         tableLoader.addImage(contextPath + "/skins" + images[i]);
                     } else {
                         loader.addImage(contextPath + "/skins" + images[i]);

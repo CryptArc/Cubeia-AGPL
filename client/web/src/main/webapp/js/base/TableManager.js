@@ -150,7 +150,7 @@ Poker.TableManager = Class.extend({
      * @param {Number} tableId
      * @param {String} handId
      */
-    startNewopHand : function(tableId, handId) {
+    startNewHand : function(tableId, handId) {
         var table = this.tables.get(tableId);
         table.handCount++;
         table.handId = handId;

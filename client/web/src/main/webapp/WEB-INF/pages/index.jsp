@@ -771,13 +771,13 @@
                             <div class="row triggers">
                                 <div class="col-sm-12">
                                     <div class="col-sm-6 small achievements">
-                                        <div class="icon value">0/1</div>
+                                        <div class="icon value profile-nr-achievements">0/1</div>
                                     </div>
                                     <div class="col-sm-3 small items">
-                                        <div class="icon value">0</div>
+                                        <div class="icon value profile-nr-items">0</div>
                                     </div>
                                     <div class="col-sm-3 small awards">
-                                        <div class="icon value">0</div>
+                                        <div class="icon value profile-nr-awards">0</div>
                                     </div>
                                 </div>
 
@@ -787,8 +787,8 @@
                                     <div class="account">
                                         <div class="account-name profile-current-balance-name"></div>
                                         <div class="account-balance profile-account-balance">
-                                            <span class="real-money profile-current-balance">$1000.00</span>
-                                            <span class="bonus profile-current-bonus">Bonus: $145.00</span>
+                                            <span class="real-money profile-current-balance"></span>
+                                            <span class="bonus profile-current-bonus">Bonus: </span>
                                         </div>
                                     </div>
 

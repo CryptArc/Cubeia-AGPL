@@ -235,6 +235,12 @@ Poker.AccountPageManager = Class.extend({
                 $(".profile-current-bonus").html("Bonus: " + a.formattedBalance);
             }
         });
+        if(profile.stats) {
+            $(".profile-nr-achievements").html(profile.stats.nrOfAchievements);
+            $(".profile-nr-awards").html(profile.stats.nrOfAwards);
+            $(".profile-nr-items").html(profile.stats.nrOfItems);
+        }
+        $(".profile-nr-achievements")
         $("#accountBalancesContainer").html(template.render({accounts : displayAccounts }));
 
         $("#topUpCurrencies").empty();

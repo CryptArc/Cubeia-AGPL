@@ -37,6 +37,30 @@ Poker.PlayerApi = Class.extend({
 
         });
     },
+    /**
+     * Retrieves the player profile for a specific player
+     * @param {Number} playerId id of the player to get the profile for
+     * @param {String} sessionToken authentication token to the player api
+     * @param {Function} callback success callback
+     * @param {Function} errorCallback error callback
+     */
+    requestPrivatePlayerProfile : function(sessionToken,callback,errorCallback) {
+        var url = this.playerApiBaseUrl + "/player/profile?session="+sessionToken;
+        $.ajax(url, {
+            method : "GET",
+            contentType : "application/json",
+            success : function(data) {
+                callback(data);
+            },
+            error : function() {
+                console.log("Error while fetching player profile " + url);
+                if(typeof(errorCallback)!="undefined") {
+                    errorCallback();
+                }
+            }
+
+        });
+    },
     isLeaderboardEnabled : function() {
         var enabled = this.operatorApiBaseUrl!=null && this.operatorApiBaseUrl!="";
         return enabled;
