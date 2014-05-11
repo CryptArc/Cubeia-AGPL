@@ -283,7 +283,7 @@
 
                     var webSocketUrl = requestHost ? requestHost : "localhost";
 
-                    console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort);
+                    console.log("connecting o WS: " + webSocketUrl + ":" + webSocketPort);
 
                     //handles the lobby UI
                     Poker.AppCtx.wire({
@@ -336,6 +336,9 @@
             <div class="user-panel-name username"></div>
             <div class="user-panel-avatar"></div>
         </div>
+        <a class="toolbar-buy-credits" style="display:none;">
+            Buy Credits
+        </a>
     </div>
 
     <div class="toolbar-background"></div>

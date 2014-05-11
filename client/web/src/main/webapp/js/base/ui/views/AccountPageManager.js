@@ -37,15 +37,15 @@ Poker.AccountPageManager = Class.extend({
             }
             Poker.AppCtx.getViewManager().activateView(self.editProfileView);
         });
-        $("#buyCreditsButton").click(function(e){
+        var buyCredits = function(e){
             self.closeAccountOverlay();
             if(self.buyCreditsView==null) {
                 var url = Poker.OperatorConfig.getBuyCreditsUrl();
                 if(url!=null && url=="internal") {
-                     self.buyCreditsView = new Poker.CreditsView(function(){
-                         Poker.AppCtx.getViewManager().removeView(self.buyCreditsView);
-                         self.buyCreditsView = null;
-                     });
+                    self.buyCreditsView = new Poker.CreditsView(function(){
+                        Poker.AppCtx.getViewManager().removeView(self.buyCreditsView);
+                        self.buyCreditsView = null;
+                    });
 
                 } else {
                     self.buyCreditsView = new Poker.ExternalPageView(
@@ -62,7 +62,15 @@ Poker.AccountPageManager = Class.extend({
             }
             Poker.AppCtx.getViewManager().activateView(self.buyCreditsView);
 
-        });
+        };
+        $("#buyCreditsButton").click(buyCredits);
+        var buyCreditsUrl = Poker.OperatorConfig.getBuyCreditsUrl();
+        if(buyCreditsUrl!=null && buyCreditsUrl!=""){
+            $(".toolbar-buy-credits").click(buyCredits);
+            $(".toolbar-buy-credits").show();
+        } else {
+            $(".toolbar-buy-credits").hide();
+        }
 
         $(".logout-link").click(function() {
             self.closeAccountOverlay();

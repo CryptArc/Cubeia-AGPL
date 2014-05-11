@@ -25,9 +25,11 @@ Poker.ViewManager = Class.extend({
     userPanel : null,
     userOverlay : null,
     userPanel : null,
+    buyCredits : null,
     init : function(tabsContainerId) {
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
+        this.buyCredits = $(".toolbar-buy-credits");
         this.tabsElement = $(".tabs-container");
         this.userPanel = $(".user-panel");
         this.views = [];
@@ -417,7 +419,7 @@ Poker.ViewManager = Class.extend({
             this.tabsElement.find("li").css("width","");
         } else {
             var count = this.getVisibleTabCount();
-            var userPanelWidth = this.userPanel.outerWidth();
+            var userPanelWidth = this.userPanel.outerWidth() + this.buyCredits.outerWidth();;
             this.tabsElement.width(( $(window).width() - 55 - userPanelWidth ) + "px");
             this.tabsElement.find("li").width((100/count) + "%");
         }
