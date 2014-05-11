@@ -1542,24 +1542,24 @@
     </p>
     <p class="stopped-reconnecting" style="display: none;" data-i18n="disconnect-dialog.unable-to-reconnect">
     </p>
-    <p class="dialog-buttons stopped-reconnecting" style="display: none;">
+    <div class="dialog-buttons stopped-reconnecting" style="display: none;">
         <a class="dialog-ok-button" data-i18n="disconnect-dialog.reload">
         </a>
-    </p>
+    </div>
 </div>
 <div id="buyInDialog" style="display: none;">
 </div>
 <div id="genericDialog" style="display: none;">
     <h1>Header</h1>
     <p class="message">Message</p>
-    <p class="dialog-buttons">
+    <div class="dialog-buttons">
             <a class="dialog-cancel-button" style="display:none;" data-i18n="generic-dialog.cancel">
                Cancel
             </a>
             <a class="dialog-ok-button" data-i18n="generic-dialog.continue">
                 Continue
             </a>
-    </p>
+    </div>
 
 </div>
 <script type="text/mustache" id="tournamentBuyInContent">
@@ -1573,14 +1573,14 @@
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
         </div>
-        <p class="dialog-buttons">
+        <div class="dialog-buttons">
             <a class="dialog-cancel-button">
                 {{t "buy-in.cancel" }}
-        </a>
-        <a class="dialog-ok-button">
+            </a>
+            <a class="dialog-ok-button">
                 {{t "buy-in.ok-button" }}
-        </a>
-    </p>
+            </a>
+        </div>
 </script>
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
@@ -1609,14 +1609,14 @@
     <div class="buy-in-row">
         <span class="buyin-error" style="display: none;"></span>
     </div>
-    <p class="dialog-buttons">
+    <div class="dialog-buttons">
         <a class="dialog-cancel-button">
             {{t "buy-in.cancel" }}
         </a>
         <a  class="dialog-ok-button">
             {{t "buy-in.ok-button" }}
         </a>
-    </p>
+    </div>
 </script>
 <script type="text/mustache" id="menuItemTemplate">
     <li class="{{cssClass}}">
@@ -1650,7 +1650,7 @@
                 <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
             </div>
             <div class="row">
-                <div class="col-sm-7">
+                <div class="col-sm-7 tournament-name-container">
                     <h3 class="tournament-name">
                         <div  style="display:inline-block;">
                            <span class="tournament-name-title">{{name}}</span>

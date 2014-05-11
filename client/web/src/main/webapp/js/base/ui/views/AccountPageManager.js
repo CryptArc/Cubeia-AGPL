@@ -77,29 +77,28 @@ Poker.AccountPageManager = Class.extend({
 
     },
     updateAccounting : function(profile) {
-        /**
-         * @param {Poker.MyProfile} profile
-         */
-
+        console.log("profile = ", profile);
+        if(profile.name!=""){
             $(".profile-username").html(profile.name);
-            if( profile.avatarUrl != null) {
-                $(".user-panel-avatar").addClass("user-panel-custom-avatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
-                $(".profile-avatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
+        }
+        if( profile.avatarUrl != null) {
+            $(".user-panel-avatar").addClass("user-panel-custom-avatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
+            $(".profile-avatar").css("backgroundImage","url('"+profile.avatarUrl+"')");
+        }
+        if(profile.bonuses && profile.bonuses.length>0) {
+            this.onBonusInfo(profile);
+        }
+        if(profile && profile.level>0)  {
+            var totalLevelXp = profile.nextLevelXp - profile.thisLevelXp;
+            var progress = 100*(profile.xp - profile.thisLevelXp)/totalLevelXp;
+            $(".profile-next-level").html(1+profile.level);
+            $(".profile-current-level").attr("class","").addClass("profile-current-level").addClass("level").addClass("level-"+profile.level);
+            if(profile.nextLevelXp) {
+                $(".profile-xp-progress").width(progress+"%");
+                $(".profile-current-xp").html(profile.xp + " / " + profile.nextLevelXp);
             }
-            if(profile.bonuses && profile.bonuses.length>0) {
-                this.onBonusInfo(profile);
-            }
-            if(profile && profile.level>0)  {
-                var totalLevelXp = profile.nextLevelXp - profile.thisLevelXp;
-                var progress = 100*(profile.xp - profile.thisLevelXp)/totalLevelXp;
-                $(".profile-next-level").html(1+profile.level);
-                $(".profile-current-level").attr("class","").addClass("profile-current-level").addClass("level").addClass("level-"+profile.level);
-                if(profile.nextLevelXp) {
-                    $(".profile-xp-progress").width(progress+"%");
-                    $(".profile-current-xp").html(profile.xp + " / " + profile.nextLevelXp);
-                }
 
-            }
+        }
 
 
     },
@@ -111,6 +110,7 @@ Poker.AccountPageManager = Class.extend({
     onLogin : function(playerId,name) {
         var self = this;
         $(".username").html(name);
+        $(".profile-username").html(name);
         $(".user-id").html(playerId);
         var currencies =  Poker.OperatorConfig.getEnabledCurrencies();
 

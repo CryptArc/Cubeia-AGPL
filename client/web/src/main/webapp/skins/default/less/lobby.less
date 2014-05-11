@@ -6,6 +6,10 @@
         margin-top:10px;
     }
 }
+#tableListContainer {
+    min-height: 700px;
+}
+
 .lobby-container {
     .logo-container {
         height: 100px;
@@ -113,6 +117,9 @@
        float:left;
        background-repeat: no-repeat;
    }
+
+
+
    .user-info {
         width:78%;
        float:right;
@@ -150,6 +157,7 @@
     font-size:150%;
     font-weight:500;
     margin-bottom:3px;
+
 
     div.small {
         font-weight: 600;
@@ -208,6 +216,38 @@
 
         }
     }
+    @media (max-width:992px){
+        font-size:120%;
+        .icon {
+            width:50%;
+        }
+        .achievements {
+            .icon {
+                line-height: 3;
+                background-size: auto 40%;
+                background-image: url(../images/icon-achievement.png);
+            }
+        }
+        .items {
+            .icon {
+                line-height: 2.5;
+                font-size: 120%;
+                background-size: auto 40%;
+                background-image: url(../images/icon-medal.png);
+            }
+
+        }
+        .awards {
+            .icon {
+                line-height: 2.5;
+                font-size: 120%;
+                background-size: auto 45%;
+                background-image: url(../images/icon-crown.png);
+
+            }
+        }
+    }
+
 }
 .full-profile-link {
     color:#999;
@@ -235,6 +275,7 @@
         font-size:110%;
 
 
+
         &.with-bonus {
             .bonus {
                 display: block;
@@ -260,6 +301,11 @@
             display: none;
         }
 
+
+
+    }
+    @media (max-width:992px){
+        font-size:100%;
     }
 }
 .navbar-top  {

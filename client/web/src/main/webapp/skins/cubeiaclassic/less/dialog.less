@@ -3,6 +3,11 @@
 }
 .dialog-cancel-button {
     .default-btn;
+    .linear-gradient(top, #878787 0%, #5e5e5e 100%);
+    text-shadow: none;
+    &:active {
+        .linear-gradient(top, #5e5e5e 0%, #878787 100%);
+    }
 }
 .dialog-overlay {
     background-image: url("../images/global/opacity40.png");
