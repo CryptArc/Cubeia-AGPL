@@ -10,7 +10,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>game-site-modules</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>    
    
@@ -19,7 +19,7 @@
         <dependency>
             <artifactId>poker-user-creator</artifactId>
             <groupId>com.cubeia.games</groupId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         
 		<dependency>

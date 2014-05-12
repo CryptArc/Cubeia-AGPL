@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>bot-modules</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-bot</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>

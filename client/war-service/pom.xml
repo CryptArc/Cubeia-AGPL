@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>poker-client-modules</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -31,7 +31,7 @@
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-client-web</artifactId>
             <type>war</type>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>    
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.cubeia.jetty</groupId>
             <artifactId>jetty-embed</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>

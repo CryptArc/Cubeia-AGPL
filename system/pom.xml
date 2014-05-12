@@ -11,7 +11,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>poker-root</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-user-creator</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>firebase-service-modules</artifactId>
 		<groupId>com.cubeia.games</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.cubeia.games.poker.config</groupId>
 	<artifactId>config-service</artifactId>

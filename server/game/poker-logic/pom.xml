@@ -2,13 +2,13 @@
     <parent>
         <artifactId>game-modules</artifactId>
         <groupId>com.cubeia.games</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker-logic</artifactId>
     <name>Poker Logic</name>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <url>http://maven.apache.org</url>
 
     <dependencies>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.cubeia.games.handhistory</groupId>
             <artifactId>hand-history-api</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
         	<groupId>org.slf4j</groupId>

@@ -15,7 +15,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>cubeia-network-embedded-services</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.cubeia.jetty</groupId>
             <artifactId>jetty-embed</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>

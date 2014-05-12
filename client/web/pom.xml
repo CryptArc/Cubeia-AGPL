@@ -6,12 +6,12 @@
     <packaging>war</packaging>
     <name>Poker Client</name>
 
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>poker-client-modules</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <build>
