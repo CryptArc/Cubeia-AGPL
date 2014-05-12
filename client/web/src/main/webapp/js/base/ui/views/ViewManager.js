@@ -128,9 +128,9 @@ Poker.ViewManager = Class.extend({
     },
     checkMobileDevice : function() {
         if(window.matchMedia) {
-            var mq1 = window.matchMedia("(max-height:615px)");
+            var mq1 = window.matchMedia("(max-device-width:415px)");
             var mq2 = window.matchMedia("(max-width:615px)");
-            if(mq1.matches || mq2.matches) {
+            if(mq2.matches || mq1.matches) {
                 this.mobileDevice = true;
             } else {
                 this.mobileDevice = false;

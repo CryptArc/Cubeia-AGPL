@@ -336,8 +336,8 @@
             <div class="user-panel-name username"></div>
             <div class="user-panel-avatar"></div>
         </div>
-        <a class="toolbar-buy-credits" style="display:none;">
-            Buy Credits
+        <a class="toolbar-buy-credits">
+            Add Funds
         </a>
     </div>
 
@@ -976,7 +976,7 @@
                     Profile
                 </div>
                 <div class="account-button" id="buyCreditsButton">
-                    Buy Credits
+                    Add Funds
                 </div>
             </div>
 

@@ -130,9 +130,9 @@ Poker.AccountPageManager = Class.extend({
             $(".toolbar-buy-credits").click(function(){
                 self.buyCredits();
             });
-            $(".toolbar-buy-credits").show();
+            $(".toolbar-buy-credits").addClass("visible");
         } else {
-            $(".toolbar-buy-credits").hide();
+            $(".toolbar-buy-credits").removeClass("visible");
         }
 
     },
