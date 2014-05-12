@@ -279,20 +279,20 @@
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
                 <type>jar</type>
-                <version>1.1-SNAPSHOT</version>
+                <version>1.1</version>
             </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
                 <type>firebase-sar</type>
-                <version>1.1-SNAPSHOT</version>
+                <version>1.1</version>
             </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase</groupId>
                 <artifactId>guice-support</artifactId>
-                <version>1.5-SNAPSHOT</version>
+                <version>1.5</version>
             </dependency>
 
             <dependency>
@@ -411,15 +411,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.cubeia.firebase</groupId>
-                <artifactId>game-common</artifactId>
-                <version>1.6-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.cubeia.backoffice.firebase</groupId>
                 <artifactId>generic-wallet-service</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.6.1</version>
                 <type>jar</type>
             </dependency>
 
@@ -848,12 +842,9 @@
         </pluginRepository>
     </pluginRepositories>
     <scm>
-        <connection>
-            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
-        </connection>
-        <developerConnection>
-            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
-        </developerConnection>
+		<connection>scm:hg:https://bitbucket.org/cubeia/cubeia-poker</connection>
+		<developerConnection>scm:hg:https://bitbucket.org/cubeia/cubeia-poker</developerConnection>
+	    <tag>HEAD</tag>
     </scm>
      <distributionManagement>
         <repository>
