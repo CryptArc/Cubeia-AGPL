@@ -36,6 +36,15 @@ Poker.DynamicHand = Class.extend({
         "9" : [0,-1,-1,-1,0,0,1,1,1],
         "10" :[0,-1,-1,-1,-1,0,1,1,1,1]
     },
+    cardOffset : {
+        "1" : [50],
+        "2" : [60,110],
+        "3" : [35,80,125],
+        "4" : [15,60,105,150],
+        "5" : [0,45,90,135,180],
+        "6" : [-30,15,60,105,150,195],
+        "7" : [-45,0,45,90,135,180,225]
+    },
     init : function(handContainer, myPlayer, tableId) {
 
         this.handContainer = handContainer;
@@ -181,6 +190,7 @@ Poker.DynamicHand = Class.extend({
         if(this.cards.size()>0) {
             this.calculateCardDimensions();
         }
+        var nrOfCards = this.cards.size();
         var cssUtils = new Poker.CSSUtils();
         for(var i = 0; i<this.cardOrder.length; i++) {
             var card = this.cards.get(this.cardOrder[i]);
@@ -190,9 +200,9 @@ Poker.DynamicHand = Class.extend({
             }
             var el = card.getContainerElement();
             if(el && el.length && el.length>0) {
-                //cssUtils.setTranslate3d(el,Math.floor(pos.x),Math.floor(pos.y),0, "px")
-               el.css("left",Math.floor(pos.x) + "px");
-               el.css("top",Math.floor(pos.y) + "px");
+               cssUtils.setTranslate3d(el,this.cardOffset[nrOfCards+""][i],Math.floor(pos.y),0, "%");
+               //el.css("left",Math.floor(pos.x) + "px");
+               //el.css("top",Math.floor(pos.y) + "px");
 
             }
         }
