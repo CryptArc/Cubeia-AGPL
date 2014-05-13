@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker-root</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Poker Root</name>
     <packaging>pom</packaging>
 
@@ -34,9 +33,9 @@
     </prerequisites>
 
     <properties>
-        <firebase.version>1.10.1-BETA2-SNAPSHOT</firebase.version>
+        <firebase.version>1.10.1-BETA1</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cubeia.network.version>1.6.1-SNAPSHOT</cubeia.network.version>
+        <cubeia.network.version>1.6.1</cubeia.network.version>
         <jetty-version>9.1.1.v20140108</jetty-version> 
     </properties>
 
@@ -134,7 +133,7 @@
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots</artifactId>
-                <version>1.14-SNAPSHOT</version>
+                <version>1.14</version>
             </dependency>
 
             <dependency>
@@ -279,20 +278,20 @@
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
                 <type>jar</type>
-                <version>1.1-SNAPSHOT</version>
+                <version>1.1</version>
             </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
                 <type>firebase-sar</type>
-                <version>1.1-SNAPSHOT</version>
+                <version>1.1</version>
             </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase</groupId>
                 <artifactId>guice-support</artifactId>
-                <version>1.5-SNAPSHOT</version>
+                <version>1.5</version>
             </dependency>
 
             <dependency>
@@ -411,15 +410,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.cubeia.firebase</groupId>
-                <artifactId>game-common</artifactId>
-                <version>1.6-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.cubeia.backoffice.firebase</groupId>
                 <artifactId>generic-wallet-service</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.6.1</version>
                 <type>jar</type>
             </dependency>
 
@@ -768,7 +761,7 @@
                 <configuration>
                     <forkMode>once</forkMode>
                     <excludes>
-                        <exclude></exclude>
+                        <exclude />
                     </excludes>
                 </configuration>
                 <inherited>true</inherited> 
@@ -848,12 +841,9 @@
         </pluginRepository>
     </pluginRepositories>
     <scm>
-        <connection>
-            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
-        </connection>
-        <developerConnection>
-            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
-        </developerConnection>
+		<connection>scm:hg:https://bitbucket.org/cubeia/cubeia-poker</connection>
+		<developerConnection>scm:hg:https://bitbucket.org/cubeia/cubeia-poker</developerConnection>
+	    <tag>HEAD</tag>
     </scm>
      <distributionManagement>
         <repository>

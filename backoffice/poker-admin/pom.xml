@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poker-admin</artifactId>
     <name>Poker Admin</name>
@@ -9,7 +8,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>poker-backoffice</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     
     <properties>
@@ -434,8 +433,7 @@
                         <webInfIncludeJarPattern>do_not_scan_web-inf_lib_because_it_is_sooooo_slooooow.jar</webInfIncludeJarPattern>
                     </webAppConfig>
                     <connectors>
-                        <connector
-                                implementation="org.eclipse.jetty.server.bio.SocketConnector">
+                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
                             <port>8088</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>

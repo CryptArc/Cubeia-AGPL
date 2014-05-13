@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker-protocol</artifactId>
@@ -10,7 +9,7 @@
     <parent>
         <groupId>com.cubeia.games</groupId>
         <artifactId>protocol-modules</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -26,7 +25,7 @@
             <plugin>
                 <groupId>com.cubeia</groupId>
                 <artifactId>protocol-generator-plugin</artifactId>
-                <version>1.9-SNAPSHOT</version>
+                <version>1.10</version>
                 <configuration>
                     <protocol_file>src/main/xml/protocol.xml</protocol_file>
                     <language>all</language>
@@ -186,14 +185,14 @@
                                             protocol-generator-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [1.7-SNAPSHOT,)
+                                            [1.10,)
                                         </versionRange>
                                         <goals>
                                             <goal>generate</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -208,7 +207,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -227,7 +226,7 @@
                                 		</goals>
                                 	</pluginExecutionFilter>
                                 	<action>
-                                		<ignore></ignore>
+                                		<ignore />
                                 	</action>
                                 </pluginExecution>
                             </pluginExecutions>

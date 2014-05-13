@@ -10,14 +10,17 @@ Poker.DevTools = Class.extend({
     mockEventManager : null,
     variant : null,
     TEXAS_HOLDEM : { numCards : 2, id : 0},
+    CRAZY : { numCards : 3, id : 2},
     OMAHA : { numCards : 4, id : 5},
     TELESINA : { numCards : 5, id:  1},
-    capacity : 8,
+    SEVEN_CARD_STUD_ONE_CARD_LEFT : { numCards : 6, id:  4},
+    SEVEN_CARD_STUD : { numCards : 7, id:  4},
+    capacity : 2,
 
     init : function() {
         var self = this;
         this.initCards();
-        this.variant = this.OMAHA;
+        this.variant = this.TEXAS_HOLDEM;
     },
     initCards : function() {
        var suits = "hsdc ";
