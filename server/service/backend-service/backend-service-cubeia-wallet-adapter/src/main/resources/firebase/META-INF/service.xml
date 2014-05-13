@@ -7,6 +7,7 @@
 
     <dependencies>
         <contract>com.cubeia.network.wallet.firebase.api.WalletServiceContract</contract>
+        <contract>com.cubeia.network.users.firebase.api.UserServiceContract</contract>
     </dependencies>
 
     <exported>
