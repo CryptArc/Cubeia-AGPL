@@ -101,7 +101,7 @@ Poker.CreditsView = Poker.ResponsiveTabView.extend({
         console.log("accounts = ", profile.accounts);
         if(accounts!=null && accounts.length > 0) {
             $.each(accounts,function(i,a){
-                if(a.currencyCode == "XMB") {
+                if(a.currencyCode == "XMB" && a.role == "MAIN") {
                     self.getViewElement().find(".xmb-balance").html(a.formattedBalance);
                 }
             });
